@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>This is the meta page</h1>
+<p>Select sub page:</p>
+
+<button type="button" onclick="loadPage('chat')">ChatRoomPage</button>
+
+<div id="to_change">
+	<!-- Things inside of here will change once the script is called -->
+</div>
+
+<script>
+	function loadPage(pageURL) {
+		var xhr = new XMLHttpRequest();
+		
+		// This will replace the content of the first element with id "to_change"
+		xhr.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200)
+				document.getElementById("to_change").innerHTML = this.responseText;
+		};
+		
+		// Requesting pageURL from our webserver
+		xhr.open("GET", pageURL);
+		xhr.send();
+	}
+</script>
+
+</body>
+</html>
