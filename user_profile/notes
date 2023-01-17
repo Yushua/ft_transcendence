@@ -4,3 +4,5 @@ testing: npm run start:dev
 
 make module or other files: nest g
 to know what to type: nest g --help
+
+nestjs-task-management
