@@ -9,6 +9,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TasksService = void 0;
 const common_1 = require("@nestjs/common");
 let TasksService = class TasksService {
+    constructor() {
+        this.tasks = [];
+    }
+    getAllTasks() {
+        return this.tasks;
+    }
 };
 TasksService = __decorate([
     (0, common_1.Injectable)()
