@@ -9,6 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TasksService = void 0;
 const common_1 = require("@nestjs/common");
 const task_model_1 = require("./task.model");
+const uuid_1 = require("uuid");
 let TasksService = class TasksService {
     constructor() {
         this.tasks = [];
@@ -18,7 +19,7 @@ let TasksService = class TasksService {
     }
     createTask(title, description) {
         const _task = {
-            id: '1234',
+            id: (0, uuid_1.v4)(),
             title,
             description,
             status: task_model_1.TaskStatus.OPEN,
