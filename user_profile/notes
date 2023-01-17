@@ -7,3 +7,6 @@ to know what to type: nest g --help
 
 nestjs-task-management
 sgdsgs
+
+---------
+by having the @Post() you cans end information thats created in the constructor. so you EXTRACT whats in there.

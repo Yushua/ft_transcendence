@@ -4,4 +4,5 @@ export declare class TasksController {
     private taskServices;
     constructor(taskServices: TasksService);
     getAllTask(): Task[];
+    createTask(title: string, description: string): Task;
 }

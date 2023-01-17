@@ -1,0 +1,1 @@
+- create a system where it sends an e-mail, this e-mail has a message and a random code. this code is stored, the system get this code for this user, if the user sends this code, its compared, if its equal, then the autenticaiton is succesfull
