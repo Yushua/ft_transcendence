@@ -17,7 +17,8 @@ let TasksService = class TasksService {
     getAllTasks() {
         return this.tasks;
     }
-    createTask(title, description) {
+    createTask(CreateTaskDto) {
+        const { title, description } = CreateTaskDto;
         const _task = {
             id: (0, uuid_1.v4)(),
             title,
