@@ -5,6 +5,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TasksService = void 0;
 const common_1 = require("@nestjs/common");
@@ -16,6 +19,9 @@ let TasksService = class TasksService {
     }
     getAllTasks() {
         return this.tasks;
+    }
+    getTasksById(id) {
+        return this.tasks.find((task) => task.id == id);
     }
     createTask(CreateTaskDto) {
         const { title, description } = CreateTaskDto;
@@ -29,6 +35,12 @@ let TasksService = class TasksService {
         return _task;
     }
 };
+__decorate([
+    (0, common_1.Get)(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Array)
+], TasksService.prototype, "getAllTasks", null);
 TasksService = __decorate([
     (0, common_1.Injectable)()
 ], TasksService);
