@@ -9,18 +9,12 @@ export class TasksService {
     private tasks: Task[] = [];
 
     //how to take them
-    //http://localhost:4242/tasks
     @Get()
     getAllTasks(): Task[] {
         return this.tasks;
     }
 
     //find() compares to true or false
-    getTasksById(id: string) : Task{
-        return this.tasks.find((task) => task.id == id);
-    }
-
-    //http://localhost:4242/randomline
     createTask(CreateTaskDto: CreateTaskDto): Task {
         const {
             title,
@@ -34,9 +28,17 @@ export class TasksService {
             status: TaskStatus.OPEN,
         };
         this.tasks.push(_task);
-
         return _task;
     }
+    
+    getTasksById(id: string) : Task{
+        return this.tasks.find((task) => task.id == id);
+    }
 
+    //filter method to delete the task
+    deleteTasksById(id: string): void{
+        this.tasks = this.tasks.filter((task) => task.id !== id);
+    }
 
+    //http://localhost:4242/randomline
 }
