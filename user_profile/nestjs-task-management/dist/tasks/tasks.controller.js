@@ -17,12 +17,18 @@ const common_1 = require("@nestjs/common");
 const task_model_1 = require("./task.model");
 const tasks_service_1 = require("./tasks.service");
 const create_task_dto_1 = require("./dto/create-task.dto");
+const get_tasks_filter_dto_1 = require("./dto/get-tasks-filter.dto");
 let TasksController = class TasksController {
     constructor(taskServices) {
         this.taskServices = taskServices;
     }
-    getAllTask() {
-        return this.taskServices.getAllTasks();
+    getTask(filterDto) {
+        if (Object.keys(filterDto).length) {
+            return this.taskServices.getTasksWithFilters(filterDto);
+        }
+        else {
+            return this.taskServices.getAllTasks();
+        }
     }
     getTaskById(id) {
         return this.taskServices.getTasksById(id);
@@ -39,10 +45,11 @@ let TasksController = class TasksController {
 };
 __decorate([
     (0, common_1.Get)(),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [get_tasks_filter_dto_1.getTasksFilterDto]),
     __metadata("design:returntype", Array)
-], TasksController.prototype, "getAllTask", null);
+], TasksController.prototype, "getTask", null);
 __decorate([
     (0, common_1.Get)('/:id'),
     __param(0, (0, common_1.Param)('id')),

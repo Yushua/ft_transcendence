@@ -2,6 +2,7 @@ import { Get, Injectable, Param } from '@nestjs/common';
 import { Task, TaskStatus } from './task.model';
 import { v4 } from 'uuid';
 import { CreateTaskDto } from './dto/create-task.dto';
+import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
 
 //random uuid doesn't work for some reason
 @Injectable()
@@ -14,6 +15,25 @@ export class TasksService {
         return this.tasks;
     }
 
+    getTasksWithFilters(filterDto: getTasksFilterDto): Task[] {
+        const { status, search} = filterDto;
+
+        let tasks = this.getAllTasks();
+
+        if (status){
+            tasks = tasks.filter((task) => task.status === status);
+        }
+
+        if (search) {
+            tasks = tasks.filter((task) => {
+                if (task.title.includes(search) || task.description.includes(search)){
+                    return true;
+                }
+                return false;
+            });
+        }
+        return tasks;
+    }
     //find() compares to true or false
     postTask(CreateTaskDto: CreateTaskDto): Task {
         const {
@@ -45,5 +65,7 @@ export class TasksService {
         task.status = status;
         return task;
     }
+
+
     //http://localhost:4242/randomline
 }

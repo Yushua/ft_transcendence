@@ -20,6 +20,22 @@ let TasksService = class TasksService {
     getAllTasks() {
         return this.tasks;
     }
+    getTasksWithFilters(filterDto) {
+        const { status, search } = filterDto;
+        let tasks = this.getAllTasks();
+        if (status) {
+            tasks = tasks.filter((task) => task.status === status);
+        }
+        if (search) {
+            tasks = tasks.filter((task) => {
+                if (task.title.includes(search) || task.description.includes(search)) {
+                    return true;
+                }
+                return false;
+            });
+        }
+        return tasks;
+    }
     postTask(CreateTaskDto) {
         const { title, description } = CreateTaskDto;
         const _task = {
