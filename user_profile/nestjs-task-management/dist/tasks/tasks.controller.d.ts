@@ -6,6 +6,6 @@ export declare class TasksController {
     constructor(taskServices: TasksService);
     getAllTask(): Task[];
     getTaskById(id: string): Task;
-    createTask(CreateTaskDto: CreateTaskDto): Task;
+    postTask(CreateTaskDto: CreateTaskDto): Task;
     deleteTasksById(id: string): void;
 }

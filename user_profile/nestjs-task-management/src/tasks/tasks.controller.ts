@@ -24,11 +24,11 @@ export class TasksController {
     }
 
     @Post()
-    createTask(
+    postTask(
         @Body() CreateTaskDto: CreateTaskDto
     ): Task {
         //create task -> puts it in array -> then writes that array
-        return this.taskServices.createTask(CreateTaskDto);
+        return this.taskServices.postTask(CreateTaskDto);
         // console.log('title: ', title, '.');
         // console.log('description: ', description, '.');
     }

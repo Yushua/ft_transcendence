@@ -15,7 +15,7 @@ export class TasksService {
     }
 
     //find() compares to true or false
-    createTask(CreateTaskDto: CreateTaskDto): Task {
+    postTask(CreateTaskDto: CreateTaskDto): Task {
         const {
             title,
             description
@@ -40,5 +40,9 @@ export class TasksService {
         this.tasks = this.tasks.filter((task) => task.id !== id);
     }
 
+    patchTaskById(id: string, status: TaskStatus){
+        const task = this.getTasksById(id);
+        
+    }
     //http://localhost:4242/randomline
 }

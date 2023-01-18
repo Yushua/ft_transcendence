@@ -20,7 +20,7 @@ let TasksService = class TasksService {
     getAllTasks() {
         return this.tasks;
     }
-    createTask(CreateTaskDto) {
+    postTask(CreateTaskDto) {
         const { title, description } = CreateTaskDto;
         const _task = {
             id: (0, uuid_1.v4)(),
@@ -36,6 +36,9 @@ let TasksService = class TasksService {
     }
     deleteTasksById(id) {
         this.tasks = this.tasks.filter((task) => task.id !== id);
+    }
+    patchTaskById(id, status) {
+        const task = this.getTasksById(id);
     }
 };
 __decorate([
