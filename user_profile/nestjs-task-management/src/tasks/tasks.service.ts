@@ -40,9 +40,10 @@ export class TasksService {
         this.tasks = this.tasks.filter((task) => task.id !== id);
     }
 
-    patchTaskById(id: string, status: TaskStatus){
+    patchUpdateTaskById(id: string, status: TaskStatus){
         const task = this.getTasksById(id);
-        
+        task.status = status;
+        return task;
     }
     //http://localhost:4242/randomline
 }

@@ -6,5 +6,5 @@ export declare class TasksService {
     postTask(CreateTaskDto: CreateTaskDto): Task;
     getTasksById(id: string): Task;
     deleteTasksById(id: string): void;
-    patchTaskById(id: string, status: TaskStatus): void;
+    patchUpdateTaskById(id: string, status: TaskStatus): Task;
 }

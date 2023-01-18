@@ -1,4 +1,4 @@
-import { Task } from './task.model';
+import { Task, TaskStatus } from './task.model';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 export declare class TasksController {
@@ -8,4 +8,5 @@ export declare class TasksController {
     getTaskById(id: string): Task;
     postTask(CreateTaskDto: CreateTaskDto): Task;
     deleteTasksById(id: string): void;
+    patchUpdateTaskById(id: string, status: TaskStatus): Task;
 }
