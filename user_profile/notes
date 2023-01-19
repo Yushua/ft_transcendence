@@ -16,9 +16,17 @@ Docker Start and postgre. or Database software
 
 name of docker container  - locking it to this port - the password for it - making sure it runs enough - the container name
 
+//how to run the postgres container on docker
 docker run --name postgres-nest -p 5432:5432 -e POSTGRES_PASSWORD=postgres -d postgres
 //installing postgres
 
 how to stop
 
 docke container stop postgres-nest
+
+remove
+
+docker container rm postgres-nest
+
+---
+
