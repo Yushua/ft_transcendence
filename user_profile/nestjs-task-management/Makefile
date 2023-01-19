@@ -1,5 +1,7 @@
+runt:
+	docker run --name postgres-nest -p 5353:5353 -e POSTGRES_PASSWORD=postgres -d postgres
+
 run:
-	# docker run --name postgres-nest -p 5353:5353 -e POSTGRES_PASSWORD=postgres -d postgres
 	docker-compose up -d
 	docker-compose ps
 
