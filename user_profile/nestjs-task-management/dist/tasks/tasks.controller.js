@@ -14,10 +14,10 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TasksController = void 0;
 const common_1 = require("@nestjs/common");
-const task_model_1 = require("./task.model");
 const tasks_service_1 = require("./tasks.service");
 const create_task_dto_1 = require("./dto/create-task.dto");
 const get_tasks_filter_dto_1 = require("./dto/get-tasks-filter.dto");
+const update_task_status_dto_1 = require("./dto/update-task-status.dto");
 let TasksController = class TasksController {
     constructor(taskServices) {
         this.taskServices = taskServices;
@@ -39,8 +39,9 @@ let TasksController = class TasksController {
     deleteTasksById(id) {
         return this.taskServices.deleteTasksById(id);
     }
-    patchUpdateTaskById(id, status) {
-        return this.taskServices.patchUpdateTaskById(id, status);
+    patchTaskById(id, UpdateTaskStatusDto) {
+        const { status } = UpdateTaskStatusDto;
+        return this.taskServices.patchTaskById(id, status);
     }
 };
 __decorate([
@@ -74,11 +75,11 @@ __decorate([
 __decorate([
     (0, common_1.Patch)('/:id/status'),
     __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.Body)('status')),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:paramtypes", [String, update_task_status_dto_1.UpdateTaskStatusDto]),
     __metadata("design:returntype", Object)
-], TasksController.prototype, "patchUpdateTaskById", null);
+], TasksController.prototype, "patchTaskById", null);
 TasksController = __decorate([
     (0, common_1.Controller)('tasks'),
     __metadata("design:paramtypes", [tasks_service_1.TasksService])

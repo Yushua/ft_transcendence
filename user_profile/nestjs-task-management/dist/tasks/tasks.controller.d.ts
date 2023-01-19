@@ -1,7 +1,8 @@
-import { Task, TaskStatus } from './task.model';
+import { Task } from './task.model';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
+import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
 export declare class TasksController {
     private taskServices;
     constructor(taskServices: TasksService);
@@ -9,5 +10,5 @@ export declare class TasksController {
     getTaskById(id: string): Task;
     postTask(CreateTaskDto: CreateTaskDto): Task;
     deleteTasksById(id: string): void;
-    patchUpdateTaskById(id: string, status: TaskStatus): Task;
+    patchTaskById(id: string, UpdateTaskStatusDto: UpdateTaskStatusDto): Task;
 }

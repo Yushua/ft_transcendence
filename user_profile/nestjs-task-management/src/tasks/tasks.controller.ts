@@ -4,6 +4,7 @@ import { TasksService } from './tasks.service';
 import { v4 } from 'uuid';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
+import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
 
 @Controller('tasks')
 export class TasksController {
@@ -53,11 +54,12 @@ export class TasksController {
     specific function in the mutiple Patch function
     */
     @Patch('/:id/status')
-    patchUpdateTaskById(
+    patchTaskById(
         @Param('id') id: string,
-        @Body('status') status: TaskStatus,
+        @Body() UpdateTaskStatusDto: UpdateTaskStatusDto,
         ): Task {
-            return this.taskServices.patchUpdateTaskById(id, status);
+            const {status} = UpdateTaskStatusDto;
+            return this.taskServices.patchTaskById(id, status);
     }
 
 

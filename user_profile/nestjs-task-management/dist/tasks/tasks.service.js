@@ -50,15 +50,15 @@ let TasksService = class TasksService {
     getTasksById(id) {
         const found = this.tasks.find((task) => task.id == id);
         if (!found) {
-            throw new common_1.NotFoundException;
+            throw new common_1.NotFoundException(`Task with ID "${id}" not found`);
         }
         return found;
     }
     deleteTasksById(id) {
-        const task = this.getTasksById(id);
+        const found = this.getTasksById(id);
         this.tasks = this.tasks.filter((task) => task.id !== id);
     }
-    patchUpdateTaskById(id, status) {
+    patchTaskById(id, status) {
         const task = this.getTasksById(id);
         task.status = status;
         return task;

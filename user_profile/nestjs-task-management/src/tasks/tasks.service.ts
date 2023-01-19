@@ -3,7 +3,6 @@ import { Task, TaskStatus } from './task.model';
 import { v4 } from 'uuid';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
-import { IsNotEmpty } from 'class-validator';
 
 //random uuid doesn't work for some reason
 @Injectable()
@@ -56,18 +55,18 @@ export class TasksService {
         const found = this.tasks.find((task) => task.id == id);
         
         if (!found){
-            throw new NotFoundException;
+            throw new NotFoundException(`Task with ID "${id}" not found`);
         }
         return found;
     }
 
     //filter method to delete the task
     deleteTasksById(id: string): void{
-        const task = this.getTasksById(id);
+        const found = this.getTasksById(id);
         this.tasks = this.tasks.filter((task) => task.id !== id);
     }
 
-    patchUpdateTaskById(id: string, status: TaskStatus){
+    patchTaskById(id: string, status: TaskStatus){
         const task = this.getTasksById(id);
         task.status = status;
         return task;
