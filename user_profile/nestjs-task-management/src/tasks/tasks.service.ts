@@ -1,8 +1,9 @@
-import { Get, Injectable, Param } from '@nestjs/common';
+import { Get, Injectable, NotFoundException, Param } from '@nestjs/common';
 import { Task, TaskStatus } from './task.model';
 import { v4 } from 'uuid';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
+import { IsNotEmpty } from 'class-validator';
 
 //random uuid doesn't work for some reason
 @Injectable()
@@ -52,11 +53,17 @@ export class TasksService {
     }
     
     getTasksById(id: string) : Task{
-        return this.tasks.find((task) => task.id == id);
+        const found = this.tasks.find((task) => task.id == id);
+        
+        if (!found){
+            throw new NotFoundException;
+        }
+        return found;
     }
 
     //filter method to delete the task
     deleteTasksById(id: string): void{
+        const task = this.getTasksById(id);
         this.tasks = this.tasks.filter((task) => task.id !== id);
     }
 

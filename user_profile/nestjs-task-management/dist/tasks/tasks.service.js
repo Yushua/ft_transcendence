@@ -48,9 +48,14 @@ let TasksService = class TasksService {
         return _task;
     }
     getTasksById(id) {
-        return this.tasks.find((task) => task.id == id);
+        const found = this.tasks.find((task) => task.id == id);
+        if (!found) {
+            throw new common_1.NotFoundException;
+        }
+        return found;
     }
     deleteTasksById(id) {
+        const task = this.getTasksById(id);
         this.tasks = this.tasks.filter((task) => task.id !== id);
     }
     patchUpdateTaskById(id, status) {
