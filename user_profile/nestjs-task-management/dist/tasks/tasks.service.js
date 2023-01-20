@@ -8,70 +8,23 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TasksService = void 0;
 const common_1 = require("@nestjs/common");
-const task_model_1 = require("./task.model");
-const uuid_1 = require("uuid");
+const tasks_repository_1 = require("./tasks.repository");
+const typeorm_1 = require("@nestjs/typeorm");
 let TasksService = class TasksService {
-    constructor() {
-        this.tasks = [];
-    }
-    getAllTasks() {
-        return this.tasks;
-    }
-    getTasksWithFilters(filterDto) {
-        const { status, search } = filterDto;
-        let tasks = this.getAllTasks();
-        if (status) {
-            tasks = tasks.filter((task) => task.status === status);
-        }
-        if (search) {
-            tasks = tasks.filter((task) => {
-                if (task.title.includes(search) || task.description.includes(search)) {
-                    return true;
-                }
-                return false;
-            });
-        }
-        return tasks;
-    }
-    postTask(CreateTaskDto) {
-        const { title, description } = CreateTaskDto;
-        const _task = {
-            id: (0, uuid_1.v4)(),
-            title,
-            description,
-            status: task_model_1.TaskStatus.OPEN,
-        };
-        this.tasks.push(_task);
-        return _task;
-    }
-    getTasksById(id) {
-        const found = this.tasks.find((task) => task.id == id);
-        if (!found) {
-            throw new common_1.NotFoundException(`Task with ID "${id}" not found`);
-        }
-        return found;
-    }
-    deleteTasksById(id) {
-        const found = this.getTasksById(id);
-        this.tasks = this.tasks.filter((task) => task.id !== id);
-    }
-    patchTaskById(id, status) {
-        const task = this.getTasksById(id);
-        task.status = status;
-        return task;
+    constructor(taskRepository) {
+        this.taskRepository = taskRepository;
     }
 };
-__decorate([
-    (0, common_1.Get)(),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Array)
-], TasksService.prototype, "getAllTasks", null);
 TasksService = __decorate([
-    (0, common_1.Injectable)()
+    (0, common_1.Injectable)(),
+    __param(0, (0, typeorm_1.InjectRepository)(tasks_repository_1.TasksRepository)),
+    __metadata("design:paramtypes", [tasks_repository_1.TasksRepository])
 ], TasksService);
 exports.TasksService = TasksService;
 //# sourceMappingURL=tasks.service.js.map

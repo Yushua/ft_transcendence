@@ -9,20 +9,29 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTasksFilterDto = void 0;
-const class_validator_1 = require("class-validator");
-const task_status_model_1 = require("../task-status.model");
-class getTasksFilterDto {
-}
+exports.Task = void 0;
+const typeorm_1 = require("typeorm");
+const task_status_model_1 = require("./task-status.model");
+let Task = class Task {
+};
 __decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsEnum)(task_status_model_1.TaskStatus),
+    (0, typeorm_1.PrimaryGeneratedColumn)('uuid'),
     __metadata("design:type", String)
-], getTasksFilterDto.prototype, "status", void 0);
+], Task.prototype, "id", void 0);
 __decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
+    (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], getTasksFilterDto.prototype, "search", void 0);
-exports.getTasksFilterDto = getTasksFilterDto;
-//# sourceMappingURL=get-tasks-filter.dto.js.map
+], Task.prototype, "title", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], Task.prototype, "description", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], Task.prototype, "status", void 0);
+Task = __decorate([
+    (0, typeorm_1.Entity)()
+], Task);
+exports.Task = Task;
+//# sourceMappingURL=task.entity.js.map

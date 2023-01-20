@@ -30,5 +30,4 @@ docker container rm postgres-nest
 
 --- ORM ---
 
-npm add typeorm @nestjs/typeo
-rm pg
+npm add typeorm @nestjs/typeorm pg
