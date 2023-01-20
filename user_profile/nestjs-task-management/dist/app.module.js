@@ -21,7 +21,7 @@ AppModule = __decorate([
             authentication_module_1.AuthenticationModule,
             typeorm_1.TypeOrmModule.forRoot({
                 type: 'postgres',
-                host: '172.23.0.2',
+                host: '172.23.0.3',
                 port: 5432,
                 username: 'postgres',
                 password: 'postgres',
