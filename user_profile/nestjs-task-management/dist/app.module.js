@@ -11,11 +11,24 @@ const common_1 = require("@nestjs/common");
 const tasks_module_1 = require("./tasks/tasks.module");
 const user_module_1 = require("./user/user.module");
 const authentication_module_1 = require("./authentication/authentication.module");
+const typeorm_1 = require("@nestjs/typeorm");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [tasks_module_1.TasksModule, user_module_1.UserModule, authentication_module_1.AuthenticationModule],
+        imports: [tasks_module_1.TasksModule,
+            user_module_1.UserModule,
+            authentication_module_1.AuthenticationModule,
+            typeorm_1.TypeOrmModule.forRoot({
+                type: 'postgres',
+                host: '172.23.0.2',
+                port: 5432,
+                username: 'postgres',
+                password: 'postgres',
+                database: 'task-management',
+                autoLoadEntities: true,
+                synchronize: true,
+            })],
     })
 ], AppModule);
 exports.AppModule = AppModule;
