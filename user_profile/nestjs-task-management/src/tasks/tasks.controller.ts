@@ -18,7 +18,7 @@ export class TasksController {
 
     @Get('/:id')
     getTaskById(@Param('id') id:string): Promise<Task> {
-        return this.taskServices.getTaskById(id);
+        return this.taskServices.findById(id);
     }
 
     @Post()
@@ -26,12 +26,12 @@ export class TasksController {
         @Body() CreateTaskDto: CreateTaskDto
     ): Promise<Task> {
         //create task -> puts it in array -> then writes that array
-        return this.taskServices.postTask(CreateTaskDto);
+        return this.taskServices.insert(CreateTaskDto);
     }
 
     @Delete('/:id')
     deleteTasksById(@Param('id') id: string): Promise<void> {
-        return this.taskServices.deleteTask(id);
+        return this.taskServices.deleteTasksById(id);
     }
 
     // //when its a get request, do this

@@ -2,34 +2,56 @@ import { Get, Inject, Injectable, NotFoundException, Param } from '@nestjs/commo
 import { TaskStatus } from './task-status.model';
 import { v4 } from 'uuid';
 import { CreateTaskDto } from './dto/create-task.dto';
-import { TasksRepository } from './tasks.repository';
+// import { TasksRepository } from './tasks.repository';
 import { Task } from './task.entity';
 import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 //random uuid doesn't work for some reason
 @Injectable()
 export class TasksService {
-		constructor(private taskEntityRepository: TasksRepository) {}
+  constructor(
+    @InjectRepository(Task)
+    private readonly taskEntity: Repository<Task>,
+  ) {}
 
-	async getAllTasks(filterDto: getTasksFilterDto): Promise<Task[]> {
-		return this.taskEntityRepository.findAll(filterDto);
-	}
+	// async getAllTasks(filterDto: getTasksFilterDto): Promise<Task[]> {
+	// 	// return this.taskEntityRepository.findAll(filterDto);
+	// }
 
-	async getTaskById(id: string): Promise<Task> {
-		return this.taskEntityRepository.findById(id);
-	}
+	async findById(id: string): Promise<Task> {
+    const found = await this.taskEntity.findOneBy({ id });
+    if (!found) {
+      throw new NotFoundException(`Task with ID "${id}" not found`);
+    }
+    return found;
+  }
 
-	async postTask(CreateTaskDto: CreateTaskDto): Promise<Task> {
-		return this.taskEntityRepository.insert(CreateTaskDto);
-	}   
+  async insert(createTaskDto: CreateTaskDto): Promise<Task> {
+    const { title,
+        description,
+    } = createTaskDto;
+    const task = this.taskEntity.create({
+      title,
+      description,
+      status: TaskStatus.OPEN,
+    });
+    await this.taskEntity.save(task);
+    return task;
+  }
 
-	async deleteTask(id: string): Promise<void> {
-		return this.taskEntityRepository.deleteTasksById(id);
-	}
+  async deleteTasksById(id: string): Promise<void> {
+    const result = await this.taskEntity.delete(id);
+ 
+    if (result.affected === 0) {
+      throw new NotFoundException(`Task with ID "${id}" not found`);
+    }
+  }
 		
-	async patchTaskById(id: string, status: TaskStatus): Promise<Task> {
-		return this.taskEntityRepository.patchTaskById(id, status);
-	}
+	// async patchTaskById(id: string, status: TaskStatus): Promise<Task> {
+	// 	return this.taskEntityRepository.patchTaskById(id, status);
+	// }
 
 		// async getTasksWithFilters(filterDto: getTasksFilterDto): Promise <Task[]> {
 		// 	return this.taskEntityRepository.getTasksWithFilters(id, status);

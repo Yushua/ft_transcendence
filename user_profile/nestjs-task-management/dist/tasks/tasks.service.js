@@ -8,33 +8,48 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TasksService = void 0;
 const common_1 = require("@nestjs/common");
-const tasks_repository_1 = require("./tasks.repository");
+const task_status_model_1 = require("./task-status.model");
+const task_entity_1 = require("./task.entity");
+const typeorm_1 = require("typeorm");
+const typeorm_2 = require("@nestjs/typeorm");
 let TasksService = class TasksService {
-    constructor(taskEntityRepository) {
-        this.taskEntityRepository = taskEntityRepository;
+    constructor(taskEntity) {
+        this.taskEntity = taskEntity;
     }
-    async getAllTasks(filterDto) {
-        return this.taskEntityRepository.findAll(filterDto);
+    async findById(id) {
+        const found = await this.taskEntity.findOneBy({ id });
+        if (!found) {
+            throw new common_1.NotFoundException(`Task with ID "${id}" not found`);
+        }
+        return found;
     }
-    async getTaskById(id) {
-        return this.taskEntityRepository.findById(id);
+    async insert(createTaskDto) {
+        const { title, description, } = createTaskDto;
+        const task = this.taskEntity.create({
+            title,
+            description,
+            status: task_status_model_1.TaskStatus.OPEN,
+        });
+        await this.taskEntity.save(task);
+        return task;
     }
-    async postTask(CreateTaskDto) {
-        return this.taskEntityRepository.insert(CreateTaskDto);
-    }
-    async deleteTask(id) {
-        return this.taskEntityRepository.deleteTasksById(id);
-    }
-    async patchTaskById(id, status) {
-        return this.taskEntityRepository.patchTaskById(id, status);
+    async deleteTasksById(id) {
+        const result = await this.taskEntity.delete(id);
+        if (result.affected === 0) {
+            throw new common_1.NotFoundException(`Task with ID "${id}" not found`);
+        }
     }
 };
 TasksService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [tasks_repository_1.TasksRepository])
+    __param(0, (0, typeorm_2.InjectRepository)(task_entity_1.Task)),
+    __metadata("design:paramtypes", [typeorm_1.Repository])
 ], TasksService);
 exports.TasksService = TasksService;
 //# sourceMappingURL=tasks.service.js.map

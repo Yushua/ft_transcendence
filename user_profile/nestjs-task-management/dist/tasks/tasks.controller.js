@@ -21,13 +21,13 @@ let TasksController = class TasksController {
         this.taskServices = taskServices;
     }
     getTaskById(id) {
-        return this.taskServices.getTaskById(id);
+        return this.taskServices.findById(id);
     }
     postTask(CreateTaskDto) {
-        return this.taskServices.postTask(CreateTaskDto);
+        return this.taskServices.insert(CreateTaskDto);
     }
     deleteTasksById(id) {
-        return this.taskServices.deleteTask(id);
+        return this.taskServices.deleteTasksById(id);
     }
 };
 __decorate([
