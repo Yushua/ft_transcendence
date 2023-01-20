@@ -8,22 +8,32 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TasksService = void 0;
 const common_1 = require("@nestjs/common");
 const tasks_repository_1 = require("./tasks.repository");
-const typeorm_1 = require("@nestjs/typeorm");
 let TasksService = class TasksService {
-    constructor(taskRepository) {
-        this.taskRepository = taskRepository;
+    constructor(taskEntityRepository) {
+        this.taskEntityRepository = taskEntityRepository;
+    }
+    async getAllTasks(filterDto) {
+        return this.taskEntityRepository.findAll(filterDto);
+    }
+    async getTaskById(id) {
+        return this.taskEntityRepository.findById(id);
+    }
+    async postTask(CreateTaskDto) {
+        return this.taskEntityRepository.insert(CreateTaskDto);
+    }
+    async deleteTask(id) {
+        return this.taskEntityRepository.deleteTasksById(id);
+    }
+    async patchTaskById(id, status) {
+        return this.taskEntityRepository.patchTaskById(id, status);
     }
 };
 TasksService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, typeorm_1.InjectRepository)(tasks_repository_1.TasksRepository)),
     __metadata("design:paramtypes", [tasks_repository_1.TasksRepository])
 ], TasksService);
 exports.TasksService = TasksService;
