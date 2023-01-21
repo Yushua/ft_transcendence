@@ -2,7 +2,6 @@ import { Get, Inject, Injectable, NotFoundException, Param } from '@nestjs/commo
 import { TaskStatus } from './task-status.model';
 import { v4 } from 'uuid';
 import { CreateTaskDto } from './dto/create-task.dto';
-// import { TasksRepository } from './tasks.repository';
 import { Task } from './task.entity';
 import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { Repository } from 'typeorm';
@@ -20,6 +19,7 @@ export class TasksService {
 	// 	// return this.taskEntityRepository.findAll(filterDto);
 	// }
 
+    
   
   async findAllTasks(filterDto: getTasksFilterDto): Promise<Task[]> {
     const { status, search } = filterDto;
@@ -81,23 +81,5 @@ export class TasksService {
 
 		// async getTasksWithFilters(filterDto: getTasksFilterDto): Promise <Task[]> {
 		// 	return this.taskEntityRepository.getTasksWithFilters(id, status);
-		// }
-	
-		// //find() compares to true or false
-		//createTask
-		// postTask(CreateTaskDto: CreateTaskDto): Task {
-		//     const {
-		//         title,
-		//         description
-		//     } = CreateTaskDto;
-
-		//     const _task: Task = {
-		//         id: v4(),
-		//         title,
-		//         description,
-		//         status: TaskStatus.OPEN,
-		//     };
-		//     this.tasks.push(_task);
-		//     return _task;
 		// }
 }
