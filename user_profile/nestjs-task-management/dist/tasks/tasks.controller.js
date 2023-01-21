@@ -16,9 +16,14 @@ exports.TasksController = void 0;
 const common_1 = require("@nestjs/common");
 const tasks_service_1 = require("./tasks.service");
 const create_task_dto_1 = require("./dto/create-task.dto");
+const update_task_status_dto_1 = require("./dto/update-task-status.dto");
+const get_tasks_filter_dto_1 = require("./dto/get-tasks-filter.dto");
 let TasksController = class TasksController {
     constructor(taskServices) {
         this.taskServices = taskServices;
+    }
+    getAllTasks(filterDto) {
+        return this.taskServices.findAllTasks(filterDto);
     }
     getTaskById(id) {
         return this.taskServices.findById(id);
@@ -29,7 +34,18 @@ let TasksController = class TasksController {
     deleteTasksById(id) {
         return this.taskServices.deleteTasksById(id);
     }
+    patchTaskById(id, updateTaskById) {
+        const { status } = updateTaskById;
+        return this.taskServices.updateTaskById(id, status);
+    }
 };
+__decorate([
+    (0, common_1.Get)(),
+    __param(0, (0, common_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [get_tasks_filter_dto_1.getTasksFilterDto]),
+    __metadata("design:returntype", Promise)
+], TasksController.prototype, "getAllTasks", null);
 __decorate([
     (0, common_1.Get)('/:id'),
     __param(0, (0, common_1.Param)('id')),
@@ -51,6 +67,14 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], TasksController.prototype, "deleteTasksById", null);
+__decorate([
+    (0, common_1.Patch)('/:id/status'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, update_task_status_dto_1.UpdateTaskStatusDto]),
+    __metadata("design:returntype", Promise)
+], TasksController.prototype, "patchTaskById", null);
 TasksController = __decorate([
     (0, common_1.Controller)('tasks'),
     __metadata("design:paramtypes", [tasks_service_1.TasksService])

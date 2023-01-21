@@ -20,6 +20,26 @@ export class TasksService {
 	// 	// return this.taskEntityRepository.findAll(filterDto);
 	// }
 
+  
+  async findAllTasks(filterDto: getTasksFilterDto): Promise<Task[]> {
+    const { status, search } = filterDto;
+    const query = this.taskEntity.createQueryBuilder('task');
+ 
+    if (status) {
+      query.andWhere('task.status = :status', { status });
+    }
+ 
+    if (search) {
+      query.andWhere(
+        'LOWER(task.title) LIKE LOWER(:search) OR LOWER(task.description) LIKE LOWER(:search)',
+        { search: `%${search}%` },
+      );
+    }
+ 
+    const tasks = await query.getMany();
+    return tasks;
+  }
+
 	async findById(id: string): Promise<Task> {
     const found = await this.taskEntity.findOneBy({ id });
     if (!found) {
@@ -49,9 +69,15 @@ export class TasksService {
     }
   }
 		
-	// async patchTaskById(id: string, status: TaskStatus): Promise<Task> {
-	// 	return this.taskEntityRepository.patchTaskById(id, status);
-	// }
+	async updateTaskById(id: string, status: TaskStatus): Promise<Task> {
+		const task = await this.findById(id);
+
+    task.status = status;
+    //to save in database
+    await this.taskEntity.save(task);
+
+    return task;
+	}
 
 		// async getTasksWithFilters(filterDto: getTasksFilterDto): Promise <Task[]> {
 		// 	return this.taskEntityRepository.getTasksWithFilters(id, status);

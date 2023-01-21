@@ -7,14 +7,20 @@ import { Body,
     Patch,
     Query } from '@nestjs/common';
 import { TasksService } from './tasks.service';
-import { v4 } from 'uuid';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { Task } from './task.entity';
+import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
+import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
 
 @Controller('tasks')
 export class TasksController {
     //define properties
     constructor(private taskServices: TasksService) {}
+
+    @Get()
+    getAllTasks(@Query() filterDto: getTasksFilterDto): Promise<Task[]> {
+        return this.taskServices.findAllTasks(filterDto);
+    }
 
     @Get('/:id')
     getTaskById(@Param('id') id:string): Promise<Task> {
@@ -48,19 +54,13 @@ export class TasksController {
     //     }
     // }
 
-    // /*now patches and updates ONE thing, but normally you would get a DTO of the app
-    // do the things you do to this, this can be one thing, or multiuple, and then Patch it all in one go
-
-    // and if you only need to PATCH oen thing, you create that specific one. but if you do more, you use that
-    // specific function in the mutiple Patch function
-    // */
-    // @Patch('/:id/status')
-    // patchTaskById(
-    //     @Param('id') id: string,
-    //     @Body() UpdateTaskStatusDto: UpdateTaskStatusDto,
-    //     ): Task {
-    //         const {status} = UpdateTaskStatusDto;
-    //         return this.taskServices.patchTaskById(id, status);
-    // }
+    @Patch('/:id/status')
+    patchTaskById(
+        @Param('id') id: string,
+        @Body() updateTaskById: UpdateTaskStatusDto,
+        ): Promise<Task> {
+            const {status} = updateTaskById;
+            return this.taskServices.updateTaskById(id, status);
+    }
 }
 

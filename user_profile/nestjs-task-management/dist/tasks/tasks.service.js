@@ -22,6 +22,18 @@ let TasksService = class TasksService {
     constructor(taskEntity) {
         this.taskEntity = taskEntity;
     }
+    async findAllTasks(filterDto) {
+        const { status, search } = filterDto;
+        const query = this.taskEntity.createQueryBuilder('task');
+        if (status) {
+            query.andWhere('task.status = :status', { status });
+        }
+        if (search) {
+            query.andWhere('LOWER(task.title) LIKE LOWER(:search) OR LOWER(task.description) LIKE LOWER(:search)', { search: `%${search}%` });
+        }
+        const tasks = await query.getMany();
+        return tasks;
+    }
     async findById(id) {
         const found = await this.taskEntity.findOneBy({ id });
         if (!found) {
@@ -44,6 +56,12 @@ let TasksService = class TasksService {
         if (result.affected === 0) {
             throw new common_1.NotFoundException(`Task with ID "${id}" not found`);
         }
+    }
+    async updateTaskById(id, status) {
+        const task = await this.findById(id);
+        task.status = status;
+        await this.taskEntity.save(task);
+        return task;
     }
 };
 TasksService = __decorate([
