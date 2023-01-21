@@ -20,3 +20,7 @@ test:
 gethostname:
 	# docker inspect nestjs-task-management_pgadmin_1 | grep IPAddress
 	docker inspect nestjs-task-management_postgres_1 | grep IPAddress
+
+setup:
+	npm install @nestjs/common
+	npm install @nestjs/core
