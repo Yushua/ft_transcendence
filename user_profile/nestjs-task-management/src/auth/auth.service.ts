@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
@@ -19,7 +19,17 @@ export class AuthService {
         const _user = this.authEntity.create({
             username, password,
         });
-
-        await this.authEntity.save(_user);
+        try {
+            await this.authEntity.save(_user);
+        } catch (error) {
+            if (error.code === '23505'){
+                throw new ConflictException(`account name "${username} was already in use`);
+            }
+            else {
+                throw new InternalServerErrorException(`account name "${username} was already in use`);
+            }
+            //how to get the error.code
+            //console.log(error.code);
+        }
     }
 }

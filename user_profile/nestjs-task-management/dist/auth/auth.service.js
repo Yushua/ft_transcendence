@@ -26,7 +26,17 @@ let AuthService = class AuthService {
         const _user = this.authEntity.create({
             username, password,
         });
-        await this.authEntity.save(_user);
+        try {
+            await this.authEntity.save(_user);
+        }
+        catch (error) {
+            if (error.code === '23505') {
+                throw new common_1.ConflictException(`account name "${username} was already in use`);
+            }
+            else {
+                throw new common_1.InternalServerErrorException(`account name "${username} was already in use`);
+            }
+        }
     }
 };
 AuthService = __decorate([

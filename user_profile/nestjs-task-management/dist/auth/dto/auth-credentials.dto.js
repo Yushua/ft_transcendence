@@ -15,10 +15,19 @@ class AuthCredentialsDto {
 }
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MinLength)(4),
+    (0, class_validator_1.MaxLength)(20),
     __metadata("design:type", String)
 ], AuthCredentialsDto.prototype, "username", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MinLength)(8),
+    (0, class_validator_1.MaxLength)(20),
+    (0, class_validator_1.Matches)(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
+        message: 'password is too weak, more details come from the frontend'
+    }),
     __metadata("design:type", String)
 ], AuthCredentialsDto.prototype, "password", void 0);
 exports.AuthCredentialsDto = AuthCredentialsDto;
