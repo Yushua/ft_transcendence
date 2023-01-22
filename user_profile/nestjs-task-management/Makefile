@@ -24,3 +24,6 @@ gethostname:
 setup:
 	npm install @nestjs/common
 	npm install @nestjs/core
+	npm i --save @nestjs/config
+	npm install --save @nestjs/typeorm typeorm mysql2
+	npm install class-validator --save

@@ -6,17 +6,20 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AuthenticationModule = void 0;
+exports.AuthModule = void 0;
 const common_1 = require("@nestjs/common");
-const authentication_controller_1 = require("./authentication.controller");
-const authentication_service_1 = require("./authentication.service");
-let AuthenticationModule = class AuthenticationModule {
+const auth_service_1 = require("./auth.service");
+const auth_controller_1 = require("./auth.controller");
+const typeorm_1 = require("@nestjs/typeorm");
+const user_entity_1 = require("./user.entity");
+let AuthModule = class AuthModule {
 };
-AuthenticationModule = __decorate([
+AuthModule = __decorate([
     (0, common_1.Module)({
-        controllers: [authentication_controller_1.AuthenticationController],
-        providers: [authentication_service_1.AuthenticationService],
+        imports: [typeorm_1.TypeOrmModule.forFeature([user_entity_1.User])],
+        providers: [auth_service_1.AuthService],
+        controllers: [auth_controller_1.AuthController]
     })
-], AuthenticationModule);
-exports.AuthenticationModule = AuthenticationModule;
-//# sourceMappingURL=authentication.module.js.map
+], AuthModule);
+exports.AuthModule = AuthModule;
+//# sourceMappingURL=auth.module.js.map

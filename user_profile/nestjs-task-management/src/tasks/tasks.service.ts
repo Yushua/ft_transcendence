@@ -1,6 +1,5 @@
-import { Get, Inject, Injectable, NotFoundException, Param } from '@nestjs/common';
+import { Injectable, NotFoundException, Param } from '@nestjs/common';
 import { TaskStatus } from './task-status.model';
-import { v4 } from 'uuid';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { Task } from './task.entity';
 import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
@@ -13,13 +12,7 @@ export class TasksService {
   constructor(
     @InjectRepository(Task)
     private readonly taskEntity: Repository<Task>,
-  ) {}
-
-	// async getAllTasks(filterDto: getTasksFilterDto): Promise<Task[]> {
-	// 	// return this.taskEntityRepository.findAll(filterDto);
-	// }
-
-    
+  ) {} 
   
   async findAllTasks(filterDto: getTasksFilterDto): Promise<Task[]> {
     const { status, search } = filterDto;
@@ -78,8 +71,4 @@ export class TasksService {
 
     return task;
 	}
-
-		// async getTasksWithFilters(filterDto: getTasksFilterDto): Promise <Task[]> {
-		// 	return this.taskEntityRepository.getTasksWithFilters(id, status);
-		// }
 }
