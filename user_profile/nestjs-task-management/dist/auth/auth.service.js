@@ -17,14 +17,17 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const user_entity_1 = require("./user.entity");
+const bcrypt = require("bcrypt");
 let AuthService = class AuthService {
     constructor(authEntity) {
         this.authEntity = authEntity;
     }
     async createUser(authCredentialsDto) {
         const { username, password } = authCredentialsDto;
+        const salt = await bcrypt.genSalt();
+        const hashedPassword = await bcrypt.hash(password, salt);
         const _user = this.authEntity.create({
-            username, password,
+            username, password: hashedPassword,
         });
         try {
             await this.authEntity.save(_user);
