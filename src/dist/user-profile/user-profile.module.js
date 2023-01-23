@@ -6,28 +6,20 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AppModule = void 0;
+exports.UserProfileModule = void 0;
 const common_1 = require("@nestjs/common");
-const user_profile_module_1 = require("./user-profile/user-profile.module");
 const typeorm_1 = require("@nestjs/typeorm");
-let AppModule = class AppModule {
+const user_profile_controller_1 = require("./user-profile.controller");
+const user_profile_entity_1 = require("./user-profile.entity");
+const user_profile_service_1 = require("./user-profile.service");
+let UserProfileModule = class UserProfileModule {
 };
-AppModule = __decorate([
+UserProfileModule = __decorate([
     (0, common_1.Module)({
-        imports: [
-            user_profile_module_1.UserProfileModule,
-            typeorm_1.TypeOrmModule.forRoot({
-                type: 'postgres',
-                host: 'localhost',
-                port: 5432,
-                username: 'postgres',
-                password: 'postgres',
-                database: 'task-management',
-                autoLoadEntities: true,
-                synchronize: true,
-            })
-        ],
+        imports: [typeorm_1.TypeOrmModule.forFeature([user_profile_entity_1.UserProfile])],
+        controllers: [user_profile_controller_1.UserProfileController],
+        providers: [user_profile_service_1.UserProfileService]
     })
-], AppModule);
-exports.AppModule = AppModule;
-//# sourceMappingURL=app.module.js.map
+], UserProfileModule);
+exports.UserProfileModule = UserProfileModule;
+//# sourceMappingURL=user-profile.module.js.map
