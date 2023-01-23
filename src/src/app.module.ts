@@ -1,14 +1,19 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { ServeStaticModule } from '@nestjs/serve-static';
-import { join } from 'path';
-
-import { ChatRoomController } from './chat_room/app.chat.controller';
-import { ChatRoomService } from './chat_room/app.chat.service';
+import { UserProfileModule } from './user-profile/user-profile.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-  controllers: [AppController, ChatRoomController],
-  providers: [AppService, ChatRoomService],
+  imports: [
+    UserProfileModule,
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: 'localhost',
+      port: 5432,
+      username: 'postgres',
+      password: 'postgres',
+      database: 'task-management',
+      autoLoadEntities: true,
+      synchronize: true, //keeps it in sync
+      })],
 })
 export class AppModule {}
