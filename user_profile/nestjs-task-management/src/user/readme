@@ -1,0 +1,13 @@
+input for user{
+    name: string
+    Date of creation: int/int/int
+    email: string
+    password: string
+
+    computers added: []
+        if computer new, then, authenticate
+
+    authentication code: string
+        if NULL, the nothing happens, else, it creates an unique number and starts
+        the authentication Process. after which it deletes this code.
+}
