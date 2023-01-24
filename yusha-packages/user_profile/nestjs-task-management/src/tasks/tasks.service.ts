@@ -48,7 +48,7 @@ export class TasksService {
     const task = this.taskEntity.create({
       title,
       description,
-      status: TaskStatus.OPEN,
+      status: TaskStatus.CREATION,
     });
     await this.taskEntity.save(task);
     return task;

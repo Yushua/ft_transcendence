@@ -14,6 +14,15 @@ export class AuthController {
         return this.authServices.createUser(authCredentialsDto);
     }
 
+    @Post('/signin')
+    signIn(
+        @Body() authCredentialsDto: AuthCredentialsDto
+        ): Promise<{ accessToken: string}> {
+        //frontend will save this token and attach
+        //it to every application afterwards
+        return this.authServices.signIn(authCredentialsDto);
+    }
+
     // @Get('/:id')
     // getTaskById(@Param('id') id:string): Promise<User> {
     //     return this.authServices.findById(id);

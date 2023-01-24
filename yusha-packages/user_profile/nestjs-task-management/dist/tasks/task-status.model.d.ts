@@ -1,5 +1,5 @@
 export declare enum TaskStatus {
-    OPEN = "OPEN",
-    IN_PROGRESS = "IN_PROGRESS",
-    DONE = "DONE"
+    ONLINE = "ONLINE",
+    OFFLINE = "OFFLINE",
+    CREATION = "CREATION"
 }
