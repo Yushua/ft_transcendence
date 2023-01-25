@@ -1,1 +1,1 @@
-{"version":3,"file":"task-status.model.js","sourceRoot":"","sources":["../../src/tasks/task-status.model.ts"],"names":[],"mappings":";;;AAEA,IAAY,UAIX;AAJD,WAAY,UAAU;IAClB,2BAAa,CAAA;IACb,yCAA2B,CAAA;IAC3B,2BAAa,CAAA;AACjB,CAAC,EAJW,UAAU,GAAV,kBAAU,KAAV,kBAAU,QAIrB"}
+{"version":3,"file":"task-status.model.js","sourceRoot":"","sources":["../../src/tasks/task-status.model.ts"],"names":[],"mappings":";;;AAEA,IAAY,UAIX;AAJD,WAAY,UAAU;IAClB,+BAAiB,CAAA;IACjB,iCAAmB,CAAA;IACnB,mCAAqB,CAAA;AACzB,CAAC,EAJW,UAAU,GAAV,kBAAU,KAAV,kBAAU,QAIrB"}

@@ -41,12 +41,14 @@ let TasksService = class TasksService {
         }
         return found;
     }
-    async insert(createTaskDto) {
+    async insert(createTaskDto, user) {
         const { title, description, } = createTaskDto;
+        console.log(user);
         const task = this.taskEntity.create({
+            user,
             title,
             description,
-            status: task_status_model_1.TaskStatus.OPEN,
+            status: task_status_model_1.TaskStatus.CREATION,
         });
         await this.taskEntity.save(task);
         return task;

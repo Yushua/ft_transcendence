@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { User } from './user.entity';
@@ -12,6 +13,23 @@ export class AuthController {
         @Body() authCredentialsDto: AuthCredentialsDto
         ): Promise<void> {
         return this.authServices.createUser(authCredentialsDto);
+    }
+
+    @Post('/signin')
+    signIn(
+        @Body() authCredentialsDto: AuthCredentialsDto
+        ): Promise<{ accessToken: string}> {
+        //frontend will save this token and attach
+        //it to every application afterwards
+        return this.authServices.signIn(authCredentialsDto);
+    }
+
+    @Post('/test')
+    @UseGuards(AuthGuard())
+    test(
+        @Req() req
+        ) {
+        console.log(req);
     }
 
     // @Get('/:id')

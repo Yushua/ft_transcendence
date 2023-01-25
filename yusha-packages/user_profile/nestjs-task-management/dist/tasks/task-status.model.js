@@ -3,8 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TaskStatus = void 0;
 var TaskStatus;
 (function (TaskStatus) {
-    TaskStatus["OPEN"] = "OPEN";
-    TaskStatus["IN_PROGRESS"] = "IN_PROGRESS";
-    TaskStatus["DONE"] = "DONE";
+    TaskStatus["ONLINE"] = "ONLINE";
+    TaskStatus["OFFLINE"] = "OFFLINE";
+    TaskStatus["CREATION"] = "CREATION";
 })(TaskStatus = exports.TaskStatus || (exports.TaskStatus = {}));
 //# sourceMappingURL=task-status.model.js.map
