@@ -8,8 +8,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
-const user_profile_module_1 = require("./user-profile/user-profile.module");
 const typeorm_1 = require("@nestjs/typeorm");
+const user_profile_module_1 = require("./user-profile/user-profile.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -22,7 +22,7 @@ AppModule = __decorate([
                 port: 5432,
                 username: 'postgres',
                 password: 'postgres',
-                database: 'task-management',
+                database: 'team-zero',
                 autoLoadEntities: true,
                 synchronize: true,
             })

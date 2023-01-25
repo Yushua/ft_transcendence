@@ -23,3 +23,5 @@ setup:
 	npm install --save @nestjs/typeorm typeorm mysql2
 	npm install class-validator --save
 	npm add bcrypt
+	npm add @nestjs/jwt @nestjs/passport passport passport-jwt
+	npm install pg --save

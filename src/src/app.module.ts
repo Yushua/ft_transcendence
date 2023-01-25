@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { UserProfileModule } from './user-profile/user-profile.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { UserProfileModule } from './user-profile/user-profile.module';
 
 @Module({
   imports: [
@@ -11,7 +11,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       port: 5432,
       username: 'postgres',
       password: 'postgres',
-      database: 'task-management',
+      database: 'team-zero',
       autoLoadEntities: true,
       synchronize: true, //keeps it in sync
       })],
