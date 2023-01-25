@@ -1,12 +1,20 @@
 import { IsNotEmpty } from "class-validator";
+import { Column } from "typeorm";
+import { UserStatus } from "../user-profile-status.model";
 
-export class CreateTaskDto {
-    @IsNotEmpty()
-    title: string;
+export class CreateUserDto {
+    @Column({
+        unique: true
+    })
+    username: string;
 
     @IsNotEmpty()
-    description: string;
+    password: string;
 
-    @IsNotEmpty()
+    @Column({
+        unique: true
+    })
     eMail: string;
+
+    status: UserStatus
 }

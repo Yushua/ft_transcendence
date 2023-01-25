@@ -27,6 +27,16 @@ __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], UserProfile.prototype, "password", void 0);
+__decorate([
+    (0, typeorm_1.Column)({
+        unique: true
+    }),
+    __metadata("design:type", String)
+], UserProfile.prototype, "eMail", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], UserProfile.prototype, "status", void 0);
 UserProfile = __decorate([
     (0, typeorm_1.Entity)()
 ], UserProfile);

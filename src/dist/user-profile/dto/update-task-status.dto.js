@@ -9,14 +9,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UpdateTaskStatusDto = void 0;
+exports.UpdateUserStatusDto = void 0;
 const class_validator_1 = require("class-validator");
 const user_profile_status_model_1 = require("../user-profile-status.model");
-class UpdateTaskStatusDto {
+class UpdateUserStatusDto {
 }
 __decorate([
-    (0, class_validator_1.IsEnum)(user_profile_status_model_1.TaskStatus),
+    (0, class_validator_1.IsEnum)(user_profile_status_model_1.UserStatus),
     __metadata("design:type", String)
-], UpdateTaskStatusDto.prototype, "status", void 0);
-exports.UpdateTaskStatusDto = UpdateTaskStatusDto;
+], UpdateUserStatusDto.prototype, "status", void 0);
+exports.UpdateUserStatusDto = UpdateUserStatusDto;
 //# sourceMappingURL=update-task-status.dto.js.map

@@ -13,4 +13,11 @@ export class UserProfile {
     @Column()
     password: string;
 
+    @Column({
+        unique: true
+    })
+    eMail: string;
+
+    @Column()
+    status: string;
 }

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserProfileModule } from './user-profile/user-profile.module';
+import { LoginModule } from './login/login.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { UserProfileModule } from './user-profile/user-profile.module';
       database: 'team-zero',
       autoLoadEntities: true,
       synchronize: true, //keeps it in sync
-      })],
+      }),
+    LoginModule],
 })
 export class AppModule {}

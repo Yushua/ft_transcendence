@@ -10,6 +10,7 @@ exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const user_profile_module_1 = require("./user-profile/user-profile.module");
+const login_module_1 = require("./login/login.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -25,7 +26,8 @@ AppModule = __decorate([
                 database: 'team-zero',
                 autoLoadEntities: true,
                 synchronize: true,
-            })
+            }),
+            login_module_1.LoginModule
         ],
     })
 ], AppModule);

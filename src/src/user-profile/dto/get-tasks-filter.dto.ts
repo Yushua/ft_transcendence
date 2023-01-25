@@ -1,10 +1,10 @@
 import { IsEnum, IsOptional, IsString, isString } from "class-validator";
-import { TaskStatus } from "../user-profile-status.model";
+import { UserStatus } from "../user-profile-status.model";
 
 export class getTasksFilterDto {
     @IsOptional()
-    @IsEnum(TaskStatus)
-    status?: TaskStatus;
+    @IsEnum(UserStatus)
+    status?: UserStatus;
     @IsOptional()
     @IsString()
     search?: string;

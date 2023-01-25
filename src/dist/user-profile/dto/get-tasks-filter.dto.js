@@ -16,7 +16,7 @@ class getTasksFilterDto {
 }
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsEnum)(user_profile_status_model_1.TaskStatus),
+    (0, class_validator_1.IsEnum)(user_profile_status_model_1.UserStatus),
     __metadata("design:type", String)
 ], getTasksFilterDto.prototype, "status", void 0);
 __decorate([
