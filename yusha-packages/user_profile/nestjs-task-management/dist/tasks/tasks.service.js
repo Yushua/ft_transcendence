@@ -34,7 +34,7 @@ let TasksService = class TasksService {
         const tasks = await query.getMany();
         return tasks;
     }
-    async findBy(id) {
+    async findById(id) {
         const found = await this.taskEntity.findOneBy({ id });
         if (!found) {
             throw new common_1.NotFoundException(`Task with ID "${id}" not found`);

@@ -1,9 +1,7 @@
 import { ConflictException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateUserDto } from './dto/create-user.dto';
 import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
-import { UpdateUserStatusDto } from './dto/update-task-status.dto';
 import { UserStatus } from './user-profile-status.model';
 import { UserProfile } from './user.entity';
 

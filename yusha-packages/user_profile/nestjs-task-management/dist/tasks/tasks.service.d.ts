@@ -8,7 +8,7 @@ export declare class TasksService {
     private readonly taskEntity;
     constructor(taskEntity: Repository<Task>);
     findAllTasks(filterDto: getTasksFilterDto): Promise<Task[]>;
-    findBy(id: string): Promise<Task>;
+    findById(id: string): Promise<Task>;
     insert(createTaskDto: CreateTaskDto, user: User): Promise<Task>;
     deleteTasksById(id: string): Promise<void>;
     updateTaskById(id: string, status: TaskStatus): Promise<Task>;

@@ -37,10 +37,10 @@ export class LoginService {
         } catch (error) {
             console.log(`error "${error.code}`);
             if (error.code === '23505'){
-                throw new ConflictException(`account name "${username} was already in use1`);
+                throw new ConflictException(`account name/email "${username} was already in use1`);
             }
             else {
-                throw new InternalServerErrorException(`account name "${error.code} was already in use, but the error is different`);
+                throw new InternalServerErrorException(`account name/email "${error.code} was already in use, but the error is different`);
             }
         }
         return _user;
