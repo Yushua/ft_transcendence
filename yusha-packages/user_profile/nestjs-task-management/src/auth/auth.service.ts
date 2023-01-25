@@ -37,7 +37,7 @@ export class AuthService {
                 throw new InternalServerErrorException(`account name "${username} was already in use`);
             }
             //how to get the error.code
-            console.log(error.code);
+            // console.log(error.code);
         }
     }
     async signIn(authCredentialsDto: AuthCredentialsDto): Promise<{ accessToken: string}> {

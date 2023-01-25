@@ -41,7 +41,6 @@ let AuthService = class AuthService {
             else {
                 throw new common_1.InternalServerErrorException(`account name "${username} was already in use`);
             }
-            console.log(error.code);
         }
     }
     async signIn(authCredentialsDto) {
