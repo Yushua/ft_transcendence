@@ -1,4 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { UserStatus } from "./user-profile-status.model";
 
 @Entity()
 export class UserProfile {
@@ -19,5 +20,5 @@ export class UserProfile {
     eMail: string;
 
     @Column()
-    status: string;
+    status: UserStatus;
 }

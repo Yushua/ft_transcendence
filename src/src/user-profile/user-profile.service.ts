@@ -1,7 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { CreateUserDto } from './dto/create-user.dto';
 import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
+import { UpdateUserStatusDto } from './dto/update-task-status.dto';
+import { UserStatus } from './user-profile-status.model';
 import { UserProfile } from './user.entity';
 
 @Injectable()
@@ -29,4 +32,35 @@ export class UserProfileService {
         const users = await query.getMany();
         return users;
       } 
+
+      async findUserBy(id: string): Promise<UserProfile> {
+        const found = await this.userEntity.findOneBy({id});
+        if (!found){
+          throw new NotFoundException(`Task with ID "${id}" not found`);
+        }
+        return found;
+      }
+    
+      async changeStatus(status: UserStatus, id: string): Promise<UserProfile> {
+        const found = await this.findUserBy(id);
+        found.status = status;
+        await this.userEntity.save(found);
+        return found;
+      }
+      async changeUsername(username: string, id: string): Promise<UserProfile> {
+        const found = await this.findUserBy(id);
+        found.username = username;
+        try {
+          await this.userEntity.save(found);
+        } catch (error) {
+          console.log(`error "${error.code}`);
+            if (error.code === '23505'){
+                throw new ConflictException(`account name "${username} was already in use1`);
+            }
+            else {
+                throw new InternalServerErrorException(`account name "${error.code} was already in use, but the error is different`);
+            }
+        }
+        return found;
+      }
 }

@@ -33,6 +33,36 @@ let UserProfileService = class UserProfileService {
         const users = await query.getMany();
         return users;
     }
+    async findUserBy(id) {
+        const found = await this.userEntity.findOneBy({ id });
+        if (!found) {
+            throw new common_1.NotFoundException(`Task with ID "${id}" not found`);
+        }
+        return found;
+    }
+    async changeStatus(status, id) {
+        const found = await this.findUserBy(id);
+        found.status = status;
+        await this.userEntity.save(found);
+        return found;
+    }
+    async changeUsername(username, id) {
+        const found = await this.findUserBy(id);
+        found.username = username;
+        try {
+            await this.userEntity.save(found);
+        }
+        catch (error) {
+            console.log(`error "${error.code}`);
+            if (error.code === '23505') {
+                throw new common_1.ConflictException(`account name "${username} was already in use1`);
+            }
+            else {
+                throw new common_1.InternalServerErrorException(`account name "${error.code} was already in use, but the error is different`);
+            }
+        }
+        return found;
+    }
 };
 UserProfileService = __decorate([
     (0, common_1.Injectable)(),

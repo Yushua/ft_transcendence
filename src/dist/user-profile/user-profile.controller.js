@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserProfileController = void 0;
 const common_1 = require("@nestjs/common");
 const get_tasks_filter_dto_1 = require("./dto/get-tasks-filter.dto");
+const user_profile_status_model_1 = require("./user-profile-status.model");
 const user_profile_service_1 = require("./user-profile.service");
 let UserProfileController = class UserProfileController {
     constructor(taskServices) {
@@ -22,6 +23,18 @@ let UserProfileController = class UserProfileController {
     }
     getAllTasks(filterDto) {
         return this.taskServices.findAllUsers(filterDto);
+    }
+    getUserById(id) {
+        return this.taskServices.findUserBy(id);
+    }
+    getUserByUsername(username) {
+        return this.taskServices.findUserBy(username);
+    }
+    changeUsername(username, id) {
+        return this.taskServices.changeUsername(username, id);
+    }
+    changeStatus(status, id) {
+        return this.taskServices.changeStatus(status, id);
     }
 };
 __decorate([
@@ -31,6 +44,36 @@ __decorate([
     __metadata("design:paramtypes", [get_tasks_filter_dto_1.getTasksFilterDto]),
     __metadata("design:returntype", Promise)
 ], UserProfileController.prototype, "getAllTasks", null);
+__decorate([
+    (0, common_1.Get)('/user/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UserProfileController.prototype, "getUserById", null);
+__decorate([
+    (0, common_1.Get)('/user/:username'),
+    __param(0, (0, common_1.Param)('username')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UserProfileController.prototype, "getUserByUsername", null);
+__decorate([
+    (0, common_1.Patch)('/username'),
+    __param(0, (0, common_1.Param)('username')),
+    __param(1, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", Promise)
+], UserProfileController.prototype, "changeUsername", null);
+__decorate([
+    (0, common_1.Patch)('/status/:status'),
+    __param(0, (0, common_1.Param)('status')),
+    __param(1, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", Promise)
+], UserProfileController.prototype, "changeStatus", null);
 UserProfileController = __decorate([
     (0, common_1.Controller)('user-profile'),
     __metadata("design:paramtypes", [user_profile_service_1.UserProfileService])
