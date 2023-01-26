@@ -8,3 +8,4 @@ async function bootstrap() {
   await app.listen(4242);
 }
 bootstrap();
+//network_mode: 10.11.3.20

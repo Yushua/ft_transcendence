@@ -1,7 +1,6 @@
 run:
 	docker-compose up -d
 	docker-compose ps
-	docker run -d -p src_postgres_1
 
 stop:
 	docker-compose down

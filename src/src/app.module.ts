@@ -19,3 +19,8 @@ import { LoginModule } from './login/login.module';
     LoginModule],
 })
 export class AppModule {}
+
+/*
+
+use computer name and set that instead of localhost
+*/
