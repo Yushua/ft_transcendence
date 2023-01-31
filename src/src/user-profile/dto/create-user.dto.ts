@@ -16,5 +16,8 @@ export class CreateUserDto {
     })
     eMail: string;
 
+    // @Column()
+    // friendlist: Array<string>;
+
     status: UserStatus
 }

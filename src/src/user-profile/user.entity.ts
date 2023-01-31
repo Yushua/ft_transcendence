@@ -14,6 +14,9 @@ export class UserProfile {
     })
     username: string;
 
+    // @Column()
+    // profilePicture: ??????
+
     @Column()
     password: string;
 
@@ -24,6 +27,10 @@ export class UserProfile {
 
     @Column()
     status: UserStatus;
+
+    // @Column()
+    friendlist: string[];
+    // friendlist: Array<string>;
 
     @OneToMany((_type) => StatProfile, stat => stat.user, { eager: true})
     stat: StatProfile[];

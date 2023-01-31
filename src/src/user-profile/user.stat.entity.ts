@@ -16,6 +16,8 @@ export class StatProfile {
     
     @ManyToOne((_type) => UserProfile, user => user.stat, { eager: false})
     user: UserProfile[];
+
+
 }
 
 /*
