@@ -33,7 +33,6 @@ export class LoginService {
             password: hashedPassword,
             eMail,
             status: UserStatus.CREATION,
-            // friendlist,
         });
         console.log(_user);
         try {

@@ -40,6 +40,10 @@ __decorate([
     __metadata("design:type", String)
 ], UserProfile.prototype, "status", void 0);
 __decorate([
+    (0, typeorm_1.Column)("text", { array: true, default: "{}" }),
+    __metadata("design:type", Array)
+], UserProfile.prototype, "friendList", void 0);
+__decorate([
     (0, typeorm_1.OneToMany)((_type) => user_stat_entity_1.StatProfile, stat => stat.user, { eager: true }),
     __metadata("design:type", Array)
 ], UserProfile.prototype, "stat", void 0);
