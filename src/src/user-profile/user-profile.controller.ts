@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Param, Patch, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Query, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { CreateUserDto } from './dto/create-user.dto';
 import { AddFriendListDto } from './dto/create-user.dto copy';
 import { getTasksFilterDto } from './dto/get-tasks-filter.dto';

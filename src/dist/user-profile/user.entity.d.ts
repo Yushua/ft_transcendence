@@ -6,6 +6,6 @@ export declare class UserProfile {
     password: string;
     eMail: string;
     status: UserStatus;
-    friendlist: string[];
+    friendlist: string[10];
     stat: StatProfile[];
 }

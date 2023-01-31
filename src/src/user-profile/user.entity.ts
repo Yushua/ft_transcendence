@@ -29,7 +29,7 @@ export class UserProfile {
     status: UserStatus;
 
     // @Column()
-    friendlist: string[];
+    friendlist: string[10]
     // friendlist: Array<string>;
 
     @OneToMany((_type) => StatProfile, stat => stat.user, { eager: true})
