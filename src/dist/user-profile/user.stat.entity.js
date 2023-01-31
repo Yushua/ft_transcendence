@@ -23,6 +23,14 @@ __decorate([
     __metadata("design:type", String)
 ], StatProfile.prototype, "gameName", void 0);
 __decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", Number)
+], StatProfile.prototype, "wins", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", Number)
+], StatProfile.prototype, "losses", void 0);
+__decorate([
     (0, typeorm_1.ManyToOne)((_type) => user_entity_1.UserProfile, user => user.stat, { eager: false }),
     __metadata("design:type", Array)
 ], StatProfile.prototype, "user", void 0);
