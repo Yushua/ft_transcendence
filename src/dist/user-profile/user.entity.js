@@ -9,9 +9,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MatchMaking = exports.UserProfile = void 0;
+exports.UserProfile = void 0;
+const class_transformer_1 = require("class-transformer");
 const typeorm_1 = require("typeorm");
 const user_profile_status_model_1 = require("./user-profile-status.model");
+const user_entity_friends_1 = require("./user.entity.friends");
+const user_stat_entity_1 = require("./user.stat.entity");
 let UserProfile = class UserProfile {
 };
 __decorate([
@@ -38,26 +41,17 @@ __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], UserProfile.prototype, "status", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    (0, class_transformer_1.Exclude)({ toPlainOnly: true }),
+    __metadata("design:type", user_entity_friends_1.FriendsProfile)
+], UserProfile.prototype, "friendsProfile", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)((_type) => user_stat_entity_1.StatProfile, stat => stat.user, { eager: true }),
+    __metadata("design:type", Array)
+], UserProfile.prototype, "statProfile", void 0);
 UserProfile = __decorate([
     (0, typeorm_1.Entity)()
 ], UserProfile);
 exports.UserProfile = UserProfile;
-let MatchMaking = class MatchMaking {
-};
-__decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
-], MatchMaking.prototype, "username1", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
-], MatchMaking.prototype, "username2", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
-], MatchMaking.prototype, "gameName", void 0);
-MatchMaking = __decorate([
-    (0, typeorm_1.Entity)()
-], MatchMaking);
-exports.MatchMaking = MatchMaking;
 //# sourceMappingURL=user.entity.js.map
