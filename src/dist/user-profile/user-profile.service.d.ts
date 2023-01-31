@@ -2,9 +2,11 @@ import { Repository } from 'typeorm';
 import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { UserStatus } from './user-profile-status.model';
 import { UserProfile } from './user.entity';
+import { StatProfile } from './user.stat.entity';
 export declare class UserProfileService {
     private readonly userEntity;
-    constructor(userEntity: Repository<UserProfile>);
+    private readonly statEntity;
+    constructor(userEntity: Repository<UserProfile>, statEntity: Repository<StatProfile>);
     findAllUsers(filterDto: getTasksFilterDto): Promise<UserProfile[]>;
     findUserBy(id: string): Promise<UserProfile>;
     changeStatus(status: UserStatus, id: string): Promise<UserProfile>;

@@ -1,5 +1,4 @@
 import { UserStatus } from "./user-profile-status.model";
-import { FriendsProfile } from "./user.entity.friends";
 import { StatProfile } from "./user.stat.entity";
 export declare class UserProfile {
     id: string;
@@ -7,6 +6,5 @@ export declare class UserProfile {
     password: string;
     eMail: string;
     status: UserStatus;
-    friendsProfile: FriendsProfile;
-    statProfile: StatProfile[];
+    stat: StatProfile[];
 }

@@ -25,10 +25,6 @@ export class UserProfile {
     @Column()
     status: UserStatus;
 
-    @Column()
-    @Exclude({toPlainOnly: true})
-    friendsProfile: FriendsProfile;
-
     @OneToMany((_type) => StatProfile, stat => stat.user, { eager: true})
-    statProfile: StatProfile[];
+    stat: StatProfile[];
 }

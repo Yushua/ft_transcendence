@@ -48,4 +48,9 @@ export class UserProfileController {
         @Param('id') id: string): Promise<UserProfile> {
         return this.taskServices.changeStatus(status, id);
     }
+
+    /*
+    when a game is created, look into the suer if the suer has the stats there
+    if yes, the  continue, if not, then create one
+    */
 }

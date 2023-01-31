@@ -4,12 +4,15 @@ import { Repository } from 'typeorm';
 import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { UserStatus } from './user-profile-status.model';
 import { UserProfile } from './user.entity';
+import { StatProfile } from './user.stat.entity';
 
 @Injectable()
 export class UserProfileService {
     constructor(
         @InjectRepository(UserProfile)
         private readonly userEntity: Repository<UserProfile>,
+        @InjectRepository(StatProfile)
+        private readonly statEntity: Repository<StatProfile>,
       ) {}
 
       async findAllUsers(filterDto: getTasksFilterDto): Promise<UserProfile[]> {
@@ -45,6 +48,7 @@ export class UserProfileService {
         await this.userEntity.save(found);
         return found;
       }
+
       async changeUsername(username: string, id: string): Promise<UserProfile> {
         const found = await this.findUserBy(id);
         found.username = username;
