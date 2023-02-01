@@ -26,3 +26,4 @@ setup:
 	npm add bcrypt
 	npm add @nestjs/jwt @nestjs/passport passport passport-jwt
 	npm install pg --save
+	npm install --save @types/react @types/react-dom
