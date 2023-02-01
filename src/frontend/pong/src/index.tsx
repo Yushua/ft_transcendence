@@ -1,7 +1,5 @@
-import { stringify } from "querystring";
 import React from "react";
 import ReactDOM from 'react-dom/client';
-import { createSecureContext } from "tls";
 import './index.css';
 
 // ========================================
@@ -52,7 +50,7 @@ class Board extends React.Component<any, any> {
 }
 
 // ========================================
-class Game extends React.Component<any, any> {
+class Game extends React.Component<{ }, { history: Array<any>, oIsNext: boolean }> {
 	constructor(props:any) {
 		super(props)
 		this.state = {
@@ -65,7 +63,7 @@ class Game extends React.Component<any, any> {
 		const history = this.state.history;
 		const current = history[history.length - 1];	
 		const new_squares = current.squares.slice()
-		if (new_squares[i])
+		if (new_squares[i] || calculateWinner(current.squares))
 			return
 		new_squares[i] = this.state.oIsNext ? 'O' : 'X'
 		this.setState({
@@ -76,23 +74,21 @@ class Game extends React.Component<any, any> {
 	}
 
 	render() {
-		const history = this.props.history
+		const history = this.state.history
 		const current = history[history.length - 1]
-		const winner = calculateWinner(this.state.squares)
+		const winner = calculateWinner(current.squares)
 		const status = winner ? 'Winner: ' + winner : 'Next Player: ' + (this.state.oIsNext ? 'O' : 'X')
 
 		return (
 			<div className="game">
 		  		<div className="game-board">
+				{status}
 					<Board 
 						squares = {current.squares}
 						onClick={(i: any) => this.handleClick(i)}
 					/>
 		 		</div>
 		  		<div className="game-info">
-					<div>
-						{/* status */}
-					</div>
 					<ol>
 						{/* TODO */}
 					</ol>
