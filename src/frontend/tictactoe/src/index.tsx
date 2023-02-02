@@ -1,6 +1,9 @@
 import React from "react";
 import ReactDOM from 'react-dom/client';
 import './index.css';
+import { CanvasHTMLAttributes } from "react";
+import { Rectangle, Circle, Ellipse, Line, Polyline, CornerBox, Triangle } from "react-shapes";
+
 
 // ========================================
 //render a square
@@ -98,11 +101,39 @@ class Game extends React.Component<{ }, { history: Array<any>, oIsNext: boolean 
 	}
 }
 
+
+// ========================================
+class Game2 extends React.Component<{ }, {  }> {
+	constructor(props:any) {
+		super(props)
+	}
+
+	rect: Rectangle 
+	  
+
+	render() {
+
+		return (
+			<div className="pong">
+				{BackGround()}
+			</div>
+		)
+	}
+
+}
+
+// ========================================
+function BackGround() {
+    return (
+        <Rectangle width={1250} height={625} fill={{color:'#000000'}} stroke={{color:'#E65243'}} strokeWidth={3} />
+    );
+}
+
 // ========================================
 const element = document.getElementById("root");
 if (element != null) {
 	const root = ReactDOM.createRoot(element);
-	root.render(<Game />);
+	root.render(<Game />)
 }
 
 // ========================================
