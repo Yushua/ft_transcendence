@@ -1,23 +1,13 @@
 import React from 'react';
 
-enum KeyBindings {
-	UP = 38,
-	DOWN = 40,
-	A = 65,
-	Z = 90,
-	SPACE = 32
-}
-
 class Pong extends React.Component {
 
 	private			gameCanvas
 	private			gameContext
-	public static	keysPressed: boolean[] = [false]
+	public static	keysPressed = new Map<string, boolean>()
 	public static	playerScore: number = 0
 	public static	player_2_Score: number = 0
-	// public static	computerScore: number = 0
 	private			player1: Paddle
-	// private			computerPlayer: ComputerPaddle
 	private			player2: Paddle
 	private			ball: Ball
 
@@ -32,19 +22,14 @@ class Pong extends React.Component {
 		var paddleWidth:number = 20, paddleHeight:number = 100, ballSize:number = 20, wallOffset:number = 20
 		this.player1 = new Paddle(paddleWidth,paddleHeight,wallOffset,this.gameCanvas.height / 2 - paddleHeight / 2, 1)
 		this.player2 = new Paddle(paddleWidth, paddleHeight, this.gameCanvas.width - (wallOffset + paddleWidth), this.gameCanvas.height / 2 - paddleHeight / 2, 2)
-		// this.computerPlayer = new ComputerPaddle(paddleWidth,paddleHeight,this.gameCanvas.width - (wallOffset + paddleWidth) ,this.gameCanvas.height / 2 - paddleHeight / 2)
 		this.ball = new Ball(ballSize,ballSize,this.gameCanvas.width / 2 - ballSize / 2, this.gameCanvas.height / 2 - ballSize / 2, 3)
-		window.addEventListener("keydown",function(e) {
-			if (e.keyCode !== KeyBindings.SPACE)
-				Pong.keysPressed[e.which] = true
-		})
-		window.addEventListener("keyup",function(e){
-			if (e.keyCode !== KeyBindings.SPACE)
-				Pong.keysPressed[e.which] = false
-		})
-		window.addEventListener("keypress",function(e){
-			if (e.keyCode === KeyBindings.SPACE)
-				Pong.keysPressed[KeyBindings.SPACE] = !Pong.keysPressed[KeyBindings.SPACE]
+		
+		window.addEventListener("keydown",(event) => { Pong.keysPressed.set(event.key, true) })
+		window.addEventListener("keyup",(event) => { Pong.keysPressed.set(event.key, false) })
+		window.addEventListener("keypress", (event) => {
+			console.log(event.key)
+			if (event.key === " ")
+				Pong.keysPressed.set("pause", !Pong.keysPressed.get("pause"))
 		})
 	}
 
@@ -64,8 +49,8 @@ class Pong extends React.Component {
 		const player_2_ScoreString:string = Pong.player_2_Score.toString()
 		this.gameContext.fillText(playerScoreString, 375, 50)
 		this.gameContext.fillText(player_2_ScoreString, 1125, 50)
-		//if paused..
-		if (Pong.keysPressed[KeyBindings.SPACE])
+		//if paused
+		if (Pong.keysPressed.get("pause"))
 		{
 			this.gameContext.fillText("GAME", 500, 325)
 			this.gameContext.fillText("PAUSED", 875, 325)
@@ -73,12 +58,10 @@ class Pong extends React.Component {
 	}
 	update()
 	{
-		if (Pong.keysPressed[KeyBindings.SPACE])
+		if (Pong.keysPressed.get("pause"))
 			return
 		this.player1.update(this.gameCanvas)
-		// this.computerPlayer.update(this.ball,this.gameCanvas)
 		this.player2.update(this.gameCanvas)
-		// this.ball.update(this.player1,this.computerPlayer,this.gameCanvas)
 		this.ball.update(this.player1,this.player2,this.gameCanvas)
 	}
 	draw()
@@ -88,8 +71,6 @@ class Pong extends React.Component {
 		this.drawBoardDetails()
 		this.player1.draw(this.gameContext)
 		this.player2.draw(this.gameContext)
-
-		// this.computerPlayer.draw(this.gameContext)
 		this.ball.draw(this.gameContext)
   	}
 	gameLoop()
@@ -99,7 +80,6 @@ class Pong extends React.Component {
 		requestAnimationFrame(game.gameLoop)
 	}
 }
-export default Pong
 
 class Entity
 {
@@ -129,20 +109,16 @@ class Paddle extends Entity
 {
 
 	private speed:number = 12;
-	constructor(w:number,h:number,x:number,y:number, num:number)
-	{
-		super(w,h,x,y, num)
-	}
 
 	update(canvas: any)
 	{
-		if (Pong.keysPressed[KeyBindings.UP] && this.num === 2 || Pong.keysPressed[KeyBindings.A] && this.num === 1 )
+		if ((Pong.keysPressed.get("ArrowUp") && this.num === 2 ) || (Pong.keysPressed.get("a") && this.num === 1))
 		{
 			this.yVel = -1
 			if (this.y <= 20)
 				this.yVel = 0
 		}
-		else if (Pong.keysPressed[KeyBindings.DOWN] && this.num === 2 || Pong.keysPressed[KeyBindings.Z] && this.num === 1)
+		else if ((Pong.keysPressed.get("ArrowDown") && this.num === 2) || (Pong.keysPressed.get("z") && this.num === 1))
 		{
 			this.yVel = 1
 			if (this.y + this.height >= canvas.height - 20)
@@ -153,35 +129,6 @@ class Paddle extends Entity
 		this.y += this.yVel * this.speed
 	}
 }
-
-// class ComputerPaddle extends Entity
-// {
-// 	private speed:number = 12
-
-// 	// constructor(w:number,h:number,x:number,y:number)
-// 	// {
-// 	// 	super(w,h,x,y)
-// 	// }
-// 	update(ball:Ball, canvas: any)
-// 	{  
-// 		//chase ball
-// 		if (ball.y < this.y && ball.xVel === 1)
-// 		{
-// 			this.yVel = -1;       
-// 			if (this.y <= 20)
-// 				this.yVel = 0
-// 		}
-// 		else if (ball.y > this.y + this.height && ball.xVel === 1)
-// 		{
-// 			this.yVel = 1
-// 			if (this.y + this.height >= canvas.height - 20)
-// 				this.yVel = 0
-// 		}
-// 		else
-// 			this.yVel = 0
-// 		this.y += this.yVel * this.speed
-// 	}
-// }
 
 class Ball extends Entity
 {
@@ -197,7 +144,6 @@ class Ball extends Entity
 			this.xVel = -1
 		this.yVel = 1
 	}
-	// update(player:Paddle, computer:ComputerPaddle, canvas: any)
 	update(player1:Paddle, player2:Paddle, canvas: any)
 	{
 		//check top canvas bounds
@@ -236,13 +182,6 @@ class Ball extends Entity
 			if (this.y >= player2.y && this.y + this.height <= player2.y + player2.height)
 				this.xVel = -1;
 		}
-
-		//check computer collision
-		// if (this.x + this.width >= computer.x)
-		// {
-		// 	if (this.y >= computer.y && this.y + this.height <= computer.y + computer.height)
-		// 		this.xVel = -1;
-		// }
 		this.x += this.xVel * this.speed;
 		this.y += this.yVel * this.speed;
 	}
