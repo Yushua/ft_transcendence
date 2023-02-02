@@ -1,6 +1,4 @@
-import { setMaxIdleHTTPParsers } from 'http';
 import React from 'react';
-import './App.css';
 
 enum KeyBindings {
 	UP = 38,
