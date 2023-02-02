@@ -138,13 +138,13 @@ class Paddle extends Entity
 
 	update(canvas: any)
 	{
-		if (Pong.keysPressed[KeyBindings.UP] && this.num === 1 || Pong.keysPressed[KeyBindings.A] && this.num === 2 )
+		if (Pong.keysPressed[KeyBindings.UP] && this.num === 2 || Pong.keysPressed[KeyBindings.A] && this.num === 1 )
 		{
 			this.yVel = -1
 			if (this.y <= 20)
 				this.yVel = 0
 		}
-		else if (Pong.keysPressed[KeyBindings.DOWN] && this.num === 1 || Pong.keysPressed[KeyBindings.Z] && this.num === 2)
+		else if (Pong.keysPressed[KeyBindings.DOWN] && this.num === 2 || Pong.keysPressed[KeyBindings.Z] && this.num === 1)
 		{
 			this.yVel = 1
 			if (this.y + this.height >= canvas.height - 20)
