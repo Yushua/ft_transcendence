@@ -10,8 +10,12 @@ setup:
 	npm i --save react-shapes
 	npm i --save-dev web-vitals
 	npm i --save typescript
-	npm add bcrypt
+	npm i --save-dev @types/cors
+	npm i --save stream-chat
+	npm i --save-dev @types/uuid
+	npm i --save-dev @types/bcrypt
 	npm add @nestjs/jwt @nestjs/passport passport passport-jwt
+	npm add express nodemon bcrypt
 	npm audit fix
 
 # create project: npx create-react-app my-app --template typescript
