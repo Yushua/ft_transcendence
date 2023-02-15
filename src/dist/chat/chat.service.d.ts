@@ -14,6 +14,7 @@ export declare class ChatService {
     NewRoom(roomDTO: ChatRoomDTO): Promise<ChatRoom>;
     GetMessages(roomID: string, index: number): Promise<ChatMessage[]>;
     PostNewMessage(roomID: string, msgDTO: ChatMessageDTO): Promise<string>;
+    AddUserToRoom(roomID: string, userID: string): Promise<void>;
     GetRoom(roomID: string): Promise<ChatRoom>;
     ModifyRoom(roomID: string, func: (ChatUser: ChatRoom) => void): Promise<ChatRoom>;
     DeleteRoom(roomID: string): Promise<void>;

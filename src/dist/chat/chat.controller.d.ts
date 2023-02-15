@@ -7,6 +7,7 @@ import { ChatRoomDTO } from './dto/chat_room.dto';
 export declare class ChatController {
     private readonly service;
     constructor(service: ChatService);
+    GetChatWebApp(): string;
     GetChatUser(userID: string): Promise<ChatUser>;
     GetChatUserInfo(userID: string, info: string): Promise<ChatUser>;
     GetRoom(roomID: string): Promise<ChatRoom>;
@@ -14,6 +15,7 @@ export declare class ChatController {
     GetMessageGroup(roomID: string, index: number): Promise<ChatMessage[]>;
     MakeNewRoom(room: ChatRoomDTO): Promise<ChatRoom>;
     PostNewMessage(roomID: string, msg: ChatMessageDTO): Promise<string>;
+    AddUser(roomID: string, userID: string): Promise<void>;
     DeleteRoom(roomID: string): string;
     DeleteUser(userID: string): string;
     GetChatUsers(): Promise<ChatUser[]>;

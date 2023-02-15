@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { timeStamp } from 'console';
 import { Repository } from 'typeorm';
@@ -36,7 +36,7 @@ export class ChatService {
 			MessageCount: 0
 		})
 		
-		return this.chatMessageRepo.save(msgGroup)
+		return await this.chatMessageRepo.save(msgGroup)
 	}
 	
 	//#endregion
@@ -82,17 +82,28 @@ export class ChatService {
 			msgGroup = await this._addMessageGroup(await this._getMsgID(room.ID, depth))
 			msgGroup.AddMessage(msg)
 		}
-		this.chatMessageRepo.save(msgGroup)
+		await this.chatMessageRepo.save(msgGroup)
 		return msgGroup.ID
 	}
 	
+	async AddUserToRoom(roomID: string, userID: string) {
+		await this.ModifyRoom(roomID, async room => {
+			if (!room.MemberIDs.includes(userID)) {
+				room.MemberIDs.push(userID)
+				await this.ModifyUser(userID, user => {
+					user.ChatRoomsIn.push(roomID)
+				})
+			}
+		})
+	}
+	
 	async GetRoom(roomID: string): Promise<ChatRoom>
-		{ return await this.chatRoomRepo.findOneBy({ ID: roomID }) }
+		{ return this.chatRoomRepo.findOneBy({ ID: roomID }) }
 	
 	async ModifyRoom(roomID: string, func: (ChatUser: ChatRoom) => void): Promise<ChatRoom> {
 		const room = await this.GetRoom(roomID)
 		func(room)
-		return this.chatRoomRepo.save(room)
+		return await this.chatRoomRepo.save(room)
 	}
 	
 	async DeleteRoom(roomID: string): Promise<void> {
@@ -123,7 +134,7 @@ export class ChatService {
 	async ModifyUser(ID: string, func: (ChatUser: ChatUser) => void): Promise<ChatUser> {
 		var foudUser = await this.GetOrAddUser(ID)
 		func(foudUser)
-		return this.chatUserRepo.save(foudUser)
+		return await this.chatUserRepo.save(foudUser)
 	}
 	
 	async DeleteUser(userID: string): Promise<void> {
@@ -161,10 +172,10 @@ export class ChatService {
 	//#region Debug
 	
 	async GetAllUsers(): Promise<ChatUser[]>
-		{ return await this.chatUserRepo.find() }
+		{ return this.chatUserRepo.find() }
 	
 	async GetAllRooms(): Promise<ChatRoom[]>
-		{ return await  this.chatRoomRepo.find() }
+		{ return this.chatRoomRepo.find() }
 	
 	async DeleteAll(): Promise<void> {
 		this.chatRoomRepo.delete({})

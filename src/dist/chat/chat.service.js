@@ -37,7 +37,7 @@ let ChatService = class ChatService {
             Messages: [],
             MessageCount: 0
         });
-        return this.chatMessageRepo.save(msgGroup);
+        return await this.chatMessageRepo.save(msgGroup);
     }
     async NewRoom(roomDTO) {
         const { OwnerID, Password, RoomType } = roomDTO;
@@ -70,14 +70,24 @@ let ChatService = class ChatService {
             msgGroup = await this._addMessageGroup(await this._getMsgID(room.ID, depth));
             msgGroup.AddMessage(msg);
         }
-        this.chatMessageRepo.save(msgGroup);
+        await this.chatMessageRepo.save(msgGroup);
         return msgGroup.ID;
     }
-    async GetRoom(roomID) { return await this.chatRoomRepo.findOneBy({ ID: roomID }); }
+    async AddUserToRoom(roomID, userID) {
+        await this.ModifyRoom(roomID, async (room) => {
+            if (!room.MemberIDs.includes(userID)) {
+                room.MemberIDs.push(userID);
+                await this.ModifyUser(userID, user => {
+                    user.ChatRoomsIn.push(roomID);
+                });
+            }
+        });
+    }
+    async GetRoom(roomID) { return this.chatRoomRepo.findOneBy({ ID: roomID }); }
     async ModifyRoom(roomID, func) {
         const room = await this.GetRoom(roomID);
         func(room);
-        return this.chatRoomRepo.save(room);
+        return await this.chatRoomRepo.save(room);
     }
     async DeleteRoom(roomID) {
         const room = await this.GetRoom(roomID);
@@ -101,7 +111,7 @@ let ChatService = class ChatService {
     async ModifyUser(ID, func) {
         var foudUser = await this.GetOrAddUser(ID);
         func(foudUser);
-        return this.chatUserRepo.save(foudUser);
+        return await this.chatUserRepo.save(foudUser);
     }
     async DeleteUser(userID) {
         const user = await this.chatUserRepo.findOneBy({ ID: userID });
@@ -129,8 +139,8 @@ let ChatService = class ChatService {
             await this.DeleteRoom(roomID);
         await this.chatUserRepo.remove(user);
     }
-    async GetAllUsers() { return await this.chatUserRepo.find(); }
-    async GetAllRooms() { return await this.chatRoomRepo.find(); }
+    async GetAllUsers() { return this.chatUserRepo.find(); }
+    async GetAllRooms() { return this.chatRoomRepo.find(); }
     async DeleteAll() {
         this.chatRoomRepo.delete({});
         this.chatUserRepo.delete({});

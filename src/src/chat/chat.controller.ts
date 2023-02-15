@@ -5,11 +5,17 @@ import { ChatRoom } from './chat_objects/chat_room';
 import { ChatUser } from './chat_objects/chat_user';
 import { ChatMessageDTO } from './dto/chat_message.dto';
 import { ChatRoomDTO } from './dto/chat_room.dto';
+import { ChatApp } from './chat.app';
 
 @Controller("chat")
 export class ChatController {
 	
 	constructor (private readonly service: ChatService) {}
+	
+	@Get()
+	GetChatWebApp()
+		: string
+			{ return ChatApp.GetWebApp() }
 	
 	//#region Get
 	
@@ -49,17 +55,24 @@ export class ChatController {
 	//#endregion
 	
 	@Post("room")
-	MakeNewRoom(
+	async MakeNewRoom(
 		@Body() room: ChatRoomDTO)
 		: Promise<ChatRoom>
-			{ return this.service.NewRoom(room) }
+			{ return await this.service.NewRoom(room) }
 	
 	@Post("msg/:roomID")
-	PostNewMessage(
+	async PostNewMessage(
 		@Param("roomID") roomID: string,
 		@Body() msg: ChatMessageDTO)
 		: Promise<string>
-			{ return this.service.PostNewMessage(roomID, msg) }
+			{ return await this.service.PostNewMessage(roomID, msg) }
+	
+	@Post("room/:roomID/:userID")
+	async AddUser(
+		@Param("roomID") roomID: string,
+		@Param("userID") userID: string,)
+		: Promise<void>
+			{ await this.service.AddUserToRoom(roomID, userID) }
 	
 	@Delete("room/:roomID")
 	DeleteRoom(

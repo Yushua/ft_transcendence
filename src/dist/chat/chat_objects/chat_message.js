@@ -35,7 +35,7 @@ let ChatMessageGroupManager = ChatMessageGroupManager_1 = class ChatMessageGroup
         return messages;
     }
 };
-ChatMessageGroupManager.MaxMessageCount = 20;
+ChatMessageGroupManager.MaxMessageCount = 10;
 __decorate([
     (0, typeorm_1.PrimaryColumn)({ unique: true }),
     __metadata("design:type", String)

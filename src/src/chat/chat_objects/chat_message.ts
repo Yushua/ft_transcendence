@@ -38,7 +38,7 @@ export class ChatMessageGroupManager {
 		return messages
 	}
 	
-	static readonly MaxMessageCount: number = 20
+	static readonly MaxMessageCount: number = 10
 }
 
 export class ChatMessage {

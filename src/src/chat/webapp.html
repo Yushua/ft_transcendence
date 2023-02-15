@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<body onload="onload()">
+
+<h1>Chat App</h1>
+
+<div>
+	User select: <select name="UserID" id="UserID" onchange="load()"> </select><br>
+	<br>
+</div>
+
+<div>
+	Room Password: <input type="text" id="RoomPassword" name="RoomPassword">
+	Private: <input type="checkbox" id="Private" name="Private"><br>
+	<button type="button" onclick="newRoom()">Make New Room</button><br>
+	<br>
+</div>
+
+<div>
+	Room select: <select name="RoomID" id="RoomID" onchange="roomChange()"> </select><br>
+	Members:<br>
+	<a id="Members"></a>
+	<select name="MemberID" id="MemberID"> </select>
+	<button type="button" onclick="addMember()">Add User</button><br>
+	<br>
+</div>
+
+<div>
+	<div id="chat"></div>
+	<input type="text" id="MessageBox" name="MessageBox">
+	<button type="button" onclick="sendMessage()">Send</button><br>
+	<br>
+</div>
+
+
+<button type="button" onclick="deleteALL()">Delete all chat data</button>
+
+<script>
+	function deleteALL() {
+		HTTPdelete("chat/all")
+		onload()
+	}
+	
+	async function onload() {
+		const users = await getObj("user-profile/user")
+		var options = ""
+		for (const user of users)
+			options += `<option value="${user.id}">${user.username}</option><br>`
+		document.getElementById("UserID").innerHTML = options
+		if (options != "")
+			load()
+	}
+	
+	async function load() {
+		document.getElementById("chat").innerHTML = ""
+		document.getElementById("MemberID").innerHTML = ""
+		document.getElementById("Members").innerHTML = ""
+		const user = document.getElementById("UserID").value
+		const roomIDs = await getObj(`chat/user/${user}/ChatRoomsIn`)
+		var options = ""
+		for (const roomID of roomIDs)
+			options += `<option value="${roomID}">${roomID}</option><br>`
+		document.getElementById("RoomID").innerHTML = options
+		if (options != "")
+			roomChange()
+	}
+	
+	async function HTTPdelete(url) {
+		var req = new XMLHttpRequest();
+		req.open("DELETE", url);
+		req.send();
+	}
+	
+	async function getObj(url) {
+		var req = new XMLHttpRequest();
+		req.open("GET", url, false);
+		req.send();
+		if (req.status === 200)
+			return JSON.parse(req.responseText)
+		return null
+	}
+	
+	async function get(url) {
+		var req = new XMLHttpRequest();
+		req.open("GET", url, false);
+		req.send();
+		if (req.status === 200)
+			return req.responseText
+		return null
+	}
+	
+	async function postObj(obj) {
+		var req = new XMLHttpRequest();
+		req.open("GET", url, false);
+		req.send();
+		if (req.status === 201)
+			return JSON.parse(req.responseText)
+		return null
+	}
+	
+	async function post(url, obj) {
+		var req = new XMLHttpRequest();
+		req.open("POST", url, false);
+		req.setRequestHeader("content-type", "application/x-www-form-urlencoded")
+		var body = ""
+		for (const entry of Object.entries(obj))
+			body += `${entry[0]}=${entry[1]}&`
+		req.send(body);
+		if (req.status === 201)
+			return req.responseText
+		return null
+	}
+	
+	async function newRoom() {
+		const user = document.getElementById("UserID").value
+		const pass = document.getElementById("RoomPassword").value
+		const priv = document.getElementById("Private").value
+		if (!!await post(`chat/room`, {OwnerID: user, Password:pass, RoomType:(priv?"Private":"Public") }))
+			load()
+	}
+	
+	async function addMember() {
+		const memb = document.getElementById("MemberID").value
+		const room = document.getElementById("RoomID").value
+		post(`chat/room/${room}/${memb}`, {})
+		roomChange()
+	}
+	
+	function sendMessage() {
+		
+		const user = document.getElementById("UserID").value
+		const msg = document.getElementById("MessageBox").value
+		const room = document.getElementById("RoomID").value
+		const body = `OwnerID=${user}&Message=${msg}`
+		
+		var xhr = new XMLHttpRequest();
+		
+		xhr.onreadystatechange = async function() {
+			if (this.readyState != 4)
+				return
+			if (this.status == 201)
+				getMessages()
+			else
+				console.log(await JSON.parse(this.responseText))
+		};
+		
+		xhr.open("POST", `chat/msg/${room}`);
+		xhr.setRequestHeader("content-type", "application/x-www-form-urlencoded")
+		xhr.send(body);
+	}
+	
+	var users = {}
+	
+	async function getUserName(userID) {
+		if (userID in users)
+			return users[userID]
+		const user = await getObj(`user-profile/user/${userID}`)
+		users[userID] = user.username
+		return user.username
+	}
+	
+	async function roomChange() {
+		getMessages()
+		
+		const room = document.getElementById("RoomID").value
+		const members = await getObj(`chat/room/${room}/MemberIDs`)
+		options = ""
+		for (const member of members)
+			options += `${await getUserName(member)}<br>`
+		document.getElementById("Members").innerHTML = options
+		
+		const userID = document.getElementById("UserID").value
+		const users = await getObj("user-profile/user")
+		var options = ""
+		for (const user of users)
+			if (user.id != userID && !members.includes(user.id))
+				options += `<option value="${user.id}">${user.username}</option><br>`
+		document.getElementById("MemberID").innerHTML = options
+	}
+	
+	const LogDepth = 10
+	async function getMessages() {
+		
+		document.getElementById("chat").innerHTML = "";
+		
+		const room = document.getElementById("RoomID").value
+		
+		var count = 0
+		var chat = ""
+		
+		for (let page = 1; count < LogDepth; page++) {
+			const msgs = await getObj(`chat/msg/${room}/-${page}`)
+			
+			if (msgs.length == 0)
+				break
+			
+			for (let i = msgs.length - 1; count < LogDepth && i >= 0; i--) {
+				count++
+				console.log(`${i} ${count} ${page} ${msgs[i].Message}`)
+				chat = `${await getUserName(msgs[i].OwnerID)}: ${msgs[i].Message}<br>` + chat
+			}
+		}
+		
+		for (; count < 10; count++)
+			chat = `<br>` + chat
+		document.getElementById("chat").innerHTML = chat;
+	}
+</script>
+
+</body>
+</html>

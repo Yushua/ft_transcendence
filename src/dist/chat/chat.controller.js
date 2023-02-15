@@ -17,23 +17,32 @@ const common_1 = require("@nestjs/common");
 const chat_service_1 = require("./chat.service");
 const chat_message_dto_1 = require("./dto/chat_message.dto");
 const chat_room_dto_1 = require("./dto/chat_room.dto");
+const chat_app_1 = require("./chat.app");
 let ChatController = class ChatController {
     constructor(service) {
         this.service = service;
     }
+    GetChatWebApp() { return chat_app_1.ChatApp.GetWebApp(); }
     GetChatUser(userID) { return this.service.GetOrAddUser(userID); }
     async GetChatUserInfo(userID, info) { return (await this.service.GetOrAddUser(userID))[info]; }
     GetRoom(roomID) { return this.service.GetRoom(roomID); }
     async GetRoomInfo(roomID, info) { return (await this.service.GetRoom(roomID))[info]; }
     GetMessageGroup(roomID, index) { return this.service.GetMessages(roomID, +index); }
-    MakeNewRoom(room) { return this.service.NewRoom(room); }
-    PostNewMessage(roomID, msg) { return this.service.PostNewMessage(roomID, msg); }
+    async MakeNewRoom(room) { return await this.service.NewRoom(room); }
+    async PostNewMessage(roomID, msg) { return await this.service.PostNewMessage(roomID, msg); }
+    async AddUser(roomID, userID) { await this.service.AddUserToRoom(roomID, userID); }
     DeleteRoom(roomID) { this.service.DeleteRoom(roomID); return "All gone!"; }
     DeleteUser(userID) { this.service.DeleteUser(userID); return "All gone!"; }
     GetChatUsers() { return this.service.GetAllUsers(); }
     GetChatRooms() { return this.service.GetAllRooms(); }
     DeleteAll() { this.service.DeleteAll(); return "All gone!"; }
 };
+__decorate([
+    (0, common_1.Get)(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", String)
+], ChatController.prototype, "GetChatWebApp", null);
 __decorate([
     (0, common_1.Get)("user/:userID"),
     __param(0, (0, common_1.Param)("userID")),
@@ -87,6 +96,14 @@ __decorate([
     __metadata("design:paramtypes", [String, chat_message_dto_1.ChatMessageDTO]),
     __metadata("design:returntype", Promise)
 ], ChatController.prototype, "PostNewMessage", null);
+__decorate([
+    (0, common_1.Post)("room/:roomID/:userID"),
+    __param(0, (0, common_1.Param)("roomID")),
+    __param(1, (0, common_1.Param)("userID")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", Promise)
+], ChatController.prototype, "AddUser", null);
 __decorate([
     (0, common_1.Delete)("room/:roomID"),
     __param(0, (0, common_1.Param)("roomID")),
