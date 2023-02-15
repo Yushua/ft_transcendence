@@ -18,6 +18,15 @@ export class UserProfileService {
 
       async addFriendToID(userID: string, friendID: string):Promise<void>{
           const user = await this.findUserBy(userID);
+          if (!user){
+            throw new NotFoundException(`Task with ID "${userID}" not found`);
+          }
+          user.friendList.forEach( (item) => {
+            if(item === friendID){
+              throw new NotFoundException(`Friend "${friendID}" already added`);
+              return ;
+            }
+          });
           user.friendList.push(friendID);
           await this.userEntity.save(user);
       }
