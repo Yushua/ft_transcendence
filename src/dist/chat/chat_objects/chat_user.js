@@ -9,37 +9,24 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserProfile = void 0;
+exports.ChatUser = void 0;
 const typeorm_1 = require("typeorm");
-const user_profile_status_model_1 = require("./user-profile-status.model");
-let UserProfile = class UserProfile {
+let ChatUser = class ChatUser {
 };
 __decorate([
-    (0, typeorm_1.PrimaryGeneratedColumn)('uuid'),
+    (0, typeorm_1.PrimaryColumn)({ unique: true }),
     __metadata("design:type", String)
-], UserProfile.prototype, "id", void 0);
+], ChatUser.prototype, "ID", void 0);
 __decorate([
-    (0, typeorm_1.Column)({
-        unique: true
-    }),
-    __metadata("design:type", String)
-], UserProfile.prototype, "username", void 0);
+    (0, typeorm_1.Column)("text", { array: true }),
+    __metadata("design:type", Array)
+], ChatUser.prototype, "ChatRoomsIn", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
-], UserProfile.prototype, "password", void 0);
-__decorate([
-    (0, typeorm_1.Column)({
-        unique: true
-    }),
-    __metadata("design:type", String)
-], UserProfile.prototype, "eMail", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
-], UserProfile.prototype, "status", void 0);
-UserProfile = __decorate([
+    (0, typeorm_1.Column)("text", { array: true }),
+    __metadata("design:type", Array)
+], ChatUser.prototype, "BlockedUserIDs", void 0);
+ChatUser = __decorate([
     (0, typeorm_1.Entity)()
-], UserProfile);
-exports.UserProfile = UserProfile;
-//# sourceMappingURL=user.entity.js.map
+], ChatUser);
+exports.ChatUser = ChatUser;
+//# sourceMappingURL=chat_user.js.map

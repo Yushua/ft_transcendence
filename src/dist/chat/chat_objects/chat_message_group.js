@@ -9,37 +9,21 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserProfile = void 0;
+exports.ChatMessageGroup = void 0;
 const typeorm_1 = require("typeorm");
-const user_profile_status_model_1 = require("./user-profile-status.model");
-let UserProfile = class UserProfile {
+let ChatMessageGroup = class ChatMessageGroup {
 };
+ChatMessageGroup.MaxMessageCount = 10;
 __decorate([
-    (0, typeorm_1.PrimaryGeneratedColumn)('uuid'),
+    (0, typeorm_1.PrimaryColumn)({ unique: true }),
     __metadata("design:type", String)
-], UserProfile.prototype, "id", void 0);
+], ChatMessageGroup.prototype, "ID", void 0);
 __decorate([
-    (0, typeorm_1.Column)({
-        unique: true
-    }),
-    __metadata("design:type", String)
-], UserProfile.prototype, "username", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
-], UserProfile.prototype, "password", void 0);
-__decorate([
-    (0, typeorm_1.Column)({
-        unique: true
-    }),
-    __metadata("design:type", String)
-], UserProfile.prototype, "eMail", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
-], UserProfile.prototype, "status", void 0);
-UserProfile = __decorate([
+    (0, typeorm_1.Column)("simple-array"),
+    __metadata("design:type", Array)
+], ChatMessageGroup.prototype, "Content", void 0);
+ChatMessageGroup = __decorate([
     (0, typeorm_1.Entity)()
-], UserProfile);
-exports.UserProfile = UserProfile;
-//# sourceMappingURL=user.entity.js.map
+], ChatMessageGroup);
+exports.ChatMessageGroup = ChatMessageGroup;
+//# sourceMappingURL=chat_message_group.js.map
