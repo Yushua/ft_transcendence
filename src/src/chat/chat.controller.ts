@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, Sse } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { ChatMessage } from './chat_objects/chat_message';
 import { ChatRoom } from './chat_objects/chat_room';
@@ -6,11 +6,15 @@ import { ChatUser } from './chat_objects/chat_user';
 import { ChatMessageDTO } from './dto/chat_message.dto';
 import { ChatRoomDTO } from './dto/chat_room.dto';
 import { ChatApp } from './chat.app';
+import { Observable, Subject, map } from 'rxjs';
+import { EventEmitter } from 'stream';
 
 @Controller("chat")
 export class ChatController {
 	
-	constructor (private readonly service: ChatService) {}
+	constructor (
+		private readonly service: ChatService,
+		private readonly eventService: EventEmitter) {}
 	
 	@Get()
 	GetChatWebApp()
@@ -64,15 +68,20 @@ export class ChatController {
 	async PostNewMessage(
 		@Param("roomID") roomID: string,
 		@Body() msg: ChatMessageDTO)
-		: Promise<string>
-			{ return await this.service.PostNewMessage(roomID, msg) }
+		: Promise<string> {
+			const ret = await this.service.PostNewMessage(roomID, msg)
+			this.eventService.emit("RoomUpdate", roomID)
+			return ret
+		}
 	
 	@Post("room/:roomID/:userID")
 	async AddUser(
 		@Param("roomID") roomID: string,
 		@Param("userID") userID: string,)
-		: Promise<void>
-			{ await this.service.AddUserToRoom(roomID, userID) }
+		: Promise<void> {
+			await this.service.AddUserToRoom(roomID, userID)
+			this.eventService.emit("RoomUpdate", roomID)
+		}
 	
 	@Delete("room/:roomID")
 	DeleteRoom(
@@ -85,6 +94,20 @@ export class ChatController {
 		@Param("userID") userID: string)
 		: string
 			{ this.service.DeleteUser(userID); return "All gone!" }
+	
+	@Sse('event/:roomID')
+	NotifyClientOfUpdate(@Param("roomID") roomID: string): Observable<string> {
+		const subject$ = new Subject()
+		
+		this.eventService.on("RoomUpdate", updatedRoomID => {
+			if (updatedRoomID === roomID) {
+				subject$.next("r")
+				console.log("update")
+			}
+		})
+		
+		return subject$.pipe(map((msg: string): string => msg))
+	}
 	
 	//#region Debug
 	

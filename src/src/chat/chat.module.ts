@@ -5,6 +5,7 @@ import { ChatService } from './chat.service';
 import { ChatMessageGroupManager } from './chat_objects/chat_message';
 import { ChatRoom } from './chat_objects/chat_room';
 import { ChatUser } from './chat_objects/chat_user';
+import { EventEmitter } from 'stream';
 
 @Module({
 	imports: [TypeOrmModule.forFeature([
@@ -13,6 +14,6 @@ import { ChatUser } from './chat_objects/chat_user';
 		ChatUser
 	])],
 	controllers: [ChatController],
-	providers: [ChatService]
+	providers: [ChatService, EventEmitter]
 })
 export class ChatModule {}

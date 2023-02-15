@@ -18,9 +18,12 @@ const chat_service_1 = require("./chat.service");
 const chat_message_dto_1 = require("./dto/chat_message.dto");
 const chat_room_dto_1 = require("./dto/chat_room.dto");
 const chat_app_1 = require("./chat.app");
+const rxjs_1 = require("rxjs");
+const stream_1 = require("stream");
 let ChatController = class ChatController {
-    constructor(service) {
+    constructor(service, eventService) {
         this.service = service;
+        this.eventService = eventService;
     }
     GetChatWebApp() { return chat_app_1.ChatApp.GetWebApp(); }
     GetChatUser(userID) { return this.service.GetOrAddUser(userID); }
@@ -29,10 +32,27 @@ let ChatController = class ChatController {
     async GetRoomInfo(roomID, info) { return (await this.service.GetRoom(roomID))[info]; }
     GetMessageGroup(roomID, index) { return this.service.GetMessages(roomID, +index); }
     async MakeNewRoom(room) { return await this.service.NewRoom(room); }
-    async PostNewMessage(roomID, msg) { return await this.service.PostNewMessage(roomID, msg); }
-    async AddUser(roomID, userID) { await this.service.AddUserToRoom(roomID, userID); }
+    async PostNewMessage(roomID, msg) {
+        const ret = await this.service.PostNewMessage(roomID, msg);
+        this.eventService.emit("RoomUpdate", roomID);
+        return ret;
+    }
+    async AddUser(roomID, userID) {
+        await this.service.AddUserToRoom(roomID, userID);
+        this.eventService.emit("RoomUpdate", roomID);
+    }
     DeleteRoom(roomID) { this.service.DeleteRoom(roomID); return "All gone!"; }
     DeleteUser(userID) { this.service.DeleteUser(userID); return "All gone!"; }
+    NotifyClientOfUpdate(roomID) {
+        const subject$ = new rxjs_1.Subject();
+        this.eventService.on("RoomUpdate", updatedRoomID => {
+            if (updatedRoomID === roomID) {
+                subject$.next("r");
+                console.log("update");
+            }
+        });
+        return subject$.pipe((0, rxjs_1.map)((msg) => msg));
+    }
     GetChatUsers() { return this.service.GetAllUsers(); }
     GetChatRooms() { return this.service.GetAllRooms(); }
     DeleteAll() { this.service.DeleteAll(); return "All gone!"; }
@@ -119,6 +139,13 @@ __decorate([
     __metadata("design:returntype", String)
 ], ChatController.prototype, "DeleteUser", null);
 __decorate([
+    (0, common_1.Sse)('event/:roomID'),
+    __param(0, (0, common_1.Param)("roomID")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", rxjs_1.Observable)
+], ChatController.prototype, "NotifyClientOfUpdate", null);
+__decorate([
     (0, common_1.Get)("users"),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
@@ -138,7 +165,8 @@ __decorate([
 ], ChatController.prototype, "DeleteAll", null);
 ChatController = __decorate([
     (0, common_1.Controller)("chat"),
-    __metadata("design:paramtypes", [chat_service_1.ChatService])
+    __metadata("design:paramtypes", [chat_service_1.ChatService,
+        stream_1.EventEmitter])
 ], ChatController);
 exports.ChatController = ChatController;
 //# sourceMappingURL=chat.controller.js.map

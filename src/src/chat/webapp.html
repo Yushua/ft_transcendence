@@ -35,7 +35,7 @@
 
 <button type="button" onclick="deleteALL()">Delete all chat data</button>
 
-<script>
+<script>	
 	function deleteALL() {
 		HTTPdelete("chat/all")
 		onload()
@@ -52,6 +52,7 @@
 	}
 	
 	async function load() {
+		eventSource = null
 		document.getElementById("chat").innerHTML = ""
 		document.getElementById("MemberID").innerHTML = ""
 		document.getElementById("Members").innerHTML = ""
@@ -135,15 +136,6 @@
 		
 		var xhr = new XMLHttpRequest();
 		
-		xhr.onreadystatechange = async function() {
-			if (this.readyState != 4)
-				return
-			if (this.status == 201)
-				getMessages()
-			else
-				console.log(await JSON.parse(this.responseText))
-		};
-		
 		xhr.open("POST", `chat/msg/${room}`);
 		xhr.setRequestHeader("content-type", "application/x-www-form-urlencoded")
 		xhr.send(body);
@@ -159,6 +151,7 @@
 		return user.username
 	}
 	
+	var eventSource = null
 	async function roomChange() {
 		getMessages()
 		
@@ -176,6 +169,18 @@
 			if (user.id != userID && !members.includes(user.id))
 				options += `<option value="${user.id}">${user.username}</option><br>`
 		document.getElementById("MemberID").innerHTML = options
+	
+		try {
+			console.log("closing")
+			eventSource.close()
+			eventSource = null
+			console.log("closed")
+		} catch (error) {
+			console.log(error)
+		}
+		
+		eventSource = new EventSource(`/chat/event/${room}`)
+		eventSource.onmessage = msg => getMessages()
 	}
 	
 	const LogDepth = 10
@@ -196,7 +201,6 @@
 			
 			for (let i = msgs.length - 1; count < LogDepth && i >= 0; i--) {
 				count++
-				console.log(`${i} ${count} ${page} ${msgs[i].Message}`)
 				chat = `${await getUserName(msgs[i].OwnerID)}: ${msgs[i].Message}<br>` + chat
 			}
 		}
