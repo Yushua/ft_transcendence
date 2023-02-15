@@ -16,6 +16,19 @@ export class UserProfileService {
         private readonly statEntity: Repository<StatProfile>,
       ) {}
 
+      async addFriendToID(userID: string, friendID: string):Promise<void>{
+          const user = await this.findUserBy(userID);
+          user.friendList.push(friendID);
+          await this.userEntity.save(user);
+      }
+      async removeFriendFromID(userID: string, friendID: string):Promise<void>{
+        const user = await this.findUserBy(userID);
+        user.friendList.forEach( (item, index) => {
+          if(item === friendID) user.friendList.splice(index,1);
+        });
+        await this.userEntity.save(user);
+      }
+
       async findAllUsers(filterDto: getTasksFilterDto): Promise<UserProfile[]> {
         const { status, search } = filterDto;
         const query = this.userEntity.createQueryBuilder('userProfile');
