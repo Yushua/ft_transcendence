@@ -18,5 +18,5 @@ services:
       - "5432:5432"
       - "53603:53603"
     volumes:
-      - /Users/rdrazsky/Desktop/Work/ft_transcendence/src:/src
+      - /Volumes/Storage/goinfre/bhoitzin/GitHub/ft_transcendence/pong:/server
     # environment:

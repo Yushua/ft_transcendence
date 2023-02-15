@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserProfileModule } from './user-profile/user-profile.module';
-import { LoginModule } from './login/login.module';
-import { GameModule } from './game/game.module';
+import { UserProfileModule } from './src/user-profile/user-profile.module';
+import { LoginModule } from './src/login/login.module';
+import { GameModule } from './src/game/game.module';
+import { GatewayModule } from './src/gateway/gateway.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { GameModule } from './game/game.module';
       synchronize: true, //keeps it in sync
       }),
     LoginModule,
-    GameModule],
+    GameModule,
+    GatewayModule],
 })
 export class AppModule {}
