@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { GameBkeMap } from './game.bkeMap.entity';
 import { GameRoom, GameType, GameRoomType } from './components/game_room'
-
+import { GameRoomDTO } from './dto/game_room.dto'
 @Injectable()
 export class GameService {
 	constructor( 
@@ -11,13 +11,15 @@ export class GameService {
 		@InjectRepository(GameBkeMap) private readonly GameBkeMapRepos: Repository<GameBkeMap>
 		) {}
 
-	async	createGame(PlayerIDs: string[], GameName: string, GameType: GameType, GameRoomType:	GameRoomType): Promise<GameRoom> {
-    
+	// async	createGame(PlayerIDs: string[], GameName: string, GameType: GameType, GameRoomType:	GameRoomType): Promise<GameRoom> {
+    async	createGame(gameDTO: GameRoomDTO): Promise<GameRoom> {
+
+		const { PlayerIDs, RoomType, GameName, GameType } = gameDTO
 		const _game = this.GameRoomRepos.create ({
 			PlayerIDs,
+			RoomType,
 			GameName,
 			GameType,
-			GameRoomType,
 		})
 		console.log(_game)
 		try 
@@ -59,9 +61,9 @@ export class GameService {
 
 	async startGame(id: string) {
 		const game = await this.getGameByID(id)
-		if (game.GameType === )
+		if (game.GameType === 2)
 			this.setupBKE(game)
-		if (game.gameType === 'pong')
+		if (game.GameType === 0)
 			this.setupPong(game)
 	}
 

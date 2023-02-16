@@ -13,7 +13,7 @@ export enum GameType {
 
 @Entity()
 export class GameRoom {
-	@PrimaryGeneratedColumn('uuid')		ID:			string
+	@PrimaryGeneratedColumn('uuid')		id:			string
 	@Column("text", { array: true })	PlayerIDs:	string[]
 	@Column()							GameName:	string
 	// @Column("text", { array: true }) WatcherIDs:	string[]

@@ -1,11 +1,19 @@
-import { IsEnum, IsNotEmpty, IsString } from "class-validator"
+import { IsEnum, IsNotEmpty, IsNumber, IsString } from "class-validator"
 import { GameRoomType } from "../components/game_room"
 
-export class ChatRoomDTO {
+export class GameRoomDTO {
 	@IsNotEmpty()
 	@IsString()
 	PlayerIDs: string[]
-		
+	
+	@IsNotEmpty()
+	@IsString()
+	GameName: string
+
+	@IsNotEmpty()
+	@IsNumber()
+	GameType: number
+
 	@IsNotEmpty()
 	@IsEnum(GameRoomType)
 	RoomType: GameRoomType
