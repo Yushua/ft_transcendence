@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.LoginService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("typeorm");
-const bcrypt = require("bcrypt");
+const bcrypt_1 = require("bcrypt");
 const user_entity_1 = require("../user-profile/user.entity");
 const jwt_1 = require("@nestjs/jwt");
 const typeorm_2 = require("@nestjs/typeorm");
@@ -28,8 +28,8 @@ let LoginService = class LoginService {
     async createUser(authCredentialsDto) {
         const { username, password, eMail } = authCredentialsDto;
         console.log(authCredentialsDto);
-        const salt = await bcrypt.genSalt();
-        const hashedPassword = await bcrypt.hash(password, salt);
+        const salt = await bcrypt_1.default.genSalt();
+        const hashedPassword = await bcrypt_1.default.hash(password, salt);
         const _user = this.userProfileEntityRepos.create({
             username,
             password: hashedPassword,
@@ -54,7 +54,7 @@ let LoginService = class LoginService {
     async signIn(authCredentialsDto) {
         const { username, password } = authCredentialsDto;
         const user = await this.userProfileEntityRepos.findOneBy({ username });
-        if (user && (await bcrypt.compare(password, user.password))) {
+        if (user && (await bcrypt_1.default.compare(password, user.password))) {
             const payload = { username };
             const accessToken = await this.jwtService.sign(payload);
             return { accessToken };

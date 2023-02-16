@@ -1,6 +1,6 @@
 import { Repository } from 'typeorm';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
-import { UserProfile } from 'src/user-profile/user.entity';
+import { UserProfile } from '../user-profile/user.entity';
 import { JwtService } from '@nestjs/jwt';
 export declare class LoginService {
     private readonly userProfileEntityRepos;

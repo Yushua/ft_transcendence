@@ -40,7 +40,7 @@ let GameService = class GameService {
         return _game;
     }
     async setupBKE(game) {
-        const map = Array[9];
+        let map;
         for (var i = 0; i < 9; i++) {
             map[i] = 0;
         }

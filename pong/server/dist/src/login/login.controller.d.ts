@@ -1,4 +1,4 @@
-import { UserProfile } from 'src/user-profile/user.entity';
+import { UserProfile } from '../user-profile/user.entity';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { LoginService } from './login.service';
 export declare class LoginController {
