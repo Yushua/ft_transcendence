@@ -14,7 +14,6 @@ const chat_service_1 = require("./chat.service");
 const chat_message_1 = require("./chat_objects/chat_message");
 const chat_room_1 = require("./chat_objects/chat_room");
 const chat_user_1 = require("./chat_objects/chat_user");
-const stream_1 = require("stream");
 let ChatModule = class ChatModule {
 };
 ChatModule = __decorate([
@@ -25,7 +24,7 @@ ChatModule = __decorate([
                 chat_user_1.ChatUser
             ])],
         controllers: [chat_controller_1.ChatController],
-        providers: [chat_service_1.ChatService, stream_1.EventEmitter]
+        providers: [chat_service_1.ChatService]
     })
 ], ChatModule);
 exports.ChatModule = ChatModule;

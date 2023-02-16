@@ -19,40 +19,40 @@ const chat_message_dto_1 = require("./dto/chat_message.dto");
 const chat_room_dto_1 = require("./dto/chat_room.dto");
 const chat_app_1 = require("./chat.app");
 const rxjs_1 = require("rxjs");
-const stream_1 = require("stream");
 let ChatController = class ChatController {
-    constructor(service, eventService) {
+    constructor(service) {
         this.service = service;
-        this.eventService = eventService;
     }
     GetChatWebApp() { return chat_app_1.ChatApp.GetWebApp(); }
     GetChatUser(userID) { return this.service.GetOrAddUser(userID); }
     async GetChatUserInfo(userID, info) { return (await this.service.GetOrAddUser(userID))[info]; }
     GetRoom(roomID) { return this.service.GetRoom(roomID); }
-    async GetRoomInfo(roomID, info) { return (await this.service.GetRoom(roomID))[info]; }
+    async GetRoomInfo(roomID, info) {
+        const room = await this.service.GetRoom(roomID);
+        if (!room)
+            return null;
+        return room[info];
+    }
     GetMessageGroup(roomID, index) { return this.service.GetMessages(roomID, +index); }
-    async MakeNewRoom(room) { return await this.service.NewRoom(room); }
+    async MakeNewRoom(room) {
+        const ret = await this.service.NewRoom(room);
+        this.service.Notify("user-" + room.OwnerID, "you have been added");
+        return ret;
+    }
     async PostNewMessage(roomID, msg) {
         const ret = await this.service.PostNewMessage(roomID, msg);
-        this.eventService.emit("RoomUpdate", roomID);
+        this.service.Notify("room-" + roomID, "new msg");
         return ret;
     }
     async AddUser(roomID, userID) {
         await this.service.AddUserToRoom(roomID, userID);
-        this.eventService.emit("RoomUpdate", roomID);
+        this.service.Notify("room-" + roomID, "new mem");
+        this.service.Notify("user-" + userID, "you have been added");
     }
     DeleteRoom(roomID) { this.service.DeleteRoom(roomID); return "All gone!"; }
     DeleteUser(userID) { this.service.DeleteUser(userID); return "All gone!"; }
-    NotifyClientOfUpdate(roomID) {
-        const subject$ = new rxjs_1.Subject();
-        this.eventService.on("RoomUpdate", updatedRoomID => {
-            if (updatedRoomID === roomID) {
-                subject$.next("r");
-                console.log("update");
-            }
-        });
-        return subject$.pipe((0, rxjs_1.map)((msg) => msg));
-    }
+    NotifyClientOfRoomUpdate(roomID) { return this.service.SubscribeTo("room-" + roomID); }
+    NotifyClientOfUserUpdate(userID) { return this.service.SubscribeTo("user-" + userID); }
     GetChatUsers() { return this.service.GetAllUsers(); }
     GetChatRooms() { return this.service.GetAllRooms(); }
     DeleteAll() { this.service.DeleteAll(); return "All gone!"; }
@@ -139,12 +139,19 @@ __decorate([
     __metadata("design:returntype", String)
 ], ChatController.prototype, "DeleteUser", null);
 __decorate([
-    (0, common_1.Sse)('event/:roomID'),
+    (0, common_1.Sse)('room-event/:roomID'),
     __param(0, (0, common_1.Param)("roomID")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", rxjs_1.Observable)
-], ChatController.prototype, "NotifyClientOfUpdate", null);
+], ChatController.prototype, "NotifyClientOfRoomUpdate", null);
+__decorate([
+    (0, common_1.Sse)('user-event/:userID'),
+    __param(0, (0, common_1.Param)("userID")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", rxjs_1.Observable)
+], ChatController.prototype, "NotifyClientOfUserUpdate", null);
 __decorate([
     (0, common_1.Get)("users"),
     __metadata("design:type", Function),
@@ -165,8 +172,7 @@ __decorate([
 ], ChatController.prototype, "DeleteAll", null);
 ChatController = __decorate([
     (0, common_1.Controller)("chat"),
-    __metadata("design:paramtypes", [chat_service_1.ChatService,
-        stream_1.EventEmitter])
+    __metadata("design:paramtypes", [chat_service_1.ChatService])
 ], ChatController);
 exports.ChatController = ChatController;
 //# sourceMappingURL=chat.controller.js.map

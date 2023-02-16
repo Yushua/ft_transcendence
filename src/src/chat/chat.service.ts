@@ -7,6 +7,7 @@ import { ChatRoom, ChatRoomType } from './chat_objects/chat_room';
 import { ChatUser } from './chat_objects/chat_user';
 import { ChatMessageDTO } from './dto/chat_message.dto';
 import { ChatRoomDTO } from './dto/chat_room.dto';
+import { Observable, Subject, map } from 'rxjs';
 
 @Injectable()
 export class ChatService {
@@ -178,9 +179,27 @@ export class ChatService {
 		{ return this.chatRoomRepo.find() }
 	
 	async DeleteAll(): Promise<void> {
-		this.chatRoomRepo.delete({})
-		this.chatUserRepo.delete({})
-		this.chatMessageRepo.delete({})
+		await this.chatRoomRepo.delete({})
+		await this.chatUserRepo.delete({})
+		await this.chatMessageRepo.delete({})
+	}
+	
+	//#endregion
+
+	//#region EventSystem
+	
+	Subjects = {}
+	SubscribeTo(roomID: string): Observable<string> {
+		var sub: Subject<string> = this.Subjects[roomID]
+		if (!sub)
+			sub = (this.Subjects[roomID] = new Subject<string>())
+		return sub.pipe(map((data: string): string => data))
+	}
+	
+	Notify(roomID: string, msg: string) {
+		var sub: Subject<string> = this.Subjects[roomID]
+		if (!!sub)
+			sub.next(msg)
 	}
 	
 	//#endregion

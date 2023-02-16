@@ -4,6 +4,7 @@ import { ChatRoom } from './chat_objects/chat_room';
 import { ChatUser } from './chat_objects/chat_user';
 import { ChatMessageDTO } from './dto/chat_message.dto';
 import { ChatRoomDTO } from './dto/chat_room.dto';
+import { Observable } from 'rxjs';
 export declare class ChatService {
     private readonly chatRoomRepo;
     private readonly chatMessageRepo;
@@ -24,4 +25,7 @@ export declare class ChatService {
     GetAllUsers(): Promise<ChatUser[]>;
     GetAllRooms(): Promise<ChatRoom[]>;
     DeleteAll(): Promise<void>;
+    Subjects: {};
+    SubscribeTo(roomID: string): Observable<string>;
+    Notify(roomID: string, msg: string): void;
 }

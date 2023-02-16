@@ -19,11 +19,13 @@ const typeorm_2 = require("typeorm");
 const chat_message_1 = require("./chat_objects/chat_message");
 const chat_room_1 = require("./chat_objects/chat_room");
 const chat_user_1 = require("./chat_objects/chat_user");
+const rxjs_1 = require("rxjs");
 let ChatService = class ChatService {
     constructor(chatRoomRepo, chatMessageRepo, chatUserRepo) {
         this.chatRoomRepo = chatRoomRepo;
         this.chatMessageRepo = chatMessageRepo;
         this.chatUserRepo = chatUserRepo;
+        this.Subjects = {};
     }
     async _getMsgID(roomID, index) {
         if (index < 0)
@@ -142,9 +144,20 @@ let ChatService = class ChatService {
     async GetAllUsers() { return this.chatUserRepo.find(); }
     async GetAllRooms() { return this.chatRoomRepo.find(); }
     async DeleteAll() {
-        this.chatRoomRepo.delete({});
-        this.chatUserRepo.delete({});
-        this.chatMessageRepo.delete({});
+        await this.chatRoomRepo.delete({});
+        await this.chatUserRepo.delete({});
+        await this.chatMessageRepo.delete({});
+    }
+    SubscribeTo(roomID) {
+        var sub = this.Subjects[roomID];
+        if (!sub)
+            sub = (this.Subjects[roomID] = new rxjs_1.Subject());
+        return sub.pipe((0, rxjs_1.map)((data) => data));
+    }
+    Notify(roomID, msg) {
+        var sub = this.Subjects[roomID];
+        if (!!sub)
+            sub.next(msg);
     }
 };
 ChatService = __decorate([

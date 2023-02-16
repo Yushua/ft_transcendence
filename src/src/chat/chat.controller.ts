@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, Sse } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, Sse, Header } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { ChatMessage } from './chat_objects/chat_message';
 import { ChatRoom } from './chat_objects/chat_room';
@@ -6,15 +6,13 @@ import { ChatUser } from './chat_objects/chat_user';
 import { ChatMessageDTO } from './dto/chat_message.dto';
 import { ChatRoomDTO } from './dto/chat_room.dto';
 import { ChatApp } from './chat.app';
-import { Observable, Subject, map } from 'rxjs';
-import { EventEmitter } from 'stream';
+import { Observable } from 'rxjs';
 
 @Controller("chat")
 export class ChatController {
 	
 	constructor (
-		private readonly service: ChatService,
-		private readonly eventService: EventEmitter) {}
+		private readonly service: ChatService) {}
 	
 	@Get()
 	GetChatWebApp()
@@ -46,8 +44,12 @@ export class ChatController {
 	async GetRoomInfo(
 		@Param("roomID") roomID: string,
 		@Param("info") info: string)
-		: Promise<any>
-			{ return (await this.service.GetRoom(roomID))[info] }
+		: Promise<any> {
+			const room = await this.service.GetRoom(roomID)
+			if (!room)
+				return null
+			return room[info]
+		}
 	
 	@Get("msg/:roomID/:index")
 	GetMessageGroup(
@@ -61,8 +63,11 @@ export class ChatController {
 	@Post("room")
 	async MakeNewRoom(
 		@Body() room: ChatRoomDTO)
-		: Promise<ChatRoom>
-			{ return await this.service.NewRoom(room) }
+		: Promise<ChatRoom> {
+			const ret = await this.service.NewRoom(room)
+			this.service.Notify("user-" + room.OwnerID, "you have been added")
+			return ret
+		}
 	
 	@Post("msg/:roomID")
 	async PostNewMessage(
@@ -70,7 +75,7 @@ export class ChatController {
 		@Body() msg: ChatMessageDTO)
 		: Promise<string> {
 			const ret = await this.service.PostNewMessage(roomID, msg)
-			this.eventService.emit("RoomUpdate", roomID)
+			this.service.Notify("room-" + roomID, "new msg")
 			return ret
 		}
 	
@@ -80,7 +85,8 @@ export class ChatController {
 		@Param("userID") userID: string,)
 		: Promise<void> {
 			await this.service.AddUserToRoom(roomID, userID)
-			this.eventService.emit("RoomUpdate", roomID)
+			this.service.Notify("room-" + roomID, "new mem")
+			this.service.Notify("user-" + userID, "you have been added")
 		}
 	
 	@Delete("room/:roomID")
@@ -95,19 +101,21 @@ export class ChatController {
 		: string
 			{ this.service.DeleteUser(userID); return "All gone!" }
 	
-	@Sse('event/:roomID')
-	NotifyClientOfUpdate(@Param("roomID") roomID: string): Observable<string> {
-		const subject$ = new Subject()
-		
-		this.eventService.on("RoomUpdate", updatedRoomID => {
-			if (updatedRoomID === roomID) {
-				subject$.next("r")
-				console.log("update")
-			}
-		})
-		
-		return subject$.pipe(map((msg: string): string => msg))
-	}
+	//#region Server Sent Notifications
+	
+	@Sse('room-event/:roomID')
+	NotifyClientOfRoomUpdate(
+		@Param("roomID") roomID: string)
+		: Observable<string>
+			{ return this.service.SubscribeTo("room-" + roomID) }
+	
+	@Sse('user-event/:userID')
+	NotifyClientOfUserUpdate(
+		@Param("userID") userID: string)
+		: Observable<string>
+			{ return this.service.SubscribeTo("user-" + userID) }
+	
+	//#endregion
 	
 	//#region Debug
 	
@@ -125,6 +133,6 @@ export class ChatController {
 	DeleteAll()
 		: string
 			{ this.service.DeleteAll(); return "All gone!" }
-	
+
 	//#endregion
 }
