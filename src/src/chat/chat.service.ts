@@ -189,15 +189,16 @@ export class ChatService {
 	//#region EventSystem
 	
 	private Subjects = {}
-	SubscribeTo(roomID: string): Observable<string> {
-		var sub: Subject<string> = this.Subjects[roomID]
+	SubscribeTo(ID: string): Observable<string> {
+		console.log(`subscribing to ${ID}`)
+		var sub: Subject<string> = this.Subjects[ID]
 		if (!sub)
-			sub = (this.Subjects[roomID] = new Subject<string>())
+			sub = (this.Subjects[ID] = new Subject<string>())
 		return sub.pipe(map((data: string): string => data))
 	}
 	
-	Notify(roomID: string, msg: string) {
-		var sub: Subject<string> = this.Subjects[roomID]
+	Notify(ID: string, msg: string) {
+		var sub: Subject<string> = this.Subjects[ID]
 		if (!!sub)
 			sub.next(msg)
 	}
