@@ -111,17 +111,11 @@ export class ChatController {
 	
 	//#region Server Sent Notifications
 	
-	@Sse('room-event/:roomID')
+	@Sse('event/:ID')
 	NotifyClientOfRoomUpdate(
-		@Param("roomID") roomID: string)
+		@Param("ID") ID: string)
 		: Observable<string>
-			{ return this.service.SubscribeTo("room-" + roomID) }
-	
-	@Sse('user-event/:userID')
-	NotifyClientOfUserUpdate(
-		@Param("userID") userID: string)
-		: Observable<string>
-			{ return this.service.SubscribeTo("user-" + userID) }
+			{ return this.service.SubscribeTo(ID) }
 	
 	//#endregion
 	

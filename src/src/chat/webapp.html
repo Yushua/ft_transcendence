@@ -28,7 +28,7 @@
 			if (userID == "")
 				return
 			const roomID = document.getElementById("RoomID").value
-			userEvent = new EventSource(`/chat/user-event/${userID}`)
+			userEvent = new EventSource(`/chat/event/user-${userID}`)
 			userEvent.onmessage = msg => {
 				switch (msg.data) {
 					case "you have been added":
@@ -125,7 +125,7 @@
 			
 			closeRoomEvent()
 			const roomID = document.getElementById("RoomID").value
-			roomEvent = new EventSource(`/chat/room-event/${roomID}`)
+			roomEvent = new EventSource(`/chat/event/room-${roomID}`)
 			roomEvent.onmessage = msg => {
 				switch (msg.data) {
 					case "new mem":

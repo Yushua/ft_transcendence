@@ -19,8 +19,7 @@ export declare class ChatController {
     AddUser(roomID: string, userID: string): Promise<void>;
     DeleteRoom(roomID: string): string;
     DeleteUser(userID: string): string;
-    NotifyClientOfRoomUpdate(roomID: string): Observable<string>;
-    NotifyClientOfUserUpdate(userID: string): Observable<string>;
+    NotifyClientOfRoomUpdate(ID: string): Observable<string>;
     GetChatUsers(): Promise<ChatUser[]>;
     GetChatRooms(): Promise<ChatRoom[]>;
     DeleteAll(): string;

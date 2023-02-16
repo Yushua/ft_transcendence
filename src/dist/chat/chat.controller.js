@@ -51,8 +51,7 @@ let ChatController = class ChatController {
     }
     DeleteRoom(roomID) { this.service.DeleteRoom(roomID); return "All gone!"; }
     DeleteUser(userID) { this.service.DeleteUser(userID); return "All gone!"; }
-    NotifyClientOfRoomUpdate(roomID) { return this.service.SubscribeTo("room-" + roomID); }
-    NotifyClientOfUserUpdate(userID) { return this.service.SubscribeTo("user-" + userID); }
+    NotifyClientOfRoomUpdate(ID) { return this.service.SubscribeTo(ID); }
     GetChatUsers() { return this.service.GetAllUsers(); }
     GetChatRooms() { return this.service.GetAllRooms(); }
     DeleteAll() { this.service.DeleteAll(); return "All gone!"; }
@@ -139,19 +138,12 @@ __decorate([
     __metadata("design:returntype", String)
 ], ChatController.prototype, "DeleteUser", null);
 __decorate([
-    (0, common_1.Sse)('room-event/:roomID'),
-    __param(0, (0, common_1.Param)("roomID")),
+    (0, common_1.Sse)('event/:ID'),
+    __param(0, (0, common_1.Param)("ID")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", rxjs_1.Observable)
 ], ChatController.prototype, "NotifyClientOfRoomUpdate", null);
-__decorate([
-    (0, common_1.Sse)('user-event/:userID'),
-    __param(0, (0, common_1.Param)("userID")),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", rxjs_1.Observable)
-], ChatController.prototype, "NotifyClientOfUserUpdate", null);
 __decorate([
     (0, common_1.Get)("users"),
     __metadata("design:type", Function),
