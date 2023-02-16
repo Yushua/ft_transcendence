@@ -4,6 +4,7 @@ import { UserProfileModule } from './src/user-profile/user-profile.module';
 import { LoginModule } from './src/login/login.module';
 import { GameModule } from './src/game/game.module';
 import { GatewayModule } from './src/gateway/gateway.module';
+import { ChatModule } from 'src/chat/chat.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { GatewayModule } from './src/gateway/gateway.module';
       }),
     LoginModule,
     GameModule,
+    ChatModule,
     GatewayModule],
 })
 export class AppModule {}

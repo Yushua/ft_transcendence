@@ -2,27 +2,27 @@ import { ConflictException, Injectable, InternalServerErrorException, NotFoundEx
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { GameBkeMap } from './game.bkeMap.entity';
-import { GameEntity } from './game.entity';
+import { GameRoom, GameType, GameRoomType } from './components/game_room'
 
 @Injectable()
 export class GameService {
 	constructor( 
-		@InjectRepository(GameEntity) private readonly GameEntityRepos: Repository<GameEntity>,
+		@InjectRepository(GameRoom) private readonly GameRoomRepos: Repository<GameRoom>,
 		@InjectRepository(GameBkeMap) private readonly GameBkeMapRepos: Repository<GameBkeMap>
 		) {}
 
-	async	createGame(gameType: string, user1: string, user2: string, gameName: string): Promise<GameEntity> {
+	async	createGame(PlayerIDs: string[], GameName: string, GameType: GameType, GameRoomType:	GameRoomType): Promise<GameRoom> {
     
-		const _game = this.GameEntityRepos.create ({
-			gameType,
-			user1,
-			user2,
-			gameName
+		const _game = this.GameRoomRepos.create ({
+			PlayerIDs,
+			GameName,
+			GameType,
+			GameRoomType,
 		})
 		console.log(_game)
 		try 
 		{
-			await this.GameEntityRepos.save(_game)
+			await this.GameRoomRepos.save(_game)
 		}
 		catch(error:any) 
 		{
@@ -31,7 +31,7 @@ export class GameService {
 		return _game
   	}
 
-	async setupBKE(game: GameEntity): Promise<GameBkeMap> {
+	async setupBKE(game: GameRoom): Promise<GameBkeMap> {
 
 		let map!: Array<number>
 
@@ -44,12 +44,12 @@ export class GameService {
 		return _map
 	}
 
-	async setupPong(game: GameEntity) {
+	async setupPong(game: GameRoom) {
 
 	}
 
-	async getGameByID(id: string): Promise<GameEntity> {
-    	const game = await this.GameEntityRepos.findOneBy({id});
+	async getGameByID(id: string): Promise<GameRoom> {
+    	const game = await this.GameRoomRepos.findOneBy({id});
 		if (!game)
 		{
 			throw new NotFoundException(`Game with ID "${id}" not found`);
@@ -59,9 +59,9 @@ export class GameService {
 
 	async startGame(id: string) {
 		const game = await this.getGameByID(id)
-		if (game.gameType == 'bke')
+		if (game.GameType === )
 			this.setupBKE(game)
-		if (game.gameType == 'pong')
+		if (game.gameType === 'pong')
 			this.setupPong(game)
 	}
 
