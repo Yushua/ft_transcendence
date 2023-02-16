@@ -188,7 +188,7 @@ export class ChatService {
 
 	//#region EventSystem
 	
-	Subjects = {}
+	private Subjects = {}
 	SubscribeTo(roomID: string): Observable<string> {
 		var sub: Subject<string> = this.Subjects[roomID]
 		if (!sub)

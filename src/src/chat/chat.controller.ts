@@ -60,6 +60,8 @@ export class ChatController {
 	
 	//#endregion
 	
+	//#region Post
+	
 	@Post("room")
 	async MakeNewRoom(
 		@Body() room: ChatRoomDTO)
@@ -89,6 +91,10 @@ export class ChatController {
 			this.service.Notify("user-" + userID, "you have been added")
 		}
 	
+	//#endregion
+	
+	//#region Delete
+	
 	@Delete("room/:roomID")
 	DeleteRoom(
 		@Param("roomID") roomID: string)
@@ -100,6 +106,8 @@ export class ChatController {
 		@Param("userID") userID: string)
 		: string
 			{ this.service.DeleteUser(userID); return "All gone!" }
+	
+	//#endregion
 	
 	//#region Server Sent Notifications
 	
