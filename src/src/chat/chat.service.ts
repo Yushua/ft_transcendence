@@ -190,7 +190,6 @@ export class ChatService {
 	
 	private Subjects = {}
 	SubscribeTo(ID: string): Observable<string> {
-		console.log(`subscribing to ${ID}`)
 		var sub: Subject<string> = this.Subjects[ID]
 		if (!sub)
 			sub = (this.Subjects[ID] = new Subject<string>())
