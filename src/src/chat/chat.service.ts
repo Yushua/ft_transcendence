@@ -191,12 +191,14 @@ export class ChatService {
 	private Subjects = {}
 	SubscribeTo(ID: string): Observable<string> {
 		var sub: Subject<string> = this.Subjects[ID]
+		// console.log(`${!!sub?"[SUB]":"[NEW]"} ${ID.substring(0, 4)}`)
 		if (!sub)
 			sub = (this.Subjects[ID] = new Subject<string>())
 		return sub.pipe(map((data: string): string => data))
 	}
 	
 	Notify(ID: string, msg: string) {
+		// console.log(`< < < ${ID.substring(0, 4)} ${msg}`)
 		var sub: Subject<string> = this.Subjects[ID]
 		if (!!sub)
 			sub.next(msg)

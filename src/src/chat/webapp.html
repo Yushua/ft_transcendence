@@ -160,16 +160,10 @@
 	<script>
 		function sendMessage() {
 			
-			const user = document.getElementById("UserID").value
+			const userID = document.getElementById("UserID").value
+			const roomID = document.getElementById("RoomID").value
 			const msg = document.getElementById("MessageBox").value
-			const room = document.getElementById("RoomID").value
-			const body = `OwnerID=${user}&Message=${msg}`
-			
-			var xhr = new XMLHttpRequest();
-			
-			xhr.open("POST", `chat/msg/${room}`);
-			xhr.setRequestHeader("content-type", "application/x-www-form-urlencoded")
-			xhr.send(body);
+			POST(`chat/msg/${roomID}`, { OwnerID: userID, Message: msg})
 		}
 		
 		const LogDepth = 10
@@ -204,6 +198,8 @@
 <button type="button" onclick="deleteALL()">[DEBGU] Delete all chat data</button>
 <script> function deleteALL() { DELETE("chat/all"); setTimeout(onload, 100) }</script>
 
+<div id="debug"></div>
+
 <script id="LocalUsernameStorage">
 	var users = {}
 	async function getUserName(userID) {
@@ -218,11 +214,13 @@
 <script id="HTTP">
 
 	function GET(url) {
+		// console.log(`GET ${url}`)
 		var req = new XMLHttpRequest();
 		req.open("GET", url, false);
 		req.send();
 		if (req.status === 200)
 			return req.responseText
+		document.getElementById("debug").innerHTML = req.responseText
 		return null
 	}
 	
@@ -237,6 +235,7 @@
 	}
 	
 	function POST(url, obj) {
+		// console.log(`POST ${url}`)
 		var req = new XMLHttpRequest();
 		req.open("POST", url, false);
 		req.setRequestHeader("content-type", "application/x-www-form-urlencoded")
@@ -246,6 +245,7 @@
 		req.send(body);
 		if (req.status === 201)
 			return req.responseText
+		document.getElementById("debug").innerHTML = req.responseText
 		return null
 	}
 	

@@ -148,14 +148,14 @@ let ChatService = class ChatService {
         await this.chatUserRepo.delete({});
         await this.chatMessageRepo.delete({});
     }
-    SubscribeTo(roomID) {
-        var sub = this.Subjects[roomID];
+    SubscribeTo(ID) {
+        var sub = this.Subjects[ID];
         if (!sub)
-            sub = (this.Subjects[roomID] = new rxjs_1.Subject());
+            sub = (this.Subjects[ID] = new rxjs_1.Subject());
         return sub.pipe((0, rxjs_1.map)((data) => data));
     }
-    Notify(roomID, msg) {
-        var sub = this.Subjects[roomID];
+    Notify(ID, msg) {
+        var sub = this.Subjects[ID];
         if (!!sub)
             sub.next(msg);
     }

@@ -26,6 +26,6 @@ export declare class ChatService {
     GetAllRooms(): Promise<ChatRoom[]>;
     DeleteAll(): Promise<void>;
     private Subjects;
-    SubscribeTo(roomID: string): Observable<string>;
-    Notify(roomID: string, msg: string): void;
+    SubscribeTo(ID: string): Observable<string>;
+    Notify(ID: string, msg: string): void;
 }
