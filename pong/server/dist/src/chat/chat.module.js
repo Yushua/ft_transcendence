@@ -6,24 +6,26 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GameModule = void 0;
+exports.ChatModule = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
-const game_room_1 = require("./components/game_room");
-const game_bkeMap_entity_1 = require("./game.bkeMap.entity");
-const game_controller_1 = require("./game.controller");
-const game_service_1 = require("./game.service");
-let GameModule = class GameModule {
+const chat_controller_1 = require("./chat.controller");
+const chat_service_1 = require("./chat.service");
+const chat_message_1 = require("./chat_objects/chat_message");
+const chat_room_1 = require("./chat_objects/chat_room");
+const chat_user_1 = require("./chat_objects/chat_user");
+let ChatModule = class ChatModule {
 };
-GameModule = __decorate([
+ChatModule = __decorate([
     (0, common_1.Module)({
-        imports: [
-            typeorm_1.TypeOrmModule.forFeature([game_bkeMap_entity_1.GameBkeMap]),
-            typeorm_1.TypeOrmModule.forFeature([game_room_1.GameRoom]),
-        ],
-        controllers: [game_controller_1.GameController],
-        providers: [game_service_1.GameService],
+        imports: [typeorm_1.TypeOrmModule.forFeature([
+                chat_room_1.ChatRoom,
+                chat_message_1.ChatMessageGroupManager,
+                chat_user_1.ChatUser
+            ])],
+        controllers: [chat_controller_1.ChatController],
+        providers: [chat_service_1.ChatService]
     })
-], GameModule);
-exports.GameModule = GameModule;
-//# sourceMappingURL=game.module.js.map
+], ChatModule);
+exports.ChatModule = ChatModule;
+//# sourceMappingURL=chat.module.js.map

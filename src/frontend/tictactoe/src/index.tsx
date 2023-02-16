@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import { CanvasHTMLAttributes } from "react";
-import { Rectangle, Circle, Ellipse, Line, Polyline, CornerBox, Triangle } from "react-shapes";
+import { Rectangle } from "react-shapes";
 
 
 // ========================================
@@ -80,7 +80,7 @@ class Game extends React.Component<{ }, { history: Array<any>, oIsNext: boolean 
 		const history = this.state.history
 		const current = history[history.length - 1]
 		const winner = calculateWinner(current.squares)
-		const status = winner ? 'Winner: ' + winner : 'Next Player: ' + (this.state.oIsNext ? 'O' : 'X')
+		const status = winner ? `Winner: ${winner}` : `Next Player: ${this.state.oIsNext ? 'O' : 'X'}`
 
 		return (
 			<div className="game">

@@ -15,12 +15,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GameController = void 0;
 const common_1 = require("@nestjs/common");
 const game_service_1 = require("./game.service");
+const game_room_dto_1 = require("./dto/game_room.dto");
+const game_app_1 = require("./game.app");
 let GameController = class GameController {
     constructor(gameService) {
         this.gameService = gameService;
     }
-    createGame(gameType, user1, user2, gameName) {
-        return this.gameService.createGame(gameType, user1, user2, gameName);
+    createGame(room) {
+        return this.gameService.createGame(room);
     }
     startGame(id) {
         return this.gameService.startGame(id);
@@ -28,12 +30,15 @@ let GameController = class GameController {
     clickSquare(num) {
         return this.gameService.clickSquare(num);
     }
+    displayIndex() {
+        return game_app_1.GameApp.displayIndex();
+    }
 };
 __decorate([
     (0, common_1.Post)('create-game'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String, String]),
+    __metadata("design:paramtypes", [game_room_dto_1.GameRoomDTO]),
     __metadata("design:returntype", Promise)
 ], GameController.prototype, "createGame", null);
 __decorate([
@@ -50,6 +55,12 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], GameController.prototype, "clickSquare", null);
+__decorate([
+    (0, common_1.Get)(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], GameController.prototype, "displayIndex", null);
 GameController = __decorate([
     (0, common_1.Controller)('game'),
     __metadata("design:paramtypes", [game_service_1.GameService])

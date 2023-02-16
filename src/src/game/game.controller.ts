@@ -20,4 +20,3 @@ export class GameController {
     clickSquare( @Param('num') num: string) {
         return this.gameService.clickSquare(num)
     }
-}

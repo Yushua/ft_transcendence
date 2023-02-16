@@ -13,6 +13,7 @@ const user_profile_module_1 = require("./src/user-profile/user-profile.module");
 const login_module_1 = require("./src/login/login.module");
 const game_module_1 = require("./src/game/game.module");
 const gateway_module_1 = require("./src/gateway/gateway.module");
+const chat_module_1 = require("./src/chat/chat.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -31,6 +32,7 @@ AppModule = __decorate([
             }),
             login_module_1.LoginModule,
             game_module_1.GameModule,
+            chat_module_1.ChatModule,
             gateway_module_1.GatewayModule
         ],
     })

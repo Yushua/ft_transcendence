@@ -17,22 +17,23 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const game_bkeMap_entity_1 = require("./game.bkeMap.entity");
-const game_entity_1 = require("./game.entity");
+const game_room_1 = require("./components/game_room");
 let GameService = class GameService {
-    constructor(GameEntityRepos, GameBkeMapRepos) {
-        this.GameEntityRepos = GameEntityRepos;
+    constructor(GameRoomRepos, GameBkeMapRepos) {
+        this.GameRoomRepos = GameRoomRepos;
         this.GameBkeMapRepos = GameBkeMapRepos;
     }
-    async createGame(gameType, user1, user2, gameName) {
-        const _game = this.GameEntityRepos.create({
-            gameType,
-            user1,
-            user2,
-            gameName
+    async createGame(gameDTO) {
+        const { PlayerIDs, RoomType, GameName, GameType } = gameDTO;
+        const _game = this.GameRoomRepos.create({
+            PlayerIDs,
+            RoomType,
+            GameName,
+            GameType,
         });
         console.log(_game);
         try {
-            await this.GameEntityRepos.save(_game);
+            await this.GameRoomRepos.save(_game);
         }
         catch (error) {
             console.log(`error ${error.code}`);
@@ -52,7 +53,7 @@ let GameService = class GameService {
     async setupPong(game) {
     }
     async getGameByID(id) {
-        const game = await this.GameEntityRepos.findOneBy({ id });
+        const game = await this.GameRoomRepos.findOneBy({ id });
         if (!game) {
             throw new common_1.NotFoundException(`Game with ID "${id}" not found`);
         }
@@ -60,17 +61,19 @@ let GameService = class GameService {
     }
     async startGame(id) {
         const game = await this.getGameByID(id);
-        if (game.gameType == 'bke')
+        if (game.GameType === 2)
             this.setupBKE(game);
-        if (game.gameType == 'pong')
+        if (game.GameType === 0)
             this.setupPong(game);
     }
     async clickSquare(num) {
     }
+    async displayIndex() {
+    }
 };
 GameService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, typeorm_1.InjectRepository)(game_entity_1.GameEntity)),
+    __param(0, (0, typeorm_1.InjectRepository)(game_room_1.GameRoom)),
     __param(1, (0, typeorm_1.InjectRepository)(game_bkeMap_entity_1.GameBkeMap)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository])

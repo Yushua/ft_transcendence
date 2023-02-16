@@ -70,4 +70,8 @@ export class GameService {
 	async	clickSquare(num: string) {
 
 	}
+
+	async displayIndex() {
+		
+	}
 }

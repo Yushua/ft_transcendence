@@ -1,14 +1,16 @@
 import { Repository } from 'typeorm';
 import { GameBkeMap } from './game.bkeMap.entity';
-import { GameEntity } from './game.entity';
+import { GameRoom } from './components/game_room';
+import { GameRoomDTO } from './dto/game_room.dto';
 export declare class GameService {
-    private readonly GameEntityRepos;
+    private readonly GameRoomRepos;
     private readonly GameBkeMapRepos;
-    constructor(GameEntityRepos: Repository<GameEntity>, GameBkeMapRepos: Repository<GameBkeMap>);
-    createGame(gameType: string, user1: string, user2: string, gameName: string): Promise<GameEntity>;
-    setupBKE(game: GameEntity): Promise<GameBkeMap>;
-    setupPong(game: GameEntity): Promise<void>;
-    getGameByID(id: string): Promise<GameEntity>;
+    constructor(GameRoomRepos: Repository<GameRoom>, GameBkeMapRepos: Repository<GameBkeMap>);
+    createGame(gameDTO: GameRoomDTO): Promise<GameRoom>;
+    setupBKE(game: GameRoom): Promise<GameBkeMap>;
+    setupPong(game: GameRoom): Promise<void>;
+    getGameByID(id: string): Promise<GameRoom>;
     startGame(id: string): Promise<void>;
     clickSquare(num: string): Promise<void>;
+    displayIndex(): Promise<void>;
 }

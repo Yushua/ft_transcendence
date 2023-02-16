@@ -14,11 +14,26 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MyGateway = void 0;
 const websockets_1 = require("@nestjs/websockets");
+const socket_io_1 = require("socket.io");
 let MyGateway = class MyGateway {
+    onModuleInit() {
+        this.server.on('connection', (socket) => {
+            console.log(socket.id);
+            console.log('Connected');
+        });
+    }
     onNewMessage(body) {
         console.log(body);
+        this.server.emit('onMessage', {
+            msg: 'watisditnuweer',
+            content: body
+        });
     }
 };
+__decorate([
+    (0, websockets_1.WebSocketServer)(),
+    __metadata("design:type", socket_io_1.Server)
+], MyGateway.prototype, "server", void 0);
 __decorate([
     (0, websockets_1.SubscribeMessage)('newMessage'),
     __param(0, (0, websockets_1.MessageBody)()),
