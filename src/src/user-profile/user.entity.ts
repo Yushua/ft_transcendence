@@ -14,8 +14,9 @@ export class UserProfile {
     })
     username: string;
 
-    // @Column()
-    // profilePicture: ??????
+    //string path towards the picture
+    @Column()
+    profilePicture: string
 
     @Column()
     password: string;

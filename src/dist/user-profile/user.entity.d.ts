@@ -3,6 +3,7 @@ import { StatProfile } from "./user.stat.entity";
 export declare class UserProfile {
     id: string;
     username: string;
+    profilePicture: string;
     password: string;
     eMail: string;
     status: UserStatus;

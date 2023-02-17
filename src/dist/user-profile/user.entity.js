@@ -28,6 +28,10 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
+], UserProfile.prototype, "profilePicture", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
 ], UserProfile.prototype, "password", void 0);
 __decorate([
     (0, typeorm_1.Column)({
