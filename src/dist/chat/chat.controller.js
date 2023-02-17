@@ -41,16 +41,27 @@ let ChatController = class ChatController {
     }
     async PostNewMessage(roomID, msg) {
         const ret = await this.service.PostNewMessage(roomID, msg);
-        this.service.Notify("room-" + roomID, "new msg");
+        this.service.Notify("room-" + roomID, "msg");
         return ret;
+    }
+    async MakeAdmin(roomID, userID) {
+        if (await this.service.MakeAdmin(roomID, userID))
+            this.service.Notify("room-" + roomID, "room");
     }
     async AddUser(roomID, userID) {
         await this.service.AddUserToRoom(roomID, userID);
-        this.service.Notify("room-" + roomID, "new mem");
-        this.service.Notify("user-" + userID, "you have been added");
+        this.service.Notify(`room-${roomID}`, "mem");
+        this.service.Notify(`user-${userID}`, "you have been added");
     }
-    DeleteRoom(roomID) { this.service.DeleteRoom(roomID); return "All gone!"; }
-    DeleteUser(userID) { this.service.DeleteUser(userID); return "All gone!"; }
+    async KickMember(roomID, memberID) {
+        await this.service.KickMember(roomID, memberID);
+        this.service.Notify(`room-${roomID}`, "room");
+    }
+    async DeleteRoom(roomID) {
+        await this.service.DeleteRoom(roomID);
+        this.service.Notify(`room-${roomID}`, "room");
+    }
+    async DeleteUser(userID) { await this.service.DeleteUser(userID); }
     NotifyClientOfRoomUpdate(ID) { return this.service.SubscribeTo(ID); }
     GetChatUsers() { return this.service.GetAllUsers(); }
     GetChatRooms() { return this.service.GetAllRooms(); }
@@ -116,6 +127,14 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ChatController.prototype, "PostNewMessage", null);
 __decorate([
+    (0, common_1.Post)("admin/:roomID/:userID"),
+    __param(0, (0, common_1.Param)("roomID")),
+    __param(1, (0, common_1.Param)("userID")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", Promise)
+], ChatController.prototype, "MakeAdmin", null);
+__decorate([
     (0, common_1.Post)("room/:roomID/:userID"),
     __param(0, (0, common_1.Param)("roomID")),
     __param(1, (0, common_1.Param)("userID")),
@@ -124,18 +143,26 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ChatController.prototype, "AddUser", null);
 __decorate([
+    (0, common_1.Delete)("member/:roomID/:memberID"),
+    __param(0, (0, common_1.Param)("roomID")),
+    __param(1, (0, common_1.Param)("memberID")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", Promise)
+], ChatController.prototype, "KickMember", null);
+__decorate([
     (0, common_1.Delete)("room/:roomID"),
     __param(0, (0, common_1.Param)("roomID")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", String)
+    __metadata("design:returntype", Promise)
 ], ChatController.prototype, "DeleteRoom", null);
 __decorate([
     (0, common_1.Delete)("user/:userID"),
     __param(0, (0, common_1.Param)("userID")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", String)
+    __metadata("design:returntype", Promise)
 ], ChatController.prototype, "DeleteUser", null);
 __decorate([
     (0, common_1.Sse)('event/:ID'),

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, Sse, Header } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, Sse, Headers } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { ChatMessage } from './chat_objects/chat_message';
 import { ChatRoom } from './chat_objects/chat_room';
@@ -77,8 +77,17 @@ export class ChatController {
 		@Body() msg: ChatMessageDTO)
 		: Promise<string> {
 			const ret = await this.service.PostNewMessage(roomID, msg)
-			this.service.Notify("room-" + roomID, "new msg")
+			this.service.Notify("room-" + roomID, "msg")
 			return ret
+		}
+	
+	@Post("admin/:roomID/:userID")
+	async MakeAdmin(
+		@Param("roomID") roomID: string,
+		@Param("userID") userID: string)
+		: Promise<void> {
+			if (await this.service.MakeAdmin(roomID, userID))
+				this.service.Notify("room-" + roomID, "room")
 		}
 	
 	@Post("room/:roomID/:userID")
@@ -87,25 +96,36 @@ export class ChatController {
 		@Param("userID") userID: string,)
 		: Promise<void> {
 			await this.service.AddUserToRoom(roomID, userID)
-			this.service.Notify("room-" + roomID, "new mem")
-			this.service.Notify("user-" + userID, "you have been added")
+			this.service.Notify(`room-${roomID}`, "mem")
+			this.service.Notify(`user-${userID}`, "you have been added")
 		}
 	
 	//#endregion
 	
 	//#region Delete
 	
+	@Delete("member/:roomID/:memberID")
+	async KickMember(
+		@Param("roomID") roomID: string,
+		@Param("memberID") memberID: string,)
+		: Promise<void> {
+			await this.service.KickMember(roomID, memberID)
+			this.service.Notify(`room-${roomID}`, "room")
+		}
+	
 	@Delete("room/:roomID")
-	DeleteRoom(
+	async DeleteRoom(
 		@Param("roomID") roomID: string)
-		: string
-			{ this.service.DeleteRoom(roomID); return "All gone!" }
+		: Promise<void> {
+			await this.service.DeleteRoom(roomID)
+			this.service.Notify(`room-${roomID}`, "room")
+		}
 	
 	@Delete("user/:userID")
-	DeleteUser(
+	async DeleteUser(
 		@Param("userID") userID: string)
-		: string
-			{ this.service.DeleteUser(userID); return "All gone!" }
+		: Promise<void>
+			{ await this.service.DeleteUser(userID) }
 	
 	//#endregion
 	

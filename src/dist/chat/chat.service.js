@@ -20,11 +20,13 @@ const chat_message_1 = require("./chat_objects/chat_message");
 const chat_room_1 = require("./chat_objects/chat_room");
 const chat_user_1 = require("./chat_objects/chat_user");
 const rxjs_1 = require("rxjs");
+const user_entity_1 = require("../user-profile/user.entity");
 let ChatService = class ChatService {
-    constructor(chatRoomRepo, chatMessageRepo, chatUserRepo) {
+    constructor(chatRoomRepo, chatMessageRepo, chatUserRepo, userProfileRepo) {
         this.chatRoomRepo = chatRoomRepo;
         this.chatMessageRepo = chatMessageRepo;
         this.chatUserRepo = chatUserRepo;
+        this.userProfileRepo = userProfileRepo;
         this.Subjects = {};
     }
     async _getMsgID(roomID, index) {
@@ -45,11 +47,12 @@ let ChatService = class ChatService {
         const { OwnerID, Password, RoomType } = roomDTO;
         var room = await this.chatRoomRepo.create({
             OwnerID, Password, RoomType: +chat_room_1.ChatRoomType[RoomType],
-            MemberIDs: [OwnerID], AdminIDs: [OwnerID], BlackList: [],
+            MemberIDs: [OwnerID], AdminIDs: [OwnerID],
+            BanIDs: [], MuteIDs: [], MuteDates: [],
             MessageGroupDepth: 0
         });
         room = await this.chatRoomRepo.save(room);
-        await this.ModifyUser(OwnerID, user => { user.ChatRoomsIn.push(room.ID); });
+        await this._modifyUser(OwnerID, user => { user.ChatRoomsIn.push(room.ID); });
         return room;
     }
     async GetMessages(roomID, index) {
@@ -76,17 +79,17 @@ let ChatService = class ChatService {
         return msgGroup.ID;
     }
     async AddUserToRoom(roomID, userID) {
-        await this.ModifyRoom(roomID, async (room) => {
+        await this._modifyRoom(roomID, async (room) => {
             if (!room.MemberIDs.includes(userID)) {
                 room.MemberIDs.push(userID);
-                await this.ModifyUser(userID, user => {
+                await this._modifyUser(userID, user => {
                     user.ChatRoomsIn.push(roomID);
                 });
             }
         });
     }
     async GetRoom(roomID) { return this.chatRoomRepo.findOneBy({ ID: roomID }); }
-    async ModifyRoom(roomID, func) {
+    async _modifyRoom(roomID, func) {
         const room = await this.GetRoom(roomID);
         func(room);
         return await this.chatRoomRepo.save(room);
@@ -96,7 +99,7 @@ let ChatService = class ChatService {
         for (let i = 0; i < room.MessageGroupDepth; i++)
             this.chatMessageRepo.delete({ ID: await this._getMsgID(roomID, i + 1) });
         for (const userID of room.MemberIDs) {
-            this.ModifyUser(userID, user => {
+            this._modifyUser(userID, user => {
                 const index = user.ChatRoomsIn.indexOf(roomID, 0);
                 if (index > -1)
                     user.ChatRoomsIn.splice(index, 1);
@@ -105,40 +108,54 @@ let ChatService = class ChatService {
         this.chatRoomRepo.remove(room);
     }
     async GetOrAddUser(userID) {
-        var foudUser = await this.chatUserRepo.findOneBy({ ID: userID });
-        if (foudUser)
-            return foudUser;
-        return await this.chatUserRepo.save(await this.chatUserRepo.create({ ID: userID, ChatRoomsIn: [], BlockedUserIDs: [] }));
+        var user = await this.chatUserRepo.findOneBy({ ID: userID });
+        if (user)
+            return user;
+        return await this.chatUserRepo.save(await this.chatUserRepo.create({
+            ID: userID, ChatRoomsIn: [], DirectChatsIn: [], BlockedUserIDs: []
+        }));
     }
-    async ModifyUser(ID, func) {
-        var foudUser = await this.GetOrAddUser(ID);
-        func(foudUser);
-        return await this.chatUserRepo.save(foudUser);
+    async _modifyUser(ID, func) {
+        var user = await this.GetOrAddUser(ID);
+        func(user);
+        return await this.chatUserRepo.save(user);
+    }
+    async MakeAdmin(roomID, userID) {
+        var changed = false;
+        await this._modifyRoom(roomID, room => {
+            if (!room.AdminIDs.includes(userID) && room.MemberIDs.includes(userID)) {
+                room.AdminIDs.push(userID);
+                changed = true;
+            }
+        });
+        return changed;
+    }
+    async KickMember(roomID, memberID) {
+        const room = await this.GetRoom(roomID);
+        if (room.OwnerID == memberID)
+            return;
+        var roomToDelete = null;
+        await this._modifyUser(memberID, user => {
+            const index = user.ChatRoomsIn.indexOf(roomID, 0);
+            if (index > -1)
+                user.ChatRoomsIn.splice(index, 1);
+        });
+        await this._modifyRoom(roomID, async (room) => {
+            var index;
+            index = room.MemberIDs.indexOf(memberID, 0);
+            if (index > -1)
+                room.MemberIDs.splice(index, 1);
+            index = room.AdminIDs.indexOf(memberID, 0);
+            if (index > -1)
+                room.AdminIDs.splice(index, 1);
+        });
+        if (!!roomToDelete)
+            await this.DeleteRoom(roomToDelete);
     }
     async DeleteUser(userID) {
         const user = await this.chatUserRepo.findOneBy({ ID: userID });
-        if (!user)
-            return;
-        const roomsToDelete = [];
-        for (const roomID of user.ChatRoomsIn) {
-            await this.ModifyRoom(roomID, room => {
-                var index;
-                index = room.MemberIDs.indexOf(userID, 0);
-                if (index > -1)
-                    room.MemberIDs.splice(index, 1);
-                index = room.AdminIDs.indexOf(userID, 0);
-                if (index > -1)
-                    room.AdminIDs.splice(index, 1);
-                if (room.OwnerID == userID) {
-                    if (room.MemberIDs.length == 0)
-                        roomsToDelete.push(roomID);
-                    else
-                        room.OwnerID = room.MemberIDs[0];
-                }
-            });
-        }
-        for (const roomID of roomsToDelete)
-            await this.DeleteRoom(roomID);
+        for (const roomID of user.ChatRoomsIn)
+            await this.KickMember(roomID, userID);
         await this.chatUserRepo.remove(user);
     }
     async GetAllUsers() { return this.chatUserRepo.find(); }
@@ -165,7 +182,9 @@ ChatService = __decorate([
     __param(0, (0, typeorm_1.InjectRepository)(chat_room_1.ChatRoom)),
     __param(1, (0, typeorm_1.InjectRepository)(chat_message_1.ChatMessageGroupManager)),
     __param(2, (0, typeorm_1.InjectRepository)(chat_user_1.ChatUser)),
+    __param(3, (0, typeorm_1.InjectRepository)(user_entity_1.UserProfile)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository])
 ], ChatService);

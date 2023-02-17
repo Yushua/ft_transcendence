@@ -10,10 +10,12 @@ export enum ChatRoomType {
 export class ChatRoom {
 	@PrimaryGeneratedColumn('uuid')  ID:                string
 	@Column()                        OwnerID:           string
-	@Column("text", { array: true }) MemberIDs:         string[]
-	@Column("text", { array: true }) AdminIDs:          string[]
 	@Column()                        Password:          string
 	@Column()                        RoomType:          ChatRoomType
-	@Column("text", { array: true }) BlackList:         string[]
+	@Column("text", { array: true }) MemberIDs:         string[]
+	@Column("text", { array: true }) AdminIDs:          string[]
+	@Column("text", { array: true }) BanIDs:            string[]
+	@Column("text", { array: true }) MuteIDs:           string[]
+	@Column("text", { array: true }) MuteDates:         string[]
 	@Column()                        MessageGroupDepth: number
 }

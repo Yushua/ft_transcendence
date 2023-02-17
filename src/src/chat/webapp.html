@@ -68,20 +68,8 @@
 
 <div id="DivRoomSelect">
 	Room select: <select name="RoomID" id="RoomID" onchange="roomChange()"> </select><br>
-	Members:<br>
-	<a id="Members"></a>
-	<select name="MemberID" id="MemberID"> </select>
-	<button type="button" onclick="addMember()">Add User</button><br>
 	<br>
 	<script>
-		async function addMember() {
-			const memID = document.getElementById("MemberID").value
-			const roomID = document.getElementById("RoomID").value
-			if (memID == "" || roomID == "")
-				return
-			POST(`chat/room/${roomID}/${memID}`, {})
-		}
-		
 		async function updateRooms() {
 			const userID = document.getElementById("UserID").value
 			const roomIDs = await GET_OBJ(`chat/user/${userID}/ChatRoomsIn`)
@@ -92,30 +80,29 @@
 			roomChange()
 		}
 		
-		async function updateMembers() {
-			// Current members
-			const roomID = document.getElementById("RoomID").value
-			const members = await GET_OBJ(`chat/room/${roomID}/MemberIDs`)
-			options = ""
-			for (const member of members)
-				options += `${await getUserName(member)}<br>`
-			document.getElementById("Members").innerHTML = options
-			
-			// Add members
-			const userID = document.getElementById("UserID").value
-			const users = await GET_OBJ("user-profile/user")
-			var options = ""
-			for (const user of users)
-				if (user.id != userID && !members.includes(user.id))
-					options += `<option value="${user.id}">${user.username}</option><br>`
-			document.getElementById("MemberID").innerHTML = options
-		}
-		
 		async function roomChange() {
 			
 			closeRoomEvent()
 			
-			const roomStyle = (document.getElementById("RoomID").value != "") ? "block" : "none"
+			const userID = document.getElementById("UserID").value
+			const roomID = document.getElementById("RoomID").value
+			
+			if (roomID != "") {
+				const adminIDs = await GET_OBJ(`chat/room/${roomID}/AdminIDs`)
+				document.getElementById("DivAdminOptions").style.display
+					= (adminIDs.includes(userID)) ? "block" : "none"
+				const ownerID = GET(`chat/room/${roomID}/OwnerID`)
+				document.getElementById("DivOwnerOptions").style.display
+					= (ownerID == userID) ? "block" : "none"
+			}
+			else {
+				document.getElementById("DivAdminOptions").style.display
+					= "none"
+				document.getElementById("DivOwnerOptions").style.display
+					= "none"
+			}
+			
+			const roomStyle = (roomID != "") ? "block" : "none"
 			document.getElementById("DivRoomSelect").style.display = roomStyle
 			document.getElementById("DivChatLog").style.display = roomStyle
 			if (roomStyle === "none")
@@ -124,18 +111,13 @@
 			updateMembers()
 			
 			closeRoomEvent()
-			const roomID = document.getElementById("RoomID").value
 			roomEvent = new EventSource(`/chat/event/room-${roomID}`)
 			roomEvent.onmessage = msg => {
 				switch (msg.data) {
-					case "new mem":
-						updateMembers()
-						break;
-					case "new msg":
-						updateChat()	
-						break;
-					default:
-						break;
+					case "room": updateRooms();
+					case "mem": updateMembers(); break;
+					case "msg": updateChat(); break;
+					default: break;
 				}
 			}
 			
@@ -152,18 +134,91 @@
 	</script>
 </div>
 
+<div id="DivOwnerOptions">
+	-~={ Owner options }=~-<br>
+	<input type="text" name="" id="">
+		<button type="button" onclick="changePassword()">Change Password</button><br>
+	<select name="AdminIDs" id="AdminIDs"></select>
+		<button type="button" onclick="removeAdmin()">Remove Admin</button><br>
+	<button type="button" onclick="deleteRoom()">Delete Room</button><br>
+	<br>
+</div>
+
+<div id="DivAdminOptions">
+	-~={ Admin options }=~-<br>
+	<select name="AddMemberID" id="AddMemberID"> </select>
+		<button type="button" onclick="addMember()">Add User</button>
+	<br>
+	<select name="ModMemberID" id="ModMemberID"> </select>
+		<button type="button" onclick="removeMember()">Kick User</button>
+		<button type="button" onclick="banMember()">Ban User</button>
+		<button type="button" onclick="makeAdmin()">Make Admin</button><br>
+		<button type="button" onclick="muteMember()">Mute User for </button> <input type="text" name="" id=""> seconds.
+	<br>
+	<script>
+		async function updateMembers() {
+			// Current members
+			const roomID = document.getElementById("RoomID").value
+			const members = await GET_OBJ(`chat/room/${roomID}/MemberIDs`)
+			options = ""
+			for (const member of members)
+				options += `<option value="${member}">${await getUserName(member)}</option><br>`
+			document.getElementById("ModMemberID").innerHTML = options
+			
+			// Add members
+			const userID = document.getElementById("UserID").value
+			const users = await GET_OBJ("user-profile/user")
+			var options = ""
+			for (const user of users)
+				if (user.id != userID && !members.includes(user.id))
+					options += `<option value="${user.id}">${user.username}</option><br>`
+			document.getElementById("AddMemberID").innerHTML = options
+		}
+		
+		async function makeAdmin() {
+			const memID = document.getElementById("ModMemberID").value
+			const roomID = document.getElementById("RoomID").value
+			if (memID == "" || roomID == "")
+				return
+			POST(`chat/admin/${roomID}/${memID}`)
+		}
+		
+		async function addMember() {
+			const memID = document.getElementById("AddMemberID").value
+			const roomID = document.getElementById("RoomID").value
+			if (memID == "" || roomID == "")
+				return
+			POST(`chat/room/${roomID}/${memID}`)
+		}
+		
+		async function removeMember() {
+			const memID = document.getElementById("ModMemberID").value
+			const roomID = document.getElementById("RoomID").value
+			if (memID == "" || roomID == "")
+				return
+			DELETE(`chat/member/${roomID}/${memID}`)
+		}
+	</script>
+</div>
+
 <div id="DivChatLog">
 	<div id="chat"></div>
-	<input type="text" id="MessageBox" name="MessageBox">
+	<input type="text" id="MessageBox" name="MessageBox" onkeydown="sendMessageEnter()">
 	<button type="button" onclick="sendMessage()">Send</button><br>
 	<br>
 	<script>
+		function sendMessageEnter() {
+			if (event.key === "Enter")
+				sendMessage()
+		}
+		
 		function sendMessage() {
 			
 			const userID = document.getElementById("UserID").value
 			const roomID = document.getElementById("RoomID").value
-			const msg = document.getElementById("MessageBox").value
-			POST(`chat/msg/${roomID}`, { OwnerID: userID, Message: msg})
+			const msgBox = document.getElementById("MessageBox")
+			POST(`chat/msg/${roomID}`, { OwnerID: userID, Message: msgBox.value})
+			msgBox.value = ""
 		}
 		
 		const LogDepth = 10
@@ -213,10 +268,13 @@
 
 <script id="HTTP">
 
-	function GET(url) {
+	function GET(url, hdr = null) {
 		// console.log(`GET ${url}`)
 		var req = new XMLHttpRequest();
 		req.open("GET", url, false);
+		if (!!hdr)
+			for (const header of Object.entries(hdr))
+				req.setRequestHeader(header[0], header[1])
 		req.send();
 		if (req.status === 200)
 			return req.responseText
@@ -224,8 +282,8 @@
 		return null
 	}
 	
-	async function GET_OBJ(url) {
-		const res = GET(url)
+	async function GET_OBJ(url, hdr = null) {
+		const res = GET(url, hdr)
 		try {
 			return JSON.parse(res)
 		} catch (error) {
@@ -234,23 +292,30 @@
 		}
 	}
 	
-	function POST(url, obj) {
+	function POST(url, obj = "", hdr = null) {
 		// console.log(`POST ${url}`)
 		var req = new XMLHttpRequest();
 		req.open("POST", url, false);
-		req.setRequestHeader("content-type", "application/x-www-form-urlencoded")
-		var body = ""
-		for (const entry of Object.entries(obj))
-			body += `${entry[0]}=${entry[1]}&`
-		req.send(body);
+		if (!!hdr)
+			for (const header of Object.entries(hdr))
+				req.setRequestHeader(header[0], header[1])
+		if (typeof obj == "object") {
+			req.setRequestHeader("content-type", "application/x-www-form-urlencoded")
+			var body = ""
+			for (const entry of Object.entries(obj))
+				body += `${entry[0]}=${entry[1]}&`
+			req.send(body);
+		}
+		else
+			req.send(obj);
 		if (req.status === 201)
 			return req.responseText
 		document.getElementById("debug").innerHTML = req.responseText
 		return null
 	}
 	
-	async function POST_OBJ(url, obj) {
-		const res = POST(url, obj)
+	async function POST_OBJ(url, obj = "", hdr = null) {
+		const res = POST(url, obj, hdr)
 		try {
 			return JSON.parse(res)
 		} catch (error) {

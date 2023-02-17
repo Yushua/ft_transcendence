@@ -14,6 +14,7 @@ const chat_service_1 = require("./chat.service");
 const chat_message_1 = require("./chat_objects/chat_message");
 const chat_room_1 = require("./chat_objects/chat_room");
 const chat_user_1 = require("./chat_objects/chat_user");
+const user_entity_1 = require("../user-profile/user.entity");
 let ChatModule = class ChatModule {
 };
 ChatModule = __decorate([
@@ -21,7 +22,8 @@ ChatModule = __decorate([
         imports: [typeorm_1.TypeOrmModule.forFeature([
                 chat_room_1.ChatRoom,
                 chat_message_1.ChatMessageGroupManager,
-                chat_user_1.ChatUser
+                chat_user_1.ChatUser,
+                user_entity_1.UserProfile
             ])],
         controllers: [chat_controller_1.ChatController],
         providers: [chat_service_1.ChatService]

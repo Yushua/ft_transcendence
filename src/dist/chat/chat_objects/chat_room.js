@@ -27,14 +27,6 @@ __decorate([
     __metadata("design:type", String)
 ], ChatRoom.prototype, "OwnerID", void 0);
 __decorate([
-    (0, typeorm_1.Column)("text", { array: true }),
-    __metadata("design:type", Array)
-], ChatRoom.prototype, "MemberIDs", void 0);
-__decorate([
-    (0, typeorm_1.Column)("text", { array: true }),
-    __metadata("design:type", Array)
-], ChatRoom.prototype, "AdminIDs", void 0);
-__decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], ChatRoom.prototype, "Password", void 0);
@@ -45,7 +37,23 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)("text", { array: true }),
     __metadata("design:type", Array)
-], ChatRoom.prototype, "BlackList", void 0);
+], ChatRoom.prototype, "MemberIDs", void 0);
+__decorate([
+    (0, typeorm_1.Column)("text", { array: true }),
+    __metadata("design:type", Array)
+], ChatRoom.prototype, "AdminIDs", void 0);
+__decorate([
+    (0, typeorm_1.Column)("text", { array: true }),
+    __metadata("design:type", Array)
+], ChatRoom.prototype, "BanIDs", void 0);
+__decorate([
+    (0, typeorm_1.Column)("text", { array: true }),
+    __metadata("design:type", Array)
+], ChatRoom.prototype, "MuteIDs", void 0);
+__decorate([
+    (0, typeorm_1.Column)("text", { array: true }),
+    __metadata("design:type", Array)
+], ChatRoom.prototype, "MuteDates", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", Number)

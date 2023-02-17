@@ -5,10 +5,12 @@ export declare enum ChatRoomType {
 export declare class ChatRoom {
     ID: string;
     OwnerID: string;
-    MemberIDs: string[];
-    AdminIDs: string[];
     Password: string;
     RoomType: ChatRoomType;
-    BlackList: string[];
+    MemberIDs: string[];
+    AdminIDs: string[];
+    BanIDs: string[];
+    MuteIDs: string[];
+    MuteDates: string[];
     MessageGroupDepth: number;
 }

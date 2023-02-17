@@ -24,6 +24,10 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)("text", { array: true }),
     __metadata("design:type", Array)
+], ChatUser.prototype, "DirectChatsIn", void 0);
+__decorate([
+    (0, typeorm_1.Column)("text", { array: true }),
+    __metadata("design:type", Array)
 ], ChatUser.prototype, "BlockedUserIDs", void 0);
 ChatUser = __decorate([
     (0, typeorm_1.Entity)()
