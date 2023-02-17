@@ -6,6 +6,7 @@ stop:
 	docker-compose down
 
 remove:
+	docker system prune -f --volumes
 	docker container stop postgres-nest
 	docker container rm postgres-nest
 
@@ -23,5 +24,10 @@ setup:
 	npm install --save @nestjs/typeorm typeorm mysql2
 	npm install class-validator --save
 	npm add bcrypt
+<<<<<<< HEAD
 	npm install pg --save
 	npm install class-transformer
+=======
+	npm add @nestjs/jwt @nestjs/passport passport passport-jwt
+	npm install pg --save
+>>>>>>> d84703b5e91b6ee794919e975df1525f283f7ae5

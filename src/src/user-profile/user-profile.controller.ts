@@ -1,55 +1,73 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { UpdateStatusDto } from './dto/updata-status.dto';
-import { userProfileCredentialsDto } from './dto/user-profile-credentials.dto';
-import { UserProfile } from './user-profile.entity';
+import { Body, Controller, Get, Param, Patch, Query, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { CreateUserDto } from './dto/create-user.dto';
+import { AddFriendListDto } from './dto/create-user.dto copy';
+import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
+import { UpdateUserStatusDto } from './dto/update-task-status.dto';
+import { UserStatus } from './user-profile-status.model';
 import { UserProfileService } from './user-profile.service';
-import { UserStatus } from './user-status.module';
+import { UserProfile } from './user.entity';
 
 @Controller('user-profile')
 export class UserProfileController {
-    constructor(private userProfileService: UserProfileService) {}
+    constructor(private userServices: UserProfileService) {}
 
-    @Post('user')
-    postUserProfile(
-        @Body() userProfileCredentialsDto: userProfileCredentialsDto ): Promise<UserProfile> {
-        return this.userProfileService.injectUser(userProfileCredentialsDto);
+    @Get('/user')
+    getAllTasks(@Query() filterDto: getTasksFilterDto): Promise<UserProfile[]> {
+        return this.userServices.findAllUsers(filterDto);
+    }
+ 
+    @Get('/user/:id')
+    getUserById(
+        @Param('id') id: string): Promise<UserProfile> {
+        return this.userServices.findUserBy(id);
     }
 
-    @Post('/offlineGive/:id') 
-    getOfflineGive( @Param('id') id: string,
-    @Body() updateStatusDto: UpdateStatusDto): Promise<UserProfile> {
-        const {status} = updateStatusDto;
-            return this.userProfileService.updateStatus(id, status);
-        }
-
-    @Post('/offline/:id') 
-    getOffline( @Param('id') id: string): Promise<UserProfile> {
-            return this.userProfileService.updateStatus(id, UserStatus.OFFLINE);
-        }
-
-    @Post('/online/:id') 
-    getOnline( @Param('id') id: string): Promise<UserProfile> {
-            return this.userProfileService.updateStatus(id, UserStatus.ONLINE);
-        }
-    
-    @Get('/:id')
-    getUserProfileById( @Param('id') id: string,
-    ): Promise<UserProfile> {
-        return this.userProfileService.findUserProfileById(id);
+    @Get('/user/:username')
+    getUserByUsername(
+        @Param('username') username: string): Promise<UserProfile> {
+        return this.userServices.findUserBy(username);
     }
-
-    @Get()
-    getAllUseProfile():Promise<UserProfile[]> {
-        return this.userProfileService.getAll();
-    }
-
-    //get all offline and online
-    // @Get('/online')
-    // getAllUseProfileOnline():Promise<UserProfile[]> {
-    //     return this.userProfileService.getAllOnline();
+    // @Get('/status/:offline')
+    // getAllStatusOffline(
+    //     ): Promise<UserProfile> {
+    //     return this.userServices.findUserBy(UserStatus.OFFLINE);
     // }
-    // @Get('/offline')
-    // getAllUseProfileOffline():Promise<UserProfile[]> {
-    //     return this.userProfileService.getAllOffline();
+
+    // @Get('/status/:online')
+    // getAllStatusOnline(
+    //     ): Promise<UserProfile> {
+    //     return this.userServices.findUserBy(UserStatus.ONLINE);
     // }
+
+    @Patch('/username')
+    changeUsername(
+        @Param('username') username: string,
+        @Param('id') id: string): Promise<UserProfile> {
+        return this.userServices.changeUsername(username, id);
+    }
+
+    @Patch('/status/:status')
+    changeStatus(
+        @Param('status') status: UserStatus,
+        @Param('id') id: string): Promise<UserProfile> {
+        return this.userServices.changeStatus(status, id);
+    }
+
+    // @Patch('/status/:id')
+    // addFriend(
+    //     @Param('id') id: string,
+    //     @Body() addFriendListDto: AddFriendListDto)
+    //     : Promise<UserProfile> {
+    //     return this.userServices.addFriend(id, addFriendListDto);
+    // }
+
+    /*
+        front app application will test
+        this week;
+    */
+    /*
+    when a game is created, look into the suer if the suer has the stats there
+    if yes, the  continue, if not, then create one
+    */
 }

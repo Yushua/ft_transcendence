@@ -18,19 +18,21 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const user_entity_1 = require("./user.entity");
 const bcrypt = require("bcrypt");
+const jwt_1 = require("@nestjs/jwt");
 let AuthService = class AuthService {
-    constructor(authEntity) {
-        this.authEntity = authEntity;
+    constructor(autEntityRepos, jwtService) {
+        this.autEntityRepos = autEntityRepos;
+        this.jwtService = jwtService;
     }
     async createUser(authCredentialsDto) {
         const { username, password } = authCredentialsDto;
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(password, salt);
-        const _user = this.authEntity.create({
+        const _user = this.autEntityRepos.create({
             username, password: hashedPassword,
         });
         try {
-            await this.authEntity.save(_user);
+            await this.autEntityRepos.save(_user);
         }
         catch (error) {
             if (error.code === '23505') {
@@ -41,11 +43,24 @@ let AuthService = class AuthService {
             }
         }
     }
+    async signIn(authCredentialsDto) {
+        const { username, password } = authCredentialsDto;
+        const user = await this.autEntityRepos.findOneBy({ username });
+        if (user && (await bcrypt.compare(password, user.password))) {
+            const payload = { username };
+            const accessToken = await this.jwtService.sign(payload);
+            return { accessToken };
+        }
+        else {
+            throw new common_1.UnauthorizedException('Please check your login credentials');
+        }
+    }
 };
 AuthService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        jwt_1.JwtService])
 ], AuthService);
 exports.AuthService = AuthService;
 //# sourceMappingURL=auth.service.js.map

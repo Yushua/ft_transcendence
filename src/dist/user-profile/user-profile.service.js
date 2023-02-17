@@ -16,48 +16,84 @@ exports.UserProfileService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
-const user_profile_entity_1 = require("./user-profile.entity");
-const user_status_module_1 = require("./user-status.module");
+const user_entity_1 = require("./user.entity");
+const user_stat_entity_1 = require("./user.stat.entity");
 let UserProfileService = class UserProfileService {
-    constructor(userProfileEntity) {
-        this.userProfileEntity = userProfileEntity;
+    constructor(userEntity, statEntity) {
+        this.userEntity = userEntity;
+        this.statEntity = statEntity;
     }
-    async findUserById(id) {
-        const _user = this.userProfileEntity.findOneBy({ id });
-        if (!_user) {
-            throw new common_1.NotFoundException(`User with id "${id}" not found`);
+    async addFriendToID(userID, friendID) {
+        const user = await this.findUserBy(userID);
+        if (!user) {
+            throw new common_1.NotFoundException(`Task with ID "${userID}" not found`);
         }
-        return _user;
-    }
-    async injectUser(userProfileCredentialsDto) {
-        const { username } = userProfileCredentialsDto;
-        const _user = this.userProfileEntity.create({
-            username,
-            status: user_status_module_1.UserStatus.CREATION,
+        user.friendList.forEach((item) => {
+            if (item === friendID) {
+                throw new common_1.NotFoundException(`Friend "${friendID}" already added`);
+                return;
+            }
         });
-        await this.userProfileEntity.save(_user);
-        return _user;
+        user.friendList.push(friendID);
+        await this.userEntity.save(user);
     }
-    async findUserProfileById(id) {
-        const _user = this.findUserById(id);
-        return _user;
+    async removeFriendFromID(userID, friendID) {
+        const user = await this.findUserBy(userID);
+        user.friendList.forEach((item, index) => {
+            if (item === friendID)
+                user.friendList.splice(index, 1);
+        });
+        await this.userEntity.save(user);
     }
-    async getAll() {
-        const query = this.userProfileEntity.createQueryBuilder('task');
-        const _user = await query.getMany();
-        return _user;
+    async findAllUsers(filterDto) {
+        const { status, search } = filterDto;
+        const query = this.userEntity.createQueryBuilder('userProfile');
+        if (status) {
+            query.andWhere('task.status = :status', { status });
+        }
+        if (search) {
+            query.andWhere('LOWER(task.title) LIKE LOWER(:search) OR LOWER(task.description) LIKE LOWER(:search)', { search: `%${search}%` });
+        }
+        const users = await query.getMany();
+        return users;
     }
-    async updateStatus(id, status) {
-        const _user = await this.findUserById(id);
-        _user.status = status;
-        await this.userProfileEntity.save(_user);
-        return _user;
+    async findUserBy(id) {
+        const found = await this.userEntity.findOneBy({ id });
+        if (!found) {
+            throw new common_1.NotFoundException(`Task with ID "${id}" not found`);
+        }
+        return found;
+    }
+    async changeStatus(status, id) {
+        const found = await this.findUserBy(id);
+        found.status = status;
+        await this.userEntity.save(found);
+        return found;
+    }
+    async changeUsername(username, id) {
+        const found = await this.findUserBy(id);
+        found.username = username;
+        try {
+            await this.userEntity.save(found);
+        }
+        catch (error) {
+            console.log(`error "${error.code}`);
+            if (error.code === '23505') {
+                throw new common_1.ConflictException(`account name "${username} was already in use1`);
+            }
+            else {
+                throw new common_1.InternalServerErrorException(`account name "${error.code} was already in use, but the error is different`);
+            }
+        }
+        return found;
     }
 };
 UserProfileService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, typeorm_1.InjectRepository)(user_profile_entity_1.UserProfile)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __param(0, (0, typeorm_1.InjectRepository)(user_entity_1.UserProfile)),
+    __param(1, (0, typeorm_1.InjectRepository)(user_stat_entity_1.StatProfile)),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository])
 ], UserProfileService);
 exports.UserProfileService = UserProfileService;
 //# sourceMappingURL=user-profile.service.js.map

@@ -1,10 +1,12 @@
-import { Injectable, NotFoundException, Param } from '@nestjs/common';
+import { Injectable, NotFoundException, Param, UseGuards } from '@nestjs/common';
 import { TaskStatus } from './task-status.model';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { Task } from './task.entity';
 import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'src/auth/user.entity';
+import { AuthGuard } from '@nestjs/passport';
 
 //random uuid doesn't work for some reason
 @Injectable()
@@ -41,14 +43,17 @@ export class TasksService {
     return found;
   }
 
-  async insert(createTaskDto: CreateTaskDto): Promise<Task> {
-    const { title,
-        description,
-    } = createTaskDto;
-    const task = this.taskEntity.create({
+  async insert(createTaskDto: CreateTaskDto, user: User): Promise<Task> {
+    const {
       title,
       description,
-      status: TaskStatus.OPEN,
+    } = createTaskDto;
+    console.log(user);
+    const task = this.taskEntity.create({
+      user,
+      title,
+      description,
+      status: TaskStatus.CREATION,
     });
     await this.taskEntity.save(task);
     return task;

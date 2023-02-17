@@ -14,76 +14,66 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserProfileController = void 0;
 const common_1 = require("@nestjs/common");
-const updata_status_dto_1 = require("./dto/updata-status.dto");
-const user_profile_credentials_dto_1 = require("./dto/user-profile-credentials.dto");
+const get_tasks_filter_dto_1 = require("./dto/get-tasks-filter.dto");
+const user_profile_status_model_1 = require("./user-profile-status.model");
 const user_profile_service_1 = require("./user-profile.service");
-const user_status_module_1 = require("./user-status.module");
 let UserProfileController = class UserProfileController {
-    constructor(userProfileService) {
-        this.userProfileService = userProfileService;
+    constructor(userServices) {
+        this.userServices = userServices;
     }
-    postUserProfile(userProfileCredentialsDto) {
-        return this.userProfileService.injectUser(userProfileCredentialsDto);
+    getAllTasks(filterDto) {
+        return this.userServices.findAllUsers(filterDto);
     }
-    getOfflineGive(id, updateStatusDto) {
-        const { status } = updateStatusDto;
-        return this.userProfileService.updateStatus(id, status);
+    getUserById(id) {
+        return this.userServices.findUserBy(id);
     }
-    getOffline(id) {
-        return this.userProfileService.updateStatus(id, user_status_module_1.UserStatus.OFFLINE);
+    getUserByUsername(username) {
+        return this.userServices.findUserBy(username);
     }
-    getOnline(id) {
-        return this.userProfileService.updateStatus(id, user_status_module_1.UserStatus.ONLINE);
+    changeUsername(username, id) {
+        return this.userServices.changeUsername(username, id);
     }
-    getUserProfileById(id) {
-        return this.userProfileService.findUserProfileById(id);
-    }
-    getAllUseProfile() {
-        return this.userProfileService.getAll();
+    changeStatus(status, id) {
+        return this.userServices.changeStatus(status, id);
     }
 };
 __decorate([
-    (0, common_1.Post)('user'),
-    __param(0, (0, common_1.Body)()),
+    (0, common_1.Get)('/user'),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [user_profile_credentials_dto_1.userProfileCredentialsDto]),
+    __metadata("design:paramtypes", [get_tasks_filter_dto_1.getTasksFilterDto]),
     __metadata("design:returntype", Promise)
-], UserProfileController.prototype, "postUserProfile", null);
+], UserProfileController.prototype, "getAllTasks", null);
 __decorate([
-    (0, common_1.Post)('/offlineGive/:id'),
-    __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, updata_status_dto_1.UpdateStatusDto]),
-    __metadata("design:returntype", Promise)
-], UserProfileController.prototype, "getOfflineGive", null);
-__decorate([
-    (0, common_1.Post)('/offline/:id'),
+    (0, common_1.Get)('/user/:id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
-], UserProfileController.prototype, "getOffline", null);
+], UserProfileController.prototype, "getUserById", null);
 __decorate([
-    (0, common_1.Post)('/online/:id'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.Get)('/user/:username'),
+    __param(0, (0, common_1.Param)('username')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
-], UserProfileController.prototype, "getOnline", null);
+], UserProfileController.prototype, "getUserByUsername", null);
 __decorate([
-    (0, common_1.Get)('/:id'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.Patch)('/username'),
+    __param(0, (0, common_1.Param)('username')),
+    __param(1, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
-], UserProfileController.prototype, "getUserProfileById", null);
+], UserProfileController.prototype, "changeUsername", null);
 __decorate([
-    (0, common_1.Get)(),
+    (0, common_1.Patch)('/status/:status'),
+    __param(0, (0, common_1.Param)('status')),
+    __param(1, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
-], UserProfileController.prototype, "getAllUseProfile", null);
+], UserProfileController.prototype, "changeStatus", null);
 UserProfileController = __decorate([
     (0, common_1.Controller)('user-profile'),
     __metadata("design:paramtypes", [user_profile_service_1.UserProfileService])

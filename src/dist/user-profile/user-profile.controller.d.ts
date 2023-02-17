@@ -1,14 +1,13 @@
-import { UpdateStatusDto } from './dto/updata-status.dto';
-import { userProfileCredentialsDto } from './dto/user-profile-credentials.dto';
-import { UserProfile } from './user-profile.entity';
+import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
+import { UserStatus } from './user-profile-status.model';
 import { UserProfileService } from './user-profile.service';
+import { UserProfile } from './user.entity';
 export declare class UserProfileController {
-    private userProfileService;
-    constructor(userProfileService: UserProfileService);
-    postUserProfile(userProfileCredentialsDto: userProfileCredentialsDto): Promise<UserProfile>;
-    getOfflineGive(id: string, updateStatusDto: UpdateStatusDto): Promise<UserProfile>;
-    getOffline(id: string): Promise<UserProfile>;
-    getOnline(id: string): Promise<UserProfile>;
-    getUserProfileById(id: string): Promise<UserProfile>;
-    getAllUseProfile(): Promise<UserProfile[]>;
+    private userServices;
+    constructor(userServices: UserProfileService);
+    getAllTasks(filterDto: getTasksFilterDto): Promise<UserProfile[]>;
+    getUserById(id: string): Promise<UserProfile>;
+    getUserByUsername(username: string): Promise<UserProfile>;
+    changeUsername(username: string, id: string): Promise<UserProfile>;
+    changeStatus(status: UserStatus, id: string): Promise<UserProfile>;
 }
