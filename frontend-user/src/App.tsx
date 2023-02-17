@@ -2,17 +2,7 @@ import React from 'react';
 import './App.css';
 import fetch from 'node-fetch'
 
-type User = {
-  id: string;
-  name: string;
-  authenticationCode: string;
-}
-
-type GetUsersResponse = {
-  data: User[];
-}
-
-async function logIn() {
+async function logIn(username: string, password: string) {
   try {
     // 👇️ const response: Response
     const response = await fetch('http://localhost:4242/signup', {
@@ -20,9 +10,7 @@ async function logIn() {
       headers: {
         Accept: 'application/json',
       },
-      Form-encoded: {
-
-      }
+      body: `username=${username}&password=${password}`
     });
 
     if (!response.ok) {
@@ -30,11 +18,6 @@ async function logIn() {
     }
 
     // 👇️ const result: GetUsersResponse
-    const result = (await response.json()) as GetUsersResponse;
-
-    console.log('result is: ', JSON.stringify(result, null, 4));
-
-    return result;
   } catch (error) {
     if (error instanceof Error) {
       console.log('error message: ', error.message);
@@ -45,8 +28,10 @@ async function logIn() {
     }
   }
 }
+var username: string = "";
+var password: string = "";
 
-logIn();
+logIn(username, password);
 
 function App() {
   return (
@@ -57,4 +42,3 @@ function App() {
 }
 
 export default App;
-
