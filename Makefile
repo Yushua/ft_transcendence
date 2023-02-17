@@ -10,8 +10,6 @@ reset: stop
 
 .PHONY: all stop reset
 
-install:
-	npm install
-	npm install -save @nestjs/serve-static
-	npm install -g @nestjs/cli
+run-front:
+	cd ./frontend-user ; npm start
 	
