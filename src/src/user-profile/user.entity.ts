@@ -15,7 +15,7 @@ export class UserProfile {
     username: string;
 
     //string path towards the picture
-    @Column()
+    @Column({ default: ""})
     profilePicture: string
 
     @Column()
