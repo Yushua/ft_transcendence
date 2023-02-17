@@ -7,6 +7,8 @@ export declare class UserProfileService {
     private readonly userEntity;
     private readonly statEntity;
     constructor(userEntity: Repository<UserProfile>, statEntity: Repository<StatProfile>);
+    addFriendToID(userID: string, friendID: string): Promise<void>;
+    removeFriendFromID(userID: string, friendID: string): Promise<void>;
     findAllUsers(filterDto: getTasksFilterDto): Promise<UserProfile[]>;
     findUserBy(id: string): Promise<UserProfile>;
     changeStatus(status: UserStatus, id: string): Promise<UserProfile>;

@@ -12,4 +12,6 @@ reset: stop
 
 run-front:
 	cd ./frontend-user ; npm start
-	
+
+run-front:
+	cd ./back-end ; npm run start:dev

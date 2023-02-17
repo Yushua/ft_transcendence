@@ -23,6 +23,28 @@ let UserProfileService = class UserProfileService {
         this.userEntity = userEntity;
         this.statEntity = statEntity;
     }
+    async addFriendToID(userID, friendID) {
+        const user = await this.findUserBy(userID);
+        if (!user) {
+            throw new common_1.NotFoundException(`Task with ID "${userID}" not found`);
+        }
+        user.friendList.forEach((item) => {
+            if (item === friendID) {
+                throw new common_1.NotFoundException(`Friend "${friendID}" already added`);
+                return;
+            }
+        });
+        user.friendList.push(friendID);
+        await this.userEntity.save(user);
+    }
+    async removeFriendFromID(userID, friendID) {
+        const user = await this.findUserBy(userID);
+        user.friendList.forEach((item, index) => {
+            if (item === friendID)
+                user.friendList.splice(index, 1);
+        });
+        await this.userEntity.save(user);
+    }
     async findAllUsers(filterDto) {
         const { status, search } = filterDto;
         const query = this.userEntity.createQueryBuilder('userProfile');
