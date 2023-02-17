@@ -3,8 +3,8 @@ import { UserStatus } from './user-profile-status.model';
 import { UserProfileService } from './user-profile.service';
 import { UserProfile } from './user.entity';
 export declare class UserProfileController {
-    private taskServices;
-    constructor(taskServices: UserProfileService);
+    private userServices;
+    constructor(userServices: UserProfileService);
     getAllTasks(filterDto: getTasksFilterDto): Promise<UserProfile[]>;
     getUserById(id: string): Promise<UserProfile>;
     getUserByUsername(username: string): Promise<UserProfile>;

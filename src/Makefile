@@ -6,6 +6,7 @@ stop:
 	docker-compose down
 
 remove:
+	docker system prune -f --volumes
 	docker container stop postgres-nest
 	docker container rm postgres-nest
 

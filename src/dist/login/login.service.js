@@ -34,7 +34,7 @@ let LoginService = class LoginService {
             username,
             password: hashedPassword,
             eMail,
-            status: user_profile_status_model_1.UserStatus.CREATION
+            status: user_profile_status_model_1.UserStatus.CREATION,
         });
         console.log(_user);
         try {
