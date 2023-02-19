@@ -18,7 +18,10 @@ export class LoginService {
 
     async createUser(authCredentialsDto: AuthCredentialsDto): Promise<UserProfile> {
         
-        const { username, password, eMail
+        const {
+            username,
+            password,
+            eMail
         } = authCredentialsDto;
         console.log(authCredentialsDto);
         //hash
@@ -29,7 +32,7 @@ export class LoginService {
             username,
             password: hashedPassword,
             eMail,
-            status: UserStatus.CREATION
+            status: UserStatus.CREATION,
         });
         console.log(_user);
         try {

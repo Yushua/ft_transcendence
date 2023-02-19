@@ -1,16 +1,42 @@
-import { ConflictException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, InternalServerErrorException, NotFoundException, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { UserStatus } from './user-profile-status.model';
 import { UserProfile } from './user.entity';
+import { StatProfile } from './user.stat.entity';
 
 @Injectable()
 export class UserProfileService {
     constructor(
         @InjectRepository(UserProfile)
         private readonly userEntity: Repository<UserProfile>,
+        @InjectRepository(StatProfile)
+        private readonly statEntity: Repository<StatProfile>,
       ) {}
+
+      async addFriendToID(userID: string, friendID: string):Promise<void>{
+          const user = await this.findUserBy(userID);
+          if (!user){
+            throw new NotFoundException(`Task with ID "${userID}" not found`);
+          }
+          user.friendList.forEach( (item) => {
+            if(item === friendID){
+              throw new NotFoundException(`Friend "${friendID}" already added`);
+              return ;
+            }
+          });
+          user.friendList.push(friendID);
+          await this.userEntity.save(user);
+      }
+      async removeFriendFromID(userID: string, friendID: string):Promise<void>{
+        const user = await this.findUserBy(userID);
+        user.friendList.forEach( (item, index) => {
+          if(item === friendID) user.friendList.splice(index,1);
+        });
+        await this.userEntity.save(user);
+      }
 
       async findAllUsers(filterDto: getTasksFilterDto): Promise<UserProfile[]> {
         const { status, search } = filterDto;
@@ -45,6 +71,7 @@ export class UserProfileService {
         await this.userEntity.save(found);
         return found;
       }
+
       async changeUsername(username: string, id: string): Promise<UserProfile> {
         const found = await this.findUserBy(id);
         found.username = username;
