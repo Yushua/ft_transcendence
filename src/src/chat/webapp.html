@@ -96,7 +96,7 @@
 			
 			const roomStyle = (roomID != "") ? "block" : "none"
 			document.getElementById("DivRoomSelect").style.display = roomStyle
-			document.getElementById("DivChatLog").style.display = roomStyle
+			document.getElementById("DivChatWindow").style.display = roomStyle
 			if (roomStyle === "none")
 				return
 			
@@ -127,6 +127,26 @@
 </div>
 
 <div id="DivChatWindow" style="overflow:hidden">
+	<div id="DivAddFriend">
+		<div id="FriendList"></div>
+		<script>
+			async function updateFriends() {
+				const friends = (await GET_OBJ(`user-profile/user/${UserID()}`)).friendList
+				const roomMembers = await GET_OBJ(`chat/room/${RoomID()}/MemberIDs`)
+				friendList = ""
+				for (const friendID of friends) {
+					if (roomMembers.includes(friendID))
+						continue
+					friendList += `${await getUserName(friendID)} <button onclick="aPOST('chat/room/${RoomID()}/${friendID}')">Add To Room</button>`
+					friendList += "<br>"
+				}
+				if (friendList != "")
+					friendList = "-~={ Friend List }=~-<br>" + friendList + "<br>"
+				document.getElementById("FriendList").innerHTML = friendList
+			}
+		</script>
+	</div>
+	
 	<div id="DivChatLog" style="float:left">
 		
 		<!-- Message Log -->
@@ -173,6 +193,7 @@
 		<div id="ChatMebersList"></div>
 		<script>
 			async function updateMembers() {
+				updateFriends()
 				const members = await GET_OBJ(`chat/room/${RoomID()}/MemberIDs`)
 				const admins = await GET_OBJ(`chat/room/${RoomID()}/AdminIDs`)
 				const ownerID = GET(`chat/room/${RoomID()}/OwnerID`)
@@ -181,11 +202,13 @@
 					// if (member === UserID())
 					// 	continue
 					memberList += `${await getUserName(memberID)} `
-					if (!admins.includes(memberID))
-						memberList += `<button>Mute</button>`
-							+ `<button>Kick</button>`
-							+ `<button>Ban</button>`
-							+ `<button onclick="aPOST('chat/admin/${RoomID()}/${memberID}')">Make Admin</button>`
+					if (!admins.includes(memberID)) {
+						if (admins.includes(UserID()))
+							memberList += `<button>Mute</button>`
+								+ `<button onclick="DELETE('chat/member/${RoomID()}/${memberID}')">Kick</button>`
+								+ `<button>Ban</button>`
+								+ `<button onclick="aPOST('chat/admin/${RoomID()}/${memberID}')">Make Admin</button>`
+					}
 					else
 						memberList += (memberID == ownerID) ? "[Owner]" : "[Admin]"
 					memberList += "<br>"
@@ -195,7 +218,6 @@
 		</script>
 	</div>
 </div>
-
 
 <button type="button" onclick="deleteALL()">[DEBGU] Delete all chat data</button>
 <script> function deleteALL() { DELETE("chat/all"); setTimeout(onload, 100) }</script>
