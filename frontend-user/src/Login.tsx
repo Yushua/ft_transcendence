@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import fetch from 'node-fetch'
-import inputFields from "./components/inputFields"
+
 async function logIn(username: string, password: string) {
   try {
     // 👇️ const response: Response
