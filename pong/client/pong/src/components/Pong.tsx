@@ -12,9 +12,9 @@ export class Pong extends React.Component {
 	private			player2: Paddle
 	private			ball: Ball
 
-	constructor()
+	constructor(props:any)
 	{
-		super({})
+		super(props)
 		this.gameCanvas = document.getElementById("game-canvas") as HTMLCanvasElement
 		this.gameCanvas.width = 1500
 		this.gameCanvas.height = 750
@@ -110,6 +110,17 @@ export class Pong extends React.Component {
 		game.update()
 		game.draw()
 		requestAnimationFrame(game.gameLoop)
+	}
+	render()
+	{
+		return (
+			<div>
+				<h3>Controls:</h3>
+				<h4>Left player: A/Z </h4>
+				<h4>Right player: Up/Down </h4>
+				<h4>Pause: space</h4>
+			</div>
+		)
 	}
 }
 
@@ -258,5 +269,6 @@ class Ball extends Entity
 	}
 }
 
-var game = new Pong();
+const silencewarning = "iets"
+var game = new Pong(silencewarning);
 requestAnimationFrame(game.gameLoop);

@@ -1,6 +1,6 @@
 setup:
 	npm i -—save react-scripts
-	npm add socket.io-client
+	npm i --save socket.io-client
 	npm audit fix
 
 # create project: npx create-react-app my-app --template typescript

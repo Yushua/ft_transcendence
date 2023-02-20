@@ -11,8 +11,17 @@ export class SocketClient implements OnModuleInit {
 	}
 
 	onModuleInit() {
+		this.registerConsumerEvents()
+	}
+
+
+	private registerConsumerEvents() {
 		this.socketClient.on('connect', () => {
 			console.log('connected to gateway')
+		})
+
+		this.socketClient.on('onMessage', (payload:any) => {
+			console.log(payload) 
 		})
 	}
 }

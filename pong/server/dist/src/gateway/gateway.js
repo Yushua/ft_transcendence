@@ -25,7 +25,7 @@ let MyGateway = class MyGateway {
     onNewMessage(body) {
         console.log(body);
         this.server.emit('onMessage', {
-            msg: 'watisditnuweer',
+            msg: 'return message:',
             content: body
         });
     }
@@ -42,7 +42,11 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], MyGateway.prototype, "onNewMessage", null);
 MyGateway = __decorate([
-    (0, websockets_1.WebSocketGateway)()
+    (0, websockets_1.WebSocketGateway)({
+        cors: {
+            origin: ['http://localhost:3000']
+        }
+    })
 ], MyGateway);
 exports.MyGateway = MyGateway;
 //# sourceMappingURL=gateway.js.map
