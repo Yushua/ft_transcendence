@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import fetch from 'node-fetch'
-import inputFields from "./components/inputFields"
-async function logIn(username: string, password: string) {
+import InputFieldsUsername from "./components/inputFieldsUsername"
+import InputFieldsPassword from "./components/inputFieldsPassword"
+async function logIn(username: string, password: string){
   try {
     // 👇️ const response: Response
     const response = await fetch('http://localhost:4242/signup', {
@@ -29,18 +30,34 @@ async function logIn(username: string, password: string) {
   }
 }
 
-
-var username: string = "";
-var password: string = "";
-
-logIn(username, password);
-
 const App: React.FC = () => {
+
+  // const [username, setUsername] = useState<string>("");
+  // const [password, setPassword] = useState<string>("");
+  var username: string = "";
+  var password: string = "";
+
+  logIn(username, password);
+
+  console.log(username, password);
+
   return (
+
     <div className="App">
         <span className="heading">
           Login
         </span>
+        {/* <InputFieldsUsername username={username} setUsername={setUsername}/>
+        <InputFieldsPassword password={password} setPassword={setPassword}/> */}
+        <form className= 'input' >
+            <input type='input'
+            placeholder="username"
+            className="input_box"/>
+            <input type='input'
+            placeholder="password"
+            className="input_box"/>
+            <button className="input_submit" type="submit" onSubmit={logIn(username, password)} >go</button>
+        </form>
     </div>
   );
 }
