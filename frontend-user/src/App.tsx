@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React, { } from 'react';
 import './App.css';
 import fetch from 'node-fetch'
-import InputFieldsUsername from "./components/inputFieldsUsername"
-import InputFieldsPassword from "./components/inputFieldsPassword"
-async function logIn(username: string, password: string){
+async function logIn(username: string, password: string, email:string){
+  console.log("sending message")
   try {
     // 👇️ const response: Response
     const response = await fetch('http://localhost:4242/signup', {
@@ -11,7 +10,7 @@ async function logIn(username: string, password: string){
       headers: {
         Accept: 'application/json',
       },
-      body: `username=${username}&password=${password}`
+      body: `username=${username}&password=${password}eMail=${email}`
     });
 
     if (!response.ok) {
@@ -29,17 +28,14 @@ async function logIn(username: string, password: string){
     }
   }
 }
+const Print = (username:string, password:string, email:string) => {
+  logIn(username, password, email);
+  console.log(username)
+  console.log(password)
+  console.log(email)
+}
 
 const App: React.FC = () => {
-
-  // const [username, setUsername] = useState<string>("");
-  // const [password, setPassword] = useState<string>("");
-  var username: string = "";
-  var password: string = "";
-
-  logIn(username, password);
-
-  console.log(username, password);
 
   return (
 
@@ -47,8 +43,6 @@ const App: React.FC = () => {
         <span className="heading">
           Login
         </span>
-        {/* <InputFieldsUsername username={username} setUsername={setUsername}/>
-        <InputFieldsPassword password={password} setPassword={setPassword}/> */}
         <form className= 'input' >
             <input type='input'
             placeholder="username"
@@ -56,7 +50,10 @@ const App: React.FC = () => {
             <input type='input'
             placeholder="password"
             className="input_box"/>
-            <button className="input_submit" type="submit" onSubmit={logIn(username, password)} >go</button>
+            <input type='input'
+            placeholder="email"
+            className="input_box"/>
+            <button className="input_submit" type="submit" onClick={() => Print("username", "password", "email")}>submit</button>
         </form>
     </div>
   );
