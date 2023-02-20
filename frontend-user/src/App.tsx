@@ -28,11 +28,25 @@ async function logIn(username: string, password: string, email:string){
     }
   }
 }
-const Print = (username:string, password:string, email:string) => {
-  logIn(username, password, email);
-  console.log(username)
-  console.log(password)
-  console.log(email)
+
+interface FormElements extends HTMLFormControlsCollection {
+  username: HTMLInputElement
+  password: HTMLInputElement
+  eMail: HTMLInputElement
+}
+
+interface YourFormElement extends HTMLFormElement {
+ readonly elements: FormElements
+}
+
+const handleFormSubmit = (e: React.FormEvent<YourFormElement>) => {
+  e.preventDefault();
+  console.log(e.currentTarget.elements.username.value)
+  console.log(e.currentTarget.elements.password.value)
+  console.log(e.currentTarget.elements.eMail.value)
+  logIn(e.currentTarget.elements.username.value,
+    e.currentTarget.elements.password.value,
+    e.currentTarget.elements.eMail.value);
 }
 
 const App: React.FC = () => {
@@ -43,18 +57,17 @@ const App: React.FC = () => {
         <span className="heading">
           Login
         </span>
-        <form className= 'input' >
-            <input type='input'
-            placeholder="username"
-            className="input_box"/>
-            <input type='input'
-            placeholder="password"
-            className="input_box"/>
-            <input type='input'
-            placeholder="email"
-            className="input_box"/>
-            <button className="input_submit" type="submit" onClick={() => Print("username", "password", "email")}>submit</button>
-        </form>
+        <form onSubmit={handleFormSubmit}>
+        <div>
+          <label htmlFor="username">Username:</label>
+          <input id="username" type="text" />
+          <label htmlFor="password">UserPassword:</label>
+          <input id="password" type="text" />
+          <label htmlFor="eMail">UserEmail:</label>
+          <input id="eMail" type="text" />
+        </div>
+        <button type="submit">Submit</button>
+      </form>
     </div>
   );
 }
