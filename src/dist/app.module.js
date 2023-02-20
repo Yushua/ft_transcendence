@@ -11,7 +11,7 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const user_profile_module_1 = require("./user-profile/user-profile.module");
 const login_module_1 = require("./login/login.module");
-const game_module_1 = require("./game/game.module");
+const chat_module_1 = require("./chat/chat.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -29,7 +29,7 @@ AppModule = __decorate([
                 synchronize: true,
             }),
             login_module_1.LoginModule,
-            game_module_1.GameModule
+            chat_module_1.ChatModule
         ],
     })
 ], AppModule);

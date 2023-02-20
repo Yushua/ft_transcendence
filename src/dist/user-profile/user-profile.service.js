@@ -17,9 +17,33 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const user_entity_1 = require("./user.entity");
+const user_stat_entity_1 = require("./user.stat.entity");
 let UserProfileService = class UserProfileService {
-    constructor(userEntity) {
+    constructor(userEntity, statEntity) {
         this.userEntity = userEntity;
+        this.statEntity = statEntity;
+    }
+    async addFriendToID(userID, friendID) {
+        const user = await this.findUserBy(userID);
+        if (!user) {
+            throw new common_1.NotFoundException(`Task with ID "${userID}" not found`);
+        }
+        user.friendList.forEach((item) => {
+            if (item === friendID) {
+                throw new common_1.NotFoundException(`Friend "${friendID}" already added`);
+                return;
+            }
+        });
+        user.friendList.push(friendID);
+        await this.userEntity.save(user);
+    }
+    async removeFriendFromID(userID, friendID) {
+        const user = await this.findUserBy(userID);
+        user.friendList.forEach((item, index) => {
+            if (item === friendID)
+                user.friendList.splice(index, 1);
+        });
+        await this.userEntity.save(user);
     }
     async findAllUsers(filterDto) {
         const { status, search } = filterDto;
@@ -67,7 +91,9 @@ let UserProfileService = class UserProfileService {
 UserProfileService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(user_entity_1.UserProfile)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __param(1, (0, typeorm_1.InjectRepository)(user_stat_entity_1.StatProfile)),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository])
 ], UserProfileService);
 exports.UserProfileService = UserProfileService;
 //# sourceMappingURL=user-profile.service.js.map

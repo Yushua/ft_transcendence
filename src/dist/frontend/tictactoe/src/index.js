@@ -57,7 +57,7 @@ class Game extends react_1.default.Component {
         const history = this.state.history;
         const current = history[history.length - 1];
         const winner = calculateWinner(current.squares);
-        const status = winner ? 'Winner: ' + winner : 'Next Player: ' + (this.state.oIsNext ? 'O' : 'X');
+        const status = winner ? `Winner: ${winner}` : `Next Player: ${this.state.oIsNext ? 'O' : 'X'}`;
         return (<div className="game">
 		  		<div className="game-board">
 				{status}

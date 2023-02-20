@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserProfile = void 0;
 const typeorm_1 = require("typeorm");
 const user_profile_status_model_1 = require("./user-profile-status.model");
+const user_stat_entity_1 = require("./user.stat.entity");
 let UserProfile = class UserProfile {
 };
 __decorate([
@@ -24,6 +25,10 @@ __decorate([
     }),
     __metadata("design:type", String)
 ], UserProfile.prototype, "username", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: "" }),
+    __metadata("design:type", String)
+], UserProfile.prototype, "profilePicture", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
@@ -38,6 +43,14 @@ __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], UserProfile.prototype, "status", void 0);
+__decorate([
+    (0, typeorm_1.Column)("text", { array: true, default: "{}" }),
+    __metadata("design:type", Array)
+], UserProfile.prototype, "friendList", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)((_type) => user_stat_entity_1.StatProfile, stat => stat.user, { eager: true }),
+    __metadata("design:type", Array)
+], UserProfile.prototype, "stat", void 0);
 UserProfile = __decorate([
     (0, typeorm_1.Entity)()
 ], UserProfile);

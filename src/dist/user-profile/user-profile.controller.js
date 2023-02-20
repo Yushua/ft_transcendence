@@ -18,23 +18,23 @@ const get_tasks_filter_dto_1 = require("./dto/get-tasks-filter.dto");
 const user_profile_status_model_1 = require("./user-profile-status.model");
 const user_profile_service_1 = require("./user-profile.service");
 let UserProfileController = class UserProfileController {
-    constructor(taskServices) {
-        this.taskServices = taskServices;
+    constructor(userServices) {
+        this.userServices = userServices;
     }
     getAllTasks(filterDto) {
-        return this.taskServices.findAllUsers(filterDto);
+        return this.userServices.findAllUsers(filterDto);
     }
     getUserById(id) {
-        return this.taskServices.findUserBy(id);
+        return this.userServices.findUserBy(id);
     }
     getUserByUsername(username) {
-        return this.taskServices.findUserBy(username);
+        return this.userServices.findUserBy(username);
     }
     changeUsername(username, id) {
-        return this.taskServices.changeUsername(username, id);
+        return this.userServices.changeUsername(username, id);
     }
     changeStatus(status, id) {
-        return this.taskServices.changeStatus(status, id);
+        return this.userServices.changeStatus(status, id);
     }
 };
 __decorate([
