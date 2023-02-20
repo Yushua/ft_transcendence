@@ -22,6 +22,7 @@ setup:
 	npm i --save @nestjs/common
 	npm i --save class-validator
 	npm i --save @nestjs/jwt
+	npm add socket.io-client
 	npm audit fix
 
 # create project: npx create-react-app my-app --template typescript

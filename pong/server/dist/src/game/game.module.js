@@ -13,11 +13,13 @@ const game_room_1 = require("./components/game_room");
 const game_bkeMap_entity_1 = require("./game.bkeMap.entity");
 const game_controller_1 = require("./game.controller");
 const game_service_1 = require("./game.service");
+const socket_module_1 = require("./socket/socket.module");
 let GameModule = class GameModule {
 };
 GameModule = __decorate([
     (0, common_1.Module)({
         imports: [
+            socket_module_1.SocketModule,
             typeorm_1.TypeOrmModule.forFeature([game_bkeMap_entity_1.GameBkeMap]),
             typeorm_1.TypeOrmModule.forFeature([game_room_1.GameRoom]),
         ],
