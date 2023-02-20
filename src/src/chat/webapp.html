@@ -1,19 +1,79 @@
 <!DOCTYPE html>
 <html>
 <body onload="onload()">
-<script> function onload() { updateUsers() } </script>
+<script> function onload() {
+	updateUsers()
+} </script>
 
 <h1>Chat App</h1>
 
 <script>
+	LOG_SIG = !true
+	LOG_HTTP = !true
+	
 	function UserID() { return document.getElementById("UserID").value }
 	function RoomID() { return document.getElementById("RoomID").value }
+	var Room
+	var User
+	var ChatUser
+	async function downloadRoom()     { Room     = await GET_OBJ(`chat/room/${RoomID()}`) }
+	async function downloadChatUser() { ChatUser = await GET_OBJ(`chat/user/${UserID()}`) }
+	async function downloadUser()     { User     = await GET_OBJ(`user-profile/user/${UserID()}`) }
 	_isAdmin = false
 	function IsAdmin() { return _isAdmin }
 </script>
 
+<!-- Events -->
+<script>
+	var userEvent = null
+	async function SubscribeToUserEvent() {
+		try {
+			userEvent.close()
+			userEvent = null
+		} catch (error) {}
+		userEvent = new EventSource(`/chat/event/user-${UserID()}`)
+		userEvent.onmessage = msg => {
+			if (LOG_SIG)
+				console.log(`msg: ${msg.data}`)
+			switch (msg.data) {
+				case "you have been added":
+					updateUsers()
+					break;
+				default:
+					break;
+			}
+		}
+	}
+	
+	var roomEvent = null
+	function SubscribeToRoomEvent() {
+		try {
+			roomEvent.close()
+			roomEvent = null
+		} catch (error) {}
+		roomEvent = new EventSource(`/chat/event/room-${RoomID()}`)
+		roomEvent.onmessage = async msg => {
+			if (LOG_SIG)
+				console.log(`msg: ${msg.data}`)
+			switch (msg.data) {
+				case "room":
+					updateRooms()
+					break
+				case "mem":
+					await downloadRoom()
+					updateMembers()
+					break
+				case "msg":
+					updateChat()
+					break
+				default: break
+			}
+		}
+	}
+</script>
+
 <div id="DivUserSelect">
-	User select: <select name="UserID" id="UserID" onchange="changeUsers()"> </select><br>
+	User select: <select name="UserID" id="UserID" onchange="changeUser()"> </select><br>
 	<br>
 	<script>
 		async function updateUsers() {
@@ -22,37 +82,21 @@
 			for (const user of users)
 				options += `<option value="${user.id}">${user.username}</option><br>`
 			document.getElementById("UserID").innerHTML = options
-			changeUsers()
+			changeUser()
 		}
 		
-		async function changeUsers() {
-			const userID = document.getElementById("UserID").value
-			const roomStyle = (userID != "") ? "block" : "none"
-			document.getElementById("DivNewRoom").style.display = roomStyle
-			updateRooms()
-			
-			closeUserEvent()
-			if (userID == "")
+		async function changeUser() {
+			if (UserID() == "") {
+				document.getElementById("DivNewRoom").style.display = "none"
 				return
-			const roomID = document.getElementById("RoomID").value
-			userEvent = new EventSource(`/chat/event/user-${userID}`)
-			userEvent.onmessage = msg => {
-				switch (msg.data) {
-					case "you have been added":
-						changeUsers()
-						break;
-					default:
-						break;
-				}
 			}
-		}
-		
-		var userEvent = null
-		function closeUserEvent() {
-			try {
-				userEvent.close()
-				userEvent = null
-			} catch (error) {}
+			document.getElementById("DivNewRoom").style.display = "block"
+			
+			await downloadUser()
+			await downloadChatUser()
+			SubscribeToUserEvent()
+			
+			updateRooms()
 		}
 	</script>
 </div>
@@ -78,10 +122,8 @@
 	<br>
 	<script>
 		async function updateRooms() {
-			const userID = document.getElementById("UserID").value
-			const roomIDs = await GET_OBJ(`chat/user/${userID}/ChatRoomsIn`)
 			var options = ""
-			for (const roomID of roomIDs)
+			for (const roomID of this.ChatUser.ChatRoomsIn)
 				options += `<option value="${roomID}">${roomID}</option><br>`
 			document.getElementById("RoomID").innerHTML = options
 			roomChange()
@@ -89,40 +131,20 @@
 		
 		async function roomChange() {
 			
-			closeRoomEvent()
-			
-			const userID = document.getElementById("UserID").value
-			const roomID = document.getElementById("RoomID").value
-			
-			const roomStyle = (roomID != "") ? "block" : "none"
+			const roomStyle = (RoomID() != "") ? "block" : "none"
 			document.getElementById("DivRoomSelect").style.display = roomStyle
 			document.getElementById("DivChatWindow").style.display = roomStyle
 			if (roomStyle === "none")
 				return
 			
-			updateMembers()
+			await downloadRoom()
+			SubscribeToRoomEvent()
 			
-			closeRoomEvent()
-			roomEvent = new EventSource(`/chat/event/room-${roomID}`)
-			roomEvent.onmessage = msg => {
-				switch (msg.data) {
-					case "room": updateRooms();
-					case "mem": updateMembers(); break;
-					case "msg": updateChat(); break;
-					default: break;
-				}
-			}
+			updateMembers()
 			
 			updateChat()
 		}
 		
-		var roomEvent = null
-		function closeRoomEvent() {
-			try {
-				roomEvent.close()
-				roomEvent = null
-			} catch (error) {}
-		}
 	</script>
 </div>
 
@@ -131,13 +153,16 @@
 		<div id="FriendList"></div>
 		<script>
 			async function updateFriends() {
-				const friends = (await GET_OBJ(`user-profile/user/${UserID()}`)).friendList
-				const roomMembers = await GET_OBJ(`chat/room/${RoomID()}/MemberIDs`)
 				friendList = ""
-				for (const friendID of friends) {
-					if (roomMembers.includes(friendID))
-						continue
-					friendList += `${await getUserName(friendID)} <button onclick="aPOST('chat/room/${RoomID()}/${friendID}')">Add To Room</button>`
+				for (const friendID of User.friendList) {
+					
+					friendList += `${await getUserName(friendID)}`
+					if (!Room.MemberIDs.includes(friendID)) {
+						if (Room.BanIDs.includes(friendID))
+							friendList += ` [Banned in this room]`
+						else
+							friendList += ` <button onclick="aPOST('chat/room/${RoomID()}/${friendID}')">Add To Room</button>`
+					}
 					friendList += "<br>"
 				}
 				if (friendList != "")
@@ -194,9 +219,9 @@
 		<script>
 			async function updateMembers() {
 				updateFriends()
-				const members = await GET_OBJ(`chat/room/${RoomID()}/MemberIDs`)
-				const admins = await GET_OBJ(`chat/room/${RoomID()}/AdminIDs`)
-				const ownerID = GET(`chat/room/${RoomID()}/OwnerID`)
+				const members = Room.MemberIDs
+				const admins = Room.AdminIDs
+				const ownerID = Room.OwnerID
 				memberList = ""
 				for (const memberID of members) {
 					// if (member === UserID())
@@ -206,11 +231,15 @@
 						if (admins.includes(UserID()))
 							memberList += `<button>Mute</button>`
 								+ `<button onclick="DELETE('chat/member/${RoomID()}/${memberID}')">Kick</button>`
-								+ `<button>Ban</button>`
+								+ `<button onclick="DELETE('chat/ban/${RoomID()}/${memberID}')">Ban</button>`
 								+ `<button onclick="aPOST('chat/admin/${RoomID()}/${memberID}')">Make Admin</button>`
 					}
-					else
-						memberList += (memberID == ownerID) ? "[Owner]" : "[Admin]"
+					else {
+						if (UserID() == ownerID)
+							memberList += (memberID == ownerID) ? "[Owner]" : `[Admin] <button onclick="DELETE('chat/admin/${Room.ID}/${memberID}')">De-Admin</button>`
+						else
+							memberList += (memberID == ownerID) ? "[Owner]" : "[Admin]"
+					}
 					memberList += "<br>"
 				}
 				document.getElementById("ChatMebersList").innerHTML = memberList
@@ -238,7 +267,8 @@
 <script id="HTTP">
 
 	function GET(url, hdr = null) {
-		// console.log(`GET ${url}`)
+		if (LOG_HTTP)
+			console.log(`GET ${url}`)
 		var req = new XMLHttpRequest();
 		req.open("GET", url, false);
 		if (!!hdr)
@@ -247,7 +277,7 @@
 		req.send();
 		if (req.status === 200)
 			return req.responseText
-		document.getElementById("debug").innerHTML = req.responseText
+		console.log(req.responseText)
 		return null
 	}
 	
@@ -262,7 +292,8 @@
 	}
 	
 	function aPOST(url, obj = "", hdr = null) {
-		// console.log(`POST ${url}`)
+		if (LOG_HTTP)
+			console.log(`POST ${url}`)
 		var req = new XMLHttpRequest();
 		req.open("POST", url);
 		if (!!hdr)
@@ -280,7 +311,8 @@
 	}
 	
 	function POST(url, obj = "", hdr = null) {
-		// console.log(`POST ${url}`)
+		if (LOG_HTTP)
+			console.log(`POST ${url}`)
 		var req = new XMLHttpRequest();
 		req.open("POST", url, false);
 		if (!!hdr)
@@ -297,7 +329,7 @@
 			req.send(obj);
 		if (req.status === 201)
 			return req.responseText
-		document.getElementById("debug").innerHTML = req.responseText
+		console.log(req.responseText)
 		return null
 	}
 	
@@ -312,6 +344,8 @@
 	}
 	
 	async function DELETE(url) {
+		if (LOG_HTTP)
+			console.log(`DELETE ${url}`)
 		var req = new XMLHttpRequest();
 		req.open("DELETE", url);
 		req.send();

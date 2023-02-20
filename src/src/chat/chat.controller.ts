@@ -85,20 +85,15 @@ export class ChatController {
 	async MakeAdmin(
 		@Param("roomID") roomID: string,
 		@Param("userID") userID: string)
-		: Promise<void> {
-			if (await this.service.MakeAdmin(roomID, userID))
-				this.service.Notify("room-" + roomID, "room")
-		}
+		: Promise<void>
+			{ await this.service.MakeAdmin(roomID, userID) }
 	
 	@Post("room/:roomID/:userID")
 	async AddUser(
 		@Param("roomID") roomID: string,
 		@Param("userID") userID: string,)
-		: Promise<void> {
-			await this.service.AddUserToRoom(roomID, userID)
-			this.service.Notify(`room-${roomID}`, "mem")
-			this.service.Notify(`user-${userID}`, "you have been added")
-		}
+		: Promise<void>
+			{ await this.service.AddUserToRoom(roomID, userID) }
 	
 	//#endregion
 	
@@ -108,18 +103,22 @@ export class ChatController {
 	async KickMember(
 		@Param("roomID") roomID: string,
 		@Param("memberID") memberID: string,)
-		: Promise<void> {
-			await this.service.KickMember(roomID, memberID)
-			this.service.Notify(`room-${roomID}`, "room")
-		}
+		: Promise<void>
+			{ await this.service.RemoveMember(roomID, memberID) }
 	
-	@Delete("room/:roomID")
-	async DeleteRoom(
-		@Param("roomID") roomID: string)
-		: Promise<void> {
-			await this.service.DeleteRoom(roomID)
-			this.service.Notify(`room-${roomID}`, "room")
-		}
+	@Delete("ban/:roomID/:memberID")
+	async BanMember(
+		@Param("roomID") roomID: string,
+		@Param("memberID") memberID: string,)
+		: Promise<void>
+			{ await this.service.RemoveMember(roomID, memberID, true)}
+	
+	@Delete("admin/:roomID/:memberID")
+	async RemoveAdmin(
+		@Param("roomID") roomID: string,
+		@Param("memberID") memberID: string,)
+		: Promise<void>
+			{ await this.service.RemoveAdmin(roomID, memberID) }
 	
 	@Delete("user/:userID")
 	async DeleteUser(

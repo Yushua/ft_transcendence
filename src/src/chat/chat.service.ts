@@ -58,7 +58,7 @@ export class ChatService {
 		})
 		room = await this.chatRoomRepo.save(room)
 		
-		await this._modifyUser(OwnerID, user => {user.ChatRoomsIn.push(room.ID)})
+		await this.ModifyUser(OwnerID, user => {user.ChatRoomsIn.push(room.ID)})
 		
 		return room
 	}
@@ -92,22 +92,27 @@ export class ChatService {
 	}
 	
 	async AddUserToRoom(roomID: string, userID: string) {
-		await this._modifyRoom(roomID, async room => {
-			if (!room.MemberIDs.includes(userID)) {
+		var changed = false
+		await this.ModifyRoom(roomID, async room => {
+			if (changed = (!room.BanIDs.includes(userID) && !room.MemberIDs.includes(userID))) {
 				room.MemberIDs.push(userID)
-				await this._modifyUser(userID, user => {
+				await this.ModifyUser(userID, user => {
 					user.ChatRoomsIn.push(roomID)
 				})
 			}
 		})
+		if (!changed)
+			return
+		this.Notify(`room-${roomID}`, "mem")
+		this.Notify(`user-${userID}`, "you have been added")
 	}
 	
 	async GetRoom(roomID: string): Promise<ChatRoom>
 		{ return this.chatRoomRepo.findOneBy({ ID: roomID }) }
 	
-	private async _modifyRoom(roomID: string, func: (ChatUser: ChatRoom) => void): Promise<ChatRoom> {
+	async ModifyRoom(roomID: string, func: (ChatUser: ChatRoom) => void): Promise<ChatRoom> {
 		const room = await this.GetRoom(roomID)
-		func(room)
+		await func(room)
 		return await this.chatRoomRepo.save(room)
 	}
 	
@@ -116,7 +121,7 @@ export class ChatService {
 		for (let i: number = 0; i < room.MessageGroupDepth; i++)
 			this.chatMessageRepo.delete({ ID: await this._getMsgID(roomID, i + 1) })
 		for (const userID of room.MemberIDs) {
-			this._modifyUser(userID, user => {
+			this.ModifyUser(userID, user => {
 				const index = user.ChatRoomsIn.indexOf(roomID, 0);
 				if (index > -1)
 					user.ChatRoomsIn.splice(index, 1);
@@ -138,53 +143,61 @@ export class ChatService {
 		}))
 	}
 	
-	private async _modifyUser(ID: string, func: (ChatUser: ChatUser) => void): Promise<ChatUser> {
+	async ModifyUser(ID: string, func: (ChatUser: ChatUser) => void): Promise<ChatUser> {
 		var user = await this.GetOrAddUser(ID)
-		func(user)
+		await func(user)
 		return await this.chatUserRepo.save(user)
 	}
 	
-	async MakeAdmin(roomID: string, userID: string): Promise<boolean> {
+	async MakeAdmin(roomID: string, userID: string): Promise<void> {
 		var changed = false
-		await this._modifyRoom(roomID, room => {
-			if (!room.AdminIDs.includes(userID) && room.MemberIDs.includes(userID)) {
+		await this.ModifyRoom(roomID, room => {
+			if (changed = (!room.AdminIDs.includes(userID) && room.MemberIDs.includes(userID)))
 				room.AdminIDs.push(userID)
-				changed = true
-			}
 		})
-		return changed
+		if (changed)
+			this.Notify("room-" + roomID, "mem")
 	}
 	
-	async KickMember(roomID: string, memberID: string): Promise<void> {
-		const room = await this.GetRoom(roomID)
-		if (room.OwnerID == memberID)
-			return
-		
-		var roomToDelete: string = null
-		await this._modifyUser(memberID, user => {
-			const index = user.ChatRoomsIn.indexOf(roomID, 0);
-			if (index > -1)
-				user.ChatRoomsIn.splice(index, 1);
-		})
-		await this._modifyRoom(roomID, async room => {
-			var index
-			
-			index = room.MemberIDs.indexOf(memberID, 0);
-			if (index > -1)
-				room.MemberIDs.splice(index, 1);
-			
-			index = room.AdminIDs.indexOf(memberID, 0);
-			if (index > -1)
+	async RemoveAdmin(roomID: string, memberID: string): Promise<void> {
+		var changed = false
+		await this.ModifyRoom(roomID, async room => {
+			var index = room.AdminIDs.indexOf(memberID, 0);
+			if (changed = index > -1)
 				room.AdminIDs.splice(index, 1);
 		})
-		if (!!roomToDelete)
-			await this.DeleteRoom(roomToDelete)
+		if (changed)
+			this.Notify(`room-${roomID}`, "mem")
+	}
+	
+	async RemoveMember(roomID: string, memberID: string, ban: boolean = false): Promise<void> {
+		var changed = false
+		
+		await this.ModifyRoom(roomID, async room => {
+			if (room.OwnerID === memberID || room.AdminIDs.includes(memberID))
+				return
+				
+			await this.ModifyUser(memberID, user => {
+				const index = user.ChatRoomsIn.indexOf(roomID, 0);
+				if (index > -1)
+					{ user.ChatRoomsIn.splice(index, 1); changed = true}
+			})
+			
+			var index = room.MemberIDs.indexOf(memberID, 0);
+			if (index > -1)
+				{ room.MemberIDs.splice(index, 1); changed = true }
+			if (ban && !room.BanIDs.includes(memberID))
+				{ room.BanIDs.push(memberID); changed = true}
+				
+		})
+		if (changed)
+			this.Notify(`room-${roomID}`, "mem")
 	}
 	
 	async DeleteUser(userID: string): Promise<void> {
 		const user = await this.chatUserRepo.findOneBy({ ID: userID })
 		for (const roomID of user.ChatRoomsIn)
-			await this.KickMember(roomID, userID)
+			await this.RemoveMember(roomID, userID)
 		await this.chatUserRepo.remove(user)
 	}
 	
