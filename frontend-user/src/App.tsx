@@ -61,9 +61,9 @@ const App: React.FC = () => {
         <div>
           <label htmlFor="username">Username:</label>
           <input id="username" type="text" />
-          <label htmlFor="password">UserPassword:</label>
+          <label htmlFor="password">Password:</label>
           <input id="password" type="text" />
-          <label htmlFor="eMail">UserEmail:</label>
+          <label htmlFor="eMail">Email:</label>
           <input id="eMail" type="text" />
         </div>
         <button type="submit">Submit</button>
