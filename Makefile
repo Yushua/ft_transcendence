@@ -25,6 +25,8 @@ setup:
 	npm add bcrypt
 	npm add @nestjs/jwt @nestjs/passport passport passport-jwt
 	npm install pg --save
+	npm install source-map-support
+	npm install @nestjs/platform-express
 
 react:
 	npm install --save typescript @types/node @types/react @types/react-dom @types/jest
