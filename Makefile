@@ -14,7 +14,7 @@ run-front:
 	cd ./frontend-user ; npm start
 
 run-back:
-	cd ./src ; npm run start:dev
+	cd ./backend ; npm run start:dev
 
 setup:
 	npm install @nestjs/common
