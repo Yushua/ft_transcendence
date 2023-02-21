@@ -24,8 +24,9 @@ export class ChatController {
 			{ return ChatApp.GetWebAppFiles(request.url.substring(9), response)}
 	
 	@Get()
-	GetChatWebApp()
-			{ return ChatApp.GetWebApp() }
+	GetChatWebApp(
+		@Response({ passthrough: true }) response)
+			{ return ChatApp.GetWebAppFiles("index.html", response) }
 	
 	//#region Get
 	
