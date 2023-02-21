@@ -36,7 +36,6 @@ Thumbs.db
 
 # Ignore built ts files
 src/dist/**/*
-chat-app/public/**/*
 
 # ignore yarn.lock
 yarn.lock
