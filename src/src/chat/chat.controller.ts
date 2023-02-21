@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, Sse, Headers } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, Sse, Headers, Req, Request, Response, StreamableFile } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { ChatMessage } from './chat_objects/chat_message';
 import { ChatRoom } from './chat_objects/chat_room';
@@ -7,6 +7,9 @@ import { ChatMessageDTO } from './dto/chat_message.dto';
 import { ChatRoomDTO } from './dto/chat_room.dto';
 import { ChatApp } from './chat.app';
 import { Observable } from 'rxjs';
+import { createReadStream } from "fs"
+import { join } from 'path';
+import { lookup } from 'mime-types';
 
 @Controller("chat")
 export class ChatController {
@@ -14,9 +17,14 @@ export class ChatController {
 	constructor (
 		private readonly service: ChatService) {}
 	
+	@Get("app/*")
+	GetRedirectToWebApp(
+		@Req() request: Request,
+		@Response({ passthrough: true }) response)
+			{ return ChatApp.GetWebAppFiles(request.url.substring(9), response)}
+	
 	@Get()
 	GetChatWebApp()
-		: string
 			{ return ChatApp.GetWebApp() }
 	
 	//#region Get
