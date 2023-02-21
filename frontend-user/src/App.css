@@ -1,6 +1,29 @@
-/* .App {
+.App {
+  text-align: center;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: antiquewhite;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.heading {
+  text-transform: uppercase;
+  font-size: 40px;
+  margin: white;
+  z-index: 1;
   text-align: center;
 }
+
+@media (max-width: 800px) {
+  .heading {
+    margin: 15px 0;
+    font-size: 35px;
+  }
+}
+/*
 
 .App-logo {
   height: 40vmin;
