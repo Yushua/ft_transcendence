@@ -7,6 +7,10 @@ export class ChatRoomDTO {
 	OwnerID: string
 	
 	@IsString()
+	@IsNotEmpty()
+	Name: string
+	
+	@IsString()
 	Password: string
 	
 	@IsNotEmpty()

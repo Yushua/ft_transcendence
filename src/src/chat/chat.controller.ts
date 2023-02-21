@@ -62,6 +62,18 @@ export class ChatController {
 	
 	//#region Post
 	
+	@Post("friends")
+	async _friends()
+		: Promise<void>
+			{ await this.service._friends() }
+	
+	@Post("direct/:userID/:memberID")
+	async MakeDirectMessageGroup(
+		@Param("userID") userID: string,
+		@Param("memberID") memberID: string)
+		: Promise<void>
+			{ await this.service.NewDirect(userID, memberID) }
+	
 	@Post("room")
 	async MakeNewRoom(
 		@Body() room: ChatRoomDTO)
@@ -94,6 +106,13 @@ export class ChatController {
 		@Param("userID") userID: string,)
 		: Promise<void>
 			{ await this.service.AddUserToRoom(roomID, userID) }
+	
+	@Post("unban/:roomID/:userID")
+	async UnBan(
+		@Param("roomID") roomID: string,
+		@Param("userID") userID: string)
+		: Promise<void>
+			{ await this.service.UnBan(roomID, userID) }
 	
 	//#endregion
 	

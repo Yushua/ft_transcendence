@@ -47,14 +47,48 @@ export class ChatService {
 	
 	//#region RoomFrontEnd
 	
+	async UnBan(roomID: string, userID: string): Promise<void> {
+		var changed = false
+		await this.ModifyRoom(roomID, room => {
+			const index = room.BanIDs.indexOf(userID, 0);
+				if (changed = (index > -1))
+					room.BanIDs.splice(index, 1);
+		})
+		if (changed)
+			this.Notify(`room-${roomID}`, "mem")
+	}
+	
+	async NewDirect(userID: string, memberID: string): Promise<void> {
+		var user = await this.GetOrAddUser(userID)
+		if (user.FriedsWithDirect.includes(memberID))
+			return
+		
+		var room = await this.chatRoomRepo.create({
+			OwnerID:"", Name:"", Password:"", RoomType: +ChatRoomType.Private,
+			MemberIDs:[userID, memberID], AdminIDs:[],
+			BanIDs:[], MuteIDs:[], MuteDates:[],
+			MessageGroupDepth: 0, Direct: true
+		})
+		room = await this.chatRoomRepo.save(room)
+		
+		user.DirectChatsIn.push(room.ID)
+		user.FriedsWithDirect.push(memberID)
+		await this.chatUserRepo.save(user)
+		
+		await this.ModifyUser(memberID, user => {
+			user.DirectChatsIn.push(room.ID)
+			user.FriedsWithDirect.push(userID)
+		})
+	}
+	
 	async NewRoom(roomDTO: ChatRoomDTO): Promise<ChatRoom> {
 		
-		const { OwnerID, Password, RoomType } =  roomDTO
+		const { OwnerID, Name, Password, RoomType } =  roomDTO
 		var room = await this.chatRoomRepo.create({
-			OwnerID, Password, RoomType: +ChatRoomType[RoomType],
+			OwnerID, Name, Password, RoomType: +ChatRoomType[RoomType],
 			MemberIDs:[OwnerID], AdminIDs:[OwnerID],
 			BanIDs:[], MuteIDs:[], MuteDates:[],
-			MessageGroupDepth: 0
+			MessageGroupDepth: 0, Direct: false
 		})
 		room = await this.chatRoomRepo.save(room)
 		
@@ -116,20 +150,6 @@ export class ChatService {
 		return await this.chatRoomRepo.save(room)
 	}
 	
-	async DeleteRoom(roomID: string): Promise<void> {
-		const room = await this.GetRoom(roomID)
-		for (let i: number = 0; i < room.MessageGroupDepth; i++)
-			this.chatMessageRepo.delete({ ID: await this._getMsgID(roomID, i + 1) })
-		for (const userID of room.MemberIDs) {
-			this.ModifyUser(userID, user => {
-				const index = user.ChatRoomsIn.indexOf(roomID, 0);
-				if (index > -1)
-					user.ChatRoomsIn.splice(index, 1);
-			})
-		}
-		this.chatRoomRepo.remove(room)
-	}
-	
 	//#endregion
 	
 	//#region User
@@ -139,7 +159,7 @@ export class ChatService {
 		if (user)
 			return user
 		return await this.chatUserRepo.save(await this.chatUserRepo.create({
-			ID: userID, ChatRoomsIn:[], DirectChatsIn:[], BlockedUserIDs:[]
+			ID: userID, ChatRoomsIn:[], DirectChatsIn:[], FriedsWithDirect:[], BlockedUserIDs:[]
 		}))
 	}
 	
@@ -204,6 +224,18 @@ export class ChatService {
 	//#endregion
 	
 	//#region Debug
+	
+	async _friends() {
+		var users = await this.userProfileRepo.find()
+		for (const user of users) {
+			for (const other of users) {
+				if (user === other)
+					continue
+				user.friendList.push(other.id)
+			}
+			await this.userProfileRepo.save(user)
+		}
+	}
 	
 	async GetAllUsers(): Promise<ChatUser[]>
 		{ return this.chatUserRepo.find() }

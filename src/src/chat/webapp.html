@@ -8,15 +8,16 @@
 <h1>Chat App</h1>
 
 <script>
-	LOG_SIG = !true
+	LOG_SIG = true
 	LOG_HTTP = !true
 	
 	function UserID() { return document.getElementById("UserID").value }
-	function RoomID() { return document.getElementById("RoomID").value }
-	var Room
-	var User
-	var ChatUser
-	async function downloadRoom()     { Room     = await GET_OBJ(`chat/room/${RoomID()}`) }
+	var _roomID = ""
+	function RoomID() { return _roomID }
+	var Room = null
+	var User = null
+	var ChatUser = null
+	async function downloadRoom()     { Room     = await GET_OBJ(`chat/room/${_roomID}`) }
 	async function downloadChatUser() { ChatUser = await GET_OBJ(`chat/user/${UserID()}`) }
 	async function downloadUser()     { User     = await GET_OBJ(`user-profile/user/${UserID()}`) }
 	_isAdmin = false
@@ -92,87 +93,111 @@
 			}
 			document.getElementById("DivNewRoom").style.display = "block"
 			
+			await changeRoom("")
+			
 			await downloadUser()
 			await downloadChatUser()
+			updateFriends()
 			SubscribeToUserEvent()
-			
 			updateRooms()
 		}
 	</script>
 </div>
 
 <div id="DivNewRoom">
-	Room Password: <input type="text" id="RoomPassword" name="RoomPassword">
+	Name: <input type="text" id="RoomName" name="RoomName">
+	Password: <input type="text" id="RoomPassword" name="RoomPassword">
 	Private: <input type="checkbox" id="Private" name="Private"><br>
 	<button type="button" onclick="newRoom()">Make New Room</button><br>
 	<br>
 	<script>
 		async function newRoom() {
-			const user = document.getElementById("UserID").value
+			const name = document.getElementById("RoomName").value
 			const pass = document.getElementById("RoomPassword").value
 			const priv = document.getElementById("Private").value
-			if (!!await POST(`chat/room`, {OwnerID: user, Password:pass, RoomType:(priv?"Private":"Public") }))
+			if (!!await POST(`chat/room`, {OwnerID: UserID(), Name:name, Password:pass, RoomType:(priv?"Private":"Public") }))
 				updateRooms()
 		}
 	</script>
 </div>
 
-<div id="DivRoomSelect">
-	Room select: <select name="RoomID" id="RoomID" onchange="roomChange()"> </select><br>
-	<br>
-	<script>
-		async function updateRooms() {
-			var options = ""
-			for (const roomID of this.ChatUser.ChatRoomsIn)
-				options += `<option value="${roomID}">${roomID}</option><br>`
-			document.getElementById("RoomID").innerHTML = options
-			roomChange()
-		}
-		
-		async function roomChange() {
-			
-			const roomStyle = (RoomID() != "") ? "block" : "none"
-			document.getElementById("DivRoomSelect").style.display = roomStyle
-			document.getElementById("DivChatWindow").style.display = roomStyle
-			if (roomStyle === "none")
-				return
-			
-			await downloadRoom()
-			SubscribeToRoomEvent()
-			
-			updateMembers()
-			
-			updateChat()
-		}
-		
-	</script>
-</div>
-
-<div id="DivChatWindow" style="overflow:hidden">
-	<div id="DivAddFriend">
-		<div id="FriendList"></div>
-		<script>
-			async function updateFriends() {
-				friendList = ""
-				for (const friendID of User.friendList) {
-					
-					friendList += `${await getUserName(friendID)}`
-					if (!Room.MemberIDs.includes(friendID)) {
-						if (Room.BanIDs.includes(friendID))
-							friendList += ` [Banned in this room]`
+<div id="DivMainWindow" style="overflow:hidden">
+	<div id="DivMetaSelect" style="float:left;border-style:solid;">
+		<div id="DivAddFriend" style="border-style:dotted;">
+			-~={ Friends }=~-<br>
+			<div id="FriendList"></div>
+			<script>
+				async function updateFriends() {
+					friendList = ""
+					for (const friendID of User.friendList) {
+						if (RoomID() !== "" && Room.Direct && Room.MemberIDs.includes(friendID))
+							friendList += `${await a_getUserName(friendID)}`
 						else
-							friendList += ` <button onclick="aPOST('chat/room/${RoomID()}/${friendID}')">Add To Room</button>`
+							friendList += `<button onclick="connectToDirect('${friendID}')">${await a_getUserName(friendID)}</button>`
+						if (_roomID != "" && !Room.MemberIDs.includes(friendID)) {
+							if (Room.BanIDs.includes(friendID)) {
+								if (UserID() == Room.OwnerID)
+									friendList += ` <button onclick="aPOST('chat/unban/${RoomID()}/${friendID}')">UnBan</button>`
+								else
+									friendList += ` [Banned in this room]`
+							}
+							else if (Room.AdminIDs.includes(UserID()))
+								friendList += ` <button onclick="aPOST('chat/room/${RoomID()}/${friendID}')">Add To Room</button>`
+						}
+						friendList += "<br>"
 					}
-					friendList += "<br>"
+					document.getElementById("FriendList").innerHTML = friendList
 				}
-				if (friendList != "")
-					friendList = "-~={ Friend List }=~-<br>" + friendList + "<br>"
-				document.getElementById("FriendList").innerHTML = friendList
-			}
-		</script>
+				
+				async function connectToDirect(memberID) {
+					if (!ChatUser.FriedsWithDirect.includes(memberID))
+						POST(`chat/direct/${UserID()}/${memberID}`)
+					await downloadChatUser()
+					const index = ChatUser.FriedsWithDirect.indexOf(memberID, 0)
+					changeRoom(ChatUser.DirectChatsIn[index])
+				}
+			</script>
+		</div>
+		
+		<div id="_DivRoomSelect" style="border-style:dotted;">
+			-~={ Rooms }=~-<br>
+			<div id="RoomList"></div>
+			<script>
+				async function updateRooms() {
+					var roomList = document.getElementById("RoomList")
+					roomList.innerHTML = ""
+					if (!ChatUser)
+						return
+					options = ""
+					for (const roomID of ChatUser.ChatRoomsIn) {
+						if (_roomID === roomID)
+							options += `${getRoomName(roomID)}<br>`
+						else
+							options += `<button onclick="changeRoom('${roomID}')">${getRoomName(roomID)}</button><br>`
+					}
+					roomList.innerHTML = options
+				}
+				
+				async function changeRoom(roomID) {
+					_roomID = roomID
+					if (_roomID === "" ) {
+						await updateChat()
+						await updateMembers()
+						return
+					}
+					SubscribeToRoomEvent()
+					await downloadRoom()
+					updateRooms()
+					updateChat()
+					updateMembers()
+					updateFriends()
+				}
+			</script>
+		</div>
 	</div>
 	
-	<div id="DivChatLog" style="float:left">
+	<div id="DivChatLog" style="float:left;border-style:solid">
+		-~={ Chat }=~-<br>
 		
 		<!-- Message Log -->
 		<div id="chat">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>A<br></div><script>
@@ -180,7 +205,8 @@
 			async function updateChat() {
 				
 				document.getElementById("chat").innerHTML = "";
-				
+				if (RoomID() === "")
+					return
 				var count = 0
 				var chat = ""
 				
@@ -192,7 +218,7 @@
 					
 					for (let i = msgs.length - 1; count < LogDepth && i >= 0; i--) {
 						count++
-						chat = `${await getUserName(msgs[i].OwnerID)}: ${msgs[i].Message}<br>` + chat
+						chat = `${await a_getUserName(msgs[i].OwnerID)}: ${msgs[i].Message}<br>` + chat
 					}
 				}
 				
@@ -214,10 +240,14 @@
 		</script>
 	</div>
 	
-	<div id="DivMembersList" style="overflow:hidden">
+	<div id="DivMembersList" style="float:left;overflow:hidden;border-style:solid">
 		<div id="ChatMebersList"></div>
 		<script>
 			async function updateMembers() {
+				if (RoomID() === "") {
+					document.getElementById("ChatMebersList").innerHTML = ""
+					return
+				}
 				updateFriends()
 				const members = Room.MemberIDs
 				const admins = Room.AdminIDs
@@ -226,7 +256,7 @@
 				for (const memberID of members) {
 					// if (member === UserID())
 					// 	continue
-					memberList += `${await getUserName(memberID)} `
+					memberList += `${await a_getUserName(memberID)} `
 					if (!admins.includes(memberID)) {
 						if (admins.includes(UserID()))
 							memberList += `<button>Mute</button>`
@@ -253,14 +283,23 @@
 
 <div id="debug"></div>
 
-<script id="LocalUsernameStorage">
-	var users = {}
-	async function getUserName(userID) {
-		if (userID in users)
-			return users[userID]
+<script id="LocalStorage">
+	var _users = {}
+	async function a_getUserName(userID) {
+		if (userID in _users)
+			return _users[userID]
 		const user = await GET_OBJ(`user-profile/user/${userID}`)
-		users[userID] = user.username
+		_users[userID] = user.username
 		return user.username
+	}
+	
+	var _rooms = {}
+	function getRoomName(roomID) {
+		if (roomID in _rooms)
+			return _rooms[roomID]
+		const name = GET(`chat/room/${roomID}/Name`)
+		_rooms[roomID] = name
+		return name
 	}
 </script>
 
