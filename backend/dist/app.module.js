@@ -11,6 +11,7 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const user_profile_module_1 = require("./user-profile/user-profile.module");
 const login_module_1 = require("./login/login.module");
+const auth_module_1 = require("./auth/auth.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -27,7 +28,8 @@ AppModule = __decorate([
                 autoLoadEntities: true,
                 synchronize: true,
             }),
-            login_module_1.LoginModule
+            login_module_1.LoginModule,
+            auth_module_1.AuthModule
         ],
     })
 ], AppModule);
