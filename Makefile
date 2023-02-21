@@ -15,3 +15,17 @@ run-front:
 
 run-back:
 	cd ./src ; npm run start:dev
+
+setup:
+	npm install @nestjs/common
+	npm install @nestjs/core
+	npm i --save @nestjs/config
+	npm install --save @nestjs/typeorm typeorm mysql2
+	npm install class-validator --save
+	npm add bcrypt
+	npm add @nestjs/jwt @nestjs/passport passport passport-jwt
+	npm install pg --save
+
+react:
+	npm install --save typescript @types/node @types/react @types/react-dom @types/jest
+	npm install react-scripts
