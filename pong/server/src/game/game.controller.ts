@@ -2,7 +2,7 @@ import { Controller, Get, Param, Patch, Post, Query, Body } from '@nestjs/common
 import { GameService } from './game.service'
 import { GameRoom } from './components/game_room'
 import { GameRoomDTO } from './dto/game_room.dto';
-import { GameApp } from './game.app'
+// import { GameApp } from './game.app'
 
 @Controller('game')
 export class GameController {
@@ -24,9 +24,5 @@ export class GameController {
         return this.gameService.clickSquare(num)
     }
 
-    @Get()
-    displayIndex() {
-        return GameApp.displayIndex()
-    }
 }
 

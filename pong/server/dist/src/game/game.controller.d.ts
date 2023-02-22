@@ -7,5 +7,4 @@ export declare class GameController {
     createGame(room: GameRoomDTO): Promise<GameRoom>;
     startGame(id: string): Promise<void>;
     clickSquare(num: string): Promise<void>;
-    displayIndex(): string;
 }
