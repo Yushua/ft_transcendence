@@ -1,6 +1,6 @@
-import { HTTP } from "../HTTP";
+import HTTP from "../HTTP";
 
-export class ChatUser {
+export default class ChatUser {
 	private static _chatUser: any | null = null;
 	
 	static async asyncDownload(userID: string) {

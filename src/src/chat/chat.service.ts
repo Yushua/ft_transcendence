@@ -58,7 +58,7 @@ export class ChatService {
 			this.Notify(`room-${roomID}`, "mem")
 	}
 	
-	async NewDirect(userID: string, memberID: string): Promise<void> {
+	async NewDirect(userID: string, memberID: string): Promise<string> {
 		var user = await this.GetOrAddUser(userID)
 		if (user.FriedsWithDirect.includes(memberID))
 			return
@@ -79,6 +79,10 @@ export class ChatService {
 			user.DirectChatsIn.push(room.ID)
 			user.FriedsWithDirect.push(userID)
 		})
+		
+		this.Notify(`user-${memberID}`, "you have been added")
+		
+		return room.ID
 	}
 	
 	async NewRoom(roomDTO: ChatRoomDTO): Promise<ChatRoom> {

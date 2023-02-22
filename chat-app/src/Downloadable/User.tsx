@@ -1,6 +1,6 @@
-import { HTTP } from "../HTTP";
+import HTTP from "../HTTP";
 
-export class User {
+export default class User {
 	private static _user: any | null = null;
 	
 	static async asyncDownload(userID: string) {
@@ -14,5 +14,5 @@ export class User {
 	static get Password(): string   { return this._user?.password ?? [] }
 	static get Email():    string   { return this._user?.eMail ?? [] }
 	static get IconURL():  string   { return this._user?.profilePicture ?? [] }
-	static get Friends():  string[] { return this._user?.profilePicture ?? [] }
+	static get Friends():  string[] { return this._user?.friendList ?? [] }
 }

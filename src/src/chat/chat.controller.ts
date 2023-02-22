@@ -80,8 +80,8 @@ export class ChatController {
 	async MakeDirectMessageGroup(
 		@Param("userID") userID: string,
 		@Param("memberID") memberID: string)
-		: Promise<void>
-			{ await this.service.NewDirect(userID, memberID) }
+		: Promise<string>
+			{ return await this.service.NewDirect(userID, memberID) }
 	
 	@Post("room")
 	async MakeNewRoom(

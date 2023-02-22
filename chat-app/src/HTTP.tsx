@@ -1,4 +1,4 @@
-export class HTTP {
+export default class HTTP {
 	static Get(url: string, body: string | null = null, hdr: Map<string, string> | null = null): string 
 		{ return this.SendRequest("GET", url, body, hdr) }
 	
@@ -64,7 +64,7 @@ export class HTTP {
 			hdr: Map<string, string> | null,
 			callback: ((this: XMLHttpRequest, ev: Event) => any) | null) {
 		var [req, fianlBody] = this._setupRequest(method, url, body, hdr, false)
-		req.onreadystatechange = callback
+		req.onload = callback
 		req.send(fianlBody)
 	}
 }
