@@ -1,11 +1,16 @@
 import HTTP from "../HTTP";
+import { RoomEvent } from "../Events/RoomEventHandle";
 import ChatUser from "./ChatUser";
 
 export default class ChatRoom {
 	private static _chatRoom: any | null = null;
 	
+	static Clear() { this._chatRoom = null }
+	
 	static async asyncDownload(roomID: string) {
 		this._chatRoom = await JSON.parse(HTTP.Get(`chat/room/${roomID}`)) ?? null
+		if (!!this._chatRoom)
+			RoomEvent.SubscribeToUserEvent(`chat/event/room-${roomID}`)
 	}
 	
 	static IsRoomOfFriend(friendID: string): boolean {

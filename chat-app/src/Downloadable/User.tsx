@@ -3,6 +3,8 @@ import HTTP from "../HTTP";
 export default class User {
 	private static _user: any | null = null;
 	
+	static Clear() { this._user = null }
+	
 	static async asyncDownload(userID: string) {
 		const user = await JSON.parse(HTTP.Get(`user-profile/user/${userID}`))
 		if (!!user)

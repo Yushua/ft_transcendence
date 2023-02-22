@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import HTTP from "../HTTP";
+import User from "../Downloadable/User";
+import NameStorage from "../NameStorage";
+import { asyncUpdateUser } from "./MainChatWindow";
 
-export class ProfileUser { constructor ( public ID: string, public Name: string ) {} }
+class ProfileUser { constructor ( public ID: string, public Name: string ) {} }
 
-export default function UserSelect(props: any) {
-	var onSelectCallBack: (userID: string) => void = props.onSelectCallBack
+export default function UserSelect() {
 	
 	const [options, setOptions] = useState<ProfileUser[]>([])
 	
@@ -15,14 +17,16 @@ export default function UserSelect(props: any) {
 				setOptions(users.map<ProfileUser>(user => new ProfileUser(user.id, user.username)))
 			else
 				console.log("No users available!")
+			asyncUpdateUser(users[0].id)
 		}
 		getUsers()
 		return <></>
 	}
 	
-	const onChange = (data: React.ChangeEvent<HTMLSelectElement>) => {
-		if (data.target.value !== "")
-			onSelectCallBack(data.target.value)
+	const onChange = async (data: React.ChangeEvent<HTMLSelectElement>) => {
+		if (data.target.value === "")
+			return
+		asyncUpdateUser(data.target.value)
 	}
 	
 	return (
@@ -30,6 +34,7 @@ export default function UserSelect(props: any) {
 			<select onChange={onChange}>{options.map(
 				(user) =>(<option value={user.ID}>{user.Name}</option>))
 			}</select>
+			<br />
 		</>
 	)
 }

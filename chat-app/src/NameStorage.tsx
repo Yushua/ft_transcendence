@@ -23,7 +23,7 @@ export default class NameStorage {
 		var name = this._rooms.get(roomID)
 		if (!!name)
 			return name
-		name = HTTP.Get(`chat/room/${roomID}/name`) ?? undefined
+		name = HTTP.Get(`chat/room/${roomID}/Name`) ?? undefined
 		if (!name)
 			return ""
 		this._rooms.set(roomID, name)

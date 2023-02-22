@@ -3,6 +3,8 @@ import HTTP from "../HTTP";
 export default class ChatUser {
 	private static _chatUser: any | null = null;
 	
+	static Clear() { this._chatUser = null }
+	
 	static async asyncDownload(userID: string) {
 		const user = await JSON.parse(HTTP.Get(`chat/user/${userID}`))
 		if (!!user)

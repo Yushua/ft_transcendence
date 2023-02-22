@@ -1,26 +1,26 @@
 export default class HTTP {
-	static Get(url: string, body: string | null = null, hdr: Map<string, string> | null = null): string 
+	static Get(url: string, body: string | object | null = null, hdr: Map<string, string> | null = null): string 
 		{ return this.SendRequest("GET", url, body, hdr) }
 	
-	static Post(url: string, body: string | null = null, hdr: Map<string, string> | null = null): string
+	static Post(url: string, body: string | object | null = null, hdr: Map<string, string> | null = null): string
 		{ return this.SendRequest("POST", url, body, hdr) }
 	
-	static Delete(url: string, body: string | null = null, hdr: Map<string, string> | null = null): string 
+	static Delete(url: string, body: string | object | null = null, hdr: Map<string, string> | null = null): string 
 		{ return this.SendRequest("DELETE", url, body, hdr) }
 	
-	static async asyncGet(url: string, body: string | null = null, hdr: Map<string, string> | null = null, callback: ((this: XMLHttpRequest, ev: Event) => any) | null = null)
+	static async asyncGet(url: string, body: string | object | null = null, hdr: Map<string, string> | null = null, callback: ((this: XMLHttpRequest, ev: Event) => any) | null = null)
 		{ return this.asyncSendRequest("GET", url, body, hdr, callback) }
 	
-	static async asyncPost(url: string, body: string | null = null, hdr: Map<string, string> | null = null, callback: ((this: XMLHttpRequest, ev: Event) => any) | null = null)
+	static async asyncPost(url: string, body: string | object | null = null, hdr: Map<string, string> | null = null, callback: ((this: XMLHttpRequest, ev: Event) => any) | null = null)
 		{ return this.asyncSendRequest("POST", url, body, hdr, callback) }
 	
-	static async asyncDelete(url: string, body: string | null = null, hdr: Map<string, string> | null = null, callback: ((this: XMLHttpRequest, ev: Event) => any) | null = null)
+	static async asyncDelete(url: string, body: string | object | null = null, hdr: Map<string, string> | null = null, callback: ((this: XMLHttpRequest, ev: Event) => any) | null = null)
 		{ return this.asyncSendRequest("DELETE", url, body, hdr, callback) }
 	
 	private static _setupRequest(
 			method: string,
 			url: string,
-			body: string | null,
+			body: string | object | null,
 			hdr: Map<string, string> | null,
 			detach: boolean)
 			: [XMLHttpRequest, string] {
@@ -46,7 +46,7 @@ export default class HTTP {
 	static SendRequest(
 			method: string,
 			url: string,
-			body: string | null,
+			body: string | object | null,
 			hdr: Map<string, string> | null)
 			: string {
 		var [req, fianlBody] = this._setupRequest(method, url, body, hdr, false)
@@ -60,7 +60,7 @@ export default class HTTP {
 	static async asyncSendRequest(
 			method: string,
 			url: string,
-			body: string | null,
+			body: string | object | null,
 			hdr: Map<string, string> | null,
 			callback: ((this: XMLHttpRequest, ev: Event) => any) | null) {
 		var [req, fianlBody] = this._setupRequest(method, url, body, hdr, false)

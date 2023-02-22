@@ -85,7 +85,7 @@ export class ChatService {
 		return room.ID
 	}
 	
-	async NewRoom(roomDTO: ChatRoomDTO): Promise<ChatRoom> {
+	async NewRoom(roomDTO: ChatRoomDTO): Promise<string> {
 		
 		const { OwnerID, Name, Password, RoomType } =  roomDTO
 		var room = await this.chatRoomRepo.create({
@@ -98,7 +98,7 @@ export class ChatService {
 		
 		await this.ModifyUser(OwnerID, user => {user.ChatRoomsIn.push(room.ID)})
 		
-		return room
+		return room.ID
 	}
 	
 	async GetMessages(roomID: string, index: number): Promise<ChatMessage[]> {

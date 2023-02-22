@@ -86,11 +86,8 @@ export class ChatController {
 	@Post("room")
 	async MakeNewRoom(
 		@Body() room: ChatRoomDTO)
-		: Promise<ChatRoom> {
-			const ret = await this.service.NewRoom(room)
-			this.service.Notify("user-" + room.OwnerID, "you have been added")
-			return ret
-		}
+		: Promise<string>
+			{ return await this.service.NewRoom(room) }
 	
 	@Post("msg/:roomID")
 	async PostNewMessage(
