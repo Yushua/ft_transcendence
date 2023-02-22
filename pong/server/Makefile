@@ -22,6 +22,7 @@ setup:
 	npm i --save @nestjs/common
 	npm i --save class-validator
 	npm i --save @nestjs/jwt
+	npm i --save @nestjs/websockets @nestjs/platform-socket.io
 	npm add socket.io-client
 	npm audit fix
 

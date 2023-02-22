@@ -2,6 +2,8 @@ import { Controller, Get, Param, Patch, Post, Query, Body } from '@nestjs/common
 import { GameService } from './game.service'
 import { GameRoom } from './components/game_room'
 import { GameRoomDTO } from './dto/game_room.dto';
+import { io } from 'socket.io-client'
+
 // import { GameApp } from './game.app'
 
 @Controller('game')

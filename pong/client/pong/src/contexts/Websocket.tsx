@@ -1,4 +1,4 @@
-import React from "react"
+import React, { MutableRefObject } from "react"
 import { WebsocketContext } from "./WebsocketContext"
 
 type MessagePayload = {
@@ -9,19 +9,28 @@ type MessagePayload = {
 export const Websocket = () => {
 
 	const socket = React.useContext(WebsocketContext)
-	const [value, setValue] = React.useState("")
-
+	// const [gamename, setGameName] = React.useState("")
 	/*todo */
-	const [game_data, setGameData] = React.useState<MessagePayload[]>([])
+	// const [game_data, setGameData] = React.useState<MessagePayload[]>([])
+	// let pending:MutableRefObject<boolean> = React.useRef(false)
+	const [pending, setPending] = React.useState(false)
+	const [connected, setConnected] = React.useState(false)
 
 	React.useEffect(() => {
 		socket.on('connect', () => {
 			console.log('connected with gateway!', socket.id)
+			setConnected(true)
 		})
 		socket.on('onMessage', (newMessage: MessagePayload) => {
 			console.log(newMessage.msg)
 			console.log(newMessage.content)
-			setGameData((prev) => [...prev, newMessage])
+			// setGameData((prev) => [...prev, newMessage])
+		})
+		socket.on('pending', () => {
+			setPending(true)
+		})
+		socket.on('joined', (gamename: string) => {
+			console.log(gamename)
 		})
 		return () => {
 			console.log('unregisterin events')
@@ -31,34 +40,14 @@ export const Websocket = () => {
 		}
 	}, [socket])
 
-	const onSubmit = () => {
-		socket.emit('newMessage', value)
-		setValue("")
+	const findGame = () => {
+		socket.emit('LFG')
 	}
 
 	return (
 		<div>
-			<div>
-				<h1>
-					Websocket Component
-				</h1>
-				<div>
-					{game_data.length === 0 ?
-						<div>
-							No Data
-						</div> :
-						<div>
-							{game_data.map((msg) => 
-							<div>
-								<p> {msg.content} </p>
-							</div>)}
-						</div>}
-				</div>
-				<div>
-					<input type="text" value={value} onChange={(e) => setValue(e.target.value)}/>
-					<button onClick={() => onSubmit()}>Submit</button>
-				</div>
-			</div>
+			<h5>{pending ? 'Waiting for second player...' : 'Click to join game'}</h5>
+			<button onClick={() => findGame()}>Join Game</button>
 		</div>
 	)
 }

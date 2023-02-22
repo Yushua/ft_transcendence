@@ -1,7 +1,7 @@
 import { OnModuleInit } from "@nestjs/common";
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 export declare class MyGateway implements OnModuleInit {
     server: Server;
     onModuleInit(): void;
-    onNewMessage(body: any): void;
+    handleLFG(client: Socket): void;
 }

@@ -15,19 +15,40 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MyGateway = void 0;
 const websockets_1 = require("@nestjs/websockets");
 const socket_io_1 = require("socket.io");
+let queuedclient = undefined;
+let n_game_rooms = 0;
+let game_room = 'game_0';
 let MyGateway = class MyGateway {
     onModuleInit() {
         this.server.on('connection', (socket) => {
             console.log(socket.id);
             console.log('Connected');
         });
-    }
-    onNewMessage(body) {
-        console.log(body);
-        this.server.emit('onMessage', {
-            msg: 'return message:',
-            content: body
+        this.server.on('disconnect', (socket) => {
+            console.log(socket.id);
+            console.log('disconnected');
         });
+    }
+    handleLFG(client) {
+        console.log(client.id);
+        if (queuedclient === undefined || client === queuedclient) {
+            queuedclient = client;
+            client.emit('pending');
+        }
+        else {
+            game_room = game_room.replace(n_game_rooms.toString(), (n_game_rooms + 1).toString());
+            n_game_rooms++;
+            console.log(game_room);
+            client.join(game_room);
+            queuedclient.join(game_room);
+            client.emit('joined', game_room);
+            queuedclient.emit('joined', game_room);
+            this.server.to("game1").emit("onMessage", {
+                msg: 'sending this to game1',
+                content: 'this'
+            });
+            queuedclient = undefined;
+        }
     }
 };
 __decorate([
@@ -35,12 +56,12 @@ __decorate([
     __metadata("design:type", socket_io_1.Server)
 ], MyGateway.prototype, "server", void 0);
 __decorate([
-    (0, websockets_1.SubscribeMessage)('newMessage'),
-    __param(0, (0, websockets_1.MessageBody)()),
+    (0, websockets_1.SubscribeMessage)('LFG'),
+    __param(0, (0, websockets_1.ConnectedSocket)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [socket_io_1.Socket]),
     __metadata("design:returntype", void 0)
-], MyGateway.prototype, "onNewMessage", null);
+], MyGateway.prototype, "handleLFG", null);
 MyGateway = __decorate([
     (0, websockets_1.WebSocketGateway)({
         cors: {

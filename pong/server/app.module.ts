@@ -22,6 +22,7 @@ import { ChatModule } from 'src/chat/chat.module';
     LoginModule,
     GameModule,
     ChatModule,
-    GatewayModule],
+    GatewayModule
+    ],
 })
 export class AppModule {}
