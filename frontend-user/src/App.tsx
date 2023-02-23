@@ -28,6 +28,7 @@ async function AccCreate(username: string, password: string, email:string){
     return result;
   }
   catch (e: any) {
+    error1 = e;
     console.log(e)
     // error1 = "account name/email was done"
     // if (error instanceof Error) {
@@ -54,7 +55,6 @@ async function Acclogin(username: string, password: string, email:string) {
         'Content-Type': "application/x-www-form-urlencoded",
       },
     })
-    
     if (!response.ok) {
       error2 = `Error! status: ${(await response.json()).message}`;
       throw new Error(`Error! status: ${(await response.json()).message}`);
@@ -63,6 +63,9 @@ async function Acclogin(username: string, password: string, email:string) {
     const result = (await response.json())
     
     console.log('result is: ', JSON.stringify(result, null, 4));
+    var accessToken: string = result["accessToken"];
+    // cookie
+    console.log('keycode: ', accessToken);
     error2 = "succesfull";
     return result;
   }
@@ -117,21 +120,6 @@ const handleAccLogin = (e: React.FormEvent<YourFormElement>) => {
     errorThingy.innerHTML = error2
 }
 
-// function GetUsername(): string { return "AAAAAA" }
-// function GetPassword(): string { return "aaAA!!11" }
-// function GetEmail(): string { return "AAA@AAA.AAA" }
-
-// function SendingStuff() {
-//   var req = new XMLHttpRequest()
-//   req.open("POST", 'http://localhost:4242/login/signup')
-//   req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
-//   req.send(`username=${GetUsername()}&password=${GetPassword()}&eMail=${GetEmail()}`)
-// }
-
-// document.cookie = "userId=oeschger; SameSite=None; Secure";
-// document.cookie = "authenticationCode=oeschger; SameSite=None; Secure";
-
-/* <button onClick={_ => { func(123) }}> </button> */
 const App: React.FC = () => {
 
   return (
