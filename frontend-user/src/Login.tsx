@@ -1,6 +1,10 @@
 import React, { } from 'react';
 import './App.css';
-import { getCookie, getCookies, removeCookie, setCookie } from 'typescript-cookie'
+import { getCookies, removeCookie, setCookie } from 'typescript-cookie'
+import UserProfilePage from './userProfile';
+
+import { newWindow } from './App';
+import { Link } from 'react-router-dom';
 
 var error1: string = "";
 var error2: string = "";
@@ -76,20 +80,11 @@ async function Acclogin(username: string, password: string, email:string) {
     console.log('keycode c: ', getCookies());
     console.log('acces: ', getCookies().accessToken);
     console.log('user: ', getCookies().userID);
+    newWindow(<UserProfilePage />)
     return result;
   }
   catch (e: any) {
     console.log(e)
-    // error1 = "account name/email was done"
-    // if (error instanceof Error) {
-    //   error1 = 'error message: ' + error
-    //   console.log('error message: ', error.message);
-    //   return error.message;
-    // } else {
-    //   error1 = 'error message: ' + error
-    //   console.log('unexpected error: ', error);
-    //   return 'An unexpected error occurred';
-    // }
   }
 }
 
@@ -149,19 +144,20 @@ const LoginPage: React.FC = () => {
         <div><label id="errorCode1" htmlFor="error1"></label></div>
         <button type="submit">Submit</button>
       </form>
+          <form onSubmit={
+            ( handleAccLogin)}>
+          <div>
+            <label htmlFor="username">Username:</label>
+            <input id="username" type="text" />
+            <label htmlFor="password">Password:</label>
+            <input id="password" type="text" />
+            <label htmlFor="eMail">Email:</label>
+            <input id="eMail" type="text" />
+          </div>
+            <div><label id="errorCode2" htmlFor="error2"></label></div>
 
-        <form onSubmit={handleAccLogin}>
-        <div>
-          <label htmlFor="username">Username:</label>
-          <input id="username" type="text" />
-          <label htmlFor="password">Password:</label>
-          <input id="password" type="text" />
-          <label htmlFor="eMail">Email:</label>
-          <input id="eMail" type="text" />
-        </div>
-        <div><label id="errorCode2" htmlFor="error2"></label></div>
-        <button type="submit">Submit</button>
-      </form>
+            <button type="submit">Submit</button>
+          </form>
     </div>
   );
 }

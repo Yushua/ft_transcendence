@@ -5,8 +5,8 @@ const UserProfilePage: React.FC = () => {
 
   return (
 
-    <div className="UserProfilePage
-  ">
+    <div className="UserProfilePage">
+      hello, i am here
     </div>
   );
 }
