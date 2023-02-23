@@ -18,7 +18,7 @@ export class LoginController {
     @Post('/signin')
     signIn(
         @Body() authCredentialsDto: AuthCredentialsDto
-        ): Promise<{ accessToken: string}> {
+        ): Promise<{ accessToken: string, userID:string}> {
         //frontend will save this token and attach
         //it to every application afterwards
         return this.loginService.signIn(authCredentialsDto);

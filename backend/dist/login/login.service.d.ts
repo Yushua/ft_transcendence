@@ -9,5 +9,6 @@ export declare class LoginService {
     createUser(authCredentialsDto: AuthCredentialsDto): Promise<UserProfile>;
     signIn(authCredentialsDto: AuthCredentialsDto): Promise<{
         accessToken: string;
+        userID: string;
     }>;
 }

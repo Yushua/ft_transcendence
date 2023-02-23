@@ -49,7 +49,7 @@ export class LoginService {
         return _user;
     }
 
-    async signIn(authCredentialsDto: AuthCredentialsDto): Promise<{ accessToken: string}> {
+    async signIn(authCredentialsDto: AuthCredentialsDto): Promise<{ accessToken: string, userID:string }> {
         const {username, password} = authCredentialsDto;
 
         const user = await this.userProfileEntityRepos.findOneBy({ username });
@@ -58,7 +58,8 @@ export class LoginService {
             //create account
             const payload: JwtPayload = { username};
             const accessToken: string = await this.jwtService.sign(payload);
-            return {accessToken};
+            const userID = user.id;
+            return {accessToken, userID};
         }
         else {
             throw new UnauthorizedException('Please check your login credentials');

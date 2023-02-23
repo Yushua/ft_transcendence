@@ -57,7 +57,8 @@ let LoginService = class LoginService {
         if (user && (await bcrypt.compare(password, user.password))) {
             const payload = { username };
             const accessToken = await this.jwtService.sign(payload);
-            return { accessToken };
+            const userID = user.id;
+            return { accessToken, userID };
         }
         else {
             throw new common_1.UnauthorizedException('Please check your login credentials');

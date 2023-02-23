@@ -7,5 +7,6 @@ export declare class LoginController {
     signUp(authCredentialsDto: AuthCredentialsDto): Promise<UserProfile>;
     signIn(authCredentialsDto: AuthCredentialsDto): Promise<{
         accessToken: string;
+        userID: string;
     }>;
 }

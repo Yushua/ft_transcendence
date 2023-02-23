@@ -1,5 +1,6 @@
 import React, { } from 'react';
 import './App.css';
+import { getCookie, getCookies, removeCookie, setCookie } from 'typescript-cookie'
 
 var error1: string = "";
 var error2: string = "";
@@ -64,9 +65,18 @@ async function Acclogin(username: string, password: string, email:string) {
     
     console.log('result is: ', JSON.stringify(result, null, 4));
     var accessToken: string = result["accessToken"];
+    var userID: string = result["userID"];
     // cookie
     console.log('keycode: ', accessToken);
+    console.log('userID: ', userID);
     error2 = "succesfull";
+    removeCookie('accessToken');
+    removeCookie('userID');
+    setCookie('accessToken', accessToken,{ expires: 1 });
+    setCookie('userID', userID,{ expires: 1 });
+    console.log('keycode c: ', getCookies());
+    console.log('acces: ', getCookies().accessToken);
+    console.log('user: ', getCookies().userID);
     return result;
   }
   catch (e: any) {
