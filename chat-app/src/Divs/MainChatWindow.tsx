@@ -72,15 +72,22 @@ export default function MainChatWindow(props: any) {
 	}
 	
 	return (
-		<center>
-			<div style={{border: "solid", overflow: "hidden", width: "80%"}}>
-				<div>
-					<button onClick={() => setMainWindow("chat")}>Chat</button>
-					<button onClick={() => setMainWindow("servers")}>Servers</button>
-					<button onClick={() => setMainWindow("newroom")}>NewRoom</button>
-				</div>
-				<div style={{display: "table", width: "100%"}}> {window} </div>
+	<center>
+		<div style={{width: "80%"}}>
+			<div>
+				<button onClick={() => setMainWindow("chat")}>Chat</button>
+				<button onClick={() => setMainWindow("servers")}>Servers</button>
+				<button onClick={() => setMainWindow("newroom")}>NewRoom</button>
 			</div>
-		</center>
+			
+			{/* MetaDiv */}
+			<div style={{border: "solid", width: "100%", height: "5.5cm", overflow: "hidden", lineHeight: ".5cm"}}>
+				{/* ContentTable */}
+				<div style={{display: "table", width: "100%", height: "100%"}}>
+					{window}
+				</div>
+			</div>
+		</div>
+	</center>
 	)
 }

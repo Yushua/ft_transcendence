@@ -17,9 +17,14 @@ export async function asyncUpdateRoomList() {
 function GenerateRoomListJSX(): JSX.Element[] {
 	return ChatUser.ChatRoomsIn.map(roomID => {
 		if (ChatRoom.ID === roomID)
-			return (<>{NameStorage.GetRoom(roomID)}<br/></>)
+			return (<div
+			style={{height: ".5cm", width: "100%", textAlign: "left", fontSize: ".45cm"}}>
+				{NameStorage.GetRoom(roomID)}</div>)
 		else
-			return (<><button onClick={_ => asyncChangeRoom(roomID)}>{NameStorage.GetRoom(roomID)}</button><br/></>)
+			return (<><button
+			style={{height: ".5cm", width: "100%", textAlign: "left", fontSize: ".35cm"}}
+			onClick={_ => asyncChangeRoom(roomID)}>
+				{NameStorage.GetRoom(roomID)}</button><br/></>)
 	})
 }
 
@@ -31,8 +36,7 @@ export default function RoomList() {
 	_setRooms = setRooms
 	
 	return (
-		<div style={{border: "dotted"}}>
-			{`[Rooms]`} <br />
+		<div style={{overflowY: "scroll", overflowX: "hidden", width: "3.5cm", fontSize: ".45cm", height: "5cm"}}>
 			{rooms}
 		</div>
 	)

@@ -15,10 +15,12 @@ export default function RoomSelectWindow() {
 	}
 	
 	return (
-		<div style={{width: "100px", display: "table-cell", border: "solid"}}>
+		<div style={{display: "table-cell", width: "3.5cm"}}>
 			<div>
-				<button style={{display: "table-cell"}} onClick={() => setDisplay("friend")}>F</button>
-				<button style={{display: "table-cell"}} onClick={() => setDisplay("room")}>R</button>
+				<button style={{width: "50%", height: ".5cm"}}
+					onClick={() => setDisplay("friend")}>Friends</button>
+				<button style={{width: "50%", height: ".5cm"}}
+					onClick={() => setDisplay("room")}>Rooms</button>
 			</div>
 			{window}
 		</div>

@@ -18,9 +18,14 @@ export async function asyncUpdateFriendsList() {
 function GenerateFriedListJSX(): JSX.Element[] {
 	return User.Friends.map(friendID => {
 		if (ChatRoom.IsRoomOfFriend(friendID))
-			return (<>{NameStorage.GetUser(friendID)}<br/></>)
+			return (<><div
+			style={{height: ".5cm", width: "100%", textAlign: "left", fontSize: ".45cm"}}>
+				{NameStorage.GetUser(friendID)}</div></>)
 		else
-			return (<><button onClick={_ => _changeToFriendRoom(friendID)}>{NameStorage.GetUser(friendID)}</button><br/></>)
+			return (<><button
+			style={{height: ".5cm", width: "100%", textAlign: "left", fontSize: ".35cm"}}
+			onClick={_ => _changeToFriendRoom(friendID)}>
+				{NameStorage.GetUser(friendID)}</button><br/></>)
 	})
 }
 
@@ -43,8 +48,7 @@ export default function FriendsList() {
 	_setFriends = setFriends
 	
 	return (
-		<div style={{border: "dotted"}}>
-			{`[Friends]`} <br />
+		<div style={{overflowY: "scroll", overflowX: "hidden", width: "3.5cm", fontSize: ".45cm", height: "5cm"}}>
 			{friends}
 		</div>
 	)
