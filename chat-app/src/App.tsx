@@ -2,11 +2,6 @@ import './App.css'
 import HTTP from "./HTTP"
 import UserSelect from './Divs/UserSelect';
 import MainChatWindow, { SetMainWindow } from './Divs/MainChatWindow';
-import User from './Downloadable/User';
-import ChatUser from './Downloadable/ChatUser';
-import { asyncUpdateFriendsList } from './Divs/FriendsList';
-import { asyncUpdateRoomList } from './Divs/RoomList';
-import NameStorage from './NameStorage';
 
 function App() {
 	return (

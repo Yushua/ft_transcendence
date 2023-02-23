@@ -21,6 +21,7 @@ export default function RoomCreation(props: any) {
 				const pass: string = (document.getElementById("_RoomPassword") as HTMLInputElement).value
 				const type: boolean = (document.getElementById("_RoomType") as HTMLInputElement).checked
 				HTTP.asyncPost(`chat/room`, {OwnerID:User.ID, Name:name, Password:pass, RoomType:(type?"Private":"Public")}, null, async function() {
+					await ChatUser.asyncDownload(ChatUser.ID)
 					await ChatRoom.asyncDownload(this.responseText)
 					if (ChatRoom.ID !== "")
 						SetMainWindow("chat")

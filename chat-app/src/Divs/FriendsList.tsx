@@ -31,7 +31,10 @@ async function _changeToFriendRoom(friendID: string) {
 	if (index >= 0)
 		asyncChangeRoom(ChatUser.DirectChatsIn[index])
 	else
-		HTTP.asyncPost(`chat/direct/${ChatUser.ID}/${friendID}`, null, null, function() {asyncChangeRoom(this.responseText)})
+		HTTP.asyncPost(`chat/direct/${ChatUser.ID}/${friendID}`, null, null, async function() {
+			await ChatUser.asyncDownload(ChatUser.ID)
+			asyncChangeRoom(this.responseText)
+		})
 }
 
 export default function FriendsList() {

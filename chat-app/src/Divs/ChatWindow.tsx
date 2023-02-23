@@ -39,7 +39,7 @@ export default function ChatWindow(props: any) {
 	_setChatLog = setChatLog
 	
 	if (ChatRoom.ID === "")
-		return <></>
+		return <div style={{border: "solid", overflow: "hidden", display: "table-cell"}}></div>
 	
 	if (chatLog.length === 0)
 		asyncUpdateChatLog()
