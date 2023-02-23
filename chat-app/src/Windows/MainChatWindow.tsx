@@ -1,21 +1,17 @@
 import React, { useState } from "react";
-import HTTP from "../HTTP";
-import ChatWindow, { asyncUpdateChatLog } from "./ChatWindow";
-import MembersList from "./MembersList";
-import RoomSelectWindow from "./RoomSelectWindow";
+import ChatWindow, { asyncUpdateChatLog } from "./Chat/ActualChat/ChatWindow";
+import MembersWindow from "./Chat/Members/MembersWindow";
+import RoomSelectWindow from "./Chat/RoomSelect/RoomSelectWindow";
 import User from "../Downloadable/User";
 import ChatUser from "../Downloadable/ChatUser";
-import NameStorage from "../NameStorage";
-import RoomCreation from "./RoomCreation";
+import NameStorage from "../Downloadable/NameStorage";
+import RoomCreation from "./RoomCreation/RoomCreation";
 import ChatRoom from "../Downloadable/ChatRoom";
-import { asyncUpdateFriendsList } from "./FriendsList";
-import { asyncUpdateRoomList } from "./RoomList";
 
 export async function asyncUpdateUser(userID: string) {
 	if (userID === "")
 		return
 	ChatRoom.Clear()
-	await asyncUpdateChatLog()
 	await User.asyncDownload(userID)
 	await ChatUser.asyncDownload(userID)
 	SetMainWindow(`load ${userID}`)
@@ -23,8 +19,6 @@ export async function asyncUpdateUser(userID: string) {
 
 export async function asyncChangeRoom(roomID: string) {
 	await ChatRoom.asyncDownload(roomID)
-	asyncUpdateFriendsList()
-	asyncUpdateRoomList()
 	asyncUpdateChatLog()
 }
 
@@ -35,13 +29,10 @@ export function SetMainWindow(window: string) {
 var _setMainWindow: React.Dispatch<React.SetStateAction<string>> | null = null
 
 async function _load() {
-	for (const friendID of User.Friends)
-		await NameStorage.asyncGetUser(friendID)
 	SetMainWindow("chat")
 }
 
-export default function MainChatWindow(props: any) {
-	var onSelectCallBack: (userID: string) => void = props.onSelectCallBack
+export default function MainChatWindow() {
 	
 	const [MainWindow, setMainWindow] = useState<string>("")
 	_setMainWindow = setMainWindow
@@ -60,7 +51,7 @@ export default function MainChatWindow(props: any) {
 		default:
 			return <></>;
 		case "chat":
-			window = <> <RoomSelectWindow/> <ChatWindow/> <MembersList/> </>
+			window = <> <RoomSelectWindow/> <ChatWindow/> <MembersWindow/> </>
 			break;
 		case "servers":
 			window = <> TODO: Server browser </>	
@@ -75,9 +66,18 @@ export default function MainChatWindow(props: any) {
 	<center>
 		<div style={{width: "80%"}}>
 			<div>
-				<button onClick={() => setMainWindow("chat")}>Chat</button>
-				<button onClick={() => setMainWindow("servers")}>Servers</button>
-				<button onClick={() => setMainWindow("newroom")}>NewRoom</button>
+				<button
+					onClick={() => setMainWindow("chat")}
+					disabled={MainWindow === "chat"}
+					>Chat</button>
+				<button
+					onClick={() => setMainWindow("servers")}
+					disabled={MainWindow === "servers"}
+					>Servers</button>
+				<button
+					onClick={() => setMainWindow("newroom")}
+					disabled={MainWindow === "newroom"}
+					>NewRoom</button>
 			</div>
 			
 			{/* MetaDiv */}

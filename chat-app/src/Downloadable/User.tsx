@@ -1,4 +1,5 @@
 import HTTP from "../HTTP";
+import NameStorage from "./NameStorage";
 
 export default class User {
 	private static _user: any | null = null;
@@ -7,14 +8,18 @@ export default class User {
 	
 	static async asyncDownload(userID: string) {
 		const user = await JSON.parse(HTTP.Get(`user-profile/user/${userID}`))
-		if (!!user)
+		if (!!user) {
+			await NameStorage.asyncGetUser(user.id)
+			for (const memberID of user.friendList)
+				await NameStorage.asyncGetUser(memberID)
 			this._user = user
+		}
 	}
 	
 	static get ID():       string   { return this._user?.id ?? "" }
-	static get Name():     string   { return this._user?.username ?? [] }
-	static get Password(): string   { return this._user?.password ?? [] }
-	static get Email():    string   { return this._user?.eMail ?? [] }
-	static get IconURL():  string   { return this._user?.profilePicture ?? [] }
+	static get Name():     string   { return this._user?.username ?? "" }
+	static get Password(): string   { return this._user?.password ?? "" }
+	static get Email():    string   { return this._user?.eMail ?? "" }
+	static get IconURL():  string   { return this._user?.profilePicture ?? "" }
 	static get Friends():  string[] { return this._user?.friendList ?? [] }
 }

@@ -1,4 +1,5 @@
-import HTTP from "./HTTP"
+import HTTP from "../HTTP"
+import ChatRoom from "./ChatRoom"
 
 export default class NameStorage {
 	private static _users = new Map<string, string>

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import HTTP from "../HTTP";
-import User from "../Downloadable/User";
-import NameStorage from "../NameStorage";
-import { asyncUpdateUser } from "./MainChatWindow";
+import HTTP from "../../HTTP";
+import User from "../../Downloadable/User";
+import NameStorage from "../../Downloadable/NameStorage";
+import { asyncUpdateUser } from "../MainChatWindow";
 
 class ProfileUser { constructor ( public ID: string, public Name: string ) {} }
 

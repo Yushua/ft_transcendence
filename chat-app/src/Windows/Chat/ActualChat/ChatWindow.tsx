@@ -1,14 +1,19 @@
 import React, { useState } from "react";
-import HTTP from "../HTTP";
-import ChatRoom from "../Downloadable/ChatRoom";
-import NameStorage from "../NameStorage";
-import User from "../Downloadable/User";
+import HTTP from "../../../HTTP";
+import ChatRoom from "../../../Downloadable/ChatRoom";
+import NameStorage from "../../../Downloadable/NameStorage";
+import User from "../../../Downloadable/User";
 
 var _logDepth = 30
 
 export async function asyncUpdateChatLog() {
-	if (ChatRoom.ID === "" || !_setChatLog)
+	if (!_setChatLog)
 		return
+	if (ChatRoom.ID === "") {
+		_setChatLog([])
+		return
+	}
+	
 	var chat: JSX.Element[] = []
 	var count = 0
 
@@ -34,8 +39,7 @@ export async function asyncUpdateChatLog() {
 
 var _setChatLog: React.Dispatch<React.SetStateAction<JSX.Element[]>> | null = null
 
-export default function ChatWindow(props: any) {
-	var onSelectCallBack: (userID: string) => void = props.onSelectCallBack
+export default function ChatWindow() {
 	
 	const [chatLog, setChatLog] = useState<JSX.Element[]>([])
 	_setChatLog = setChatLog

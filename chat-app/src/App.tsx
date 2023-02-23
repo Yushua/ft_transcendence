@@ -1,7 +1,7 @@
 import './App.css'
 import HTTP from "./HTTP"
-import UserSelect from './Divs/UserSelect';
-import MainChatWindow, { SetMainWindow } from './Divs/MainChatWindow';
+import UserSelect from './Windows/Debug/UserSelect';
+import MainChatWindow, { SetMainWindow } from './Windows/MainChatWindow';
 
 function App() {
 	return (

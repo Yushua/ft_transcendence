@@ -1,13 +1,12 @@
 import React, { useState } from "react";
-import HTTP from "../HTTP";
-import ChatUser from "../Downloadable/ChatUser";
-import ChatRoom from "../Downloadable/ChatRoom";
-import NameStorage from "../NameStorage";
-import { asyncChangeRoom, SetMainWindow } from "./MainChatWindow";
-import User from "../Downloadable/User";
+import HTTP from "../../HTTP";
+import ChatUser from "../../Downloadable/ChatUser";
+import ChatRoom from "../../Downloadable/ChatRoom";
+import NameStorage from "../../Downloadable/NameStorage";
+import { asyncChangeRoom, SetMainWindow } from "../MainChatWindow";
+import User from "../../Downloadable/User";
 
-export default function RoomCreation(props: any) {
-	var onSelectCallBack: (userID: string) => void = props.onSelectCallBack
+export default function RoomCreation() {
 	
 	return (
 		<div style={{border: "solid"}}>
