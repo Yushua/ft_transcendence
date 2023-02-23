@@ -1,10 +1,9 @@
 import React, { } from 'react';
 import './App.css';
-import { getCookies, removeCookie, setCookie } from 'typescript-cookie'
+import { getCookie, getCookies, removeCookie, setCookie } from 'typescript-cookie'
 import UserProfilePage from './userProfile';
 
 import { newWindow } from './App';
-import { Link } from 'react-router-dom';
 
 var error1: string = "";
 var error2: string = "";
@@ -34,16 +33,6 @@ async function AccCreate(username: string, password: string, email:string){
   catch (e: any) {
     error1 = e;
     console.log(e)
-    // error1 = "account name/email was done"
-    // if (error instanceof Error) {
-    //   error1 = 'error message: ' + error
-    //   console.log('error message: ', error.message);
-    //   return error.message;
-    // } else {
-    //   error1 = 'error message: ' + error
-    //   console.log('unexpected error: ', error);
-    //   return 'An unexpected error occurred';
-    // }
   }
 }
 
@@ -125,6 +114,12 @@ const handleAccLogin = (e: React.FormEvent<YourFormElement>) => {
 }
 
 const LoginPage: React.FC = () => {
+
+  // if (getCookie("accessToken") != null) {
+  //   //still need to check if its funcional.
+  //   //simple get http request to see if it returns an OK
+  //   newWindow(<UserProfilePage />);
+  // }
 
   return (
 
