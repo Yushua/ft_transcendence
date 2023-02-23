@@ -8,6 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GameRoomDTO = void 0;
 const class_validator_1 = require("class-validator");
@@ -32,7 +33,7 @@ __decorate([
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsEnum)(game_room_1.GameRoomType),
-    __metadata("design:type", Number)
+    __metadata("design:type", typeof (_a = typeof game_room_1.GameRoomType !== "undefined" && game_room_1.GameRoomType) === "function" ? _a : Object)
 ], GameRoomDTO.prototype, "RoomType", void 0);
 exports.GameRoomDTO = GameRoomDTO;
 //# sourceMappingURL=game_room.dto.js.map

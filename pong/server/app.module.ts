@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserProfileModule } from './src/user-profile/user-profile.module';
 import { LoginModule } from './src/login/login.module';
-import { GameModule } from './src/game/game.module';
-import { GatewayModule } from './src/gateway/gateway.module';
+import { PongModule } from './src/pong/pong.module';
 import { ChatModule } from 'src/chat/chat.module';
+import { GatewayModule } from 'src/pong/utils/gateway.module';
 
 @Module({
   imports: [
@@ -20,9 +20,9 @@ import { ChatModule } from 'src/chat/chat.module';
       synchronize: true, //keeps it in sync
       }),
     LoginModule,
-    GameModule,
     ChatModule,
-    GatewayModule
+    PongModule,
+    GatewayModule,
     ],
 })
 export class AppModule {}
