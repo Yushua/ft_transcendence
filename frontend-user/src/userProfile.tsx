@@ -1,14 +1,14 @@
 import React, { } from 'react';
 import './userProfile.css';
 
-const userProfile: React.FC = () => {
+const UserProfilePage: React.FC = () => {
 
   return (
 
-    <div className="userProfile
+    <div className="UserProfilePage
   ">
     </div>
   );
 }
 
-export default userProfile;
+export default UserProfilePage;

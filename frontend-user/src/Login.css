@@ -1,4 +1,4 @@
-.UserProfilePage {
+.LoginPage {
   text-align: center;
   width: 100vw;
   height: 100vh;
@@ -25,7 +25,7 @@
 }
 /*
 
-.App-logo {
+.LoginPage-logo {
   height: 40vmin;
   pointer-events: none;
 }
