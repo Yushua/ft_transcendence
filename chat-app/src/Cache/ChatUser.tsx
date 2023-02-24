@@ -1,3 +1,4 @@
+import { ChatUserEvent } from "../Events/ChatUserEventHandle";
 import HTTP from "../Utils/HTTP";
 import { asyncUpdateMembersWindow } from "../Windows/Chat/Members/MembersWindow";
 import { asyncUpdateFriendsList } from "../Windows/Chat/RoomSelect/FriendsList";
@@ -18,6 +19,7 @@ export default class ChatUser {
 		const user = await JSON.parse(HTTP.Get(`chat/user/${userID}`))
 		if (!!user) {
 			this._chatUser = user
+			ChatUserEvent.SubscribeToUserEvent(`chat/event/user-${userID}`)
 			this._updateEvent()
 		}
 	}

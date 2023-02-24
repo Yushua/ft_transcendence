@@ -11,6 +11,7 @@ export class ChatRoom {
 	@PrimaryGeneratedColumn('uuid')  ID:                string
 	@Column()                        OwnerID:           string
 	@Column()                        Name:              string
+	@Column()                        HasPassword:       boolean
 	@Column()                        RoomType:          ChatRoomType
 	@Column("text", { array: true }) MemberIDs:         string[]
 	@Column("text", { array: true }) AdminIDs:          string[]
@@ -25,4 +26,13 @@ export class ChatRoom {
 export class ChatRoomPassword {
 	@PrimaryColumn({ unique: true }) ID:       string
 	@Column()                        Password: string
+}
+
+export class ChatRoomPreview {
+	constructor (
+		public readonly ID: string,
+		public readonly Name: string,
+		public readonly HasPassword: boolean,
+		public readonly BanIDs: string[],
+	) {}
 }

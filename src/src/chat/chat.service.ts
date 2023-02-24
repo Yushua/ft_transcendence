@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { timeStamp } from 'console';
 import { Repository } from 'typeorm';
 import { ChatMessage, ChatMessageGroupManager } from './chat_entities/chat_message';
-import { ChatRoom, ChatRoomPassword, ChatRoomType } from './chat_entities/chat_room';
+import { ChatRoom, ChatRoomPassword, ChatRoomPreview, ChatRoomType } from './chat_entities/chat_room';
 import { ChatUser } from './chat_entities/chat_user';
 import { ChatMessageDTO } from './dto/chat_message.dto';
 import { ChatRoomDTO } from './dto/chat_room.dto';
@@ -61,6 +61,7 @@ export class ChatService {
 			if (room.OwnerID !== OwnerID)
 				return
 			room.Name = Name
+			room.HasPassword = Password !== ""
 			room.RoomType = +ChatRoomType[RoomType]
 			var roomPass = await this.GetRoomPassword(roomID)
 			roomPass.Password = Password
@@ -88,7 +89,7 @@ export class ChatService {
 			return
 		
 		var room = await this.chatRoomRepo.create({
-			OwnerID:"", Name:"", RoomType: +ChatRoomType.Private,
+			OwnerID:"", Name:"", HasPassword: false, RoomType: +ChatRoomType.Private,
 			MemberIDs:[userID, memberID], AdminIDs:[],
 			BanIDs:[], MuteIDs:[], MuteDates:[],
 			MessageGroupDepth: 0, Direct: true
@@ -113,7 +114,7 @@ export class ChatService {
 		
 		const { OwnerID, Name, Password, RoomType } =  roomDTO
 		var room = await this.chatRoomRepo.create({
-			OwnerID, Name, RoomType: +ChatRoomType[RoomType],
+			OwnerID, Name, HasPassword: Password !== "", RoomType: +ChatRoomType[RoomType],
 			MemberIDs:[OwnerID], AdminIDs:[OwnerID],
 			BanIDs:[], MuteIDs:[], MuteDates:[],
 			MessageGroupDepth: 0, Direct: false
@@ -157,9 +158,11 @@ export class ChatService {
 		this.Notify("room-" + roomID, "msg")
 	}
 	
-	async AddUserToRoom(roomID: string, userID: string) {
+	async AddUserToRoom(roomID: string, userID: string, password: string | null): Promise<string> {
 		var changed = false
 		await this.ModifyRoom(roomID, async room => {
+			if (!!password && room.HasPassword && (await this.GetRoomPassword(roomID)).Password !== password)
+				return
 			if (changed = (!room.BanIDs.includes(userID) && !room.MemberIDs.includes(userID))) {
 				room.MemberIDs.push(userID)
 				await this.ModifyUser(userID, user => {
@@ -168,9 +171,16 @@ export class ChatService {
 			}
 		})
 		if (!changed)
-			return
+			return ""
 		this.Notify(`room-${roomID}`, "mem")
 		this.Notify(`user-${userID}`, "room")
+		return roomID
+	}
+	
+	async GetPublicRooms(): Promise<ChatRoomPreview[]> {
+		return (await this.chatRoomRepo.findBy({RoomType: +ChatRoomType.Public}))
+			.map(room => new ChatRoomPreview(room.ID, room.Name, room.HasPassword, room.BanIDs))
+		
 	}
 	
 	async GetRoom(roomID: string): Promise<ChatRoom>
@@ -242,8 +252,10 @@ export class ChatService {
 				{ room.BanIDs.push(memberID); changed = true}
 				
 		})
-		if (changed)
+		if (changed) {
 			this.Notify(`room-${roomID}`, "mem")
+			this.Notify(`user-${memberID}`, "room")
+		}
 	}
 	
 	async DeleteUser(userID: string): Promise<void> {

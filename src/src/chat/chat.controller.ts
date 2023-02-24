@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Patch, Delete, Body, Param, Sse, Headers, Req, Request, Response, StreamableFile } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { ChatMessage } from './chat_entities/chat_message';
-import { ChatRoom } from './chat_entities/chat_room';
+import { ChatRoom, ChatRoomPreview } from './chat_entities/chat_room';
 import { ChatUser } from './chat_entities/chat_user';
 import { ChatMessageDTO } from './dto/chat_message.dto';
 import { ChatRoomDTO } from './dto/chat_room.dto';
@@ -42,6 +42,11 @@ export class ChatController {
 		@Param("info") info: string)
 		: Promise<ChatUser>
 			{ return (await this.service.GetOrAddUser(userID))[info] }
+	
+	@Get("public")
+	async GetPublicRooms()
+		: Promise<ChatRoomPreview[]>
+			{ return await this.service.GetPublicRooms() }
 	
 	@Get("room/:roomID")
 	GetRoom(
@@ -111,12 +116,20 @@ export class ChatController {
 		: Promise<void>
 			{ await this.service.MakeAdmin(roomID, userID) }
 	
+	@Patch("join/:roomID/:userID/:pass")
+	async JoinRoom(
+		@Param("roomID") roomID: string,
+		@Param("userID") userID: string,
+		@Param("pass") pass: string)
+		: Promise<string>
+			{ return await this.service.AddUserToRoom(roomID, userID, pass) }
+	
 	@Patch("room/:roomID/:userID")
 	async AddUser(
 		@Param("roomID") roomID: string,
 		@Param("userID") userID: string,)
 		: Promise<void>
-			{ await this.service.AddUserToRoom(roomID, userID) }
+			{ await this.service.AddUserToRoom(roomID, userID, null) }
 	
 	@Patch("unban/:roomID/:userID")
 	async UnBan(

@@ -10,7 +10,7 @@ export default function RoomCreation() {
 	const [disabled, setDisanled] = useState<boolean>(false)
 	
 	return (
-		<div style={{border: "solid"}}>
+		<div style={{border: "solid", width: "8cm"}}>
 			Room name: <input id="_RoomName" type="text" /><br />
 			Password: <input id="_RoomPassword" type="text" /><br />
 			Private: <input id="_RoomType" type="checkbox" /><br />

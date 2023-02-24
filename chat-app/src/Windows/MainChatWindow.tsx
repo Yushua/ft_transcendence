@@ -6,6 +6,7 @@ import User from "../Cache/User";
 import ChatUser from "../Cache/ChatUser";
 import RoomCreation from "./RoomCreation/RoomCreation";
 import ChatRoom from "../Cache/ChatRoom";
+import RoomBrowser from "./RoomBrowser/RoomBrowser";
 
 export async function asyncUpdateUserDEBUG(userID: string) {
 	if (userID === "")
@@ -52,8 +53,8 @@ export default function MainChatWindow() {
 		case "chat":
 			window = <> <RoomSelectWindow/> <ChatWindow/> <MembersWindow/> </>
 			break;
-		case "servers":
-			window = <> TODO: Server browser </>	
+		case "rooms":
+			window = <RoomBrowser/>	
 			break;
 		case "newroom":
 			window = <RoomCreation/>
@@ -70,13 +71,13 @@ export default function MainChatWindow() {
 					disabled={MainWindow === "chat"}
 					>Chat</button>
 				<button
-					onClick={() => setMainWindow("servers")}
-					disabled={MainWindow === "servers"}
-					>Servers</button>
+					onClick={() => setMainWindow("rooms")}
+					disabled={MainWindow === "rooms"}
+					>Rooms to Join</button>
 				<button
 					onClick={() => setMainWindow("newroom")}
 					disabled={MainWindow === "newroom"}
-					>NewRoom</button>
+					>New Room</button>
 			</div>
 			
 			{/* MetaDiv */}
