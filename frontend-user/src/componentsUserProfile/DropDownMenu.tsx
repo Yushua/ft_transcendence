@@ -37,6 +37,7 @@ const DropDownMenu: React.FC<DropDownProps> = ({nameOfMenu, listOfFriends}: Drop
     const friendListSelection = (friend: string): void => {
     setselectFriendList(friend);
     };
+    //add a funciton to this list that needs to add the string to the list.
     return (
         <div>
         <button className={showDropDown ? "active" : undefined}
