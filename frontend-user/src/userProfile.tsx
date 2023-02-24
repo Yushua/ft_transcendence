@@ -4,6 +4,7 @@ import './App.css';
 import { getCookie, removeCookie } from 'typescript-cookie';
 import LoginPage from './Login';
 import { newWindow } from './App';
+import DropDown from './components/friendListDropDown';
 
 export function logoutButton() {
   removeCookie('accessToken');
@@ -36,13 +37,14 @@ export async function asyncGetName() {
   }
 }
 
-async function asyncChangeName(newUsername: string){
+async function asyncChangeName(newInput: string){
+  console.log('nameChange');
   try {
     // 👇️ const response: Response
-    var tmp:string = 'http://localhost:4242/user-profile/userchange/' + getCookie('userID') + '/' + newUsername;
+    var tmp:string = 'http://localhost:4242/user-profile/userchange/' + getCookie('userID') + '/' + newInput;
     const response = await fetch(tmp, {
       method: 'POST',
-      body: `username=${newUsername}`,
+      body: `username=${newInput}`,
       headers: {
         Accept: 'application/json',
         'Content-Type': "application/x-www-form-urlencoded",
@@ -69,8 +71,38 @@ async function asyncChangeName(newUsername: string){
   }
 }
 
+async function asyncAddFriend(newInput: string){
+  console.log('friendchange');
+  try {
+    // 👇️ const response: Response
+    var tmp:string = 'http://localhost:4242/user-profile/userchange/' + getCookie('userID') + '/' + newInput;
+    const response = await fetch(tmp, {
+      method: 'POST',
+      body: `username=${newInput}`,
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': "application/x-www-form-urlencoded",
+      },
+    })
+    
+    if (!response.ok) {
+      message = `Error! status: ${(await response.json()).message}`;
+      throw new Error(`Error! status: ${(await response.json()).message}`);
+    }
+    
+    const result = (await response.json())
+    
+    console.log('result is: ', JSON.stringify(result, null, 4));
+    return result;
+  }
+  catch (e: any) {
+    message = e;
+    console.log(e)
+  }
+}
+
 async function _delGetName(newName: string){
-  if (newName != "")
+  if (newName !== "")
     name = newName;
   if (!!_setDisplay){
     await asyncGetName();
@@ -84,7 +116,7 @@ export function setName(neww:string){
 
 //change the username form
 interface FormElements extends HTMLFormControlsCollection {
-  newUsername: HTMLInputElement
+  newInput: HTMLInputElement
 }
 
 interface YourFormElement extends HTMLFormElement {
@@ -93,11 +125,18 @@ interface YourFormElement extends HTMLFormElement {
 
 const handleUsernameChange = (e: React.FormEvent<YourFormElement>) => {
   e.preventDefault();
-  console.log(e.currentTarget.elements.newUsername.value)
-  asyncChangeName(e.currentTarget.elements.newUsername.value);
-  const errorThingy = document.getElementById("errorCode")
-  if (!!errorThingy)
-   errorThingy.innerHTML = message
+  asyncChangeName(e.currentTarget.elements.newInput.value);
+  // const errorThingy = document.getElementById("errorCode")
+  // if (!!errorThingy)
+  //  errorThingy.innerHTML = message
+}
+
+const handleFriendListAddChange = (e: React.FormEvent<YourFormElement>) => {
+  e.preventDefault();
+  asyncAddFriend(e.currentTarget.elements.newInput.value);
+  // const errorThingy = document.getElementById("errorCode")
+  // if (!!errorThingy)
+  //  errorThingy.innerHTML = message
 }
 
 var name: string = "";
@@ -105,6 +144,7 @@ var message:string = "";
 var _setDisplay: React.Dispatch<React.SetStateAction<string>> | null = null
 
 const UserProfilePage: React.FC = () => {
+
   const [Display, setDisplay] = useState<string>("")
   _setDisplay = setDisplay
 
@@ -113,6 +153,26 @@ const UserProfilePage: React.FC = () => {
   if (name === ""){
     _delGetName("");
   }
+  //drop down menu
+  const [showDropDown, setShowDropDown] = useState<boolean>(false);
+  const [selectFriendList, setselectFriendList] = useState<string>("");
+
+  const friendList = () => {
+    return ["Hong Kong", "London", "New York City", "Paris"];
+  };
+
+  const toggleDropDown = () => {
+    setShowDropDown(!showDropDown);
+  };
+  const dismissHandler = (event: React.FocusEvent<HTMLButtonElement>): void => {
+    if (event.currentTarget === event.target) {
+      setShowDropDown(false);
+    }
+  };
+
+  const friendListSelection = (friend: string): void => {
+    setselectFriendList(friend);
+  };
 
 //CAN ALSO be used, in case a string, for example a button
 //is clicked, then I an switch between a page
@@ -128,12 +188,36 @@ const UserProfilePage: React.FC = () => {
         <button onClick={() => {logoutButton()}}>logout</button>
         <label id="name" htmlFor="name">Welcome {name}</label>
       <form onSubmit ={handleUsernameChange}>
+        <button type="submit">Change username</button>
+        <input id="newInput" type="text" />
         <label htmlFor="change username">{message}</label>
-        <input id="newUsername" type="text" />
-        <label htmlFor="username">username:</label>
-        <button type="submit">Submit</button>
+      </form>
+      <form onSubmit ={handleFriendListAddChange}>
+        <button type="submit">Add Friend</button>
+        <label htmlFor="add Friend">{message}</label>
+        <input id="newInput" type="text" />
+      </form>
+      <form onSubmit ={handleUsernameChange}>
+        <button type="submit">Remove Friend</button>
+        <label htmlFor="change username">{message}</label>
+        <input id="newInput" type="text" />
       </form>
       <div>
+        <button className={showDropDown ? "active" : undefined}
+          onClick={(): void => toggleDropDown()}
+          onBlur={(e: React.FocusEvent<HTMLButtonElement>): void =>
+            dismissHandler(e)
+          }>
+        <div>{selectFriendList ? "Select: " + selectFriendList : "Select ..."} </div>
+        {showDropDown && (
+          <DropDown
+            friendList={friendList()}
+            showDropDown={false}
+            toggleDropDown={(): void => toggleDropDown()}
+            friendSelection={friendListSelection}
+          />
+        )}
+      </button>
       </div>
     </div>
 
