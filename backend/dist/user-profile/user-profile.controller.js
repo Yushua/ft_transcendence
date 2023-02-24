@@ -59,7 +59,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UserProfileController.prototype, "getUserByUsername", null);
 __decorate([
-    (0, common_1.Patch)('/username'),
+    (0, common_1.Post)('/userchange/:id/:username'),
     __param(0, (0, common_1.Param)('username')),
     __param(1, (0, common_1.Param)('id')),
     __metadata("design:type", Function),

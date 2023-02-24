@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { CreateUserDto } from './dto/create-user.dto';
 import { AddFriendListDto } from './dto/create-user.dto copy';
@@ -40,13 +40,12 @@ export class UserProfileController {
     //     return this.userServices.findUserBy(UserStatus.ONLINE);
     // }
 
-    @Patch('/username')
+    @Post('/userchange/:id/:username')
     changeUsername(
         @Param('username') username: string,
         @Param('id') id: string): Promise<UserProfile> {
         return this.userServices.changeUsername(username, id);
     }
-
     @Patch('/status/:status')
     changeStatus(
         @Param('status') status: UserStatus,
