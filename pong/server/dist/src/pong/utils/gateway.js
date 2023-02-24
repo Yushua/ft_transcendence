@@ -19,15 +19,13 @@ const pong_objects_1 = require("../components/pong_objects");
 let queuedclient = undefined;
 let n_game_rooms = 0;
 let game_room = 'game_0';
+let p1 = 'p1';
+let p2 = 'p2';
 let MyGateway = class MyGateway {
     onModuleInit() {
         this.server.on('connection', (socket) => {
             console.log(socket.id);
             console.log('Connected');
-        });
-        this.server.on('disconnect', (socket) => {
-            console.log(socket.id);
-            console.log('disconnected');
         });
     }
     handleLFG(client) {
@@ -44,15 +42,19 @@ let MyGateway = class MyGateway {
             queuedclient.join(game_room);
             client.emit('joined', game_room);
             queuedclient.emit('joined', game_room);
+            let client2 = queuedclient;
             queuedclient = undefined;
-            let p1 = new pong_objects_1.Paddle(20, 100, 20, 325, 1);
-            let p2 = new pong_objects_1.Paddle(20, 100, 1460, 325, 2);
-            let ball = new pong_objects_1.Ball(20, 20, 740, 365, 3);
+            let gamedata = new pong_objects_1.GameData;
             setInterval(() => {
-                this.server.to(game_room).emit("onMessage", {
-                    msg: 'sending this to:' + game_room,
-                    content: 'empty'
+                this.server.to(client.id).emit('gamedata', {
+                    gamedata,
+                    p1
                 });
+                this.server.to(client2.id).emit('gamedata', {
+                    gamedata,
+                    p2
+                });
+                gamedata.ball.update();
             });
         }
     }
