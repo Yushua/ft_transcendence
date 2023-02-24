@@ -36,12 +36,16 @@ export async function getname() {
   }
 }
 
-async function _delGetName(name: string ){
+async function _delGetName(){
   if (!!_setDisplay){
+    getname();
     _setDisplay(name);
   }
 } 
 
+export function setName(neww:string){
+  name = neww;
+}
 var name: string = "";
 var _setDisplay: React.Dispatch<React.SetStateAction<string>> | null = null
 
@@ -49,9 +53,10 @@ const UserProfilePage: React.FC = () => {
   const [Display, setDisplay] = useState<string>("")
   _setDisplay = setDisplay
 
+    //if name is this, then update it with the right name
+    //if name is updated, also update this with the new name, simply by making the name "" again
   if (name === ""){
-    getname();
-    _delGetName(name);
+    _delGetName();
   }
 
 //CAN ALSO be used, in case a string, for example a button
