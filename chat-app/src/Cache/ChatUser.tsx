@@ -1,6 +1,8 @@
-import HTTP from "../HTTP";
+import HTTP from "../Utils/HTTP";
+import { asyncUpdateMembersWindow } from "../Windows/Chat/Members/MembersWindow";
 import { asyncUpdateFriendsList } from "../Windows/Chat/RoomSelect/FriendsList";
 import { asyncUpdateRoomList } from "../Windows/Chat/RoomSelect/RoomList";
+import { SetMainWindow } from "../Windows/MainChatWindow";
 
 export default class ChatUser {
 	private static _chatUser: any | null = null;
@@ -10,7 +12,9 @@ export default class ChatUser {
 		this._clearEvent()
 	}
 	
-	static async asyncDownload(userID: string) {
+	static async asyncUpdate(userID: string) {
+		if (userID === "")
+			return
 		const user = await JSON.parse(HTTP.Get(`chat/user/${userID}`))
 		if (!!user) {
 			this._chatUser = user
@@ -25,11 +29,15 @@ export default class ChatUser {
 	static get BlockedUserIDs():   string[] { return this._chatUser?.BlockedUserIDs ?? [] }
 	
 	private static _onClearFuncs: (() => void)[] = [
-		
+		asyncUpdateFriendsList,
+		asyncUpdateRoomList,
+		asyncUpdateMembersWindow,
+		() => SetMainWindow(""),
 	]
 	private static _onUpdateFuncs: ((roomID: string) => void)[] = [
 		asyncUpdateFriendsList,
 		asyncUpdateRoomList,
+		asyncUpdateMembersWindow,
 	]
 	
 	private static _clearEvent() {

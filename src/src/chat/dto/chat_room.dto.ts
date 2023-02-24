@@ -1,5 +1,5 @@
 import { IsEnum, IsNotEmpty, IsString } from "class-validator"
-import { ChatRoomType } from "../chat_objects/chat_room"
+import { ChatRoomType } from "../chat_entities/chat_room"
 
 export class ChatRoomDTO {
 	@IsNotEmpty()

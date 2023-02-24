@@ -2,9 +2,9 @@ import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestj
 import { InjectRepository } from '@nestjs/typeorm';
 import { timeStamp } from 'console';
 import { Repository } from 'typeorm';
-import { ChatMessage, ChatMessageGroupManager } from './chat_objects/chat_message';
-import { ChatRoom, ChatRoomType } from './chat_objects/chat_room';
-import { ChatUser } from './chat_objects/chat_user';
+import { ChatMessage, ChatMessageGroupManager } from './chat_entities/chat_message';
+import { ChatRoom, ChatRoomPassword, ChatRoomType } from './chat_entities/chat_room';
+import { ChatUser } from './chat_entities/chat_user';
 import { ChatMessageDTO } from './dto/chat_message.dto';
 import { ChatRoomDTO } from './dto/chat_room.dto';
 import { Observable, Subject, map } from 'rxjs';
@@ -15,6 +15,8 @@ export class ChatService {
 	constructor(
 		@InjectRepository(ChatRoom)
 			private readonly chatRoomRepo: Repository<ChatRoom>,
+		@InjectRepository(ChatRoomPassword)
+			private readonly chatRoomPassRepo: Repository<ChatRoomPassword>,
 		@InjectRepository(ChatMessageGroupManager)
 			private readonly chatMessageRepo: Repository<ChatMessageGroupManager>,
 		@InjectRepository(ChatUser)
@@ -24,6 +26,10 @@ export class ChatService {
 	) {}
 	
 	//#region RoomBackEnd
+	
+	async GetRoomPassword(roomID: string): Promise<ChatRoomPassword> {
+		return this.chatRoomPassRepo.findOneBy({ ID: roomID })
+	}
 	
 	private async _getMsgID(roomID: string, index: number): Promise<string> {
 		if (index < 0)
@@ -47,6 +53,24 @@ export class ChatService {
 	
 	//#region RoomFrontEnd
 	
+	async EditRoom(roomID: string, roomDTO: ChatRoomDTO): Promise<void> {
+		
+		const { OwnerID, Name, Password, RoomType } =  roomDTO
+		
+		await this.ModifyRoom(roomID, async room => {
+			if (room.OwnerID !== OwnerID)
+				return
+			room.Name = Name
+			room.RoomType = +ChatRoomType[RoomType]
+			var roomPass = await this.GetRoomPassword(roomID)
+			roomPass.Password = Password
+			await this.chatRoomPassRepo.save(roomPass)
+			for (const userID of room.MemberIDs)
+				this.Notify(`user-${userID}`, "room")
+			this.Notify(`room-${roomID}`, "room")
+		})
+	}
+	
 	async UnBan(roomID: string, userID: string): Promise<void> {
 		var changed = false
 		await this.ModifyRoom(roomID, room => {
@@ -64,7 +88,7 @@ export class ChatService {
 			return
 		
 		var room = await this.chatRoomRepo.create({
-			OwnerID:"", Name:"", Password:"", RoomType: +ChatRoomType.Private,
+			OwnerID:"", Name:"", RoomType: +ChatRoomType.Private,
 			MemberIDs:[userID, memberID], AdminIDs:[],
 			BanIDs:[], MuteIDs:[], MuteDates:[],
 			MessageGroupDepth: 0, Direct: true
@@ -80,7 +104,7 @@ export class ChatService {
 			user.FriedsWithDirect.push(userID)
 		})
 		
-		this.Notify(`user-${memberID}`, "you have been added")
+		this.Notify(`user-${memberID}`, "room")
 		
 		return room.ID
 	}
@@ -89,12 +113,16 @@ export class ChatService {
 		
 		const { OwnerID, Name, Password, RoomType } =  roomDTO
 		var room = await this.chatRoomRepo.create({
-			OwnerID, Name, Password, RoomType: +ChatRoomType[RoomType],
+			OwnerID, Name, RoomType: +ChatRoomType[RoomType],
 			MemberIDs:[OwnerID], AdminIDs:[OwnerID],
 			BanIDs:[], MuteIDs:[], MuteDates:[],
 			MessageGroupDepth: 0, Direct: false
 		})
 		room = await this.chatRoomRepo.save(room)
+		
+		await this.chatRoomPassRepo.save(await this.chatRoomPassRepo.create({
+			ID: room.ID, Password: Password
+		}))
 		
 		await this.ModifyUser(OwnerID, user => {user.ChatRoomsIn.push(room.ID)})
 		
@@ -110,7 +138,7 @@ export class ChatService {
 		return msgGroupManager.ToMessages()
 	}
 	
-	async PostNewMessage(roomID: string, msgDTO: ChatMessageDTO): Promise<string> {
+	async PostNewMessage(roomID: string, msgDTO: ChatMessageDTO): Promise<void> {
 		
 		const { OwnerID, Message } = msgDTO
 		const msg = new ChatMessage(OwnerID, Message)
@@ -126,7 +154,7 @@ export class ChatService {
 			msgGroup.AddMessage(msg)
 		}
 		await this.chatMessageRepo.save(msgGroup)
-		return msgGroup.ID
+		this.Notify("room-" + roomID, "msg")
 	}
 	
 	async AddUserToRoom(roomID: string, userID: string) {
@@ -142,7 +170,7 @@ export class ChatService {
 		if (!changed)
 			return
 		this.Notify(`room-${roomID}`, "mem")
-		this.Notify(`user-${userID}`, "you have been added")
+		this.Notify(`user-${userID}`, "room")
 	}
 	
 	async GetRoom(roomID: string): Promise<ChatRoom>
@@ -160,7 +188,7 @@ export class ChatService {
 	
 	async GetOrAddUser(userID: string): Promise<ChatUser> {
 		var user = await this.chatUserRepo.findOneBy({ ID: userID })
-		if (user)
+		if (!!user)
 			return user
 		return await this.chatUserRepo.save(await this.chatUserRepo.create({
 			ID: userID, ChatRoomsIn:[], DirectChatsIn:[], FriedsWithDirect:[], BlockedUserIDs:[]
@@ -251,6 +279,7 @@ export class ChatService {
 		await this.chatRoomRepo.delete({})
 		await this.chatUserRepo.delete({})
 		await this.chatMessageRepo.delete({})
+		await this.chatRoomPassRepo.delete({})
 	}
 	
 	//#endregion

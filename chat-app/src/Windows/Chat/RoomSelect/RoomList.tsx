@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import HTTP from "../../../HTTP";
-import ChatUser from "../../../Downloadable/ChatUser";
-import ChatRoom from "../../../Downloadable/ChatRoom";
-import NameStorage from "../../../Downloadable/NameStorage";
+import HTTP from "../../../Utils/HTTP";
+import ChatUser from "../../../Cache/ChatUser";
+import ChatRoom from "../../../Cache/ChatRoom";
+import NameStorage from "../../../Cache/NameStorage";
 import { asyncChangeRoom } from "../../MainChatWindow";
 
 export async function asyncUpdateRoomList() {

@@ -3,8 +3,8 @@ import MembersList from "./MembersList"
 import MemberProfile, { setMemberProfileID } from "./MemberProfile"
 import RoomEdit from "./RoomEdit"
 import AddFriend from "./AddFriend"
-import ChatRoom from "../../../Downloadable/ChatRoom"
-import ChatUser from "../../../Downloadable/ChatUser"
+import ChatRoom from "../../../Cache/ChatRoom"
+import ChatUser from "../../../Cache/ChatUser"
 
 export async function asyncUpdateMembersWindow() {
 	if (ChatRoom.ID !== "") {

@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { ChangeMemberWindow } from "./MembersWindow";
-import ChatRoom from "../../../Downloadable/ChatRoom";
-import NameStorage from "../../../Downloadable/NameStorage";
-import User from "../../../Downloadable/User";
-import HTTP from "../../../HTTP";
+import { ChangeMemberWindow, asyncUpdateMembersWindow } from "./MembersWindow";
+import ChatRoom from "../../../Cache/ChatRoom";
+import NameStorage from "../../../Cache/NameStorage";
+import User from "../../../Cache/User";
+import HTTP from "../../../Utils/HTTP";
 
 export async function asyncUpdateAddFriendList() {
 	if (!_setFriends)
@@ -13,22 +13,21 @@ export async function asyncUpdateAddFriendList() {
 }
 
 function GenerateAddFriendJSX(): JSX.Element[] {
-	const filtered = User.Friends.filter(
-		friendID => !ChatRoom.MemberIDs.includes(friendID))
-	
-	return filtered.map(friendID => 
-		ChatRoom.BanIDs.includes(friendID)
-		?
-		<><button
-			style={{height: ".5cm", width: "100%", textAlign: "left", fontSize: ".35cm"}}
-			disabled
-			>{"Banned: "}{NameStorage.GetUser(friendID)}</button><br/></>
-		:
-		<><button
-			style={{height: ".5cm", width: "100%", textAlign: "left", fontSize: ".35cm"}}
-			onClick={async () => { await HTTP.asyncPost(`/chat/room/${ChatRoom.ID}/${friendID}`) }}
-			>{NameStorage.GetUser(friendID)}</button><br/></>
-	)
+	return User.Friends
+		.filter(friendID => !ChatRoom.MemberIDs.includes(friendID))
+		.map(friendID => 
+			ChatRoom.BanIDs.includes(friendID)
+			?
+			<><button
+				style={{height: ".5cm", width: "100%", textAlign: "left", fontSize: ".35cm"}}
+				disabled
+				>{"Banned: "}{NameStorage.GetUser(friendID)}</button><br/></>
+			:
+			<><button
+				style={{height: ".5cm", width: "100%", textAlign: "left", fontSize: ".35cm"}}
+				onClick={async () => { await HTTP.asyncPatch(`/chat/room/${ChatRoom.ID}/${friendID}`) }}
+				>{NameStorage.GetUser(friendID)}</button><br/></>
+		)
 }
 
 var _setFriends: React.Dispatch<React.SetStateAction<JSX.Element[]>> | null = null

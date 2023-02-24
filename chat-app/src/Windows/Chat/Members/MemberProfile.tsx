@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { ChangeMemberWindow } from "./MembersWindow";
-import NameStorage from "../../../Downloadable/NameStorage";
-import ChatRoom from "../../../Downloadable/ChatRoom";
-import ChatUser from "../../../Downloadable/ChatUser";
-import HTTP from "../../../HTTP";
+import { ChangeMemberWindow, asyncUpdateMembersWindow } from "./MembersWindow";
+import NameStorage from "../../../Cache/NameStorage";
+import ChatRoom from "../../../Cache/ChatRoom";
+import ChatUser from "../../../Cache/ChatUser";
+import HTTP from "../../../Utils/HTTP";
 
 export function setMemberProfileID(userID: string) {
 	_memberProfileID = userID
@@ -65,7 +65,7 @@ export default function MemberProfile() {
 					<div style={{width: "100%", display: "table"}}>
 						<button
 							style={{width: "100%", height: ".5cm", boxSizing: "border-box"}}
-							onClick={() => HTTP.asyncPost(`chat/admin/${ChatRoom.ID}/${_memberProfileID}`)}
+							onClick={() => HTTP.asyncPatch(`chat/admin/${ChatRoom.ID}/${_memberProfileID}`)}
 							>Make Admin</button>
 					</div>
 				</>

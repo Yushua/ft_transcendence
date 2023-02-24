@@ -1,7 +1,7 @@
 import { useState } from "react"
 import FriendsList from "./FriendsList"
 import RoomList from "./RoomList"
-import ChatRoom from "../../../Downloadable/ChatRoom"
+import ChatRoom from "../../../Cache/ChatRoom"
 
 export default function RoomSelectWindow() {
 	

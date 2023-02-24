@@ -1,4 +1,4 @@
-import HTTP from "../HTTP"
+import HTTP from "../Utils/HTTP"
 import ChatRoom from "./ChatRoom"
 
 export default class NameStorage {
@@ -29,5 +29,8 @@ export default class NameStorage {
 			return ""
 		this._rooms.set(roomID, name)
 		return name
+	}
+	static ClearRoom(roomID: string) {
+		this._rooms.delete(roomID)
 	}
 }

@@ -1,8 +1,6 @@
 import React, { useState } from "react";
-import HTTP from "../../HTTP";
-import User from "../../Downloadable/User";
-import NameStorage from "../../Downloadable/NameStorage";
-import { asyncUpdateUser } from "../MainChatWindow";
+import HTTP from "../../Utils/HTTP";
+import { asyncUpdateUserDEBUG } from "../MainChatWindow";
 
 class ProfileUser { constructor ( public ID: string, public Name: string ) {} }
 
@@ -17,7 +15,7 @@ export default function UserSelect() {
 				setOptions(users.map<ProfileUser>(user => new ProfileUser(user.id, user.username)))
 			else
 				console.log("No users available!")
-			asyncUpdateUser(users[0].id)
+			asyncUpdateUserDEBUG(users[0].id)
 		}
 		getUsers()
 		return <></>
@@ -26,7 +24,7 @@ export default function UserSelect() {
 	const onChange = async (data: React.ChangeEvent<HTMLSelectElement>) => {
 		if (data.target.value === "")
 			return
-		asyncUpdateUser(data.target.value)
+		asyncUpdateUserDEBUG(data.target.value)
 	}
 	
 	return (

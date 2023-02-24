@@ -1,5 +1,7 @@
 import './App.css'
-import HTTP from "./HTTP"
+import ChatRoom from './Cache/ChatRoom';
+import ChatUser from './Cache/ChatUser';
+import HTTP from "./Utils/HTTP"
 import UserSelect from './Windows/Debug/UserSelect';
 import MainChatWindow, { SetMainWindow } from './Windows/MainChatWindow';
 
@@ -9,7 +11,13 @@ function App() {
 	<div id="Label"></div>
 	<UserSelect />
 	<MainChatWindow/>
-	<button onClick={_ => HTTP.asyncDelete(`chat/all`)}>{"[DEBUG] Delete all Chat Data"}</button>
+	<button
+		onClick={async () => {
+		HTTP.Delete(`chat/all`)
+		ChatUser.Clear()
+		ChatRoom.Clear()
+	}}
+	>{"[DEBUG] Delete all Chat Data"}</button>
 </div>
 	)
 }

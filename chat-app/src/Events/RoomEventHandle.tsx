@@ -1,11 +1,12 @@
-import ChatRoom from "../Downloadable/ChatRoom";
+import ChatRoom from "../Cache/ChatRoom";
 import { asyncUpdateChatLog } from "../Windows/Chat/ActualChat/ChatWindow";
-import SSEManager from "./EventListener";
+import SSEManager from "./SSEManager";
 
 export const RoomEvent: SSEManager = new SSEManager(msg => {
 	switch (msg) {
 		case "msg": asyncUpdateChatLog(); break
-		case "mem": ChatRoom.asyncDownload(ChatRoom.ID); break
+		case "room":
+		case "mem": ChatRoom.asyncUpdate(ChatRoom.ID); break
 		default: break
 	}
 })

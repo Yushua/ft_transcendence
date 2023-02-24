@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import HTTP from "../../../HTTP";
-import ChatRoom from "../../../Downloadable/ChatRoom";
-import NameStorage from "../../../Downloadable/NameStorage";
-import User from "../../../Downloadable/User";
+import HTTP from "../../../Utils/HTTP";
+import ChatRoom from "../../../Cache/ChatRoom";
+import NameStorage from "../../../Cache/NameStorage";
+import User from "../../../Cache/User";
 
 var _logDepth = 30
 

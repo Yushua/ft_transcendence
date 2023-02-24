@@ -2,23 +2,22 @@ import React, { useState } from "react";
 import ChatWindow, { asyncUpdateChatLog } from "./Chat/ActualChat/ChatWindow";
 import MembersWindow from "./Chat/Members/MembersWindow";
 import RoomSelectWindow from "./Chat/RoomSelect/RoomSelectWindow";
-import User from "../Downloadable/User";
-import ChatUser from "../Downloadable/ChatUser";
-import NameStorage from "../Downloadable/NameStorage";
+import User from "../Cache/User";
+import ChatUser from "../Cache/ChatUser";
 import RoomCreation from "./RoomCreation/RoomCreation";
-import ChatRoom from "../Downloadable/ChatRoom";
+import ChatRoom from "../Cache/ChatRoom";
 
-export async function asyncUpdateUser(userID: string) {
+export async function asyncUpdateUserDEBUG(userID: string) {
 	if (userID === "")
 		return
 	ChatRoom.Clear()
-	await User.asyncDownload(userID)
-	await ChatUser.asyncDownload(userID)
+	await User.asyncUpdate(userID)
+	await ChatUser.asyncUpdate(userID)
 	SetMainWindow(`load ${userID}`)
 }
 
 export async function asyncChangeRoom(roomID: string) {
-	await ChatRoom.asyncDownload(roomID)
+	await ChatRoom.asyncUpdate(roomID)
 	asyncUpdateChatLog()
 }
 

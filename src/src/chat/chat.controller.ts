@@ -1,8 +1,8 @@
 import { Controller, Get, Post, Patch, Delete, Body, Param, Sse, Headers, Req, Request, Response, StreamableFile } from '@nestjs/common';
 import { ChatService } from './chat.service';
-import { ChatMessage } from './chat_objects/chat_message';
-import { ChatRoom } from './chat_objects/chat_room';
-import { ChatUser } from './chat_objects/chat_user';
+import { ChatMessage } from './chat_entities/chat_message';
+import { ChatRoom } from './chat_entities/chat_room';
+import { ChatUser } from './chat_entities/chat_user';
 import { ChatMessageDTO } from './dto/chat_message.dto';
 import { ChatRoomDTO } from './dto/chat_room.dto';
 import { ChatApp } from './chat.app';
@@ -16,7 +16,7 @@ export class ChatController {
 	
 	constructor (
 		private readonly service: ChatService) {}
-	
+		
 	@Get("app/*")
 	GetRedirectToWebApp(
 		@Req() request: Request,
@@ -53,12 +53,14 @@ export class ChatController {
 	async GetRoomInfo(
 		@Param("roomID") roomID: string,
 		@Param("info") info: string)
-		: Promise<any> {
-			const room = await this.service.GetRoom(roomID)
-			if (!room)
-				return null
-			return room[info]
-		}
+		: Promise<any>
+			{ return (await this.service.GetRoom(roomID))[info] }
+	
+	@Get("pass/:roomID")
+	async GetRoomPass(
+		@Param("roomID") roomID: string)
+		: Promise<any>
+			{ return (await this.service.GetRoomPassword(roomID)).Password }
 	
 	@Get("msg/:roomID/:index")
 	GetMessageGroup(
@@ -70,11 +72,6 @@ export class ChatController {
 	//#endregion
 	
 	//#region Post
-	
-	@Post("friends")
-	async _friends()
-		: Promise<void>
-			{ await this.service._friends() }
 	
 	@Post("direct/:userID/:memberID")
 	async MakeDirectMessageGroup(
@@ -93,27 +90,35 @@ export class ChatController {
 	async PostNewMessage(
 		@Param("roomID") roomID: string,
 		@Body() msg: ChatMessageDTO)
-		: Promise<string> {
-			const ret = await this.service.PostNewMessage(roomID, msg)
-			this.service.Notify("room-" + roomID, "msg")
-			return ret
-		}
+		: Promise<void>
+			{ await this.service.PostNewMessage(roomID, msg) }
 	
-	@Post("admin/:roomID/:userID")
+	//#endregion
+	
+	//#region Patch
+	
+	@Patch("room/:roomID")
+	async EditRoom(
+		@Param("roomID") roomID: string,
+		@Body() room: ChatRoomDTO)
+		: Promise<void>
+			{ await this.service.EditRoom(roomID, room) }
+	
+	@Patch("admin/:roomID/:userID")
 	async MakeAdmin(
 		@Param("roomID") roomID: string,
 		@Param("userID") userID: string)
 		: Promise<void>
 			{ await this.service.MakeAdmin(roomID, userID) }
 	
-	@Post("room/:roomID/:userID")
+	@Patch("room/:roomID/:userID")
 	async AddUser(
 		@Param("roomID") roomID: string,
 		@Param("userID") userID: string,)
 		: Promise<void>
 			{ await this.service.AddUserToRoom(roomID, userID) }
 	
-	@Post("unban/:roomID/:userID")
+	@Patch("unban/:roomID/:userID")
 	async UnBan(
 		@Param("roomID") roomID: string,
 		@Param("userID") userID: string)
@@ -164,6 +169,11 @@ export class ChatController {
 	//#endregion
 	
 	//#region Debug
+	
+	@Post("friends")
+	async _friends()
+		: Promise<void>
+			{ await this.service._friends() }
 	
 	@Get("users")
 	GetChatUsers()

@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { ChangeMemberWindow } from "./MembersWindow";
-import ChatRoom from "../../../Downloadable/ChatRoom";
-import NameStorage from "../../../Downloadable/NameStorage";
+import { ChangeMemberWindow, asyncUpdateMembersWindow } from "./MembersWindow";
+import ChatRoom from "../../../Cache/ChatRoom";
+import NameStorage from "../../../Cache/NameStorage";
 
 export async function asyncUpdateMemberList() {
 	if (!_setMembers)
@@ -25,6 +25,8 @@ export default function MembersList() {
 	
 	const [members, setMembers] = useState<JSX.Element[]>(GenerateRoomListJSX())
 	_setMembers = setMembers
+	
+	asyncUpdateMembersWindow()
 	
 	if (ChatRoom.ID === "")
 		return <></>

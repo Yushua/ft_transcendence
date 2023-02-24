@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import ChatRoom from "../../../Downloadable/ChatRoom";
-import ChatUser from "../../../Downloadable/ChatUser";
-import User from "../../../Downloadable/User";
-import HTTP from "../../../HTTP";
-import NameStorage from "../../../Downloadable/NameStorage";
+import ChatRoom from "../../../Cache/ChatRoom";
+import ChatUser from "../../../Cache/ChatUser";
+import User from "../../../Cache/User";
+import HTTP from "../../../Utils/HTTP";
+import NameStorage from "../../../Cache/NameStorage";
 import { asyncChangeRoom } from "../../MainChatWindow";
 
 export async function asyncUpdateFriendsList() {
@@ -36,7 +36,7 @@ async function _changeToFriendRoom(friendID: string) {
 		asyncChangeRoom(ChatUser.DirectChatsIn[index])
 	else
 		HTTP.asyncPost(`chat/direct/${ChatUser.ID}/${friendID}`, null, null, async function() {
-			await ChatUser.asyncDownload(ChatUser.ID)
+			await ChatUser.asyncUpdate(ChatUser.ID)
 			asyncChangeRoom(this.responseText)
 		})
 }
