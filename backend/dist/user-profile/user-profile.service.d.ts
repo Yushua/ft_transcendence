@@ -11,6 +11,7 @@ export declare class UserProfileService {
     removeFriendFromID(userID: string, friendID: string): Promise<void>;
     findAllUsers(filterDto: getTasksFilterDto): Promise<UserProfile[]>;
     findUserBy(id: string): Promise<UserProfile>;
+    returnNameById(id: string): Promise<UserProfile>;
     changeStatus(status: UserStatus, id: string): Promise<UserProfile>;
     changeUsername(username: string, id: string): Promise<UserProfile>;
 }

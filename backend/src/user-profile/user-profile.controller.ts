@@ -23,6 +23,14 @@ export class UserProfileController {
         return this.userServices.findUserBy(id);
     }
 
+    @Get("user/:id")
+    async ReturnNameById(
+        @Param("id") id: string): Promise<string>
+    {
+        const found = this.userServices.returnNameById(id);
+        return (await found).username;
+    }
+    
     @Get('/user/:username')
     getUserByUsername(
         @Param('username') username: string): Promise<UserProfile> {

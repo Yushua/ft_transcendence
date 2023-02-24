@@ -27,6 +27,10 @@ let UserProfileController = class UserProfileController {
     getUserById(id) {
         return this.userServices.findUserBy(id);
     }
+    async ReturnNameById(id) {
+        const found = this.userServices.returnNameById(id);
+        return (await found).username;
+    }
     getUserByUsername(username) {
         return this.userServices.findUserBy(username);
     }
@@ -51,6 +55,13 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], UserProfileController.prototype, "getUserById", null);
+__decorate([
+    (0, common_1.Get)("user/:id"),
+    __param(0, (0, common_1.Param)("id")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UserProfileController.prototype, "ReturnNameById", null);
 __decorate([
     (0, common_1.Get)('/user/:username'),
     __param(0, (0, common_1.Param)('username')),

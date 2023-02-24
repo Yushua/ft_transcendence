@@ -64,6 +64,13 @@ let UserProfileService = class UserProfileService {
         }
         return found;
     }
+    returnNameById(id) {
+        const found = this.userEntity.findOneBy({ id });
+        if (!found) {
+            throw new common_1.NotFoundException(`Task with ID "${id}" not found`);
+        }
+        return found;
+    }
     async changeStatus(status, id) {
         const found = await this.findUserBy(id);
         found.status = status;

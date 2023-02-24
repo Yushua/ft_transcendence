@@ -44,7 +44,7 @@ const DropDownMenu: React.FC<DropDownProps> = ({nameOfMenu, listOfFriends}: Drop
           onBlur={(e: React.FocusEvent<HTMLButtonElement>): void =>
             dismissHandler(e)
           }>
-        <div>{selectFriendList ? nameOfMenu + ": " + selectFriendList : nameOfMenu} </div>
+        <div>{selectFriendList ? "Submit to " + nameOfMenu +": " + selectFriendList : nameOfMenu} </div>
         {showDropDown && (
           <DropDown
             friendList={friendList()}
