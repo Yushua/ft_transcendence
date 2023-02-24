@@ -2,15 +2,8 @@ import React, { useState } from 'react';
 import './userProfile.css';
 import './App.css';
 import { getCookie, removeCookie } from 'typescript-cookie';
-import LoginPage from './Login';
-import { newWindow } from './App';
-import DropDown from './components/friendListDropDown';
-
-export function logoutButton() {
-  removeCookie('accessToken');
-  removeCookie('userID');
-  newWindow(<LoginPage />);
-}
+import DropDown from './componentsUserProfile/friendListDropDown';
+import LogoutButtonComponent from './componentsUserProfile/LogoutButton';
 
 export async function asyncGetName() {
   var input:string = 'http://localhost:4242/user-profile/user/' + getCookie('userID');
@@ -143,7 +136,7 @@ var name: string = "";
 var message:string = "";
 var _setDisplay: React.Dispatch<React.SetStateAction<string>> | null = null
 
-const UserProfilePage: React.FC = () => {
+function UserProfilePage() {
 
   const [Display, setDisplay] = useState<string>("")
   _setDisplay = setDisplay
@@ -185,7 +178,7 @@ const UserProfilePage: React.FC = () => {
 //look up friends
   return (
     <div className="UserProfile">
-        <button onClick={() => {logoutButton()}}>logout</button>
+        <LogoutButtonComponent />
         <label id="name" htmlFor="name">Welcome {name}</label>
       <form onSubmit ={handleUsernameChange}>
         <button type="submit">Change username</button>
