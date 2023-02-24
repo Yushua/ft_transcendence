@@ -2,6 +2,7 @@ setup:
 	npm i -—save react-scripts
 	npm i --save socket.io-client
 	npm i --save react-router-dom
+	npm i --save-dev @types/styled-components
 	npm audit fix
 
 # create project: npx create-react-app my-app --template typescript

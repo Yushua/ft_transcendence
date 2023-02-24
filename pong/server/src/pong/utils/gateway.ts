@@ -1,6 +1,8 @@
 import { OnModuleInit } from "@nestjs/common";
 import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Server, Socket } from 'socket.io'
+import { interval } from "rxjs";
+import { Paddle, Ball } from '../components/pong_objects'
 
 let queuedclient:Socket = undefined
 let n_game_rooms:number = 0
@@ -28,6 +30,7 @@ export class MyGateway implements OnModuleInit {
 		})
 	}
 	
+
 	@SubscribeMessage('LFG')
 	handleLFG(
 		@ConnectedSocket() client: Socket) {
@@ -47,32 +50,40 @@ export class MyGateway implements OnModuleInit {
 				queuedclient.join(game_room)
 				client.emit('joined', game_room)
 				queuedclient.emit('joined', game_room)
-				this.server.to("game1").emit("onMessage", { 
-					msg: 'sending this to game1',
-					content: 'this'
-				})
 				queuedclient = undefined
+
+				//create new paddles and ball
+				let p1 = new Paddle(20,100,20,325,1)
+				let p2 = new Paddle(20,100,1460,325,2)
+				let ball = new Ball(20,20,740,365,3)
+
+				//start sending data to clients
+				setInterval(() => {
+					this.server.to(game_room).emit("onMessage", { 
+						msg: 'sending this to:' + game_room,
+						content: 'empty'
+					})
+				})
 			}
 		}
-
-	// @SubscribeMessage('newMessage')
-	// onNewMessage(@MessageBody() body:any) {
-	// 	console.log(body)
-	// 	this.server.emit('onMessage', {
-	// 		msg: 'return message:',
-	// 		content: body
-	// 	})
-	// }
-
-	// @SubscribeMessage('events')
-	// handleEvent(
-	// 	@MessageBody('id') id: number,
-	// 	@ConnectedSocket() client: Socket) : number {
- 	// 		return id;
-	// 	}
-	
-
 }
+
+// @SubscribeMessage('newMessage')
+// onNewMessage(@MessageBody() body:any) {
+// 	console.log(body)
+// 	this.server.emit('onMessage', {
+// 		msg: 'return message:',
+// 		content: body
+// 	})
+// }
+
+// @SubscribeMessage('events')
+// handleEvent(
+// 	@MessageBody('id') id: number,
+// 	@ConnectedSocket() client: Socket) : number {
+// 		return id;
+// 	}
+	
 
 // const io = new Server(4242)
 

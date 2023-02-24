@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MyGateway = void 0;
 const websockets_1 = require("@nestjs/websockets");
 const socket_io_1 = require("socket.io");
+const pong_objects_1 = require("../components/pong_objects");
 let queuedclient = undefined;
 let n_game_rooms = 0;
 let game_room = 'game_0';
@@ -43,11 +44,16 @@ let MyGateway = class MyGateway {
             queuedclient.join(game_room);
             client.emit('joined', game_room);
             queuedclient.emit('joined', game_room);
-            this.server.to("game1").emit("onMessage", {
-                msg: 'sending this to game1',
-                content: 'this'
-            });
             queuedclient = undefined;
+            let p1 = new pong_objects_1.Paddle(20, 100, 20, 325, 1);
+            let p2 = new pong_objects_1.Paddle(20, 100, 1460, 325, 2);
+            let ball = new pong_objects_1.Ball(20, 20, 740, 365, 3);
+            setInterval(() => {
+                this.server.to(game_room).emit("onMessage", {
+                    msg: 'sending this to:' + game_room,
+                    content: 'empty'
+                });
+            });
         }
     }
 };

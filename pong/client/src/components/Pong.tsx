@@ -44,16 +44,15 @@ export const RunPong = () => {
 	return (
 		<div>
 			 {/* {pending ? `Waiting for second player...` : inGame ? <RenderPong /> : <button onClick={() => findGame()}>Join Game</button>} */}
-			 {pending ? `Waiting for second player...` : inGame ? <Test socket={socket} /> : <button onClick={() => findGame()}>Join Game</button>}
+			 {pending ? `Waiting for second player...` : inGame ? <RenderPong socket={socket} /> : <button onClick={() => findGame()}>Join Game</button>}
 
 		</div>
 	)
 }
 
-
 export class Pong extends React.Component<any, any> {
 
-	private			gameCanvas
+	private		 	gameCanvas
 	private			gameContext
 	public static	keysPressed = new Map<string, boolean>()
 	public static	gameState = new Map<string, boolean>()
@@ -80,7 +79,6 @@ export class Pong extends React.Component<any, any> {
 		window.addEventListener("keydown",(event) => { Pong.keysPressed.set(event.key, true) })
 		window.addEventListener("keyup",(event) => { Pong.keysPressed.set(event.key, false) })
 		window.addEventListener("keypress", (event) => {
-			console.log(event.key)
 			if (event.key === " ")
 			{
 				if (Pong.gameState.get("game_end"))
@@ -304,7 +302,6 @@ class Ball extends Entity
 				{
 					var yvec_amplifier:number = (this.y - player1.y) / (player1.height / 2 )
 					this.yVec = 0.5
-
 				}
 			}
 		}
@@ -327,26 +324,26 @@ function StartPong() {
 }
 
 
-class Test extends React.Component<any, any> {
+// class Test extends React.Component<any, any> {
 
-	function()
-	{
-		window.addEventListener("keyup",(event) => { console.log('keyup') })
-		this.props.socket.on('ArrowUp', () => {
-			console.log('pressed up!', this.props.socket.id)
-		})
-	}	
+// 	function()
+// 	{
+// 		window.addEventListener("keyup",(event) => { console.log('keyup') })
+// 		this.props.socket.on('ArrowUp', () => {
+// 			console.log('pressed up!', this.props.socket.id)
+// 		})
+// 	}	
 
-	render()
-	{
-		return (
-			<div>
-				<RenderPong />
-				<h4>{this.props.socket.id}</h4>
-			</div>
-		)
-	}
-}
+// 	render()
+// 	{
+// 		return (
+// 			<div>
+// 				<RenderPong />
+// 				<h4>{this.props.socket.id}</h4>
+// 			</div>
+// 		)
+// 	}
+// }
 
 export class RenderPong extends React.Component<any, any> {
 	
@@ -355,7 +352,7 @@ export class RenderPong extends React.Component<any, any> {
 	{
 		return (
 			<div>
-				<Pong />
+				<Pong socket={this.props.socket}/>
 			</div>
 		)
 	}

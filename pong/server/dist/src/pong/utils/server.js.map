@@ -1,0 +1,1 @@
+{"version":3,"file":"server.js","sourceRoot":"","sources":["../../../../src/pong/utils/server.ts"],"names":[],"mappings":"AAAA,IAAI,EAAE,GAAG,OAAO,CAAC,WAAW,CAAC,CAAC,MAAM,CAAC,IAAI,CAAC,CAAC;AAC3C,IAAI,UAAU,GAAG,OAAO,CAAC,mBAAmB,CAAC,CAAC;AAE9C,EAAE,CAAC,OAAO,CAAC,EAAE,CAAC,YAAY,EAAE,UAAU,CAAC,OAAO,CAAE,CAAC"}
