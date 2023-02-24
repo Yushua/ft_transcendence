@@ -36,16 +36,26 @@ export async function getname() {
   }
 }
 
+async function _delGetName(name: string ){
+  if (!!_setDisplay){
+    _setDisplay(name);
+  }
+} 
+
 var name: string = "";
-var _setWindow: React.Dispatch<React.SetStateAction<JSX.Element>> | null = null
+var _setDisplay: React.Dispatch<React.SetStateAction<string>> | null = null
 
 const UserProfilePage: React.FC = () => {
-  const [window, setWindow] = useState<JSX.Element>(<UserProfilePage />)
-  _setWindow = setWindow
+  const [Display, setDisplay] = useState<string>("")
+  _setDisplay = setDisplay
 
-  if (name === "")
-    getname()
+  if (name === ""){
+    getname();
+    _delGetName(name);
+  }
 
+//CAN ALSO be used, in case a string, for example a button
+//is clicked, then I an switch between a page
 
   return (
     <div className="UserProfile">
