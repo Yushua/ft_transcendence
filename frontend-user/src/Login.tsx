@@ -8,6 +8,9 @@ import { newWindow } from './App';
 var error1: string = "";
 var error2: string = "";
 async function AccCreate(username: string, password: string, email:string){
+  //chekck the cookie, is there n authenticion
+  //yes, then check if vbalid
+  //yes, then use that one
   try {
     // 👇️ const response: Response
     const response = await fetch('http://localhost:4242/login/signup', {

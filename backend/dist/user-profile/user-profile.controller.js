@@ -14,6 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserProfileController = void 0;
 const common_1 = require("@nestjs/common");
+const create_user_dto_copy_1 = require("./dto/create-user.dto copy");
 const get_tasks_filter_dto_1 = require("./dto/get-tasks-filter.dto");
 const user_profile_status_model_1 = require("./user-profile-status.model");
 const user_profile_service_1 = require("./user-profile.service");
@@ -39,6 +40,9 @@ let UserProfileController = class UserProfileController {
     }
     changeStatus(status, id) {
         return this.userServices.changeStatus(status, id);
+    }
+    addFriend(id, idFriend, addFriendListDto) {
+        return this.userServices.addFriend(id, idFriend, addFriendListDto);
     }
 };
 __decorate([
@@ -85,6 +89,15 @@ __decorate([
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], UserProfileController.prototype, "changeStatus", null);
+__decorate([
+    (0, common_1.Patch)('/status/:id/:idfriend'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Param)('idfriend')),
+    __param(2, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, create_user_dto_copy_1.AddFriendListDto]),
+    __metadata("design:returntype", Promise)
+], UserProfileController.prototype, "addFriend", null);
 UserProfileController = __decorate([
     (0, common_1.Controller)('user-profile'),
     __metadata("design:paramtypes", [user_profile_service_1.UserProfileService])

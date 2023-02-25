@@ -13,29 +13,32 @@ export function logoutButtonRefresh() {
 type DropDownProps = {
     nameOfMenu: string;
     listOfFriends: string[];
+    functinInput: string;
   };
 
-const DropDownMenu: React.FC<DropDownProps> = ({nameOfMenu, listOfFriends}: DropDownProps): JSX.Element =>  {
+
+const DropDownMenu: React.FC<DropDownProps> = ({nameOfMenu, listOfFriends, functinInput}: DropDownProps): JSX.Element =>  {
     const [Display, setDisplay] = useState<string>("")
     //drop down menu
     const [showDropDown, setShowDropDown] = useState<boolean>(false);
-    const [selectFriendList, setselectFriendList] = useState<string>("");
-
+    const [selectDropDownList, setselectFriendList] = useState<string>("");
+    const [selectsubmit, setselectSubmit] = useState<string>("");
     const friendList = () => {
-    return listOfFriends;
+      return listOfFriends;
     };
 
     const toggleDropDown = () => {
-    setShowDropDown(!showDropDown);
+      setShowDropDown(!showDropDown);
     };
     const dismissHandler = (event: React.FocusEvent<HTMLButtonElement>): void => {
-    if (event.currentTarget === event.target) {
-    setShowDropDown(false);
-    }
+      if (event.currentTarget === event.target) {
+        setShowDropDown(false);
+      }
     };
 
     const friendListSelection = (friend: string): void => {
-    setselectFriendList(friend);
+      setselectFriendList(friend);
+      setselectSubmit("submit")
     };
     //add a funciton to this list that needs to add the string to the list.
     return (
@@ -45,7 +48,7 @@ const DropDownMenu: React.FC<DropDownProps> = ({nameOfMenu, listOfFriends}: Drop
           onBlur={(e: React.FocusEvent<HTMLButtonElement>): void =>
             dismissHandler(e)
           }>
-        <div>{selectFriendList ? "Submit to " + nameOfMenu +": " + selectFriendList : nameOfMenu} </div>
+        <div>{selectDropDownList ? "Submit to " + nameOfMenu +": " + selectDropDownList : "Submit to " + nameOfMenu +": "} </div>
         {showDropDown && (
           <DropDown
             friendList={friendList()}
@@ -54,6 +57,9 @@ const DropDownMenu: React.FC<DropDownProps> = ({nameOfMenu, listOfFriends}: Drop
             friendSelection={friendListSelection}
           />
         )}
+      </button>
+      <button type="submit">
+      <div>{selectsubmit ? "Submit" : "choose friend"} </div>
       </button>
       </div>
     )

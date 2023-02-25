@@ -2,6 +2,7 @@ import { ConflictException, Injectable, InternalServerErrorException, NotFoundEx
 import { AuthGuard } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { AddFriendListDto } from './dto/create-user.dto copy';
 import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { UserStatus } from './user-profile-status.model';
 import { UserProfile } from './user.entity';
@@ -65,6 +66,14 @@ export class UserProfileService {
         return found;
       }
       
+      async findUserName(username: string): Promise<UserProfile> {
+        const found = await this.userEntity.findOneBy({username});
+        if (!found){
+          throw new NotFoundException(`Task with username "${username}" not found`);
+        }
+        return found;
+      }
+
       returnNameById(id: string): Promise<UserProfile> {
         const found = this.userEntity.findOneBy({id});
         if (!found){
@@ -94,6 +103,13 @@ export class UserProfileService {
                 throw new InternalServerErrorException(`account name "${error.code} was already in use, but the error is different`);
             }
         }
+        return found;
+      }
+
+      async addFriend(id:string, idfriend: string, addFriendListDto: AddFriendListDto):Promise<UserProfile> {
+        const found = await this.findUserBy(id);
+        found.friendList.push(idfriend);
+        //mke lsit of only friends and
         return found;
       }
 }

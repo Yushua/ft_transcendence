@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import './userProfile.css';
 import './App.css';
 import { getCookie, removeCookie } from 'typescript-cookie';
-import DropDown from './componentsUserProfile/FriendListDropDown';
 import LogoutButtonComponent from './componentsUserProfile/LogoutButton';
 import AddFriendToList from './componentsUserProfile/AddFriendToList';
 import HandleUsernameChange from './componentsUserProfile/HandleUsernameChange';
@@ -60,6 +59,8 @@ function UserProfilePage() {
       <DropDownMenu
       nameOfMenu={"friendlist"}
       listOfFriends={["hey", "lel"]}
+      functinInput={"friendList"}
+      //function
       />
     </div>
 

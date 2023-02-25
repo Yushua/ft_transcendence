@@ -64,6 +64,13 @@ let UserProfileService = class UserProfileService {
         }
         return found;
     }
+    async findUserName(username) {
+        const found = await this.userEntity.findOneBy({ username });
+        if (!found) {
+            throw new common_1.NotFoundException(`Task with username "${username}" not found`);
+        }
+        return found;
+    }
     returnNameById(id) {
         const found = this.userEntity.findOneBy({ id });
         if (!found) {
@@ -92,6 +99,11 @@ let UserProfileService = class UserProfileService {
                 throw new common_1.InternalServerErrorException(`account name "${error.code} was already in use, but the error is different`);
             }
         }
+        return found;
+    }
+    async addFriend(id, idfriend, addFriendListDto) {
+        const found = await this.findUserBy(id);
+        found.friendList.push(idfriend);
         return found;
     }
 };
