@@ -117,11 +117,17 @@ export class UserProfileService {
       }
 
       async getAllUsersIntoList():Promise<string[]> {
-        var newList: string[];
-        return newList;
+        console.log("getallusersnames")
+        // var newList: string[];
+        // return this.userEntity.query("SELECT username FROM user_profile;")
+        return (await this.userEntity.query("SELECT username FROM user_profile;")).map(user => user.username)
+        // const users = await query.getMany();
+
+        // return newList;
       }
       async getUsersListFriendById(id:string):Promise<void> {
         
-
+        var newList: string[] = await this.getAllUsersIntoList()
+        console.log(newList);
       }
 }

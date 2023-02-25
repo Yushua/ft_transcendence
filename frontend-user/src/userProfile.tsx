@@ -32,6 +32,28 @@ export async function asyncGetName() {
   }
 }
 
+export async function asyncGetFriendListById() {
+  var input:string = 'http://localhost:4242/user-profile//userList/' + getCookie('userID');
+  try
+  {
+    const response = await fetch(input, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': "application/x-www-form-urlencoded",
+      },
+    })
+    if (!response.ok) {
+      throw new Error(`Error! status: ${(await response.json()).message}`);
+    }
+      const result = (await response.json())
+      console.log('result is: ', JSON.stringify(result, null, 4));
+  }
+  catch (e: any) {
+    console.log(e)
+  }
+}
+
 export function setName(neww:string){
   name = neww;
 }
@@ -45,9 +67,21 @@ export interface YourFormElement extends HTMLFormElement {
  readonly elements: FormElements
 }
 
+// function handleGetFriendList = (e: React.MouseEvent<HTMLButtonElement>) => {
+//   e.preventDefault();
+//   return asyncGetFriendListById();
+
+// }
+
 var name: string = "";
+var newList:string[] = ["yusha", "lol", "Robin", "bob"];
+var _setDisplay;
 
 function UserProfilePage() {
+  //make a system update that, when either clicked, of empty
+  //fills it in with the friendlist for now, I do it here
+  const [display, setDisplay] = useState<string>("")
+  _setDisplay = setDisplay
 
   return (
     <div className="UserProfile">
@@ -58,7 +92,7 @@ function UserProfilePage() {
       <HandleUsernameChange/>
       <DropDownMenu
       nameOfMenu={"friendlist"}
-      listOfFriends={["hey", "lel"]}
+      listOfFriends={newList}
       functinInput={"friendList"}
       //function
       />

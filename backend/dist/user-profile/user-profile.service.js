@@ -110,10 +110,12 @@ let UserProfileService = class UserProfileService {
         return found;
     }
     async getAllUsersIntoList() {
-        var newList;
-        return newList;
+        console.log("getallusersnames");
+        return (await this.userEntity.query("SELECT username FROM user_profile;")).map(user => user.username);
     }
     async getUsersListFriendById(id) {
+        var newList = await this.getAllUsersIntoList();
+        console.log(newList);
     }
 };
 UserProfileService = __decorate([
