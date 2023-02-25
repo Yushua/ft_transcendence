@@ -11,7 +11,7 @@ async function addFriendToList(usernameFriend: string) {
   try {
     // 👇️ const response: Response
     const response = await fetch(inputString, {
-      method: 'POST',
+      method: 'PATCH',
       body: ``,
       headers: {
         Accept: 'application/json',
@@ -49,18 +49,19 @@ type DropDownProps = {
 const handleDropDownFunction = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     console.log("hey");
-    switch (functinInput) {
+    console.log(_functinInput);
+    switch (_functinInput) {
       case "friendList": addFriendToList(_selectDropDownList);
     }
     console.log("done");
     _selectDropDownList = "";
   }
 
-  var functinInput:string;
+  var _functinInput:string = "";
   var _selectDropDownList:string;
 const DropDownMenu: React.FC<DropDownProps> = ({nameOfMenu, listOfFriends, functinInput}: DropDownProps): JSX.Element =>  {
     //drop down menu
-    functinInput = functinInput;
+    _functinInput = functinInput;
     const [showDropDown, setShowDropDown] = useState<boolean>(false);
     const [selectDropDownList, setselectFriendList] = useState<string>("");
     const [selectsubmit, setselectSubmit] = useState<string>("");
