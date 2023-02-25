@@ -67,7 +67,7 @@ export interface YourFormElement extends HTMLFormElement {
  readonly elements: FormElements
 }
 
-export async function handleGetFriendList = (e: React.MouseEvent<HTMLButtonElement>) => {
+export const handleGetFriendList = (e: React.MouseEvent<HTMLButtonElement>) => {
   e.preventDefault();
   asyncGetFriendListById();
 }
@@ -83,7 +83,7 @@ function UserProfilePage() {
   _setDisplay = setDisplay
 
   if (display === ""){
-    handleGetFriendList();
+    //update
   }
   return (
     <div className="UserProfile">
