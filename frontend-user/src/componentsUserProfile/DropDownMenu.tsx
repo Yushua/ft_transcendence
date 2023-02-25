@@ -46,12 +46,13 @@ type DropDownProps = {
     functinInput: string;
   };
 
-const handleDropDownFunction = (e: React.FormEvent<YourFormElement>) => {
+const handleDropDownFunction = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     console.log("hey");
     switch (functinInput) {
       case "friendList": addFriendToList(_selectDropDownList);
     }
+    console.log("done");
     _selectDropDownList = "";
   }
 
@@ -73,6 +74,7 @@ const DropDownMenu: React.FC<DropDownProps> = ({nameOfMenu, listOfFriends, funct
     const toggleDropDown = () => {
       setShowDropDown(!showDropDown);
     };
+
     const dismissHandler = (event: React.FocusEvent<HTMLButtonElement>): void => {
       if (event.currentTarget === event.target) {
         setShowDropDown(false);
@@ -101,11 +103,9 @@ const DropDownMenu: React.FC<DropDownProps> = ({nameOfMenu, listOfFriends, funct
           />
         )}
       </button>
-      <form onSubmit={handleDropDownFunction}>
-        <button type="submit">
+        <button type="submit" onClick={handleDropDownFunction}>
         <div>{selectsubmit ? "Submit" : "choose friend"} </div>
         </button>
-      </form>
       </div>
     )
 }
