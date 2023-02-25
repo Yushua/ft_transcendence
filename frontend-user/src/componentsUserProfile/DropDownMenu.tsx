@@ -1,8 +1,38 @@
 import React, { useState } from 'react';
-import { removeCookie } from 'typescript-cookie';
+import { getCookie, getCookies, removeCookie } from 'typescript-cookie';
 import { newWindow } from '../App';
 import LoginPage from '../Login';
+import { YourFormElement } from '../userProfile';
 import DropDown from './FriendListDropDown';
+
+async function addFriendToList(usernameFriend: string) {
+  var inputString:string = 'http://localhost:4242/user-profile/status/' + getCookies().userID + '/' + usernameFriend;
+  console.log("add friend");
+  try {
+    // 👇️ const response: Response
+    const response = await fetch(inputString, {
+      method: 'POST',
+      body: ``,
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': "application/x-www-form-urlencoded",
+      },
+    })
+    if (!response.ok) {
+      throw new Error(`Error! status: ${(await response.json()).message}`);
+    }
+    
+    const result = (await response.json())
+    
+    console.log('result is: ', JSON.stringify(result, null, 4));
+
+    // cookie
+    return result;
+  }
+  catch (e: any) {
+    console.log(e)
+  }
+}
 
 export function logoutButtonRefresh() {
   removeCookie('accessToken');
@@ -16,13 +46,26 @@ type DropDownProps = {
     functinInput: string;
   };
 
+const handleDropDownFunction = (e: React.FormEvent<YourFormElement>) => {
+    e.preventDefault();
+    console.log("hey");
+    switch (functinInput) {
+      case "friendList": addFriendToList(_selectDropDownList);
+    }
+    _selectDropDownList = "";
+  }
 
+  var functinInput:string;
+  var _selectDropDownList:string;
 const DropDownMenu: React.FC<DropDownProps> = ({nameOfMenu, listOfFriends, functinInput}: DropDownProps): JSX.Element =>  {
-    const [Display, setDisplay] = useState<string>("")
     //drop down menu
+    functinInput = functinInput;
     const [showDropDown, setShowDropDown] = useState<boolean>(false);
     const [selectDropDownList, setselectFriendList] = useState<string>("");
     const [selectsubmit, setselectSubmit] = useState<string>("");
+    _selectDropDownList = selectDropDownList
+
+    const [display, setDisplay] = useState<string>("")
     const friendList = () => {
       return listOfFriends;
     };
@@ -48,7 +91,7 @@ const DropDownMenu: React.FC<DropDownProps> = ({nameOfMenu, listOfFriends, funct
           onBlur={(e: React.FocusEvent<HTMLButtonElement>): void =>
             dismissHandler(e)
           }>
-        <div>{selectDropDownList ? "Submit to " + nameOfMenu +": " + selectDropDownList : "Submit to " + nameOfMenu +": "} </div>
+        <div>{_selectDropDownList ? "Submit to " + nameOfMenu +": " + _selectDropDownList : "Submit to " + nameOfMenu +": "} </div>
         {showDropDown && (
           <DropDown
             friendList={friendList()}
@@ -58,9 +101,11 @@ const DropDownMenu: React.FC<DropDownProps> = ({nameOfMenu, listOfFriends, funct
           />
         )}
       </button>
-      <button type="submit">
-      <div>{selectsubmit ? "Submit" : "choose friend"} </div>
-      </button>
+      <form onSubmit={handleDropDownFunction}>
+        <button type="submit">
+        <div>{selectsubmit ? "Submit" : "choose friend"} </div>
+        </button>
+      </form>
       </div>
     )
 }

@@ -61,13 +61,13 @@ export class UserProfileController {
         return this.userServices.changeStatus(status, id);
     }
 
-    @Patch('/status/:id/:idfriend')
+    @Patch('/status/:id/:usernameFriend')
     addFriend(
         @Param('id') id: string,
-        @Param('idfriend') idFriend: string,
-        @Body() addFriendListDto: AddFriendListDto)
+        @Param('usernameFriend') usernameFriend: string,
+        )
         : Promise<UserProfile> {
-        return this.userServices.addFriend(id, idFriend, addFriendListDto);
+        return this.userServices.addFriend(id, usernameFriend);
     }
 
     /*

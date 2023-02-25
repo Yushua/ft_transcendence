@@ -101,7 +101,7 @@ let UserProfileService = class UserProfileService {
         }
         return found;
     }
-    async addFriend(id, idfriend, addFriendListDto) {
+    async addFriend(id, idfriend) {
         const found = await this.findUserBy(id);
         found.friendList.push(idfriend);
         return found;

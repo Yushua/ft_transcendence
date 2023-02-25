@@ -106,10 +106,9 @@ export class UserProfileService {
         return found;
       }
 
-      async addFriend(id:string, idfriend: string, addFriendListDto: AddFriendListDto):Promise<UserProfile> {
+      async addFriend(id:string, idfriend: string):Promise<UserProfile> {
         const found = await this.findUserBy(id);
         found.friendList.push(idfriend);
-        //mke lsit of only friends and
         return found;
       }
 }

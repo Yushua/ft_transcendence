@@ -1,4 +1,3 @@
-import { AddFriendListDto } from './dto/create-user.dto copy';
 import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { UserStatus } from './user-profile-status.model';
 import { UserProfileService } from './user-profile.service';
@@ -12,5 +11,5 @@ export declare class UserProfileController {
     getUserByUsername(username: string): Promise<UserProfile>;
     changeUsername(username: string, id: string): Promise<UserProfile>;
     changeStatus(status: UserStatus, id: string): Promise<UserProfile>;
-    addFriend(id: string, idFriend: string, addFriendListDto: AddFriendListDto): Promise<UserProfile>;
+    addFriend(id: string, usernameFriend: string): Promise<UserProfile>;
 }
