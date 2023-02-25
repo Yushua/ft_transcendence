@@ -102,14 +102,18 @@ let UserProfileService = class UserProfileService {
         return found;
     }
     async addFriend(id, idfriend) {
-        const found = await this.findUserBy(id);
-        var newList = found.friendList;
-        newList.push(idfriend);
-        console.log(newList);
-        found.friendList = newList;
-        console.log(found.friendList);
+        const found = await this.userEntity.findOneBy({ id });
+        console.log(idfriend);
+        found.friendList.push(idfriend);
         await this.userEntity.save(found);
+        console.log(found);
         return found;
+    }
+    async getAllUsersIntoList() {
+        var newList;
+        return newList;
+    }
+    async getUsersListFriendById(id) {
     }
 };
 UserProfileService = __decorate([
