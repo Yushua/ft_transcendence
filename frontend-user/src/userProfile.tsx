@@ -67,11 +67,10 @@ export interface YourFormElement extends HTMLFormElement {
  readonly elements: FormElements
 }
 
-// function handleGetFriendList = (e: React.MouseEvent<HTMLButtonElement>) => {
-//   e.preventDefault();
-//   return asyncGetFriendListById();
-
-// }
+export async function handleGetFriendList = (e: React.MouseEvent<HTMLButtonElement>) => {
+  e.preventDefault();
+  asyncGetFriendListById();
+}
 
 var name: string = "";
 var newList:string[] = ["yusha", "lol", "Robin", "bob"];
@@ -83,6 +82,9 @@ function UserProfilePage() {
   const [display, setDisplay] = useState<string>("")
   _setDisplay = setDisplay
 
+  if (display === ""){
+    handleGetFriendList();
+  }
   return (
     <div className="UserProfile">
         <LogoutButtonComponent />
