@@ -108,7 +108,12 @@ export class UserProfileService {
 
       async addFriend(id:string, idfriend: string):Promise<UserProfile> {
         const found = await this.findUserBy(id);
-        found.friendList.push(idfriend);
+        var newList: string[] = found.friendList;
+        newList.push(idfriend);
+        console.log(newList);
+        found.friendList = newList;
+        console.log(found.friendList);
+        await this.userEntity.save(found);
         return found;
       }
 }

@@ -1,3 +1,4 @@
+import { async } from 'q';
 import React, { useState } from 'react';
 import { getCookie, getCookies, removeCookie } from 'typescript-cookie';
 import { newWindow } from '../App';
