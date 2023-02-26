@@ -78,12 +78,12 @@ const handleDropDownFunction = (e: React.MouseEvent<HTMLButtonElement>) => {
     }
     console.log("done");
     _selectDropDownList = "";
+    //after this, update the page
   }
 
   var _functinInput:string = "";
   var _selectDropDownList:string;
   var _setDisplay;
-
 const DropDownMenuAddFriend: React.FC<DropDownProps> = ({nameOfMenu, functinInput}: DropDownProps): JSX.Element =>  {
     //drop down menu
     _functinInput = functinInput;
@@ -138,7 +138,7 @@ const DropDownMenuAddFriend: React.FC<DropDownProps> = ({nameOfMenu, functinInpu
         )}
       </button>
         <button type="submit" onClick={handleDropDownFunction}>
-        <div>{selectsubmit ? "Submit" : "add"} </div>
+        <div>{_selectDropDownList ? "Add" : ""} </div>
         </button>
       </div>
     )

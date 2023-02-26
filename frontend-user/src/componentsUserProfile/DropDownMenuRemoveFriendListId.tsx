@@ -71,12 +71,10 @@ type DropDownProps = {
 
 const handleDropDownFunction = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    console.log("hey");
     console.log("name to be removed ", _functinInput);
     switch (_functinInput) {
       case "friendList": removeFriendToList(_selectDropDownList);
     }
-    console.log("done");
     _selectDropDownList = "";
   }
 
@@ -140,7 +138,7 @@ const DropDownMenuRemoveFriend: React.FC<DropDownProps> = ({nameOfMenu, functinI
         )}
       </button>
         <button type="submit" onClick={handleDropDownFunction}>
-        <div>{selectsubmit ? "Submit" : "remove"} </div>
+        <div>{_selectDropDownList ? "Remove" : ""} </div>
         </button>
       </div>
     )
