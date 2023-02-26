@@ -91,7 +91,6 @@ const DropDownMenuRemoveFriend: React.FC<DropDownProps> = ({nameOfMenu, functinI
     _functinInput = functinInput;
     const [showDropDown, setShowDropDown] = useState<boolean>(false);
     const [selectDropDownList, setselectFriendList] = useState<string>("");
-    const [selectsubmit, setselectSubmit] = useState<string>("");
     _selectDropDownList = selectDropDownList
 
     //display will update when dropdown menu is submitted, so it updates everything
@@ -122,7 +121,6 @@ const DropDownMenuRemoveFriend: React.FC<DropDownProps> = ({nameOfMenu, functinI
 
     const friendListSelection = (friend: string): void => {
       setselectFriendList(friend);
-      setselectSubmit("submit")
     };
     //remove a funciton to this list that needs to remove the string to the list.
     console.log("remove list  ", list_);

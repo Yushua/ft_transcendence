@@ -142,8 +142,6 @@ export class UserProfileService {
       async getAllUsersByFriendList(id:string):Promise<string[]> {
         var newList: string[] = await this.getAllUsersIntoList()
         const found = await this.userEntity.findOneBy({id});
-        // var usernameTmp:string = found.username;
-        // delete newList[usernameTmp];
         return(newList);
       }
 
@@ -154,8 +152,6 @@ export class UserProfileService {
        */
       async getUsersListFriendById(id:string):Promise<string[]> {
         const found = await this.userEntity.findOneBy({id});
-        // var usernameTmp:string = found.username;
-        // delete newList[usernameTmp];
         return(found.friendList);
       }
 }

@@ -1,4 +1,4 @@
-import React, { } from 'react';
+import React, { useState } from 'react';
 import './userProfile.css';
 import './App.css';
 import { getCookie } from 'typescript-cookie';
@@ -23,9 +23,9 @@ export async function asyncGetName() {
     }
       const result = (await response.json())
       console.log('result is: ', JSON.stringify(result, null, 4));
-      name = await result["username"];
-      console.log(name);
-      return name;
+      _setDisplay = await result["username"];
+      console.log(_setDisplay);
+      return _setDisplay;
   }
   catch (e: any) {
     console.log(e)
@@ -46,8 +46,7 @@ export interface YourFormElement extends HTMLFormElement {
 }
 
 var name: string = "";
-// var newList:string[] = ["yusha", "lol", "Robin", "bob"];
-var newListN:string[] = [];
+var _setDisplay: React.Dispatch<React.SetStateAction<string>> | null = null
 
 function UserProfilePage() {
   //make a system update that, when either clicked, of empty
@@ -55,11 +54,17 @@ function UserProfilePage() {
   //now, when you submit, it shoudl update the page and get everything again
   //don't forget to update the player on their status
   //online, offline, ingame, inmessage
+  const [Display, setDisplay] = useState<string>("")
+    _setDisplay = setDisplay
+  if (Display === ""){
+    //it udpates too slowely
+    asyncGetName();
+  }
 
   return (
     <div className="UserProfile">
         <LogoutButtonComponent />
-        <label id="name" htmlFor="name">Welcome {name}</label>
+        <label id="name" htmlFor="name">Welcome {Display}</label>
 
       <HandleUsernameChange/>
       <DropDownMenuAddFriendList

@@ -35,6 +35,7 @@ async function addFriendToList(usernameFriend: string) {
 
 var list_:string[];
 export async function asyncGetFriendListById(){
+  console.log("get the friendlist in add")
   var input:string = 'http://localhost:4242/user-profile/userList/' + getCookie('userID');
   try
   {
@@ -91,12 +92,10 @@ const handleDropDownFunction = (e: React.MouseEvent<HTMLButtonElement>) => {
     _functinInput = functinInput;
     const [showDropDown, setShowDropDown] = useState<boolean>(false);
     const [selectDropDownList, setselectFriendList] = useState<string>("");
-    const [selectsubmit, setselectSubmit] = useState<string>("");
     const [display, setDisplay] = useState(true)
     _selectDropDownList = selectDropDownList
     _setDisplay = setDisplay
 
-    var newListN:string[] = [];
     if (display === true){
       asyncGetFriendListById();
       _setDisplay(false)
@@ -119,7 +118,6 @@ const handleDropDownFunction = (e: React.MouseEvent<HTMLButtonElement>) => {
 
     const friendListSelection = (friend: string): void => {
       setselectFriendList(friend);
-      setselectSubmit("submit")
     };
     //add a funciton to this list that needs to add the string to the list.
     return (
