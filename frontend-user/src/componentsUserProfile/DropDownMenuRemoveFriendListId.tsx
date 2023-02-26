@@ -50,7 +50,7 @@ export async function asyncGetFriendListById(){
       throw new Error(`Error! status: ${(await response.json()).message}`);
     }
      var result = await response.json()
-      console.log('result is: ', result);
+      console.log('@Get result is: ', result);
       list_ =  await result;
   }
   catch (e: any) {
@@ -72,7 +72,7 @@ type DropDownProps = {
 const handleDropDownFunction = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     console.log("hey");
-    console.log(_functinInput);
+    console.log("name to be removed ", _functinInput);
     switch (_functinInput) {
       case "friendList": removeFriendToList(_selectDropDownList);
     }
@@ -100,6 +100,7 @@ const DropDownMenuRemoveFriend: React.FC<DropDownProps> = ({nameOfMenu, functinI
       asyncGetFriendListById();
     }
 
+
     const friendList = () => {
       asyncGetFriendListById();
       return list_;
@@ -120,6 +121,7 @@ const DropDownMenuRemoveFriend: React.FC<DropDownProps> = ({nameOfMenu, functinI
       setselectSubmit("submit")
     };
     //remove a funciton to this list that needs to remove the string to the list.
+    console.log("remove list  ", list_);
     return (
         <div>
         <button className={showDropDown ? "active" : undefined}

@@ -111,10 +111,12 @@ let UserProfileService = class UserProfileService {
     }
     async removeFriend(id, idfriend) {
         const found = await this.userEntity.findOneBy({ id });
-        console.log(idfriend);
         found.friendList.splice(found.friendList.indexOf(idfriend));
+        if (found.friendList == null)
+            found.friendList = [];
         await this.userEntity.save(found);
-        console.log(found);
+        console.log("removed ", idfriend);
+        console.log(found.friendList);
         return found;
     }
     async getAllUsersIntoList() {
