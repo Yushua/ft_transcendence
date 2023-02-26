@@ -119,7 +119,7 @@ export class UserProfileService {
       async removeFriend(id:string, idfriend: string):Promise<UserProfile> {
         const found = await this.userEntity.findOneBy({id});
         //get all the users into one list
-        found.friendList.splice(found.friendList.indexOf(idfriend))
+        found.friendList.splice(found.friendList.indexOf(idfriend), 1);
         if (found.friendList == null)
           found.friendList = [];
         await this.userEntity.save(found);
