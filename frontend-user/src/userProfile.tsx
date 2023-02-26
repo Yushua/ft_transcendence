@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React, { } from 'react';
 import './userProfile.css';
 import './App.css';
 import { getCookie } from 'typescript-cookie';
 import LogoutButtonComponent from './componentsUserProfile/LogoutButton';
-import AddFriendToList from './componentsUserProfile/AddFriendToList';
 import HandleUsernameChange from './componentsUserProfile/HandleUsernameChange';
 import DropDownMenuAddFriendList from './componentsUserProfile/DropDownMenuAddFriendList';
 import DropDownMenuRemoveFriendListId from './componentsUserProfile/DropDownMenuRemoveFriendListId';
@@ -24,7 +23,7 @@ export async function asyncGetName() {
     }
       const result = (await response.json())
       console.log('result is: ', JSON.stringify(result, null, 4));
-      name = result["username"];
+      name = await result["username"];
       console.log(name);
       return name;
   }

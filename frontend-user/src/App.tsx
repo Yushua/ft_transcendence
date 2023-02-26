@@ -3,7 +3,6 @@ import './App.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import LoginPage from './Login';
-import UserProfilePage from './userProfile';
 
 export function newWindow(newWindow:JSX.Element) {
   if (!!_setWindow)

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { getCookie, removeCookie } from 'typescript-cookie';
 import { newWindow } from '../App';
 import LoginPage from '../Login';
-import { asyncGetName, setName, YourFormElement } from '../userProfile';
+import { asyncGetName, setName, YourFormElement } from '../UserProfile';
 
 var message:string = "";
 

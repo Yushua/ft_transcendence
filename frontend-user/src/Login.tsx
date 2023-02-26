@@ -1,7 +1,7 @@
 import React, { } from 'react';
 import './App.css';
-import { getCookie, getCookies, removeCookie, setCookie } from 'typescript-cookie'
-import UserProfilePage from './userProfile';
+import { getCookies, removeCookie, setCookie } from 'typescript-cookie'
+import UserProfilePage from './UserProfile';
 
 import { newWindow } from './App';
 

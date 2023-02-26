@@ -1,5 +1,4 @@
-import { async } from 'q';
-import React, { useState } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import { getCookie, getCookies, removeCookie } from 'typescript-cookie';
 import { newWindow } from '../App';
 import LoginPage from '../Login';
@@ -78,26 +77,29 @@ const handleDropDownFunction = (e: React.MouseEvent<HTMLButtonElement>) => {
     }
     console.log("done");
     _selectDropDownList = "";
+    _setDisplay(true)
     //after this, update the page
   }
 
   var _functinInput:string = "";
   var _selectDropDownList:string;
-  var _setDisplay;
-const DropDownMenuAddFriend: React.FC<DropDownProps> = ({nameOfMenu, functinInput}: DropDownProps): JSX.Element =>  {
+  
+  var _setDisplay:Dispatch<SetStateAction<boolean>>;
+  
+  const DropDownMenuAddFriend: React.FC<DropDownProps> = ({nameOfMenu, functinInput}: DropDownProps): JSX.Element =>  {
     //drop down menu
     _functinInput = functinInput;
     const [showDropDown, setShowDropDown] = useState<boolean>(false);
     const [selectDropDownList, setselectFriendList] = useState<string>("");
     const [selectsubmit, setselectSubmit] = useState<string>("");
+    const [display, setDisplay] = useState(true)
     _selectDropDownList = selectDropDownList
-
-    const [display, setDisplay] = useState<string>("")
     _setDisplay = setDisplay
 
     var newListN:string[] = [];
-    if (display === ""){
+    if (display === true){
       asyncGetFriendListById();
+      _setDisplay(false)
     }
 
     const friendList = () => {

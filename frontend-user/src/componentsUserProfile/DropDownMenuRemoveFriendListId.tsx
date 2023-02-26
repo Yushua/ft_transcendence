@@ -1,8 +1,9 @@
 import { async } from 'q';
-import React, { useState } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import { getCookie, getCookies, removeCookie } from 'typescript-cookie';
 import { newWindow } from '../App';
 import LoginPage from '../Login';
+import UserProfilePage from '../UserProfile';
 import DropDown from './FriendListDropDown';
 
 async function removeFriendToList(usernameFriend: string) {
@@ -69,18 +70,21 @@ type DropDownProps = {
     functinInput: string;
   };
 
-const handleDropDownFunction = (e: React.MouseEvent<HTMLButtonElement>) => {
+async function handleDropDownFunction (e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
     console.log("name to be removed ", _functinInput);
     switch (_functinInput) {
       case "friendList": removeFriendToList(_selectDropDownList);
     }
+    console.log("friend removed ", _functinInput);
     _selectDropDownList = "";
+    _setDisplay(true)
+    newWindow(<UserProfilePage />)
   }
 
   var _functinInput:string = "";
   var _selectDropDownList:string;
-  var _setDisplay;
+  var _setDisplay:Dispatch<SetStateAction<boolean>>;
 
 const DropDownMenuRemoveFriend: React.FC<DropDownProps> = ({nameOfMenu, functinInput}: DropDownProps): JSX.Element =>  {
     //drop down menu
@@ -90,12 +94,14 @@ const DropDownMenuRemoveFriend: React.FC<DropDownProps> = ({nameOfMenu, functinI
     const [selectsubmit, setselectSubmit] = useState<string>("");
     _selectDropDownList = selectDropDownList
 
-    const [display, setDisplay] = useState<string>("")
+    //display will update when dropdown menu is submitted, so it updates everything
+    const [display, setDisplay] = useState(true)
     _setDisplay = setDisplay
 
     var newListN:string[] = [];
-    if (display === ""){
+    if (display === true){
       asyncGetFriendListById();
+      _setDisplay(false)
     }
 
 

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { } from 'react';
 import { getCookie } from 'typescript-cookie';
-import { YourFormElement } from '../userProfile';
+import { YourFormElement } from '../UserProfile';
 var message:string = "";
 
 async function asyncAddFriend(newInput: string){
