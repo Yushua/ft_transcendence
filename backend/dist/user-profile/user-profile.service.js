@@ -115,7 +115,8 @@ let UserProfileService = class UserProfileService {
     }
     async getUsersListFriendById(id) {
         var newList = await this.getAllUsersIntoList();
-        console.log(newList);
+        const found = await this.userEntity.findOneBy({ id });
+        return (newList);
     }
 };
 UserProfileService = __decorate([

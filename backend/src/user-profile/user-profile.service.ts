@@ -118,16 +118,14 @@ export class UserProfileService {
 
       async getAllUsersIntoList():Promise<string[]> {
         console.log("getallusersnames")
-        // var newList: string[];
-        // return this.userEntity.query("SELECT username FROM user_profile;")
         return (await this.userEntity.query("SELECT username FROM user_profile;")).map(user => user.username)
-        // const users = await query.getMany();
-
-        // return newList;
       }
-      async getUsersListFriendById(id:string):Promise<void> {
+      async getUsersListFriendById(id:string):Promise<string[]> {
         
         var newList: string[] = await this.getAllUsersIntoList()
-        console.log(newList);
+        const found = await this.userEntity.findOneBy({id});
+        // var usernameTmp:string = found.username;
+        // delete newList[usernameTmp];
+        return(newList);
       }
 }

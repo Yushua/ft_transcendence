@@ -7,6 +7,7 @@ export declare class UserProfileController {
     constructor(userServices: UserProfileService);
     getAllTasks(filterDto: getTasksFilterDto): Promise<UserProfile[]>;
     getUserById(id: string): Promise<UserProfile>;
+    getUsesListById(id: string): Promise<string[]>;
     ReturnNameById(id: string): Promise<string>;
     getUserByUsername(username: string): Promise<UserProfile>;
     changeUsername(username: string, id: string): Promise<UserProfile>;

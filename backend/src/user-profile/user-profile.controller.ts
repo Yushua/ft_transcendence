@@ -23,6 +23,13 @@ export class UserProfileController {
         return this.userServices.findUserBy(id);
     }
 
+    @Get('/userList/:id')
+    getUsesListById(
+        @Param('id') id: string): Promise<string[]> {
+        //get the user list, minus the block and minus the friend list
+        return this.userServices.getUsersListFriendById(id);
+    }
+
     @Get("user/:id")
     async ReturnNameById(
         @Param("id") id: string): Promise<string>

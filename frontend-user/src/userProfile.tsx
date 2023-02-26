@@ -32,8 +32,8 @@ export async function asyncGetName() {
   }
 }
 
-export async function asyncGetFriendListById() {
-  var input:string = 'http://localhost:4242/user-profile//userList/' + getCookie('userID');
+export async function asyncGetFriendListById(){
+  var input:string = 'http://localhost:4242/user-profile/userList/' + getCookie('userID');
   try
   {
     const response = await fetch(input, {
@@ -48,6 +48,7 @@ export async function asyncGetFriendListById() {
     }
       const result = (await response.json())
       console.log('result is: ', JSON.stringify(result, null, 4));
+      newListN =  result;
   }
   catch (e: any) {
     console.log(e)
@@ -58,7 +59,7 @@ export function setName(neww:string){
   name = neww;
 }
 
-//change the username form
+// change the username form
 interface FormElements extends HTMLFormControlsCollection {
   newInput: HTMLInputElement
 }
@@ -67,13 +68,9 @@ export interface YourFormElement extends HTMLFormElement {
  readonly elements: FormElements
 }
 
-export const handleGetFriendList = (e: React.MouseEvent<HTMLButtonElement>) => {
-  e.preventDefault();
-  asyncGetFriendListById();
-}
-
 var name: string = "";
-var newList:string[] = ["yusha", "lol", "Robin", "bob"];
+// var newList:string[] = ["yusha", "lol", "Robin", "bob"];
+var newListN:string[] = [];
 var _setDisplay;
 
 function UserProfilePage() {
@@ -81,10 +78,16 @@ function UserProfilePage() {
   //fills it in with the friendlist for now, I do it here
   const [display, setDisplay] = useState<string>("")
   _setDisplay = setDisplay
-
   if (display === ""){
-    //update
+    asyncGetFriendListById();
+    console.log("newlist is ", newListN);
   }
+  asyncGetFriendListById();
+  console.log("newlist is ", newListN);
+  //now, when you submit, it shoudl update the page and get everything again
+  //don't forget to update the player on their status
+  //online, offline, ingame, inmessage
+
   return (
     <div className="UserProfile">
         <LogoutButtonComponent />
@@ -94,7 +97,7 @@ function UserProfilePage() {
       <HandleUsernameChange/>
       <DropDownMenu
       nameOfMenu={"friendlist"}
-      listOfFriends={newList}
+      listOfFriends={newListN}
       functinInput={"friendList"}
       //function
       />
