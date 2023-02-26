@@ -62,6 +62,7 @@ function UserProfilePage() {
         <LogoutButtonComponent />
         <label id="name" htmlFor="name">Welcome {name}</label>
 
+      <HandleUsernameChange/>
       <DropDownMenuAddFriendList
       nameOfMenu={"Add friendlist"}
       functinInput={"friendList"}
