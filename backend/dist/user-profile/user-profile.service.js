@@ -109,14 +109,26 @@ let UserProfileService = class UserProfileService {
         console.log(found);
         return found;
     }
+    async removeFriend(id, idfriend) {
+        const found = await this.userEntity.findOneBy({ id });
+        console.log(idfriend);
+        found.friendList.splice(found.friendList.indexOf(idfriend));
+        await this.userEntity.save(found);
+        console.log(found);
+        return found;
+    }
     async getAllUsersIntoList() {
         console.log("getallusersnames");
         return (await this.userEntity.query("SELECT username FROM user_profile;")).map(user => user.username);
     }
-    async getUsersListFriendById(id) {
+    async getAllUsersByFriendList(id) {
         var newList = await this.getAllUsersIntoList();
         const found = await this.userEntity.findOneBy({ id });
         return (newList);
+    }
+    async getUsersListFriendById(id) {
+        const found = await this.userEntity.findOneBy({ id });
+        return (found.friendList);
     }
 };
 UserProfileService = __decorate([

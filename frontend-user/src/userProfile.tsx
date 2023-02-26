@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import './userProfile.css';
 import './App.css';
-import { getCookie, removeCookie } from 'typescript-cookie';
+import { getCookie } from 'typescript-cookie';
 import LogoutButtonComponent from './componentsUserProfile/LogoutButton';
 import AddFriendToList from './componentsUserProfile/AddFriendToList';
 import HandleUsernameChange from './componentsUserProfile/HandleUsernameChange';
-import DropDownMenu from './componentsUserProfile/DropDownMenu';
+import DropDownMenuAddFriendList from './componentsUserProfile/DropDownMenuAddFriendList';
+import DropDownMenuRemoveFriendListId from './componentsUserProfile/DropDownMenuRemoveFriendListId';
 
 export async function asyncGetName() {
   var input:string = 'http://localhost:4242/user-profile/user/' + getCookie('userID');
@@ -32,29 +33,6 @@ export async function asyncGetName() {
   }
 }
 
-export async function asyncGetFriendListById(){
-  var input:string = 'http://localhost:4242/user-profile/userList/' + getCookie('userID');
-  try
-  {
-    const response = await fetch(input, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': "application/x-www-form-urlencoded",
-      },
-    })
-    if (!response.ok) {
-      throw new Error(`Error! status: ${(await response.json()).message}`);
-    }
-      const result = (await response.json())
-      console.log('result is: ', JSON.stringify(result, null, 4));
-      newListN =  result;
-  }
-  catch (e: any) {
-    console.log(e)
-  }
-}
-
 export function setName(neww:string){
   name = neww;
 }
@@ -71,19 +49,10 @@ export interface YourFormElement extends HTMLFormElement {
 var name: string = "";
 // var newList:string[] = ["yusha", "lol", "Robin", "bob"];
 var newListN:string[] = [];
-var _setDisplay;
 
 function UserProfilePage() {
   //make a system update that, when either clicked, of empty
   //fills it in with the friendlist for now, I do it here
-  const [display, setDisplay] = useState<string>("")
-  _setDisplay = setDisplay
-  if (display === ""){
-    asyncGetFriendListById();
-    console.log("newlist is ", newListN);
-  }
-  asyncGetFriendListById();
-  console.log("newlist is ", newListN);
   //now, when you submit, it shoudl update the page and get everything again
   //don't forget to update the player on their status
   //online, offline, ingame, inmessage
@@ -95,9 +64,13 @@ function UserProfilePage() {
 
       <AddFriendToList/>
       <HandleUsernameChange/>
-      <DropDownMenu
-      nameOfMenu={"friendlist"}
-      listOfFriends={newListN}
+      <DropDownMenuAddFriendList
+      nameOfMenu={"Add friendlist"}
+      functinInput={"friendList"}
+      //function
+      />
+      <DropDownMenuRemoveFriendListId
+      nameOfMenu={"remove friend"}
       functinInput={"friendList"}
       //function
       />

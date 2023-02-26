@@ -16,6 +16,8 @@ export declare class UserProfileService {
     changeStatus(status: UserStatus, id: string): Promise<UserProfile>;
     changeUsername(username: string, id: string): Promise<UserProfile>;
     addFriend(id: string, idfriend: string): Promise<UserProfile>;
+    removeFriend(id: string, idfriend: string): Promise<UserProfile>;
     getAllUsersIntoList(): Promise<string[]>;
+    getAllUsersByFriendList(id: string): Promise<string[]>;
     getUsersListFriendById(id: string): Promise<string[]>;
 }

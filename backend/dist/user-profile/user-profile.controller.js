@@ -28,6 +28,9 @@ let UserProfileController = class UserProfileController {
         return this.userServices.findUserBy(id);
     }
     getUsesListById(id) {
+        return this.userServices.getAllUsersByFriendList(id);
+    }
+    getUseFriendListById(id) {
         return this.userServices.getUsersListFriendById(id);
     }
     async ReturnNameById(id) {
@@ -45,6 +48,9 @@ let UserProfileController = class UserProfileController {
     }
     addFriend(id, usernameFriend) {
         return this.userServices.addFriend(id, usernameFriend);
+    }
+    removeFriend(id, usernameFriend) {
+        return this.userServices.removeFriend(id, usernameFriend);
     }
 };
 __decorate([
@@ -68,6 +74,13 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], UserProfileController.prototype, "getUsesListById", null);
+__decorate([
+    (0, common_1.Get)('/userFriendList/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UserProfileController.prototype, "getUseFriendListById", null);
 __decorate([
     (0, common_1.Get)("user/:id"),
     __param(0, (0, common_1.Param)("id")),
@@ -99,13 +112,21 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UserProfileController.prototype, "changeStatus", null);
 __decorate([
-    (0, common_1.Patch)('/status/:id/:usernameFriend'),
+    (0, common_1.Patch)('/friendlist/add/:id/:usernameFriend'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Param)('usernameFriend')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], UserProfileController.prototype, "addFriend", null);
+__decorate([
+    (0, common_1.Patch)('/friendlist/remove/:id/:usernameFriend'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Param)('usernameFriend')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", Promise)
+], UserProfileController.prototype, "removeFriend", null);
 UserProfileController = __decorate([
     (0, common_1.Controller)('user-profile'),
     __metadata("design:paramtypes", [user_profile_service_1.UserProfileService])

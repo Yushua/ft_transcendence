@@ -3,11 +3,10 @@ import React, { useState } from 'react';
 import { getCookie, getCookies, removeCookie } from 'typescript-cookie';
 import { newWindow } from '../App';
 import LoginPage from '../Login';
-import { YourFormElement } from '../userProfile';
 import DropDown from './FriendListDropDown';
 
 async function addFriendToList(usernameFriend: string) {
-  var inputString:string = 'http://localhost:4242/user-profile/status/' + getCookies().userID + '/' + usernameFriend;
+  var inputString:string = 'http://localhost:4242/user-profile/friendlist/add/' + getCookies().userID + '/' + usernameFriend;
   console.log("add friend");
   try {
     // 👇️ const response: Response
@@ -35,6 +34,30 @@ async function addFriendToList(usernameFriend: string) {
   }
 }
 
+var list_:string[];
+export async function asyncGetFriendListById(){
+  var input:string = 'http://localhost:4242/user-profile/userList/' + getCookie('userID');
+  try
+  {
+    const response = await fetch(input, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': "application/x-www-form-urlencoded",
+      },
+    })
+    if (!response.ok) {
+      throw new Error(`Error! status: ${(await response.json()).message}`);
+    }
+     var result = await response.json()
+      console.log('result is: ', result);
+      list_ =  await result;
+  }
+  catch (e: any) {
+    console.log(e)
+  }
+}
+
 export function logoutButtonRefresh() {
   removeCookie('accessToken');
   removeCookie('userID');
@@ -43,7 +66,6 @@ export function logoutButtonRefresh() {
 
 type DropDownProps = {
     nameOfMenu: string;
-    listOfFriends: string[];
     functinInput: string;
   };
 
@@ -60,7 +82,9 @@ const handleDropDownFunction = (e: React.MouseEvent<HTMLButtonElement>) => {
 
   var _functinInput:string = "";
   var _selectDropDownList:string;
-const DropDownMenu: React.FC<DropDownProps> = ({nameOfMenu, listOfFriends, functinInput}: DropDownProps): JSX.Element =>  {
+  var _setDisplay;
+
+const DropDownMenuAddFriend: React.FC<DropDownProps> = ({nameOfMenu, functinInput}: DropDownProps): JSX.Element =>  {
     //drop down menu
     _functinInput = functinInput;
     const [showDropDown, setShowDropDown] = useState<boolean>(false);
@@ -69,8 +93,16 @@ const DropDownMenu: React.FC<DropDownProps> = ({nameOfMenu, listOfFriends, funct
     _selectDropDownList = selectDropDownList
 
     const [display, setDisplay] = useState<string>("")
+    _setDisplay = setDisplay
+
+    var newListN:string[] = [];
+    if (display === ""){
+      asyncGetFriendListById();
+    }
+
     const friendList = () => {
-      return listOfFriends;
+      asyncGetFriendListById();
+      return list_;
     };
 
     const toggleDropDown = () => {
@@ -106,10 +138,10 @@ const DropDownMenu: React.FC<DropDownProps> = ({nameOfMenu, listOfFriends, funct
         )}
       </button>
         <button type="submit" onClick={handleDropDownFunction}>
-        <div>{selectsubmit ? "Submit" : "choose friend"} </div>
+        <div>{selectsubmit ? "Submit" : "add"} </div>
         </button>
       </div>
     )
 }
 
-export default DropDownMenu;
+export default DropDownMenuAddFriend;

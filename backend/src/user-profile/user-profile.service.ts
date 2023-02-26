@@ -116,16 +116,43 @@ export class UserProfileService {
         return found;
       }
 
+      async removeFriend(id:string, idfriend: string):Promise<UserProfile> {
+        const found = await this.userEntity.findOneBy({id});
+        //get all the users into one list
+        console.log(idfriend);
+        found.friendList.splice(found.friendList.indexOf(idfriend))
+        await this.userEntity.save(found);
+        console.log(found);
+        return found;
+      }
+
       async getAllUsersIntoList():Promise<string[]> {
         console.log("getallusersnames")
         return (await this.userEntity.query("SELECT username FROM user_profile;")).map(user => user.username)
       }
-      async getUsersListFriendById(id:string):Promise<string[]> {
-        
+
+      /**
+       * 
+       * @param id 
+       * @returns return a list of all the users minus the user itself
+       */
+      async getAllUsersByFriendList(id:string):Promise<string[]> {
         var newList: string[] = await this.getAllUsersIntoList()
         const found = await this.userEntity.findOneBy({id});
         // var usernameTmp:string = found.username;
         // delete newList[usernameTmp];
         return(newList);
+      }
+
+      /**
+       * 
+       * @param id 
+       * @returns get the users friendslist
+       */
+      async getUsersListFriendById(id:string):Promise<string[]> {
+        const found = await this.userEntity.findOneBy({id});
+        // var usernameTmp:string = found.username;
+        // delete newList[usernameTmp];
+        return(found.friendList);
       }
 }

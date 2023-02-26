@@ -23,10 +23,25 @@ export class UserProfileController {
         return this.userServices.findUserBy(id);
     }
 
+    /**
+     * 
+     * @param id 
+     * @returns get all users in  list minus this user, using ID
+     */
     @Get('/userList/:id')
     getUsesListById(
         @Param('id') id: string): Promise<string[]> {
-        //get the user list, minus the block and minus the friend list
+        return this.userServices.getAllUsersByFriendList(id);
+    }
+
+    /**
+     * 
+     * @param id 
+     * @returns get users friendslist
+     */
+    @Get('/userFriendList/:id')
+    getUseFriendListById(
+        @Param('id') id: string): Promise<string[]> {
         return this.userServices.getUsersListFriendById(id);
     }
 
@@ -68,7 +83,7 @@ export class UserProfileController {
         return this.userServices.changeStatus(status, id);
     }
 
-    @Patch('/status/:id/:usernameFriend')
+    @Patch('/friendlist/add/:id/:usernameFriend')
     addFriend(
         @Param('id') id: string,
         @Param('usernameFriend') usernameFriend: string,
@@ -76,6 +91,16 @@ export class UserProfileController {
         : Promise<UserProfile> {
         return this.userServices.addFriend(id, usernameFriend);
     }
+
+    @Patch('/friendlist/remove/:id/:usernameFriend')
+    removeFriend(
+        @Param('id') id: string,
+        @Param('usernameFriend') usernameFriend: string,
+        )
+        : Promise<UserProfile> {
+        return this.userServices.removeFriend(id, usernameFriend);
+    }
+
 
     /*
         front app application will test
