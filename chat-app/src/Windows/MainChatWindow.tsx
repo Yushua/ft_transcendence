@@ -14,12 +14,11 @@ export async function asyncUpdateUserDEBUG(userID: string) {
 	ChatRoom.Clear()
 	await User.asyncUpdate(userID)
 	await ChatUser.asyncUpdate(userID)
-	SetMainWindow(`load ${userID}`)
+	SetMainWindow("chat")
 }
 
 export async function asyncChangeRoom(roomID: string) {
 	await ChatRoom.asyncUpdate(roomID)
-	asyncUpdateChatLog()
 }
 
 export function SetMainWindow(window: string) {
@@ -28,23 +27,10 @@ export function SetMainWindow(window: string) {
 }
 var _setMainWindow: React.Dispatch<React.SetStateAction<string>> | null = null
 
-async function _load() {
-	SetMainWindow("chat")
-}
-
 export default function MainChatWindow() {
 	
 	const [MainWindow, setMainWindow] = useState<string>("")
 	_setMainWindow = setMainWindow
-	
-	const special = MainWindow.substring(0, 4)
-	switch (special) {
-		case "load":
-			_load()
-			return <>Loading...</>;
-		default:
-			break;
-	}
 	
 	var window
 	switch (MainWindow) {

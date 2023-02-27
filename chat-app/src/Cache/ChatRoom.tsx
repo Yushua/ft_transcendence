@@ -34,6 +34,12 @@ export default class ChatRoom {
 		}
 	}
 	
+	static UpdateMessageCount() {
+		if (this.ID === "")
+			return
+		this._chatRoom.MessageCount = +HTTP.Get(`chat/room/${this.ID}/MessageCount`)
+	}
+	
 	static IsRoomOfFriend(friendID: string): boolean {
 		const index = ChatUser.FriedsWithDirect.indexOf(friendID)
 		if (index >= 0)
@@ -51,6 +57,7 @@ export default class ChatRoom {
 	static get MuteIDs():           string[] { return this._chatRoom?.MuteIDs ?? [] }
 	static get MuteDates():         string[] { return this._chatRoom?.MuteDates ?? [] }
 	static get MessageGroupDepth(): number   { return this._chatRoom?.MessageGroupDepth ?? 0 }
+	static get MessageCount():      number   { return this._chatRoom?.MessageCount ?? 0 }
 	static get Direct():            boolean  { return this._chatRoom?.Direct ?? true }
 	static get Password():          string   { return this._chatRoomPass }
 	
@@ -63,6 +70,7 @@ export default class ChatRoom {
 		asyncUpdateRoomList,
 		asyncUpdateMemberList,
 		asyncUpdateMembersWindow,
+		asyncUpdateChatLog,
 	]
 	
 	private static _clearEvent() {

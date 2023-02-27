@@ -92,7 +92,7 @@ export class ChatService {
 			OwnerID:"", Name:"", HasPassword: false, RoomType: +ChatRoomType.Private,
 			MemberIDs:[userID, memberID], AdminIDs:[],
 			BanIDs:[], MuteIDs:[], MuteDates:[],
-			MessageGroupDepth: 0, Direct: true
+			MessageGroupDepth: 0, MessageCount: 0, Direct: true
 		})
 		room = await this.chatRoomRepo.save(room)
 		
@@ -117,7 +117,7 @@ export class ChatService {
 			OwnerID, Name, HasPassword: Password !== "", RoomType: +ChatRoomType[RoomType],
 			MemberIDs:[OwnerID], AdminIDs:[OwnerID],
 			BanIDs:[], MuteIDs:[], MuteDates:[],
-			MessageGroupDepth: 0, Direct: false
+			MessageGroupDepth: 0, MessageCount: 0, Direct: false
 		})
 		room = await this.chatRoomRepo.save(room)
 		
@@ -145,17 +145,18 @@ export class ChatService {
 		const msg = new ChatMessage(OwnerID, Message)
 		
 		const room = await this.GetRoom(roomID)
+		room.MessageCount += 1
 		
 		var depth = room.MessageGroupDepth
 		var msgGroup = await this.chatMessageRepo.findOneBy({ ID: await this._getMsgID(room.ID, depth) })
 		if (!msgGroup || !msgGroup.AddMessage(msg)) {
 			depth = (room.MessageGroupDepth += 1)
-			await this.chatRoomRepo.save(room)
 			msgGroup = await this._addMessageGroup(await this._getMsgID(room.ID, depth))
 			msgGroup.AddMessage(msg)
 		}
+		await this.chatRoomRepo.save(room)
 		await this.chatMessageRepo.save(msgGroup)
-		this.Notify("room-" + roomID, "msg")
+		this.Notify("room-" + roomID, ChatMessageDTO.toString())
 	}
 	
 	async AddUserToRoom(roomID: string, userID: string, password: string | null): Promise<string> {
@@ -254,7 +255,7 @@ export class ChatService {
 		})
 		if (changed) {
 			this.Notify(`room-${roomID}`, "mem")
-			this.Notify(`user-${memberID}`, "room")
+			this.Notify(`user-${memberID}`, "kick")
 		}
 	}
 	

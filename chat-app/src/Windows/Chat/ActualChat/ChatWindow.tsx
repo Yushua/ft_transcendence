@@ -4,37 +4,61 @@ import ChatRoom from "../../../Cache/ChatRoom";
 import NameStorage from "../../../Cache/NameStorage";
 import User from "../../../Cache/User";
 
+var roomCache: Map<string, JSX.Element[]> = new Map<string, JSX.Element[]>()
+var _chatLog: JSX.Element[] = []
 var _logDepth = 30
+var _fillDepth = 10
+var _oldRoomID = ""
 
 export async function asyncUpdateChatLog() {
 	if (!_setChatLog)
 		return
-	if (ChatRoom.ID === "") {
-		_setChatLog([])
-		return
-	}
-	
-	var chat: JSX.Element[] = []
-	var count = 0
-
-	for (let page = 1; count < _logDepth; page++) {
-		const msgs = await JSON.parse(HTTP.Get(`chat/msg/${ChatRoom.ID}/-${page}`))
-		
-		if (msgs.length == 0)
-			break
-		
-		for (let i = msgs.length - 1; count < _logDepth && i >= 0; i--) {
-			count++
-			chat.unshift(<div style={{textAlign: "left"}}>{`${await NameStorage.asyncGetUser(msgs[i].OwnerID)}: ${msgs[i].Message}`}</div>)
+	if (_oldRoomID !== ChatRoom.ID) {
+		if (_oldRoomID !== "")
+			roomCache.set(_oldRoomID, _chatLog)
+		_oldRoomID = ChatRoom.ID
+		_chatLog = roomCache.get(_oldRoomID) ?? []
+		if (ChatRoom.ID === "") {
+			_setChatLog([<div><span>&#8203;</span></div>])
+			return
 		}
 	}
 	
-	for (; count < 10; count++)
-		chat.unshift(<div><span>&#8203;</span></div>)
+	var _msgCount = _chatLog.length
 	
-	_setChatLog(chat)
+	const newMsgCount = ChatRoom.MessageCount
+	
+	if (newMsgCount > _msgCount) {
+		var newChatLog = []
+		var count = 0
+		var target = newMsgCount - _msgCount
+		
+		for (let page = 1; count < target; page++) {
+			const msgs = await JSON.parse(HTTP.Get(`chat/msg/${ChatRoom.ID}/-${page}`))
+			
+			if (msgs.length == 0)
+				break
+			
+			for (let i = msgs.length - 1; count < target && i >= 0; i--) {
+				count++
+				newChatLog.unshift(<div style={{textAlign: "left"}}>{`${await NameStorage.asyncGetUser(msgs[i].OwnerID)}: ${msgs[i].Message}`}</div>)
+			}
+		}
+		
+		_chatLog = _chatLog.concat(newChatLog)
+	}
+	
+	_msgCount = newMsgCount
+	
+	var chatLog = _chatLog.map(x=>x)
+	for (var fill = _msgCount; fill < _fillDepth; fill++)
+		chatLog.unshift(<div><span>&#8203;</span></div>)
+	
+	_setChatLog(chatLog)
+	
 	var log = document.getElementById("ChatLog") as HTMLElement
-	log.scrollTop = log.scrollHeight
+	if (!!log)
+		log.scrollTop = log.scrollHeight
 }
 
 var _setChatLog: React.Dispatch<React.SetStateAction<JSX.Element[]>> | null = null

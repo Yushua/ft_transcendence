@@ -19,6 +19,7 @@ export class ChatRoom {
 	@Column("text", { array: true }) MuteIDs:           string[]
 	@Column("text", { array: true }) MuteDates:         string[]
 	@Column()                        MessageGroupDepth: number
+	@Column()                        MessageCount:      number
 	@Column()                        Direct:            boolean
 }
 
