@@ -15,12 +15,13 @@ export const RunPong = () => {
 	const [connected, setConnected] = React.useState(false)
 	const [inGame, setInGame] = React.useState(false)
 	const [gameData, setGameData] = React.useState({
-		gameState:Map<string, boolean>,
+		gameState: 'newgame',
+		winner: '',
 		p1_score: 0,
 		p2_score: 0,
-		p1: Paddle,
-		p2: Paddle,
-		ball: Ball,
+		p1: new Paddle(7, 1, 1500, 750, 20, 20, 100),
+		p2: new Paddle(7, 2, 1500, 750, 20, 20, 100),
+		ball: new Ball(12, 3, 1500, 750, 20, 20, 20),
 		gameCanvasWidth: 1500,
 		gameCanvasHeight: 750,
 		paddleWidth: 20,
@@ -49,18 +50,20 @@ export const RunPong = () => {
 			//check if useReducer is usable and how
 			console.log('serverdata:', serverData)
 			setGameData({...gameData,
-				gameState: serverData.gameState,
-				p1_score: serverData.p1_score,
-				p2_score: serverData.p2_score,
-				p1: serverData.p1,
-				p2: serverData.p2,
-				ball: serverData.ball,
-				gameCanvasWidth: serverData.gameCanvasWidth,
-				gameCanvasHeight: serverData.gameCanvasHeight,
-				paddleWidth: serverData.paddleWidth,
-				paddleHeight: serverData.paddleHeight,
-				ballSize: serverData.ballSize,
-				wallOffset: serverData.wallOffset,
+				...gameData,
+				...serverData
+				// gameState: serverData.gameState,
+				// p1_score: serverData.p1_score,
+				// p2_score: serverData.p2_score,
+				// p1: serverData.p1,
+				// p2: serverData.p2,
+				// ball: serverData.ball,
+				// gameCanvasWidth: serverData.gameCanvasWidth,
+				// gameCanvasHeight: serverData.gameCanvasHeight,
+				// paddleWidth: serverData.paddleWidth,
+				// paddleHeight: serverData.paddleHeight,
+				// ballSize: serverData.ballSize,
+				// wallOffset: serverData.wallOffset,
 			})
 			console.log('gamedata', gameData)
 
@@ -87,12 +90,13 @@ export const RunPong = () => {
 
 export class RenderPong extends React.Component<any, any> {
 
-	private		 	gameCanvas
-	private			gameContext
+	private	gameCanvas
+	private	gameContext
 
 	constructor(props:any)
 	{
 		super(props)
+		console.log('props', props)
 		this.gameCanvas = document.getElementById("game-canvas") as HTMLCanvasElement
 		this.gameCanvas.width = props.gameData.gameCanvasWidth
 		this.gameCanvas.height = props.gameData.gameCanvasHeight
@@ -103,8 +107,8 @@ export class RenderPong extends React.Component<any, any> {
 		window.addEventListener("keypress", (event) => {
 			if (event.key === " ")
 			{
-				if (this.props.gameData.gameState.get("newgame"))
-					this.props.gameData.gameState.set("newgame", false)
+				if (this.props.gameData.gameState === "newgame")
+					this.props.gameData.gameState = "running"
 				else
 					this.props.gameData.keysPressed.set("pause", !this.props.gameData.keysPressed.get("pause"))
 			}
@@ -128,7 +132,7 @@ export class RenderPong extends React.Component<any, any> {
 		this.gameContext.fillText(playerScoreString, 375, 50)
 		this.gameContext.fillText(player_2_ScoreString, 1125, 50)
 		//if new game
-		if (this.props.gameData.gameState.get("newgame"))
+		if (this.props.gameData.gameState === "newgame")
 		{
 			this.gameContext.fillText("PRESS SPACE", 370, 325)
 			this.gameContext.fillText("TO START/PAUSE", 875, 325)
@@ -140,9 +144,9 @@ export class RenderPong extends React.Component<any, any> {
 			this.gameContext.fillText("PAUSED", 875, 325)
 		}
 		//if game end
-		if (this.props.gameData.gameState.get("game_end"))
+		if (this.props.gameData.gameState === "end")
 		{
-			if (this.props.gameData.gameState.get("P1_won"))
+			if (this.props.gameData.winner === "p1")
 				this.gameContext.fillText("WINNER", 315, 95)
 			else
 				this.gameContext.fillText("WINNER", 1065, 95)
@@ -152,7 +156,7 @@ export class RenderPong extends React.Component<any, any> {
 	}
 	update()
 	{
-		if (this.props.gameData.keysPressed.get("pause") || this.props.gameData.gameState.get("newgame") || this.props.gameData.gameState.get("game_end"))
+		if (this.props.gameData.keysPressed.get("pause") || this.props.gameData.gameState === "newgame" || this.props.gameData.gameState === "end")
 			return
 		if (this.props.gameData.player === 'p1')
 			this.props.gameData.player1.update(this.gameCanvas)
@@ -189,7 +193,6 @@ export class RenderPong extends React.Component<any, any> {
 
 
 function StartPong(props:any) {
-	console.log('SP:', props.gameData)
 	if (props.gameData.gameCanvasWidth === undefined)
 		return -1
 	var game = new RenderPong(props)
@@ -204,7 +207,13 @@ export class Pong extends React.Component<any, any> {
 			return ( <div>loading...</div>)
 		return (
 			<div>
+				{/* <RenderCanvas />
+				<RenderPaddles />
+				<RenderScores />
+				<RenderBall /> */}
 				<RenderPong socket={this.props.socket} gameData={this.props.gameData} />
+
+
 			</div>
 		)
 	}

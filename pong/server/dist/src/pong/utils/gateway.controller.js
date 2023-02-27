@@ -44,11 +44,23 @@ let MyGateway = class MyGateway {
             queuedclient.emit('joined', game_room);
             let client2 = queuedclient;
             queuedclient = undefined;
+            console.log('check');
             let gamedata = new pong_objects_1.GameData;
+            let p1 = new pong_objects_1.Paddle(7, 1, 1500, 750, 20, 20, 100);
+            let p2 = new pong_objects_1.Paddle(7, 2, 1500, 750, 20, 20, 100);
+            let ball = new pong_objects_1.Ball(12, 3, 1500, 750, 20, 20, 20);
+            this.server.on('gamedata_client', (socket, client_data) => {
+                if (socket.id === client.id) {
+                    if (client_data.pos === 1)
+                        p1.update();
+                    else if (socket.id === client2.id)
+                        p2.update();
+                }
+            });
             setInterval(() => {
-                this.server.to(client.id).emit('gamedata', gamedata);
-                this.server.to(client2.id).emit('gamedata', gamedata);
-                gamedata.update();
+                this.server.to(client.id).emit('gamedata', gamedata, p1, p2, ball);
+                this.server.to(client2.id).emit('gamedata', gamedata, p1, p2, ball);
+                gamedata.update(ball.update(p1, p2));
             });
         }
     }

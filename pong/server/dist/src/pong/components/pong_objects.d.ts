@@ -1,18 +1,9 @@
 export declare class GameData {
-    gameState: Map<string, boolean>;
+    gameState: string;
     p1_score: number;
     p2_score: number;
-    p1: Paddle;
-    p2: Paddle;
-    ball: Ball;
-    gameCanvasWidth: number;
-    gameCanvasHeight: number;
-    paddleWidth: number;
-    paddleHeight: number;
-    ballSize: number;
-    wallOffset: number;
     constructor();
-    update(): void;
+    update(event: string): void;
 }
 declare class Entity {
     x: number;
@@ -26,6 +17,7 @@ declare class Entity {
     width: number;
     height: number;
     constructor(speed: number, type: number, gameCanvasWidth: number, gameCanvasHeight: number, wallOffset: number, width: number, height: number);
+    draw(context: CanvasRenderingContext2D): void;
 }
 export declare class Paddle extends Entity {
     keysPressed: Map<string, boolean>;
@@ -33,6 +25,6 @@ export declare class Paddle extends Entity {
 }
 export declare class Ball extends Entity {
     constructor(speed: number, type: number, gameCanvasWidth: number, gameCanvasHeight: number, wallOffset: number, width: number, height: number);
-    update(p1: Paddle, p2: Paddle): void;
+    update(p1: Paddle, p2: Paddle): "p1_scored" | "p2_scored" | "";
 }
 export {};

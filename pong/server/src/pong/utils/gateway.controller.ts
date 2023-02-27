@@ -1,7 +1,7 @@
 import { OnModuleInit } from "@nestjs/common";
 import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Server, Socket } from 'socket.io'
-import { GameData } from '../components/pong_objects'
+import { Ball, GameData, Paddle } from '../components/pong_objects'
 
 let queuedclient:Socket = undefined
 let n_game_rooms:number = 0
@@ -50,34 +50,28 @@ export class MyGateway implements OnModuleInit {
 				queuedclient = undefined
 
 				//create new paddles and ball
+				console.log('check')
 				let gamedata = new GameData
+				let p1 = new Paddle(7, 1, 1500, 750, 20, 20, 100)
+				let p2 = new Paddle(7, 2, 1500, 750, 20, 20, 100)
+				let ball = new Ball(12, 3, 1500, 750, 20, 20, 20)
 	
+				//update player pos
+				this.server.on('gamedata_client', (socket, client_data) => {
+					if (socket.id === client.id)
+					{
+						if (client_data.pos === 1)
+							p1.update()
+						else if (socket.id === client2.id)
+							p2.update()
+					}
+				})
+
 				//start sending data to clients
 				setInterval(() => {
-					// this.server.to(game_room).emit('gamedata', { 
-					// 	gamedata
-					// })
-					this.server.to(client.id).emit('gamedata',
-						gamedata
-					)
-					this.server.to(client2.id).emit('gamedata',
-						gamedata
-					)
-					gamedata.update()
-
-					// this.server.on('gamedata_client', (socket, client_data) => {
-					// 	if (socket.id === client.id)
-					// 	{
-					// 		if (client_data.pos === 1)
-					// 		{
-					// 			p1.up
-					// 		}
-					// 	}
-					// 	else if (socket.id === client2.id)
-					// 	{
-					// 		//p2
-					// 	}
-					// })
+					this.server.to(client.id).emit('gamedata', gamedata, p1, p2, ball)
+					this.server.to(client2.id).emit('gamedata', gamedata, p1, p2, ball)
+					gamedata.update(ball.update(p1, p2))
 				})
 			}
 		}
@@ -98,22 +92,3 @@ export class MyGateway implements OnModuleInit {
 // 	@ConnectedSocket() client: Socket) : number {
 // 		return id;
 // 	}
-	
-
-// const io = new Server(4242)
-
-// io.on("connection", (socket) => {
-// 	socket.emit("hello", "world")
-
-// 	socket.on("newMessage", (args) => {
-// 		// console.log(args)
-// 	})
-// })
-
-// let p1 = new Paddle(20,100,20,325,12)
-// let p2 = new Paddle(20,100,1460,325,12)
-// let ball = new Ball(20,20,740,365,7)
-// let p1_score = 0
-// let p2_score = 0
-// let gamenum = n_game_rooms
-// let gamedata_server = { p1, p2, ball, gamenum, p1_score, p2_score }

@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { RunPong } from './components/Pong';
+import { RunPong } from './components/Pong2';
 
 class App extends Component  {
 	render() {
@@ -11,4 +11,4 @@ class App extends Component  {
 	}
 }
 
-export default App;
+export default App
