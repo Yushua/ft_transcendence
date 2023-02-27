@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@nestjs/cli": "^9.2.0",
     "@nestjs/common": "^9.3.9",
     "@nestjs/config": "^2.3.1",
     "@nestjs/core": "^9.3.9",
@@ -18,8 +19,6 @@
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
     "pg": "^8.9.0",
-    "react-scripts": "^5.0.1",
-    "react-shapes": "^0.1.0",
     "rxjs": "^7.8.0",
     "socket-controllers": "^0.1.2",
     "socket.io-client": "^4.6.1",

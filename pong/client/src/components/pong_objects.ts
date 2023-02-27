@@ -61,7 +61,7 @@ class Entity
 			this.x = this.gameCanvasWidth - (this.wallOffset + this.width)
 		if (type === 3)
 		{
-			this.x = this.gameCanvasWidth / 2 - this.width / 2,
+			this.x = this.gameCanvasWidth / 2 - this.width / 2
 			this.y = this.gameCanvasHeight / 2 - this.width / 2
 		}
 	}

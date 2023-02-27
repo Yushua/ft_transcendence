@@ -1,30 +1,38 @@
 export declare class GameData {
-    static keysPressed: Map<string, boolean>;
-    static gameState: Map<string, boolean>;
-    static playerScore: number;
-    static player_2_Score: number;
-    static player1: Paddle;
-    static player2: Paddle;
+    gameState: Map<string, boolean>;
+    p1_score: number;
+    p2_score: number;
+    p1: Paddle;
+    p2: Paddle;
     ball: Ball;
-    static gameCanvasWidth: number;
-    static gameCanvasHeight: number;
+    gameCanvasWidth: number;
+    gameCanvasHeight: number;
+    paddleWidth: number;
+    paddleHeight: number;
+    ballSize: number;
+    wallOffset: number;
     constructor();
+    update(): void;
 }
 declare class Entity {
-    width: number;
-    height: number;
     x: number;
     y: number;
     xVec: number;
     yVec: number;
     speed: number;
-    constructor(w: number, h: number, x: number, y: number, num: number);
+    gameCanvasWidth: number;
+    gameCanvasHeight: number;
+    wallOffset: number;
+    width: number;
+    height: number;
+    constructor(speed: number, type: number, gameCanvasWidth: number, gameCanvasHeight: number, wallOffset: number, width: number, height: number);
 }
 export declare class Paddle extends Entity {
+    keysPressed: Map<string, boolean>;
     update(): void;
 }
 export declare class Ball extends Entity {
-    constructor(w: number, h: number, x: number, y: number, num: number);
-    update(): void;
+    constructor(speed: number, type: number, gameCanvasWidth: number, gameCanvasHeight: number, wallOffset: number, width: number, height: number);
+    update(p1: Paddle, p2: Paddle): void;
 }
 export {};

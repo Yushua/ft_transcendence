@@ -20,6 +20,7 @@ gethostname:
 setup:
 	npm i --save @nestjs/typeorm
 	npm i --save @nestjs/common
+	npm i --save @nestjs/cli
 	npm i --save class-validator
 	npm i --save @nestjs/jwt
 	npm i --save @nestjs/websockets @nestjs/platform-socket.io

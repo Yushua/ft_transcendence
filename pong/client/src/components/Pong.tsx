@@ -1,7 +1,7 @@
 import React from 'react'
 import { Socket } from 'socket.io-client'
 import { WebsocketContext } from "../contexts/WebsocketContext"
-import { GameData } from '../../../server/src/pong/components/pong_objects'
+import { Paddle, GameData, Ball } from './pong_objects'
 
 type MessagePayload = {
 	content:string
@@ -14,9 +14,20 @@ export const RunPong = () => {
 	const [pending, setPending] = React.useState(false)
 	const [connected, setConnected] = React.useState(false)
 	const [inGame, setInGame] = React.useState(false)
-	const [gameData, setGameData] = React.useState({});
-	const [player, setPlayer] = React.useState('')
-
+	const [gameData, setGameData] = React.useState({
+		gameState:Map<string, boolean>,
+		p1_score: 0,
+		p2_score: 0,
+		p1: Paddle,
+		p2: Paddle,
+		ball: Ball,
+		gameCanvasWidth: 1500,
+		gameCanvasHeight: 750,
+		paddleWidth: 20,
+		paddleHeight: 100,
+		ballSize: 20,
+		wallOffset: 20,
+	})
 	React.useEffect(() => {
 		socket.on('connect', () => {
 			console.log('connected with gateway!', socket.id)
@@ -34,9 +45,26 @@ export const RunPong = () => {
 			setInGame(true)
 			setPending(false)
 		})
-		socket.on('gamedata', (serverData, player) => {
-			setGameData(serverData)
-			setPlayer(player)
+		socket.on('gamedata', (serverData) => {
+			//check if useReducer is usable and how
+			console.log('serverdata:', serverData)
+			setGameData({...gameData,
+				gameState: serverData.gameState,
+				p1_score: serverData.p1_score,
+				p2_score: serverData.p2_score,
+				p1: serverData.p1,
+				p2: serverData.p2,
+				ball: serverData.ball,
+				gameCanvasWidth: serverData.gameCanvasWidth,
+				gameCanvasHeight: serverData.gameCanvasHeight,
+				paddleWidth: serverData.paddleWidth,
+				paddleHeight: serverData.paddleHeight,
+				ballSize: serverData.ballSize,
+				wallOffset: serverData.wallOffset,
+			})
+			console.log('gamedata', gameData)
+
+
 		})
 
 		return () => {
@@ -52,18 +80,12 @@ export const RunPong = () => {
 
 	return (
 		<div>
-			 {pending ? `Waiting for second player...` : inGame ? <RenderPong socket={socket} gameData={gameData} player={player}/> : <button onClick={() => findGame()}>Join Game</button>}
+			 {pending ? `Waiting for second player...` : inGame ? <Pong socket={socket} gameData={gameData}/> : <button onClick={() => findGame()}>Join Game</button>}
 		</div>
 	)
 }
 
-interface PongProps {
-	socket: Socket,
-	gameData: GameData
-}
-  
-
-export class Pong extends React.Component<any, any> {
+export class RenderPong extends React.Component<any, any> {
 
 	private		 	gameCanvas
 	private			gameContext
@@ -72,19 +94,19 @@ export class Pong extends React.Component<any, any> {
 	{
 		super(props)
 		this.gameCanvas = document.getElementById("game-canvas") as HTMLCanvasElement
-		this.gameCanvas.width = this.props.gameCanvasWidth
-		this.gameCanvas.height = this.props.gameCanvasHeight
+		this.gameCanvas.width = props.gameData.gameCanvasWidth
+		this.gameCanvas.height = props.gameData.gameCanvasHeight
 		this.gameContext = this.gameCanvas.getContext("2d") as CanvasRenderingContext2D
 		this.gameContext.font = "30px Orbitron"
-		window.addEventListener("keydown",(event) => { this.props.keysPressed.set(event.key, true) })
-		window.addEventListener("keyup",(event) => { this.props.keysPressed.set(event.key, false) })
+		window.addEventListener("keydown",(event) => { this.props.gameData.keysPressed.set(event.key, true) })
+		window.addEventListener("keyup",(event) => { this.props.gameData.keysPressed.set(event.key, false) })
 		window.addEventListener("keypress", (event) => {
 			if (event.key === " ")
 			{
-				if (this.props.gameState.get("newgame"))
-					this.props.gameState.set("newgame", false)
+				if (this.props.gameData.gameState.get("newgame"))
+					this.props.gameData.gameState.set("newgame", false)
 				else
-					this.props.keysPressed.set("pause", !this.props.keysPressed.get("pause"))
+					this.props.gameData.keysPressed.set("pause", !this.props.gameData.keysPressed.get("pause"))
 			}
 		})
 	}
@@ -94,33 +116,33 @@ export class Pong extends React.Component<any, any> {
 		//draw court outline
 		this.gameContext.strokeStyle = "#fff"
 		this.gameContext.lineWidth = 5
-		this.gameContext.strokeRect(10,10,this.gameCanvas.width - 20 ,this.gameCanvas.height - 20)
+		this.gameContext.strokeRect(10,10,this.props.gameData.gameCanvasWidth - 20 ,this.props.gameData.gameCanvasHeight - 20)
 		//draw center lines
-		for (var i = 0; i + 25 < this.gameCanvas.height; i += 25) {
+		for (var i = 0; i + 25 < this.props.gameData.gameCanvasHeight; i += 25) {
 			this.gameContext.fillStyle = "#fff"
-			this.gameContext.fillRect(this.gameCanvas.width / 2 - 10, i + 10, 10, 20)
+			this.gameContext.fillRect(this.props.gameData.gameCanvasWidth / 2 - 10, i + 10, 10, 20)
 		}
 		//draw scores
-		const playerScoreString:string = this.props.playerScore.toString()
-		const player_2_ScoreString:string = this.props.player_2_Score.toString()
+		const playerScoreString:string = this.props.gameData.playerScore.toString()
+		const player_2_ScoreString:string = this.props.gameData.player_2_Score.toString()
 		this.gameContext.fillText(playerScoreString, 375, 50)
 		this.gameContext.fillText(player_2_ScoreString, 1125, 50)
 		//if new game
-		if (this.props.gameState.get("newgame"))
+		if (this.props.gameData.gameState.get("newgame"))
 		{
 			this.gameContext.fillText("PRESS SPACE", 370, 325)
 			this.gameContext.fillText("TO START/PAUSE", 875, 325)
 		}
 		//if paused
-		if (this.props.keysPressed.get("pause"))
+		if (this.props.gameData.keysPressed.get("pause"))
 		{
 			this.gameContext.fillText("GAME", 500, 325)
 			this.gameContext.fillText("PAUSED", 875, 325)
 		}
 		//if game end
-		if (this.props.gameState.get("game_end"))
+		if (this.props.gameData.gameState.get("game_end"))
 		{
-			if (this.props.gameState.get("P1_won"))
+			if (this.props.gameData.gameState.get("P1_won"))
 				this.gameContext.fillText("WINNER", 315, 95)
 			else
 				this.gameContext.fillText("WINNER", 1065, 95)
@@ -130,27 +152,27 @@ export class Pong extends React.Component<any, any> {
 	}
 	update()
 	{
-		if (this.props.keysPressed.get("pause") || this.props.gameState.get("newgame") || this.props.gameState.get("game_end"))
+		if (this.props.gameData.keysPressed.get("pause") || this.props.gameData.gameState.get("newgame") || this.props.gameData.gameState.get("game_end"))
 			return
-		if (this.props.player === 'p1')
-			this.props.player1.update(this.gameCanvas)
+		if (this.props.gameData.player === 'p1')
+			this.props.gameData.player1.update(this.gameCanvas)
 		else
-			this.props.player2.update(this.gameCanvas)
+			this.props.gameData.player2.update(this.gameCanvas)
 	}
 	draw()
 	{
 		this.gameContext.fillStyle = "#000"
-		this.gameContext.fillRect(0,0,this.gameCanvas.width,this.gameCanvas.height)
+		this.gameContext.fillRect(0,0,this.props.gameData.gameCanvasWidth,this.props.gameData.gameCanvasHeight)
 		this.drawBoardDetails()
-		this.props.player1.draw(this.gameContext, "paddle")
-		this.props.player2.draw(this.gameContext, "paddle")
-		this.props.ball.draw(this.gameContext, "ball")
+		this.props.gameData.p1.draw(this.gameContext, "paddle")
+		this.props.gameData.p2.draw(this.gameContext, "paddle")
+		this.props.gameData.ball.draw(this.gameContext, "ball")
   	}
 	gameLoop()
 	{
-		game.update()
-		game.draw()
-		requestAnimationFrame(game.gameLoop)
+		this.update()
+		this.draw()
+		requestAnimationFrame(this.gameLoop)
 	}
 	render()
 	{
@@ -165,20 +187,24 @@ export class Pong extends React.Component<any, any> {
 	}
 }
 
-var game = new Pong('iets')
 
-function StartPong() {
+function StartPong(props:any) {
+	console.log('SP:', props.gameData)
+	if (props.gameData.gameCanvasWidth === undefined)
+		return -1
+	var game = new RenderPong(props)
 	requestAnimationFrame(game.gameLoop)
 }
 
-export class RenderPong extends React.Component<any, any> {
-	
-	x = StartPong()
+export class Pong extends React.Component<any, any> {
+	x = StartPong(this.props)		
 	render()
 	{
+		if (this.x === -1)
+			return ( <div>loading...</div>)
 		return (
 			<div>
-				<Pong socket={this.props.socket}/>
+				<RenderPong socket={this.props.socket} gameData={this.props.gameData} />
 			</div>
 		)
 	}

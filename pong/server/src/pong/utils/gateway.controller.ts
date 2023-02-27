@@ -1,7 +1,7 @@
 import { OnModuleInit } from "@nestjs/common";
 import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Server, Socket } from 'socket.io'
-import { Paddle, Ball, GameData } from '../components/pong_objects'
+import { GameData } from '../components/pong_objects'
 
 let queuedclient:Socket = undefined
 let n_game_rooms:number = 0
@@ -51,28 +51,19 @@ export class MyGateway implements OnModuleInit {
 
 				//create new paddles and ball
 				let gamedata = new GameData
-				// let p1 = new Paddle(20,100,20,325,12)
-				// let p2 = new Paddle(20,100,1460,325,12)
-				// let ball = new Ball(20,20,740,365,7)
-				// let p1_score = 0
-				// let p2_score = 0
-				// let gamenum = n_game_rooms
-				// let gamedata_server = { p1, p2, ball, gamenum, p1_score, p2_score }
 	
 				//start sending data to clients
 				setInterval(() => {
 					// this.server.to(game_room).emit('gamedata', { 
 					// 	gamedata
 					// })
-					this.server.to(client.id).emit('gamedata', { 
-						gamedata,
-						p1
-					})
-					this.server.to(client2.id).emit('gamedata', { 
-						gamedata,
-						p2
-					})
-					gamedata.ball.update()
+					this.server.to(client.id).emit('gamedata',
+						gamedata
+					)
+					this.server.to(client2.id).emit('gamedata',
+						gamedata
+					)
+					gamedata.update()
 
 					// this.server.on('gamedata_client', (socket, client_data) => {
 					// 	if (socket.id === client.id)
@@ -119,3 +110,10 @@ export class MyGateway implements OnModuleInit {
 // 	})
 // })
 
+// let p1 = new Paddle(20,100,20,325,12)
+// let p2 = new Paddle(20,100,1460,325,12)
+// let ball = new Ball(20,20,740,365,7)
+// let p1_score = 0
+// let p2_score = 0
+// let gamenum = n_game_rooms
+// let gamedata_server = { p1, p2, ball, gamenum, p1_score, p2_score }
