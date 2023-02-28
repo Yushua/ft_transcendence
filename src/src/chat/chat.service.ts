@@ -90,6 +90,8 @@ export class ChatService {
 	async Mute(roomID: string, userID: string, time: number): Promise<void> {
 		if (!Number.isInteger(time))
 			throw new HttpException(`"${time}" is not an integer`, HttpStatus.BAD_REQUEST)
+		if (time > 7 * 1000 * 60 * 60 * 24)
+			throw new HttpException(`Can't mute someone for longer then a week!`, HttpStatus.BAD_REQUEST)
 		await this.ModifyRoom(roomID, async room => {
 			if (room.OwnerID === userID
 				|| room.AdminIDs.includes(userID))

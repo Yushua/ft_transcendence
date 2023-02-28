@@ -91,7 +91,11 @@ export default function ChatWindow() {
 					const msgBox = document.getElementById("SendMessageTextField") as HTMLInputElement
 					if (msgBox.value !== "")
 						HTTP.asyncPost(`chat/msg/${ChatRoom.ID}`,
-							{ OwnerID: User.ID, Message: msgBox.value })
+							{ OwnerID: User.ID, Message: msgBox.value }, null,
+							msg => {
+								if (msg.responseText !== "")
+									alert(`You are muted until: ${new Date(+msg.responseText).toString()}`)
+							})
 					msgBox.value = ""
 			}}/>
 		</div>

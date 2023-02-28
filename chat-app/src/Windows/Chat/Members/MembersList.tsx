@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ChangeMemberWindow, asyncUpdateMembersWindow } from "./MembersWindow";
 import ChatRoom from "../../../Cache/ChatRoom";
 import NameStorage from "../../../Cache/NameStorage";
+import User from "../../../Cache/User";
 
 export async function asyncUpdateMemberList() {
 	if (!_setMembers)
@@ -43,8 +44,8 @@ export default function MembersList() {
 		return (
 		<>
 			<div style={{display: "table", width: "100%"}}>
-				<button style={{width: "50%", height: ".5cm"}}
-					onClick={() => ChangeMemberWindow("edit")}>Edit</button>
+				{User.ID === ChatRoom.OwnerID ? <button style={{width: "50%", height: ".5cm"}}
+					onClick={() => ChangeMemberWindow("edit")}>Edit</button> : <></>}
 				<button style={{width: "50%", height: ".5cm"}}
 					onClick={() => ChangeMemberWindow("add")}>Add</button>
 			</div>

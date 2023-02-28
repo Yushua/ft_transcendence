@@ -15,8 +15,8 @@ function _tryJoiningRoom(roomID: string, hasPass: boolean) {
 	}
 	else
 		password = "nothing"
-	HTTP.asyncPatch(`chat/join/${roomID}/${ChatUser.ID}/${password}`, null, null, async function() {
-		if (this.responseText === "") {
+	HTTP.asyncPatch(`chat/join/${roomID}/${ChatUser.ID}/${password}`, null, null, async mgs => {
+		if (mgs.responseText === "") {
 			alert("Faild to join room.")
 			return
 		}
@@ -29,8 +29,8 @@ function _tryJoiningRoom(roomID: string, hasPass: boolean) {
 async function _updateRooms() {
 	SetRoom( [<>Loading...</>] )
 	HTTP.asyncGet("chat/public", null, null, 
-		async function() {
-			const rooms = (await JSON.parse(this.responseText))
+		async mgs => {
+			const rooms = (await JSON.parse(mgs.responseText))
 				.filter((room: any) => !ChatUser.ChatRoomsIn.includes(room.ID))
 				.map((room: any) => (
 				<button

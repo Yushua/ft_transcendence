@@ -23,9 +23,9 @@ export default function RoomCreation() {
 					const name: string = (document.getElementById("_RoomName") as HTMLInputElement).value
 					const pass: string = (document.getElementById("_RoomPassword") as HTMLInputElement).value
 					const type: boolean = (document.getElementById("_RoomType") as HTMLInputElement).checked
-					HTTP.asyncPost(`chat/room`, {OwnerID:User.ID, Name:name, Password:pass, RoomType:(type?"Private":"Public")}, null, async function() {
+					HTTP.asyncPost(`chat/room`, {OwnerID:User.ID, Name:name, Password:pass, RoomType:(type?"Private":"Public")}, null, async msg => {
 						await ChatUser.asyncUpdate(ChatUser.ID)
-						await ChatRoom.asyncUpdate(this.responseText)
+						await ChatRoom.asyncUpdate(msg.responseText)
 						if (ChatRoom.ID !== "")
 							SetMainWindow("chat")
 					}, () => setDisanled(false))
