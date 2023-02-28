@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserProfileModule } from './user-profile/user-profile.module';
 import { LoginModule } from './login/login.module';
 import { AuthModule } from './auth/auth.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -18,7 +19,8 @@ import { AuthModule } from './auth/auth.module';
       synchronize: true, //keeps it in sync
       }),
     LoginModule,
-    AuthModule],
+    AuthModule,
+    ChatModule],
 })
 export class AppModule {}
 

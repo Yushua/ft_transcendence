@@ -52,7 +52,7 @@ export class UserProfileController {
         return this.userServices.getUsersListFriendById(id);
     }
 
-    @Get("user/:id")
+    @Get("/username/:id")
     async ReturnNameById(
         @Param("id") id: string): Promise<string>
     {
@@ -60,11 +60,6 @@ export class UserProfileController {
         return (await found).username;
     }
     
-    @Get('/user/:username')
-    getUserByUsername(
-        @Param('username') username: string): Promise<UserProfile> {
-        return this.userServices.findUserBy(username);
-    }
     // @Get('/status/:offline')
     // getAllStatusOffline(
     //     ): Promise<UserProfile> {

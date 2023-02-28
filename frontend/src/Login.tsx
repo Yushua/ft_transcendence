@@ -1,9 +1,12 @@
 import React, { } from 'react';
 import './App.css';
 import { getCookies, removeCookie, setCookie } from 'typescript-cookie'
-import UserProfilePage from './UserProfile';
+// import UserProfilePage from './UserProfile';
 
 import { newWindow } from './App';
+
+import MainWindow from './MainWindow/MainWindow';
+import User from './Utils/Cache/User';
 
 var error1: string = "";
 var error2: string = "";
@@ -72,7 +75,12 @@ async function Acclogin(username: string, password: string, email:string) {
     console.log('keycode c: ', getCookies());
     console.log('acces: ', getCookies().accessToken);
     console.log('user: ', getCookies().userID);
-    newWindow(<UserProfilePage />)
+    
+    // Robin's changes
+    await User.asyncUpdate(getCookies().userID)
+    newWindow(<MainWindow/>)
+    //
+    
     return result;
   }
   catch (e: any) {
