@@ -20,12 +20,8 @@ async function addFriendToList(usernameFriend: string) {
     if (!response.ok) {
       throw new Error(`Error! status: ${(await response.json()).message}`);
     }
-    
-    const result = (await response.json())
-    
+    const result = (await response.json())  
     console.log('result is: ', JSON.stringify(result, null, 4));
-
-    // cookie
     return result;
   }
   catch (e: any) {
@@ -35,7 +31,6 @@ async function addFriendToList(usernameFriend: string) {
 
 var list_:string[];
 export async function asyncGetFriendListById(){
-  console.log("get the friendlist in add")
   var input:string = 'http://localhost:4242/user-profile/userList/' + getCookie('userID');
   try
   {
@@ -52,6 +47,7 @@ export async function asyncGetFriendListById(){
      var result = await response.json()
       console.log('result is: ', result);
       list_ =  await result;
+      // _setDisplay(true)
   }
   catch (e: any) {
     console.log(e)
@@ -102,7 +98,7 @@ const handleDropDownFunction = (e: React.MouseEvent<HTMLButtonElement>) => {
     }
 
     const friendList = () => {
-      asyncGetFriendListById();
+      // asyncGetFriendListById();
       return list_;
     };
 
