@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useState } from 'react';
-import './userProfile.css';
+import './UserProfile.css';
 import './App.css';
 import { getCookie } from 'typescript-cookie';
 import LogoutButtonComponent from './componentsUserProfile/LogoutButton';
