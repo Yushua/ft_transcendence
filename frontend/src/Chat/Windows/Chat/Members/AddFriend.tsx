@@ -25,7 +25,7 @@ function GenerateAddFriendJSX(): JSX.Element[] {
 			:
 			<div key={friendID}><button
 				style={{height: ".5cm", width: "100%", textAlign: "left", fontSize: ".35cm"}}
-				onClick={async () => { await HTTP.asyncPatch(`/chat/room/${ChatRoom.ID}/${friendID}`) }}
+				onClick={async () => { await HTTP.asyncPatch(`chat/room/${ChatRoom.ID}/${friendID}`) }}
 				>{NameStorage.GetUser(friendID)}</button></div>
 		)
 }
