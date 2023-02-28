@@ -47,7 +47,6 @@ export async function asyncGetFriendListById(){
      var result = await response.json()
       console.log('result is: ', result);
       list_ =  await result;
-      // _setDisplay(true)
   }
   catch (e: any) {
     console.log(e)
@@ -83,7 +82,7 @@ const handleDropDownFunction = (e: React.MouseEvent<HTMLButtonElement>) => {
   
   var _setDisplay:Dispatch<SetStateAction<boolean>>;
   
-  const DropDownMenuAddFriend: React.FC<DropDownProps> = ({nameOfMenu, functinInput}: DropDownProps): JSX.Element =>  {
+  function DropDownMenuAddFriend({nameOfMenu, functinInput}: DropDownProps) {
     //drop down menu
     _functinInput = functinInput;
     const [showDropDown, setShowDropDown] = useState<boolean>(false);

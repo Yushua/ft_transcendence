@@ -27,9 +27,6 @@ async function removeFriendToList(usernameRemove: string) {
     
     console.log('result removing is: ', JSON.stringify(result, null, 4));
     //after this the lsit shoudl be updated
-    asyncGetFriendListById();
-    _setDisplay(true)
-    //after this
   }
   catch (e: any) {
     console.log(e)
@@ -37,7 +34,7 @@ async function removeFriendToList(usernameRemove: string) {
 }
 
 export async function asyncGetFriendListById(){
-  console.log()
+  console.log("adding")
   var input:string = 'http://localhost:4242/user-profile/userFriendList/' + getCookie('userID');
   try
   {
@@ -73,13 +70,17 @@ type DropDownProps = {
 
 async function handleDropDownFunction (e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
-    removeFriendToList(_selectDropDownList);
+    await removeFriendToList(_selectDropDownList);
+    //update the display
+    await asyncGetFriendListById();
+    _setDisplay(true)
   }
 
   var _setDisplay:Dispatch<SetStateAction<boolean>>;
   var _selectDropDownList:string;
-
-const DropDownMenuRemoveFriend: React.FC<DropDownProps> = ({nameOfMenu, functinInput}: DropDownProps): JSX.Element =>  {
+  
+// const DropDownMenuRemoveFriend: React.FC<DropDownProps> = ({nameOfMenu}: DropDownProps): JSX.Element =>  {
+function DropDownMenuRemoveFriend({nameOfMenu}: DropDownProps) {
     //remove a funciton to this list that needs to remove the string to the list.
 
     const [display, setDisplay] = useState(true)
@@ -99,10 +100,10 @@ const DropDownMenuRemoveFriend: React.FC<DropDownProps> = ({nameOfMenu, functinI
     /**
      * when clicking on the drop down menu
      */
-    const toggleDropDown = () => {
-      asyncGetFriendListById()
+    async function asyncToggleDropDown() {
+      await asyncGetFriendListById()
       setShowDropDown(!showDropDown);
-    };
+    }
 
     const dismissHandler = (event: React.FocusEvent<HTMLButtonElement>): void => {
       if (event.currentTarget === event.target) {
@@ -119,7 +120,7 @@ const DropDownMenuRemoveFriend: React.FC<DropDownProps> = ({nameOfMenu, functinI
     return (
       <div>
           <button className={showDropDown ? "active" : undefined}
-          onClick={(): void => toggleDropDown()}
+          onClick={asyncToggleDropDown}
           onBlur={(e: React.FocusEvent<HTMLButtonElement>): void =>
             dismissHandler(e)
           }>
@@ -128,7 +129,7 @@ const DropDownMenuRemoveFriend: React.FC<DropDownProps> = ({nameOfMenu, functinI
           <DropDown
             friendList={friendList()}
             showDropDown={false}
-            toggleDropDown={(): void => toggleDropDown()}
+            toggleDropDown={asyncToggleDropDown}
             friendSelection={friendListSelection}
           />
         )}

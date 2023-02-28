@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { UserStatus } from './user-profile-status.model';
 import { UserProfileService } from './user-profile.service';
@@ -35,7 +35,7 @@ export class UserProfileController {
      * @param id 
      * @returns get users friendslist
      */
-    @Get('/c/:id')
+    @Get('/userFriendList/:id')
     getUseFriendListById(
         @Param('id') id: string): Promise<string[]> {
         return this.userServices.getUsersListFriendById(id);
