@@ -57,30 +57,64 @@ export class ChatService {
 		
 		const { OwnerID, Name, Password, RoomType } =  roomDTO
 		
-		await this.ModifyRoom(roomID, async room => {
+		const [room, changed] = await this.ModifyRoom(roomID, async room => {
 			if (room.OwnerID !== OwnerID)
-				return
+				return false
 			room.Name = Name
 			room.HasPassword = Password !== ""
 			room.RoomType = +ChatRoomType[RoomType]
 			var roomPass = await this.GetRoomPassword(roomID)
 			roomPass.Password = Password
 			await this.chatRoomPassRepo.save(roomPass)
-			for (const userID of room.MemberIDs)
-				this.Notify(`user-${userID}`, "room")
-			this.Notify(`room-${roomID}`, "room")
+			return true
 		})
+		if (!changed)
+			return
+		for (const userID of room.MemberIDs)
+			this.Notify(`user-${userID}`, "room")
+		this.Notify(`room-${roomID}`, "room")
 	}
 	
 	async UnBan(roomID: string, userID: string): Promise<void> {
-		var changed = false
-		await this.ModifyRoom(roomID, room => {
-			const index = room.BanIDs.indexOf(userID, 0);
-				if (changed = (index > -1))
-					room.BanIDs.splice(index, 1);
+		const [room, changed] = await this.ModifyRoom(roomID, async room => {
+			const index = room.BanIDs.indexOf(userID);
+			if (index === -1)
+				return false
+			room.BanIDs.splice(index, 1);
+			return true
 		})
 		if (changed)
 			this.Notify(`room-${roomID}`, "mem")
+	}
+	
+	async Mute(roomID: string, userID: string, time: number): Promise<void> {
+		if (!Number.isInteger(time))
+			throw new HttpException(`"${time}" is not an integer`, HttpStatus.BAD_REQUEST)
+		await this.ModifyRoom(roomID, async room => {
+			if (room.OwnerID === userID
+				|| room.AdminIDs.includes(userID))
+				return false
+			
+			const index = room.MuteIDs.indexOf(userID)
+			if (index !== -1)
+				room.MuteDates[index] = (Date.now() + time).toString()
+			else {
+				room.MuteIDs.push(userID)
+				room.MuteDates.push((Date.now() + time).toString())
+			}
+			return true
+		})
+	}
+	
+	async UnMute(roomID: string, userID: string): Promise<void> {
+		await this.ModifyRoom(roomID, async room => {
+			const index = room.MuteIDs.indexOf(userID)
+			if (index !== -1)
+				return false
+			room.MuteIDs.splice(index, 1)
+			room.MuteDates.splice(index, 1)
+			return true
+		})
 	}
 	
 	async NewDirect(userID: string, memberID: string): Promise<string> {
@@ -100,9 +134,10 @@ export class ChatService {
 		user.FriedsWithDirect.push(memberID)
 		await this.chatUserRepo.save(user)
 		
-		await this.ModifyUser(memberID, user => {
+		await this.ModifyUser(memberID, async user => {
 			user.DirectChatsIn.push(room.ID)
 			user.FriedsWithDirect.push(userID)
+			return true
 		})
 		
 		this.Notify(`user-${memberID}`, "room")
@@ -125,7 +160,10 @@ export class ChatService {
 			ID: room.ID, Password: Password
 		}))
 		
-		await this.ModifyUser(OwnerID, user => {user.ChatRoomsIn.push(room.ID)})
+		await this.ModifyUser(OwnerID, async user => {
+			user.ChatRoomsIn.push(room.ID)
+			return true
+		})
 		
 		return room.ID
 	}
@@ -139,12 +177,21 @@ export class ChatService {
 		return msgGroupManager.ToMessages()
 	}
 	
-	async PostNewMessage(roomID: string, msgDTO: ChatMessageDTO): Promise<void> {
+	async PostNewMessage(roomID: string, msgDTO: ChatMessageDTO): Promise<string> {
 		
 		const { OwnerID, Message } = msgDTO
 		const msg = new ChatMessage(OwnerID, Message)
 		
 		const room = await this.GetRoom(roomID)
+		const index = room.MuteIDs.indexOf(OwnerID)
+		if (index !== -1) {
+			const date = room.MuteDates[index]
+			if (+date > Date.now())
+				return date
+			room.MuteIDs.splice(index, 1)
+			room.MuteDates.splice(index, 1)
+		}
+		
 		room.MessageCount += 1
 		
 		var depth = room.MessageGroupDepth
@@ -157,19 +204,21 @@ export class ChatService {
 		await this.chatRoomRepo.save(room)
 		await this.chatMessageRepo.save(msgGroup)
 		this.Notify("room-" + roomID, ChatMessageDTO.toString())
+		return ""
 	}
 	
 	async AddUserToRoom(roomID: string, userID: string, password: string | null): Promise<string> {
-		var changed = false
-		await this.ModifyRoom(roomID, async room => {
+		const [room, changed] = await this.ModifyRoom(roomID, async room => {
 			if (!!password && room.HasPassword && (await this.GetRoomPassword(roomID)).Password !== password)
-				return
-			if (changed = (!room.BanIDs.includes(userID) && !room.MemberIDs.includes(userID))) {
-				room.MemberIDs.push(userID)
-				await this.ModifyUser(userID, user => {
-					user.ChatRoomsIn.push(roomID)
-				})
-			}
+				return false
+			if (room.BanIDs.includes(userID) || room.MemberIDs.includes(userID))
+				return false
+			room.MemberIDs.push(userID)
+			await this.ModifyUser(userID, async user => {
+				user.ChatRoomsIn.push(roomID)
+				return true
+			})
+			return true
 		})
 		if (!changed)
 			return ""
@@ -187,10 +236,12 @@ export class ChatService {
 	async GetRoom(roomID: string): Promise<ChatRoom>
 		{ return this.chatRoomRepo.findOneBy({ ID: roomID }) }
 	
-	async ModifyRoom(roomID: string, func: (ChatUser: ChatRoom) => void): Promise<ChatRoom> {
-		const room = await this.GetRoom(roomID)
-		await func(room)
-		return await this.chatRoomRepo.save(room)
+	async ModifyRoom(roomID: string, func: (ChatUser: ChatRoom) => Promise<boolean>): Promise<[ChatRoom, boolean]> {
+		var room = await this.GetRoom(roomID)
+		var changed = await func(room)
+		if (changed)
+			room = await this.chatRoomRepo.save(room)
+		return [room, changed]
 	}
 	
 	//#endregion
@@ -206,52 +257,59 @@ export class ChatService {
 		}))
 	}
 	
-	async ModifyUser(ID: string, func: (ChatUser: ChatUser) => void): Promise<ChatUser> {
+	async ModifyUser(ID: string, func: (ChatUser: ChatUser) => Promise<boolean>): Promise<[ChatUser, boolean]> {
 		var user = await this.GetOrAddUser(ID)
-		await func(user)
-		return await this.chatUserRepo.save(user)
+		const changed = await func(user)
+		if (changed)
+			user = await this.chatUserRepo.save(user)
+		return [user, changed]
 	}
 	
 	async MakeAdmin(roomID: string, userID: string): Promise<void> {
-		var changed = false
-		await this.ModifyRoom(roomID, room => {
-			if (changed = (!room.AdminIDs.includes(userID) && room.MemberIDs.includes(userID)))
+		if (await this.ModifyRoom(roomID, async room => {
+			if (!room.AdminIDs.includes(userID) && room.MemberIDs.includes(userID)) {
 				room.AdminIDs.push(userID)
-		})
-		if (changed)
-			this.Notify("room-" + roomID, "mem")
+				return true
+			}
+			return false
+		}))
+		this.Notify("room-" + roomID, "mem")
 	}
 	
 	async RemoveAdmin(roomID: string, memberID: string): Promise<void> {
-		var changed = false
-		await this.ModifyRoom(roomID, async room => {
-			var index = room.AdminIDs.indexOf(memberID, 0);
-			if (changed = index > -1)
-				room.AdminIDs.splice(index, 1);
+		const [room, changed] = await this.ModifyRoom(roomID, async room => {
+			var index = room.AdminIDs.indexOf(memberID);
+			if (index === -1)
+				return false
+			room.AdminIDs.splice(index, 1);
+			return true
 		})
 		if (changed)
 			this.Notify(`room-${roomID}`, "mem")
 	}
 	
 	async RemoveMember(roomID: string, memberID: string, ban: boolean = false): Promise<void> {
-		var changed = false
-		
-		await this.ModifyRoom(roomID, async room => {
-			if (room.OwnerID === memberID || room.AdminIDs.includes(memberID))
-				return
-				
-			await this.ModifyUser(memberID, user => {
-				const index = user.ChatRoomsIn.indexOf(roomID, 0);
-				if (index > -1)
-					{ user.ChatRoomsIn.splice(index, 1); changed = true}
+		const [room, changed] = await this.ModifyRoom(roomID, async room => {
+			if (room.OwnerID === memberID
+				|| room.AdminIDs.includes(memberID))
+				return false
+			
+			var index = room.MemberIDs.indexOf(memberID);
+			if (index === -1)
+				return false
+			room.MemberIDs.splice(index, 1)
+			if (ban && !room.BanIDs.includes(memberID))
+				room.BanIDs.push(memberID)
+			
+			await this.ModifyUser(memberID, async user => {
+				const index = user.ChatRoomsIn.indexOf(roomID);
+				if (index === -1)
+					return false
+				user.ChatRoomsIn.splice(index, 1)
+				return true
 			})
 			
-			var index = room.MemberIDs.indexOf(memberID, 0);
-			if (index > -1)
-				{ room.MemberIDs.splice(index, 1); changed = true }
-			if (ban && !room.BanIDs.includes(memberID))
-				{ room.BanIDs.push(memberID); changed = true}
-				
+			return true
 		})
 		if (changed) {
 			this.Notify(`room-${roomID}`, "mem")

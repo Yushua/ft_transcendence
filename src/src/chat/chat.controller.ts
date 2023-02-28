@@ -70,7 +70,7 @@ export class ChatController {
 	@Get("msg/:roomID/:index")
 	GetMessageGroup(
 		@Param("roomID") roomID: string,
-		@Param("index") index: number)
+		@Param("index") index: string)
 		: Promise<ChatMessage[]>
 			{ return this.service.GetMessages(roomID, +index) }
 	
@@ -95,8 +95,8 @@ export class ChatController {
 	async PostNewMessage(
 		@Param("roomID") roomID: string,
 		@Body() msg: ChatMessageDTO)
-		: Promise<void>
-			{ await this.service.PostNewMessage(roomID, msg) }
+		: Promise<string>
+			{ return await this.service.PostNewMessage(roomID, msg) }
 	
 	//#endregion
 	
@@ -137,6 +137,21 @@ export class ChatController {
 		@Param("userID") userID: string)
 		: Promise<void>
 			{ await this.service.UnBan(roomID, userID) }
+	
+	@Patch("mute/:roomID/:userID/:time")
+	async Mute(
+		@Param("roomID") roomID: string,
+		@Param("userID") userID: string,
+		@Param("time") time: string)
+		: Promise<void>
+			{ await this.service.Mute(roomID, userID, +time) }
+	
+	@Patch("mute/:roomID/:userID")
+	async UnMute(
+		@Param("roomID") roomID: string,
+		@Param("userID") userID: string)
+		: Promise<void>
+			{ await this.service.UnMute(roomID, userID) }
 	
 	//#endregion
 	
