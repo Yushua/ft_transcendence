@@ -19,8 +19,10 @@ const pong_objects_1 = require("../components/pong_objects");
 let queuedclient = undefined;
 let n_game_rooms = 0;
 let game_room = 'game_0';
-let p1 = 'p1';
-let p2 = 'p2';
+let gamedata;
+let player1;
+let player2;
+let gamedata_array;
 let MyGateway = class MyGateway {
     onModuleInit() {
         this.server.on('connection', (socket) => {
@@ -40,28 +42,27 @@ let MyGateway = class MyGateway {
             console.log(game_room);
             client.join(game_room);
             queuedclient.join(game_room);
-            client.emit('joined', game_room);
-            queuedclient.emit('joined', game_room);
+            client.emit('joined', n_game_rooms);
+            queuedclient.emit('joined', n_game_rooms);
             let client2 = queuedclient;
             queuedclient = undefined;
-            let gamedata = new pong_objects_1.GameData;
-            let p1 = new pong_objects_1.Paddle(7, 1, 1500, 750, 20, 20, 100);
-            let p2 = new pong_objects_1.Paddle(7, 2, 1500, 750, 20, 20, 100);
-            let ball = new pong_objects_1.Ball(12, 3, 1500, 750, 20, 20, 20);
-            this.server.on('gamedata_client', (socket, client_data) => {
-                if (socket.id === client.id) {
-                    if (client_data.pos === 1)
-                        p1.update();
-                    else if (socket.id === client2.id)
-                        p2.update();
-                }
-            });
+            player1 = client;
+            player2 = client2;
+            gamedata = new pong_objects_1.GameData(n_game_rooms);
             setInterval(() => {
-                this.server.to(client.id).emit('gamedata', gamedata, p1, p2, ball);
-                this.server.to(client2.id).emit('gamedata', gamedata, p1, p2, ball);
-                gamedata.update(ball.update(p1, p2));
-            });
+                this.server.to(client.id).emit('gamedata', gamedata);
+                this.server.to(client2.id).emit('gamedata', gamedata);
+                gamedata.update(gamedata.ball.update(gamedata.p1, gamedata.p2));
+            }, 10);
         }
+    }
+    handleEvent(body, client) {
+        console.log('from:', client.id);
+        console.log('msg:', body);
+        if (client.id === player1.id)
+            gamedata.p1.update(body);
+        if (client.id === player2.id)
+            gamedata.p2.update(body);
     }
 };
 __decorate([
@@ -75,6 +76,14 @@ __decorate([
     __metadata("design:paramtypes", [socket_io_1.Socket]),
     __metadata("design:returntype", void 0)
 ], MyGateway.prototype, "handleLFG", null);
+__decorate([
+    (0, websockets_1.SubscribeMessage)('movement'),
+    __param(0, (0, websockets_1.MessageBody)()),
+    __param(1, (0, websockets_1.ConnectedSocket)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, socket_io_1.Socket]),
+    __metadata("design:returntype", void 0)
+], MyGateway.prototype, "handleEvent", null);
 MyGateway = __decorate([
     (0, websockets_1.WebSocketGateway)({
         cors: {

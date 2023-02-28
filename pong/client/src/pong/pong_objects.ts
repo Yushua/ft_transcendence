@@ -1,15 +1,25 @@
 export class GameData {
 	// gameState = new Map<string, boolean>()
 	gameState: string
+	gameNum: number
 	p1_score: number
 	p2_score: number
+	p1: Paddle
+	p2: Paddle
+	ball: Ball
 
-	constructor()
+
+	constructor(num:number)
 	{
 		this.gameState = 'newgame'
 		this.p1_score = 0
 		this.p2_score = 0
+		this.gameNum = num
+		this.p1 = new Paddle(12, 1, 1500, 750, 20, 20, 100)
+		this.p2 = new Paddle(12, 2, 1500, 750, 20, 20, 100)
+		this.ball = new Ball(1, 3, 1500, 750, 20, 20, 20)
 	}
+
 	update(event:string)
 	{
 		if (event === 'p1_scored')
@@ -22,7 +32,9 @@ export class GameData {
 		{
 			this.p2_score++
 			if (this.p2_score === 11)
+			{
 				this.gameState = 'p2_won'
+			}
 		}
 	}
 }
@@ -70,31 +82,30 @@ class Entity
         context.fillStyle = "#fff";
         context.fillRect(this.x,this.y,this.width,this.height);
     }
-
 }
 
 export class Paddle extends Entity
 {
-	// public 	keysPressed = new Map<string, boolean>()
+	public 	keysPressed = new Map<string, boolean>()
 
-	// update()
-	// {
-	// 	if (this.keysPressed.get("ArrowUp"))
-	// 	{
-	// 		this.yVec = -1
-	// 		if (this.y <= 20)
-	// 			this.yVec = 0
-	// 	}
-	// 	else if (this.keysPressed.get("ArrowDown"))
-	// 	{
-	// 		this.yVec = 1
-	// 		if (this.y + this.height >= this.gameCanvasHeight - 20)
-	// 			this.yVec = 0
-	// 	}
-   	// 	else
-	// 		this.yVec = 0
-	// 	this.y += this.yVec * this.speed
-	// }
+	update(direction:number)
+	{
+		if (direction === 1)
+		{
+			this.yVec = -1
+			if (this.y <= 20)
+				this.yVec = 0
+		}
+		else if (direction === -1)
+		{
+			this.yVec = 1
+			if (this.y + this.height >= this.gameCanvasHeight - 20)
+				this.yVec = 0
+		}
+   		else
+			this.yVec = 0
+		this.y += this.yVec * this.speed
+	}
 }
 
 export class Ball extends Entity

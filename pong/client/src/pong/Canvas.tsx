@@ -1,4 +1,5 @@
 import React from "react"
+import { Socket } from "socket.io-client"
 import { GameData, Ball, Paddle } from "./pong_objects"
 
 
@@ -6,17 +7,19 @@ export class Canvas extends React.Component<any, any> {
 
 	private	gameCanvas
 	private	gameContext
+	// private socket:Socket
 
-	constructor(props:any)
+	constructor(socket:Socket)
 	{
-		super(props)
+		super(socket)
+		console.log('id:', socket.id)
 		this.gameCanvas = document.getElementById("game-canvas") as HTMLCanvasElement
 		this.gameCanvas.width = 1500
 		this.gameCanvas.height = 750
 		this.gameContext = this.gameCanvas.getContext("2d") as CanvasRenderingContext2D
 		this.gameContext.font = "30px Orbitron"
 	}
-	draw(gameData: GameData, p1:Paddle, p2:Paddle, ball:Ball)
+	draw(gameData: GameData)
 	{
 		this.gameContext.fillStyle = "#000"
 		this.gameContext.fillRect(0,0,this.gameCanvas.width,this.gameCanvas.height)
@@ -57,31 +60,44 @@ export class Canvas extends React.Component<any, any> {
 			this.gameContext.fillText("FOR NEW GAME", 875, 325)
 		}
 		//draw paddles and ball
-		console.log('check')
-		p1.draw(this.gameContext)
-		p2.draw(this.gameContext)
-		ball.draw(this.gameContext)
+		gameData.ball.draw(this.gameContext)
+		gameData.p1.draw(this.gameContext)
+		gameData.p2.draw(this.gameContext)
+
+	}
+	loop()
+	{
+
 	}
 	render()
 	{
+		// Pong.socket = this.props.socket
+		// console.log('data:', this.props.gameData)
+		if (this.props.gameData.p1_score === undefined)
+			return ( <h3>loading...</h3>)
+		this.props.instance.draw(this.props.gameData)
+		// canvas.draw(this.props.gameData)
 		return (<></>)
 	}
 }
+// console.log('check2')
+// var canvas = new Pong('')
 
-var canvas = new Canvas('')
+// export class RenderPong extends React.Component<any, any> {
+// 	public static socket:Socket
 
-export class RenderCanvas extends React.Component<any, any> {
-	render()
-	{
-		console.log('data:', this.props.gameData, this.props.p1, this.props.p2, this.props.ball)
-		if (this.props.gameData.p1_score === undefined)
-			return ( <h3>loading...</h3>)
-		canvas.draw(this.props.gameData, this.props.p1, this.props.p2, this.props.ball)
-		return (
-			<div>
-				{/* <Canvas gameData={this.props.gameData} /> */}
-			</div>
-		)
-	}
+// 	render()
+// 	{
+// 		RenderPong.socket = this.props.socket
+// 		// console.log('data:', this.props.gameData)
+// 		if (this.props.gameData.p1_score === undefined)
+// 			return ( <h3>loading...</h3>)
+// 		canvas.draw(this.props.gameData, this.props.p1, this.props.p2, this.props.ball)
+// 		return (
+// 			<div>
+// 				<Pong socket={this.props.socket} />
+// 			</div>
+// 		)
+// 	}
 
-}
+// }

@@ -1,14 +1,21 @@
 import { OnModuleInit } from "@nestjs/common";
 import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Server, Socket } from 'socket.io'
-import { Ball, GameData, Paddle } from '../components/pong_objects'
+import { GameData } from '../components/pong_objects'
 
 let queuedclient:Socket = undefined
 let n_game_rooms:number = 0
 let game_room:string = 'game_0'
-let p1 = 'p1'
-let p2 = 'p2'
+let gamedata:GameData
+let player1:Socket
+let player2:Socket
 
+let gamedata_array:Array<GameData>
+
+//MAKE A LisT OF ALL CURRENT GAMES
+//EMIT AND LISTEN PROPERLY TO CLientS WHO ARE IN GAMES
+//MAKE OPTION TO ENTER MORE CLIENTS TO A GAME
+//THey RENDER ThE GAME BUT CANT UPDATE (spectators)
 @WebSocketGateway({
 	cors: {
 		origin: ['http://localhost:3000']
@@ -44,50 +51,35 @@ export class MyGateway implements OnModuleInit {
 				console.log(game_room)
 				client.join(game_room)
 				queuedclient.join(game_room)
-				client.emit('joined', game_room)
-				queuedclient.emit('joined', game_room)
+				client.emit('joined', n_game_rooms)
+				queuedclient.emit('joined', n_game_rooms)
 				let client2 = queuedclient
 				queuedclient = undefined
+				player1 = client
+				player2 = client2
 
 				//create new paddles and ball
-				let gamedata = new GameData
-				let p1 = new Paddle(7, 1, 1500, 750, 20, 20, 100)
-				let p2 = new Paddle(7, 2, 1500, 750, 20, 20, 100)
-				let ball = new Ball(12, 3, 1500, 750, 20, 20, 20)
-	
-				//update player pos
-				this.server.on('gamedata_client', (socket, client_data) => {
-					if (socket.id === client.id)
-					{
-						if (client_data.pos === 1)
-							p1.update()
-						else if (socket.id === client2.id)
-							p2.update()
-					}
-				})
+				gamedata = new GameData(n_game_rooms)
+					// gamedata_array.push(gamedata)
 
 				//start sending data to clients
 				setInterval(() => {
-					this.server.to(client.id).emit('gamedata', gamedata, p1, p2, ball)
-					this.server.to(client2.id).emit('gamedata', gamedata, p1, p2, ball)
-					gamedata.update(ball.update(p1, p2))
-				})
+					this.server.to(client.id).emit('gamedata', gamedata, /*p1, p2, ball*/)
+					this.server.to(client2.id).emit('gamedata', gamedata, /*p1, p2, ball*/)
+					gamedata.update(gamedata.ball.update(gamedata.p1, gamedata.p2))
+
+				}, 10)
 			}
 		}
+		@SubscribeMessage('movement')
+		handleEvent(
+			@MessageBody() body: number,
+			@ConnectedSocket() client: Socket) {
+				console.log('from:', client.id)
+				console.log('msg:', body)
+				if (client.id === player1.id)
+					gamedata.p1.update(body)
+				if (client.id === player2.id)
+					gamedata.p2.update(body)
+			}
 }
-
-// @SubscribeMessage('newMessage')
-// onNewMessage(@MessageBody() body:any) {
-// 	console.log(body)
-// 	this.server.emit('onMessage', {
-// 		msg: 'return message:',
-// 		content: body
-// 	})
-// }
-
-// @SubscribeMessage('events')
-// handleEvent(
-// 	@MessageBody('id') id: number,
-// 	@ConnectedSocket() client: Socket) : number {
-// 		return id;
-// 	}

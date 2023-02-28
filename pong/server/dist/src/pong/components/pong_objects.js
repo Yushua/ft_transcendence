@@ -2,10 +2,14 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Ball = exports.Paddle = exports.GameData = void 0;
 class GameData {
-    constructor() {
+    constructor(num) {
         this.gameState = 'newgame';
         this.p1_score = 0;
         this.p2_score = 0;
+        this.gameNum = num;
+        this.p1 = new Paddle(12, 1, 1500, 750, 20, 20, 100);
+        this.p2 = new Paddle(12, 2, 1500, 750, 20, 20, 100);
+        this.ball = new Ball(1, 3, 1500, 750, 20, 20, 20);
     }
     update(event) {
         if (event === 'p1_scored') {
@@ -51,13 +55,13 @@ class Paddle extends Entity {
         super(...arguments);
         this.keysPressed = new Map();
     }
-    update() {
-        if (this.keysPressed.get("ArrowUp")) {
+    update(direction) {
+        if (direction === 1) {
             this.yVec = -1;
             if (this.y <= 20)
                 this.yVec = 0;
         }
-        else if (this.keysPressed.get("ArrowDown")) {
+        else if (direction === -1) {
             this.yVec = 1;
             if (this.y + this.height >= this.gameCanvasHeight - 20)
                 this.yVec = 0;

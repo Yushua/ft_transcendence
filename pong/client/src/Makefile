@@ -11,6 +11,7 @@ setup:
 	npm i --save-dev web-vitals
 	npm i --save typescript
 	npm i --save-dev @types/uuid
+	npm i --save immutability-helper
 	npm add @nestjs/jwt @nestjs/passport passport passport-jwt
 	npm audit fix
 

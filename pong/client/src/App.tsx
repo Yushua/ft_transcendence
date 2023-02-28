@@ -1,14 +1,11 @@
-import { Component } from 'react';
-import { RunPong } from './components/Pong2';
+import { Pong } from './pong/Pong'
 
-class App extends Component  {
-	render() {
-		return (
-		<div className="App">
-			<RunPong />
-		</div>
-		)
-	}
+function App() {
+  return (
+    <div className="Pong">
+		<Pong/>
+    </div>
+  );
 }
 
-export default App
+export default App;

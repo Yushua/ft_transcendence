@@ -4,4 +4,5 @@ export declare class MyGateway implements OnModuleInit {
     server: Server;
     onModuleInit(): void;
     handleLFG(client: Socket): void;
+    handleEvent(body: number, client: Socket): void;
 }

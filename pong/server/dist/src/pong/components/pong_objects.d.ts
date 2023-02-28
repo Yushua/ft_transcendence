@@ -1,8 +1,12 @@
 export declare class GameData {
     gameState: string;
+    gameNum: number;
     p1_score: number;
     p2_score: number;
-    constructor();
+    p1: Paddle;
+    p2: Paddle;
+    ball: Ball;
+    constructor(num: number);
     update(event: string): void;
 }
 declare class Entity {
@@ -21,7 +25,7 @@ declare class Entity {
 }
 export declare class Paddle extends Entity {
     keysPressed: Map<string, boolean>;
-    update(): void;
+    update(direction: number): void;
 }
 export declare class Ball extends Entity {
     constructor(speed: number, type: number, gameCanvasWidth: number, gameCanvasHeight: number, wallOffset: number, width: number, height: number);
