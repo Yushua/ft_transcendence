@@ -75,7 +75,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UserProfileController.prototype, "getUsesListById", null);
 __decorate([
-    (0, common_1.Get)('/userFriendList/:id'),
+    (0, common_1.Get)('/c/:id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),

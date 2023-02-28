@@ -96,6 +96,9 @@ const DropDownMenuRemoveFriend: React.FC<DropDownProps> = ({nameOfMenu, functinI
     };
 
     const [showDropDown, setShowDropDown] = useState<boolean>(false);
+    /**
+     * when clicking on the drop down menu
+     */
     const toggleDropDown = () => {
       asyncGetFriendListById()
       setShowDropDown(!showDropDown);

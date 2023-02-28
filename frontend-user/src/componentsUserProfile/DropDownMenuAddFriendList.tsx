@@ -102,7 +102,11 @@ const handleDropDownFunction = (e: React.MouseEvent<HTMLButtonElement>) => {
       return list_;
     };
 
+    /**
+     * when clicking on the dropdown menu
+     */
     const toggleDropDown = () => {
+      asyncGetFriendListById()
       setShowDropDown(!showDropDown);
     };
 
