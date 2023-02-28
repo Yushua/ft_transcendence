@@ -50,7 +50,6 @@ export class MyGateway implements OnModuleInit {
 				queuedclient = undefined
 
 				//create new paddles and ball
-				console.log('check')
 				let gamedata = new GameData
 				let p1 = new Paddle(7, 1, 1500, 750, 20, 20, 100)
 				let p2 = new Paddle(7, 2, 1500, 750, 20, 20, 100)

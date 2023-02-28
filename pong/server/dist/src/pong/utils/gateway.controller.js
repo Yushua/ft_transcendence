@@ -44,7 +44,6 @@ let MyGateway = class MyGateway {
             queuedclient.emit('joined', game_room);
             let client2 = queuedclient;
             queuedclient = undefined;
-            console.log('check');
             let gamedata = new pong_objects_1.GameData;
             let p1 = new pong_objects_1.Paddle(7, 1, 1500, 750, 20, 20, 100);
             let p2 = new pong_objects_1.Paddle(7, 2, 1500, 750, 20, 20, 100);
