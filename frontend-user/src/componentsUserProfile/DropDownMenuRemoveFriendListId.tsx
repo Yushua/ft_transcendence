@@ -26,7 +26,6 @@ async function removeFriendToList(usernameRemove: string) {
     const result = (await response.json())
     
     console.log('result removing is: ', JSON.stringify(result, null, 4));
-    //after this the lsit shoudl be updated
   }
   catch (e: any) {
     console.log(e)
@@ -78,7 +77,7 @@ async function handleDropDownFunction (e: React.MouseEvent<HTMLButtonElement>) {
 
   var _setDisplay:Dispatch<SetStateAction<boolean>>;
   var _selectDropDownList:string;
-  
+
 // const DropDownMenuRemoveFriend: React.FC<DropDownProps> = ({nameOfMenu}: DropDownProps): JSX.Element =>  {
 function DropDownMenuRemoveFriend({nameOfMenu}: DropDownProps) {
     //remove a funciton to this list that needs to remove the string to the list.
@@ -88,7 +87,6 @@ function DropDownMenuRemoveFriend({nameOfMenu}: DropDownProps) {
     if (display === true){
       //get the list trough http get request
       asyncGetFriendListById();
-      //why false?
       _setDisplay(false)
     }
 
@@ -127,7 +125,7 @@ function DropDownMenuRemoveFriend({nameOfMenu}: DropDownProps) {
         <div>{_selectDropDownList ? "Submit to " + nameOfMenu +": " + _selectDropDownList : "Submit to " + nameOfMenu +": "} </div>
         {showDropDown && (
           <DropDown
-            friendList={friendList()}
+            list={friendList()}
             showDropDown={false}
             toggleDropDown={asyncToggleDropDown}
             friendSelection={friendListSelection}
@@ -135,7 +133,7 @@ function DropDownMenuRemoveFriend({nameOfMenu}: DropDownProps) {
         )}
       </button>
         <button type="submit" onClick={handleDropDownFunction}>
-        <div>{_selectDropDownList ? "Add" : ""} </div>
+        <div>{_selectDropDownList ? "Remove" : ""} </div>
         </button>
       </div>
     )

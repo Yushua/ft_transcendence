@@ -137,12 +137,29 @@ export class UserProfileService {
       /**
        * 
        * @param id 
-       * @returns return a list of all the users minus the user itself
+       * @returns return a list of all the users
        */
       async getAllUsersByFriendList(id:string):Promise<string[]> {
         var newList: string[] = await this.getAllUsersIntoList()
         const found = await this.userEntity.findOneBy({id});
         return(newList);
+      }
+
+      /**
+       * 
+       * @param id 
+       * @returns return a list of all the users it can add
+       */
+      async getAllUsersAddList(id:string):Promise<string[]> {
+        var fullList: string[] = await this.getAllUsersIntoList()
+        const found = await this.userEntity.findOneBy({id});
+        var friendList: string[] = found.friendList;
+        fullList.splice(fullList.indexOf(found.username), 1);
+        var arrayLength = friendList.length;
+        for (var i = 0; i < arrayLength; i++) {
+          fullList.splice(fullList.indexOf(friendList[i]), 1);
+        }
+        return(fullList);
       }
 
       /**

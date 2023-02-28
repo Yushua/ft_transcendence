@@ -30,6 +30,17 @@ export class UserProfileController {
         return this.userServices.getAllUsersByFriendList(id);
     }
 
+     /**
+     * 
+     * @param id 
+     * @returns get all users in  list minus this user, using ID
+     */
+        @Get('/userAddList/:id')
+        getUserAddListById(
+            @Param('id') id: string): Promise<string[]> {
+            return this.userServices.getAllUsersAddList(id);
+        }
+    
     /**
      * 
      * @param id 

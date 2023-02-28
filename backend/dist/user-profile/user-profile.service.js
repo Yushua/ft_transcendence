@@ -128,6 +128,17 @@ let UserProfileService = class UserProfileService {
         const found = await this.userEntity.findOneBy({ id });
         return (newList);
     }
+    async getAllUsersAddList(id) {
+        var fullList = await this.getAllUsersIntoList();
+        const found = await this.userEntity.findOneBy({ id });
+        var friendList = found.friendList;
+        fullList.splice(fullList.indexOf(found.username), 1);
+        var arrayLength = friendList.length;
+        for (var i = 0; i < arrayLength; i++) {
+            fullList.splice(fullList.indexOf(friendList[i]), 1);
+        }
+        return (fullList);
+    }
     async getUsersListFriendById(id) {
         const found = await this.userEntity.findOneBy({ id });
         return (found.friendList);

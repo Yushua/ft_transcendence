@@ -31,7 +31,7 @@ async function addFriendToList(usernameFriend: string) {
 
 var list_:string[];
 export async function asyncGetFriendListById(){
-  var input:string = 'http://localhost:4242/user-profile/userList/' + getCookie('userID');
+  var input:string = 'http://localhost:4242/user-profile/userAddList/' + getCookie('userID');
   try
   {
     const response = await fetch(input, {
@@ -46,7 +46,7 @@ export async function asyncGetFriendListById(){
     }
      var result = await response.json()
       console.log('result is: ', result);
-      list_ =  await result;
+      list_ = await result;
   }
   catch (e: any) {
     console.log(e)
@@ -66,15 +66,8 @@ type DropDownProps = {
 
 const handleDropDownFunction = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    console.log("hey");
-    console.log(_functinInput);
-    switch (_functinInput) {
-      case "friendList": addFriendToList(_selectDropDownList);
-    }
-    console.log("done");
-    _selectDropDownList = "";
+    addFriendToList(_selectDropDownList);
     _setDisplay(true)
-    //after this, update the page
   }
 
   var _functinInput:string = "";
@@ -104,8 +97,8 @@ const handleDropDownFunction = (e: React.MouseEvent<HTMLButtonElement>) => {
     /**
      * when clicking on the dropdown menu
      */
-    const toggleDropDown = () => {
-      asyncGetFriendListById()
+    async function asyncToggleDropDown(){
+      await asyncGetFriendListById()
       setShowDropDown(!showDropDown);
     };
 
@@ -122,16 +115,16 @@ const handleDropDownFunction = (e: React.MouseEvent<HTMLButtonElement>) => {
     return (
         <div>
         <button className={showDropDown ? "active" : undefined}
-          onClick={(): void => toggleDropDown()}
+          onClick={asyncToggleDropDown}
           onBlur={(e: React.FocusEvent<HTMLButtonElement>): void =>
             dismissHandler(e)
           }>
         <div>{_selectDropDownList ? "Submit to " + nameOfMenu +": " + _selectDropDownList : "Submit to " + nameOfMenu +": "} </div>
         {showDropDown && (
           <DropDown
-            friendList={friendList()}
+            list={friendList()}
             showDropDown={false}
-            toggleDropDown={(): void => toggleDropDown()}
+            toggleDropDown={asyncToggleDropDown}
             friendSelection={friendListSelection}
           />
         )}

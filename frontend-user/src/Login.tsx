@@ -92,9 +92,6 @@ interface YourFormElement extends HTMLFormElement {
 
 const handleAccCreate = (e: React.FormEvent<YourFormElement>) => {
   e.preventDefault();
-  console.log(e.currentTarget.elements.username.value)
-  console.log(e.currentTarget.elements.password.value)
-  console.log(e.currentTarget.elements.eMail.value)
   AccCreate(e.currentTarget.elements.username.value,
     e.currentTarget.elements.password.value,
     e.currentTarget.elements.eMail.value);
@@ -105,9 +102,6 @@ const handleAccCreate = (e: React.FormEvent<YourFormElement>) => {
 
 const handleAccLogin = (e: React.FormEvent<YourFormElement>) => {
   e.preventDefault();
-  console.log(e.currentTarget.elements.username.value)
-  console.log(e.currentTarget.elements.password.value)
-  console.log(e.currentTarget.elements.eMail.value)
   Acclogin(e.currentTarget.elements.username.value,
     e.currentTarget.elements.password.value,
     e.currentTarget.elements.eMail.value);

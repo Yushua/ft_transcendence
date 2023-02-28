@@ -30,6 +30,9 @@ let UserProfileController = class UserProfileController {
     getUsesListById(id) {
         return this.userServices.getAllUsersByFriendList(id);
     }
+    getUserAddListById(id) {
+        return this.userServices.getAllUsersAddList(id);
+    }
     getUseFriendListById(id) {
         return this.userServices.getUsersListFriendById(id);
     }
@@ -74,6 +77,13 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], UserProfileController.prototype, "getUsesListById", null);
+__decorate([
+    (0, common_1.Get)('/userAddList/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UserProfileController.prototype, "getUserAddListById", null);
 __decorate([
     (0, common_1.Get)('/userFriendList/:id'),
     __param(0, (0, common_1.Param)('id')),

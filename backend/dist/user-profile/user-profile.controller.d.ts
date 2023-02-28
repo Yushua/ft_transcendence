@@ -8,6 +8,7 @@ export declare class UserProfileController {
     getAllTasks(filterDto: getTasksFilterDto): Promise<UserProfile[]>;
     getUserById(id: string): Promise<UserProfile>;
     getUsesListById(id: string): Promise<string[]>;
+    getUserAddListById(id: string): Promise<string[]>;
     getUseFriendListById(id: string): Promise<string[]>;
     ReturnNameById(id: string): Promise<string>;
     getUserByUsername(username: string): Promise<UserProfile>;

@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
 
 type DropDownProps = {
-  friendList: string[];
+  list: string[];
   showDropDown: boolean;
   toggleDropDown: Function;
   friendSelection: Function;
 };
 
+
 const DropDown: React.FC<DropDownProps> = ({
-  friendList,
+  list,
   friendSelection,
 }: DropDownProps): JSX.Element => {
   const [showDropDown, setShowDropDown] = useState<boolean>(false);
@@ -24,7 +25,7 @@ const DropDown: React.FC<DropDownProps> = ({
   return (
     <>
       <div className={showDropDown ? 'dropdown' : 'dropdown active'}>
-        {friendList.map(
+        {list.map(
           (friend: string, index: number): JSX.Element => {
             return (
               <p
