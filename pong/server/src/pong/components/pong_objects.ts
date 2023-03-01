@@ -1,15 +1,16 @@
 export class GameData {
-	// gameState = new Map<string, boolean>()
 	gameState: string
 	gameNum: number
+	gameName: string
 	p1_score: number
 	p2_score: number
 	p1: Paddle
 	p2: Paddle
 	ball: Ball
+	p1_name: string
+	p2_name: string
 
-
-	constructor(num:number)
+	constructor(num:number, gamename:string, p1name:string, p2name:string)
 	{
 		this.gameState = 'newgame'
 		this.p1_score = 0
@@ -18,6 +19,9 @@ export class GameData {
 		this.p1 = new Paddle(12, 1, 1500, 750, 20, 20, 100)
 		this.p2 = new Paddle(12, 2, 1500, 750, 20, 20, 100)
 		this.ball = new Ball(1, 3, 1500, 750, 20, 20, 20)
+		this.gameName = gamename
+		this.p1_name = p1name
+		this.p2_name = p2name
 	}
 
 	update(event:string)
@@ -25,13 +29,13 @@ export class GameData {
 		if (event === 'p1_scored')
 		{
 			this.p1_score++
-			if (this.p1_score === 11)
+			if (this.p1_score === 2)
 				this.gameState = 'p1_won'
 		}
 		else if (event === 'p2_scored')
 		{
 			this.p2_score++
-			if (this.p2_score === 11)
+			if (this.p2_score === 2)
 			{
 				this.gameState = 'p2_won'
 			}
@@ -166,12 +170,6 @@ export class Ball extends Entity
 			else
 				this.yVec = -1
 			return 'p2_scored'
-			// this.player_2_Score += 1
-			// if (this.player_2_Score === 11)
-			// {
-			// 	this.gameState.set("game_end", true)
-			// 	this.gameState.set("P2_won", true)
-			// }
 		}
 
 		//check right canvas bounds
@@ -184,12 +182,6 @@ export class Ball extends Entity
 			else
 				this.yVec = -1
 			return 'p1_scored'
-			// this.playerScore += 1
-			// if (this.playerScore === 11)
-			// {
-			// 	this.gameState.set("game_end", true)
-			// 	this.gameState.set("P1_won", true)
-			// }
 		}
 
 		//check player1 collision

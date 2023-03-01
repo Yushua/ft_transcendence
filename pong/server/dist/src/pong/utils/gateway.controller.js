@@ -18,12 +18,25 @@ const socket_io_1 = require("socket.io");
 const pong_objects_1 = require("../components/pong_objects");
 let queuedclient = undefined;
 let n_game_rooms = 0;
-let game_room = 'game_0';
+let game_name = 'game_0';
 let gamedata;
-let player1;
-let player2;
-let gamedata_array;
+let games = new Map;
+let roomIDs = new Array;
+let gameList = new Array;
+let dataIdTuple;
 let MyGateway = class MyGateway {
+    constructor() {
+        this.interval = setInterval(() => {
+            games.forEach((data_id_tuple, Client) => {
+                this.server.to(Client.id).emit('gamedata', data_id_tuple[0]);
+                if (data_id_tuple[0].gameState === 'p1_won' || data_id_tuple[0].gameState === 'p2_won')
+                    games.delete(Client);
+                else
+                    data_id_tuple[0].update(data_id_tuple[0].ball.update(data_id_tuple[0].p1, data_id_tuple[0].p2));
+                this.server.to(Client.id).emit('gamelist', gameList);
+            });
+        }, 10);
+    }
     onModuleInit() {
         this.server.on('connection', (socket) => {
             console.log(socket.id);
@@ -37,32 +50,34 @@ let MyGateway = class MyGateway {
             client.emit('pending');
         }
         else {
-            game_room = game_room.replace(n_game_rooms.toString(), (n_game_rooms + 1).toString());
+            game_name = game_name.replace(n_game_rooms.toString(), (n_game_rooms + 1).toString());
             n_game_rooms++;
-            console.log(game_room);
-            client.join(game_room);
-            queuedclient.join(game_room);
+            console.log(game_name);
+            client.join(game_name);
+            queuedclient.join(game_name);
             client.emit('joined', n_game_rooms);
             queuedclient.emit('joined', n_game_rooms);
             let client2 = queuedclient;
             queuedclient = undefined;
-            player1 = client;
-            player2 = client2;
-            gamedata = new pong_objects_1.GameData(n_game_rooms);
-            setInterval(() => {
-                this.server.to(client.id).emit('gamedata', gamedata);
-                this.server.to(client2.id).emit('gamedata', gamedata);
-                gamedata.update(gamedata.ball.update(gamedata.p1, gamedata.p2));
-            }, 10);
+            gamedata = new pong_objects_1.GameData(n_game_rooms, game_name, client.id, client2.id);
+            roomIDs.push(client.id);
+            roomIDs.push(client2.id);
+            gameList.push(game_name + ' ' + client.id);
+            gameList.push(game_name + ' ' + client2.id);
+            dataIdTuple = [gamedata, roomIDs];
+            games.set(client, dataIdTuple);
+            games.set(client2, dataIdTuple);
+            roomIDs = [];
         }
     }
-    handleEvent(body, client) {
-        console.log('from:', client.id);
-        console.log('msg:', body);
-        if (client.id === player1.id)
-            gamedata.p1.update(body);
-        if (client.id === player2.id)
-            gamedata.p2.update(body);
+    handleEvent(direction, client) {
+        let game = games.get(client);
+        if (game !== undefined) {
+            if (game[1][0] === client.id)
+                game[0].p1.update(direction);
+            if (game[1][1] === client.id)
+                game[0].p2.update(direction);
+        }
     }
 };
 __decorate([

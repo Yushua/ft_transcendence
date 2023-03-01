@@ -1,12 +1,15 @@
 export declare class GameData {
     gameState: string;
     gameNum: number;
+    gameName: string;
     p1_score: number;
     p2_score: number;
     p1: Paddle;
     p2: Paddle;
     ball: Ball;
-    constructor(num: number);
+    p1_name: string;
+    p2_name: string;
+    constructor(num: number, gamename: string, p1name: string, p2name: string);
     update(event: string): void;
 }
 declare class Entity {

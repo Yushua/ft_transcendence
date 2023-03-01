@@ -3,8 +3,10 @@ import { WebsocketContext } from "../contexts/WebsocketContext"
 import { GameData,  } from './pong_objects'
 import { Canvas } from './Canvas'
 import update from 'immutability-helper';
+import { GameList } from './GameList';
 
-var ini_GameData = new GameData(0)
+var iniGameData = new GameData(0, '', '', '')
+var iniGameList = new Array<string>('')
 var game:Canvas
 var keysPressed: Map<string,boolean> = new Map<string,boolean>()
 
@@ -13,7 +15,8 @@ export const Pong = () => {
 	const socket = React.useContext(WebsocketContext)
 	const [pending, setPending] = React.useState(false)
 	const [inGame, setInGame] = React.useState(false)
-	const [gameData, setGameData] = React.useState(ini_GameData)
+	const [gameData, setGameData] = React.useState(iniGameData)
+	const [gameList, setGameList] = React.useState(iniGameList)
 
 	function updateGameData(data:GameData)
 	{
@@ -21,8 +24,11 @@ export const Pong = () => {
 		const newData = update(gameData, {
 			gameState: {$set: data.gameState},
 			gameNum: {$set: data.gameNum},
+			gameName: {$set: data.gameName},
 			p1_score: {$set: data.p1_score},
 			p2_score: {$set: data.p2_score},
+			p1_name: {$set: data.p1_name},
+			p2_name: {$set: data.p2_name},
 			p1: {
 				x: {$set: data.p1.x},
 				y: {$set: data.p1.y},
@@ -63,7 +69,16 @@ export const Pong = () => {
 		setGameData(newData)
 	}
 
+	function updateGameList(list:string[])
+	{
+		let newList = new Array<string>
+		newList = list
+		setGameList(newList)
+	}
+
 	React.useEffect(() => {
+
+		/* INCOMING EVENTS ON SOCKET */
 		socket.on('connect', () => {
 			console.log('connected with gateway!', socket.id)
 		})
@@ -78,18 +93,27 @@ export const Pong = () => {
 		socket.on('gamedata', (s_gameData:GameData) => {
 			updateGameData(s_gameData)
 		})
+		socket.on('gamelist', (gameList:string[]) => {
+			updateGameList(gameList)
+		})
+
+
+		/*  EVENTLISTENERS */
 		window.addEventListener('keydown', (event) => {
 			keysPressed.set(event.key, true)
 		})
 		window.addEventListener('keyup', (event) => {
 			keysPressed.set(event.key, false)
 		})
+
+		/*  SEND DATA TO SERVER */
 		setInterval(() => {
 			if (keysPressed.get('ArrowUp'))
 				socket.emit('movement', 1)
 			if (keysPressed.get('ArrowDown'))
 				socket.emit('movement', -1)
 		}, 30)
+
 
 		return () => {
 			console.log('unregistering events')
@@ -101,13 +125,20 @@ export const Pong = () => {
 	const findGame = () => {
 		socket.emit('LFG')
 	}
+	const spectateGame = () => {
+		
+	}
+
 	return (
 		<div>
-			 {	pending ?
-			 		`Waiting for second player...` :
-				inGame ?
-					<Canvas instance={game} socket={socket} gameData={gameData}/> :
-					<button onClick={() => findGame()}>Join Game</button>}
+			{pending ?
+			 	`Waiting for second player...` :
+			inGame ?
+				<Canvas instance={game} socket={socket} gameData={gameData}/> :
+				<button onClick={() => findGame()}>Join Game</button>}
+			<button onClick={() => spectateGame()}>Spectate Game</button>
+
+			<GameList list={gameList} />
 		</div>
 	)
 }

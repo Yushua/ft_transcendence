@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Ball = exports.Paddle = exports.GameData = void 0;
 class GameData {
-    constructor(num) {
+    constructor(num, gamename, p1name, p2name) {
         this.gameState = 'newgame';
         this.p1_score = 0;
         this.p2_score = 0;
@@ -10,16 +10,19 @@ class GameData {
         this.p1 = new Paddle(12, 1, 1500, 750, 20, 20, 100);
         this.p2 = new Paddle(12, 2, 1500, 750, 20, 20, 100);
         this.ball = new Ball(1, 3, 1500, 750, 20, 20, 20);
+        this.gameName = gamename;
+        this.p1_name = p1name;
+        this.p2_name = p2name;
     }
     update(event) {
         if (event === 'p1_scored') {
             this.p1_score++;
-            if (this.p1_score === 11)
+            if (this.p1_score === 2)
                 this.gameState = 'p1_won';
         }
         else if (event === 'p2_scored') {
             this.p2_score++;
-            if (this.p2_score === 11) {
+            if (this.p2_score === 2) {
                 this.gameState = 'p2_won';
             }
         }

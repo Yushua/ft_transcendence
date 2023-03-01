@@ -37,18 +37,6 @@ export class Canvas extends React.Component<any, any> {
 		const player_2_ScoreString:string = gameData.p2_score.toString()
 		this.gameContext.fillText(playerScoreString, 375, 50)
 		this.gameContext.fillText(player_2_ScoreString, 1125, 50)
-		//if new game
-		if (gameData.gameState === "newgame")
-		{
-			this.gameContext.fillText("PRESS SPACE", 370, 325)
-			this.gameContext.fillText("TO START/PAUSE", 875, 325)
-		}
-		//if paused
-		// if (gameData.gameState === "pause")
-		// {
-		// 	this.gameContext.fillText("GAME", 500, 325)
-		// 	this.gameContext.fillText("PAUSED", 875, 325)
-		// }
 		//if game end
 		if (gameData.gameState === "p1_won" || gameData.gameState === "p2_won")
 		{
@@ -56,8 +44,6 @@ export class Canvas extends React.Component<any, any> {
 				this.gameContext.fillText("WINNER", 315, 95)
 			else
 				this.gameContext.fillText("WINNER", 1065, 95)
-			this.gameContext.fillText("PRESS SPACE", 370, 325)
-			this.gameContext.fillText("FOR NEW GAME", 875, 325)
 		}
 		//draw paddles and ball
 		gameData.ball.draw(this.gameContext)
