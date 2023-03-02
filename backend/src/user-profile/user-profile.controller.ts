@@ -24,11 +24,11 @@ export class UserProfileController {
      * @param id 
      * @returns get all users in  list minus this user, using ID
      */
-    @Get('/userList/:id')
-    getUsesListById(
-        @Param('id') id: string): Promise<string[]> {
-        return this.userServices.getAllUsersByFriendList(id);
-    }
+        @Get('/userList/:id')
+        getUsesListById(
+            @Param('id') id: string): Promise<string[]> {
+            return this.userServices.getAllUsersByFriendList(id);
+        }
 
      /**
      * 
@@ -46,11 +46,11 @@ export class UserProfileController {
      * @param id 
      * @returns get users friendslist
      */
-    @Get('/userFriendList/:id')
-    getUseFriendListById(
-        @Param('id') id: string): Promise<string[]> {
-        return this.userServices.getUsersListFriendById(id);
-    }
+        @Get('/userFriendList/:id')
+        getUseFriendListById(
+            @Param('id') id: string): Promise<string[]> {
+            return this.userServices.getUsersListFriendById(id);
+        }
 
     @Get("/username/:id")
     async ReturnNameById(

@@ -1,7 +1,6 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { YourFormElement } from "../UserProfile";
-//https://codesandbox.io/s/react-images-uploading-demo-u0khz?file=/src/index.js:89-111
-//file will be seen, by clicking on the file, you will change the profile picture
+
 var _setDisplay:Dispatch<SetStateAction<boolean>>;
 async function TogglePfpChange(e: React.FormEvent<YourFormElement>){
     e.preventDefault();
