@@ -97,7 +97,6 @@ function UserProfilePage() {
 
   return (
     <div className="UserProfile">
-      <LogoutButtonComponent />
       <div>
         <label id="name" htmlFor="name">Welcome {username}</label>
       </div>

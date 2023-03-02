@@ -11,9 +11,7 @@ export function logoutButtonRefresh() {
 
 function LogoutButtonComponent() {
     return (
-        <div>
             <button onClick={() => {logoutButtonRefresh()}}>logout</button>
-        </div>
     )
 }
 

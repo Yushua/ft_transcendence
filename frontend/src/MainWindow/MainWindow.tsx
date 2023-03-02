@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import UserProfilePage from "../UserProfile";
 import MainChatWindow from "../Chat/Windows/MainChatWindow";
+import LogoutButtonComponent from "../componentsUserProfile/LogoutButton";
 
 export default function MainWindow() {
 	
@@ -15,6 +16,7 @@ export default function MainWindow() {
 	return (
 		<div>
 			<div>
+				<LogoutButtonComponent />
 				<button
 					onClick={() => setWindow("profile")}
 					disabled={window === "profile"}
