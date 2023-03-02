@@ -20,13 +20,13 @@ function GenerateFriedListJSX(): JSX.Element[] {
 				id={friendID}
 				style={{height: ".5cm", width: "100%", textAlign: "left", fontSize: ".35cm"}}
 				disabled
-				>{NameStorage.GetUser(friendID)}</button></div>)
+				>{NameStorage.User.Get(friendID)}</button></div>)
 		else
 			return (<div key={friendID}><button
 				id={friendID}
 				style={{height: ".5cm", width: "100%", textAlign: "left", fontSize: ".35cm"}}
 				onClick={_ => _changeToFriendRoom(friendID)}
-				>{NameStorage.GetUser(friendID)}</button></div>)
+				>{NameStorage.User.Get(friendID)}</button></div>)
 	})
 }
 

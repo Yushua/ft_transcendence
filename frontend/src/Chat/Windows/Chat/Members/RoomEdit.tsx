@@ -35,7 +35,7 @@ export default function RoomEdit() {
 					const type: boolean = (document.getElementById("_RoomType") as HTMLInputElement).checked
 					HTTP.asyncPatch(`chat/room/${ChatRoom.ID}`, {OwnerID:User.ID, Name:name, Password:pass, RoomType:(type?"Private":"Public")}, null, async function() {
 						if (name != ChatRoom.Name)
-							NameStorage.ClearRoom(ChatRoom.ID)
+							NameStorage.Room.Clear(ChatRoom.ID)
 						ChatRoom.asyncUpdate(ChatRoom.ID)
 					}, () => setDis(false))
 				}}

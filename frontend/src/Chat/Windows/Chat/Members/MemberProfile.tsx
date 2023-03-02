@@ -15,7 +15,7 @@ function Mute() {
 	var actualTime: number = 0
 	var mult: string | null = ""
 	while (true) {
-		time = prompt(`Mute ${NameStorage.GetUser(_memberProfileID)} for how long?`)
+		time = prompt(`Mute ${NameStorage.User.Get(_memberProfileID)} for how long?`)
 		if (!time)
 			return
 		if (time.length === 0)
@@ -67,7 +67,7 @@ export default function MemberProfile() {
 			
 			{/* Username */}
 			<div style={{width: "100%", display: "table"}}>
-				<div style={{textAlign: "left"}}>{NameStorage.GetUser(_memberProfileID)}</div>
+				<div style={{textAlign: "left"}}>{NameStorage.User.Get(_memberProfileID)}</div>
 			</div>
 			
 			<div style={{width: "100%", display: "table"}}>
@@ -98,14 +98,14 @@ export default function MemberProfile() {
 						<button
 							style={{width: "33%", height: ".5cm", boxSizing: "border-box"}}
 							onClick={() => {
-								if (window.confirm(`Kick ${NameStorage.GetUser(_memberProfileID)}?`))
+								if (window.confirm(`Kick ${NameStorage.User.Get(_memberProfileID)}?`))
 									HTTP.asyncDelete(`chat/member/${ChatRoom.ID}/${_memberProfileID}`)
 							}}
 							>Kick</button>
 						<button
 							style={{width: "33%", height: ".5cm", boxSizing: "border-box"}}
 							onClick={() => {
-								if (window.confirm(`Ban ${NameStorage.GetUser(_memberProfileID)}?`))
+								if (window.confirm(`Ban ${NameStorage.User.Get(_memberProfileID)}?`))
 									HTTP.asyncDelete(`chat/ban/${ChatRoom.ID}/${_memberProfileID}`)
 							}}
 							>Ban</button>
@@ -114,7 +114,7 @@ export default function MemberProfile() {
 						<button
 							style={{width: "100%", height: ".5cm", boxSizing: "border-box"}}
 							onClick={() => {
-								if (window.confirm(`Make ${NameStorage.GetUser(_memberProfileID)} admin?`))
+								if (window.confirm(`Make ${NameStorage.User.Get(_memberProfileID)} admin?`))
 									HTTP.asyncPatch(`chat/admin/${ChatRoom.ID}/${_memberProfileID}`)
 							}}
 							>Make Admin</button>

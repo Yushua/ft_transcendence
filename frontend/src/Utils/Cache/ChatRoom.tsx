@@ -7,15 +7,19 @@ import { asyncUpdateChatLog } from "../../Chat/Windows/Chat/ActualChat/ChatWindo
 import { asyncUpdateRoomList } from "../../Chat/Windows/Chat/RoomSelect/RoomList";
 import { asyncUpdateFriendsList } from "../../Chat/Windows/Chat/RoomSelect/FriendsList";
 import { asyncUpdateMembersWindow } from "../../Chat/Windows/Chat/Members/MembersWindow";
+import ManualEventManager from "../../Events/ManualEventManager";
 
 export default class ChatRoom {
 	private static _chatRoom: any | null = null
 	private static _chatRoomPass: string = ""
 	
+	static UpdateEvent = new ManualEventManager()
+	static ClearEvent = new ManualEventManager()
+	
 	static Clear() {
 		this._chatRoomPass = ""
 		this._chatRoom = null
-		this._clearEvent()
+		this.ClearEvent.Run()
 	}
 	
 	static async asyncUpdate(roomID: string) {
@@ -26,7 +30,8 @@ export default class ChatRoom {
 			this._chatRoomPass = (!room.Direct && room.OwnerID === ChatUser.ID) ? HTTP.Get(`chat/pass/${roomID}`) : ""
 			this._chatRoom = room
 			RoomEvent.SubscribeToUserEvent(`chat/event/room-${roomID}`)
-			this._updateEvent()
+			NameStorage.Room.Set(room.ID, room.Name)
+			this.UpdateEvent.Run()
 		}
 	}
 	
@@ -56,26 +61,4 @@ export default class ChatRoom {
 	static get MessageCount():      number   { return this._chatRoom?.MessageCount ?? 0 }
 	static get Direct():            boolean  { return this._chatRoom?.Direct ?? true }
 	static get Password():          string   { return this._chatRoomPass }
-	
-	private static _onClearFuncs: (() => void)[] = [
-		asyncUpdateChatLog,
-		asyncUpdateMemberList,
-	]
-	private static _onUpdateFuncs: ((roomID: string) => void)[] = [
-		asyncUpdateFriendsList,
-		asyncUpdateRoomList,
-		asyncUpdateMemberList,
-		asyncUpdateMembersWindow,
-		asyncUpdateChatLog,
-	]
-	
-	private static _clearEvent() {
-		for (const func of this._onClearFuncs)
-			func()
-	}
-	
-	private static _updateEvent() {
-		for (const func of this._onUpdateFuncs)
-			func(this.ID)
-	}
 }

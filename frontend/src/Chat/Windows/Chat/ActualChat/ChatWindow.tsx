@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import HTTP from "../../../../Utils/HTTP";
 import ChatRoom from "../../../../Utils/Cache/ChatRoom";
 import NameStorage from "../../../../Utils/Cache/NameStorage";
@@ -41,7 +41,7 @@ export async function asyncUpdateChatLog() {
 			
 			for (let i = msgs.length - 1; count < target && i >= 0; i--) {
 				count++
-				newChatLog.unshift(<div key={count + _msgCount} style={{textAlign: "left"}}>{`${NameStorage.GetUser(msgs[i].OwnerID)}: ${msgs[i].Message}`}</div>)
+				newChatLog.unshift(<div key={count + _msgCount} style={{textAlign: "left"}}>{`${NameStorage.User.Get(msgs[i].OwnerID)}: ${msgs[i].Message}`}</div>)
 			}
 		}
 		
@@ -62,18 +62,22 @@ export async function asyncUpdateChatLog() {
 }
 
 var _setChatLog: React.Dispatch<React.SetStateAction<JSX.Element[]>> | null = null
-
+var _firstRender: boolean = true
 export default function ChatWindow() {
 	
 	const [chatLog, setChatLog] = useState<JSX.Element[]>([])
 	_setChatLog = setChatLog
 	
+	if (_firstRender) {
+		_firstRender = false
+		ChatRoom.ClearEvent.Subscribe(asyncUpdateChatLog)
+		ChatRoom.UpdateEvent.Subscribe(asyncUpdateChatLog)
+		asyncUpdateChatLog()
+	}
+	
 	if (ChatRoom.ID === "")
 		return <div style={{display: "table-cell"}}></div>
 	
-	if (chatLog.length === 0)
-		asyncUpdateChatLog()
-
 	return (
 		<div style={{display: "table-cell"}}>
 			

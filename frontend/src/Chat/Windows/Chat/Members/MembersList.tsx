@@ -16,7 +16,7 @@ function GenerateRoomListJSX(): JSX.Element[] {
 		return (<div key={memberID}><button
 			style={{height: ".5cm", width: "100%", textAlign: "left", fontSize: ".35cm"}}
 			onClick={() => ChangeMemberWindow(memberID)}>
-				{NameStorage.GetUser(memberID)}</button></div>)
+				{NameStorage.User.Get(memberID)}</button></div>)
 	})
 }
 

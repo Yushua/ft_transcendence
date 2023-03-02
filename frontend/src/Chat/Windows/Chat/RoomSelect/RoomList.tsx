@@ -18,12 +18,12 @@ function GenerateRoomListJSX(): JSX.Element[] {
 			return (<div key={roomID}><button
 				style={{height: ".5cm", width: "100%", textAlign: "left", fontSize: ".35cm"}}
 				disabled
-				>{NameStorage.GetRoom(roomID)}</button></div>)
+				>{NameStorage.Room.Get(roomID)}</button></div>)
 		else
 			return (<div key={roomID}><button
 				style={{height: ".5cm", width: "100%", textAlign: "left", fontSize: ".35cm"}}
 				onClick={_ => asyncChangeRoom(roomID)}
-				>{NameStorage.GetRoom(roomID)}</button></div>)
+				>{NameStorage.Room.Get(roomID)}</button></div>)
 	})
 }
 
