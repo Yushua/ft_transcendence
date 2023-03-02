@@ -2,9 +2,9 @@ import React, { Dispatch, SetStateAction, useState } from 'react';
 import './UserProfile.css';
 import './App.css';
 import { getCookie } from 'typescript-cookie';
-import LogoutButtonComponent from './componentsUserProfile/LogoutButton';
 import DropDownMenuAddFriendList from './componentsUserProfile/DropDownMenuAddFriendList';
 import DropDownMenuRemoveFriendListId from './componentsUserProfile/DropDownMenuRemoveFriendListId';
+import ProfilePicture from './componentsUserProfile/ProfilePicture';
 
 var message:string = "";
 
@@ -102,6 +102,7 @@ function UserProfilePage() {
   return (
     <div className="UserProfile">
       <div>
+        <ProfilePicture/>
         <label id="name" htmlFor="name">Welcome {username}</label>
       </div>
       <div>
