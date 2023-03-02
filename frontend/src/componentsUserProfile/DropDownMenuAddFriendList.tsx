@@ -2,11 +2,11 @@ import React, { Dispatch, SetStateAction, useState } from 'react';
 import { getCookie, getCookies, removeCookie } from 'typescript-cookie';
 import { newWindow } from '../App';
 import LoginPage from '../Login';
+import { changeListintonameForm } from './DropDownMenuRemoveFriendListId';
 import DropDown from './FriendListDropDown';
 
 async function addFriendToList(usernameFriend: string) {
   var inputString:string = 'http://localhost:4242/user-profile/friendlist/add/' + getCookies().userID + '/' + usernameFriend;
-  console.log("add friend");
   try {
     // 👇️ const response: Response
     const response = await fetch(inputString, {
@@ -46,7 +46,7 @@ export async function asyncGetFriendListById(){
     }
      var result = await response.json()
       console.log('result is: ', result);
-      list_ = await result;
+      list_ =  changeListintonameForm(result);
   }
   catch (e: any) {
     console.log(e)

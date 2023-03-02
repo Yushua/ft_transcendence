@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { YourFormElement } from "../UserProfile";
 
 var _setDisplay:Dispatch<SetStateAction<boolean>>;
-async function ChangeProfilePicture(e: React.FormEvent<YourFormElement>){
+async function TogglePfpChange(e: React.FormEvent<YourFormElement>){
     e.preventDefault();
     // await asyncChangeName(e.currentTarget.elements.username.value);
     _setDisplay(false)
@@ -18,15 +18,15 @@ function UploadProfilePicture({}) {
     _setDisplay(false)
   }
 
-  async function asyncToggleChangeProfilePicture() {
-    ChangeProfilePicture
-  }
+//   async function asyncToggleChangeProfilePicture() {
+//     await ChangeProfilePicture()
+//   }
 
   return (
     <div>
-        <form onSubmit={asyncToggleChangeProfilePicture}>
+        <form onSubmit={TogglePfpChange}>
             <div>
-            <label htmlFor="username">Username:</label>
+            <label htmlFor="profile picture upload">Profile picture change:</label>
             <input id="username" type="text" />
             <button type="submit">Submit</button>
             </div>
