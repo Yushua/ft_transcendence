@@ -105,35 +105,29 @@ export class UserProfileService {
         }
         return found;
       }
-      
-      async getUserIdWithName(username:string):Promise<string> {
-        const found = await this.userEntity.findOneBy({username});
-        const idFriend = found.id;
-        return idFriend
-      }
-      
-      /**
-       * add friends based on the id, add id friend
-       * @returns 
-       */
+
       async addFriend(id:string, idfriend: string):Promise<UserProfile> {
         const found = await this.userEntity.findOneBy({id});
         //get all the users into one list
-        idfriend = await this.getUserIdWithName(idfriend)
         console.log("idfriend ==",  idfriend);
         found.friendList.push(idfriend);
         await this.userEntity.save(found);
         return found;
       }
 
+      async getUserIdWithName(username:string):Promise<string> {
+        const found = await this.userEntity.findOneBy({username});
+        const idFriend = found.id;
+        return idFriend
+      }
+
       /**
-       * remove friends based on the id, remove id friend
+       * remove friends based on the id
        * @returns 
        */
       async removeFriend(id:string, idfriend: string):Promise<UserProfile> {
         const found = await this.userEntity.findOneBy({id});
         //get all the users into one list
-        console.log("remove ", idfriend);
         found.friendList.splice(found.friendList.indexOf(idfriend), 1);
         if (found.friendList == null)
           found.friendList = [];
@@ -167,7 +161,8 @@ export class UserProfileService {
       async getAllUsersAddList(id:string):Promise<string[]> {
         var fullList: string[] = await this.getAllUsersIntoList()
         const found = await this.userEntity.findOneBy({id});
-        return fullList.filter(userID => found.id !== userID && !found.friendList.includes(userID))
+        fullList = fullList.filter(user => !found.username.includes(user))
+        return fullList.filter(user => !found.friendList.includes(user))
       }
 
       /**

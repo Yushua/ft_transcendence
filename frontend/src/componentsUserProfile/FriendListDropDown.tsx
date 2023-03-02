@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { asyncGetName } from '../UserProfile';
 
 type DropDownProps = {
   list: string[];
@@ -9,7 +8,10 @@ type DropDownProps = {
 };
 
 
-const DropDown: React.FC<DropDownProps> = ({list, friendSelection,}: DropDownProps): JSX.Element => {
+const DropDown: React.FC<DropDownProps> = ({
+  list,
+  friendSelection,
+}: DropDownProps): JSX.Element => {
   const [showDropDown, setShowDropDown] = useState<boolean>(false);
   
   const onClickHandler = (friend: string): void => {
@@ -19,6 +21,7 @@ const DropDown: React.FC<DropDownProps> = ({list, friendSelection,}: DropDownPro
   useEffect(() => {
     setShowDropDown(showDropDown);
   }, [showDropDown]);
+
   return (
     <>
       <div className={showDropDown ? 'dropdown' : 'dropdown active'}>

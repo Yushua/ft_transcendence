@@ -3,7 +3,6 @@ import React, { Dispatch, SetStateAction, useState } from 'react';
 import { getCookie, getCookies, removeCookie } from 'typescript-cookie';
 import { newWindow } from '../App';
 import LoginPage from '../Login';
-import NameStorage from '../Utils/Cache/NameStorage';
 import DropDown from './FriendListDropDown';
 
 var list_:string[];
@@ -50,7 +49,7 @@ export async function asyncGetFriendListById(){
     }
      var result = await response.json()
       console.log('result getting is: ', await result);
-      list_ =  changeListintonameForm(result);
+      list_ =  await result;
   }
   catch (e: any) {
     console.log(e)
@@ -63,20 +62,11 @@ export function logoutButtonRefresh() {
   newWindow(<LoginPage />);
 }
 
-export function changeListintonameForm(_list:string[]):string[]{
-  var list:string[] = []
-  for (let i = 0; i < _list.length; i++) {
-    list.push(NameStorage.GetUser(_list[i]))
-  }
-  return list
-}
-
 async function handleDropDownFunction (e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
     await removeFriendToList(_selectDropDownList);
     //update the display
     await asyncGetFriendListById();
-    //change the list to have it in name form
     _setDisplay(true)
   }
 

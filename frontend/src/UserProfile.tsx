@@ -5,7 +5,6 @@ import { getCookie } from 'typescript-cookie';
 import LogoutButtonComponent from './componentsUserProfile/LogoutButton';
 import DropDownMenuAddFriendList from './componentsUserProfile/DropDownMenuAddFriendList';
 import DropDownMenuRemoveFriendListId from './componentsUserProfile/DropDownMenuRemoveFriendListId';
-import UploadProfilePicture from './componentsUserProfile/UploadProfilePicture';
 
 var message:string = "";
 
@@ -67,7 +66,6 @@ interface FormElements extends HTMLFormControlsCollection {
   password: HTMLInputElement
   eMail: HTMLInputElement
   newInput: HTMLInputElement
-  profilePictureLink: HTMLInputElement
 }
 
 export interface YourFormElement extends HTMLFormElement {
@@ -91,7 +89,6 @@ async function asyncToggleGetName(){
 };
 
 export async function asyncSetDisplay(){
-  //setprofilePictureLink
   _setDisplay(true)
 }
 
@@ -113,9 +110,6 @@ function UserProfilePage() {
           <label htmlFor="username">Username:</label>
           <input id="username" type="text" />
           <button type="submit">Submit</button>
-        </div>
-        <div>
-          <UploadProfilePicture/>
         </div>
       </form>
       </div>
