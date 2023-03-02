@@ -85,22 +85,22 @@ export class UserProfileController {
         return this.userServices.changeStatus(status, id);
     }
 
-    @Patch('/friendlist/add/:id/:usernameFriend')
+    @Patch('/friendlist/add/:id/:idFriend')
     addFriend(
         @Param('id') id: string,
-        @Param('usernameFriend') usernameFriend: string,
+        @Param('idFriend') idFriend: string,
         )
         : Promise<UserProfile> {
-        return this.userServices.addFriend(id, usernameFriend);
+        return this.userServices.addFriend(id, idFriend);
     }
 
-    @Patch('/friendlist/remove/:id/:usernameFriend')
+    @Patch('/friendlist/remove/:id/:idFriend')
     removeFriend(
         @Param('id') id: string,
-        @Param('usernameFriend') usernameFriend: string,
+        @Param('idFriend') idfriend: string,
         )
         : Promise<UserProfile> {
-        return this.userServices.removeFriend(id, usernameFriend);
+        return this.userServices.removeFriend(id, idfriend);
     }
 
 

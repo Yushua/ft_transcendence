@@ -59,25 +59,18 @@ export function logoutButtonRefresh() {
   newWindow(<LoginPage />);
 }
 
-type DropDownProps = {
-    nameOfMenu: string;
-    functinInput: string;
-  };
-
 const handleDropDownFunction = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     addFriendToList(_selectDropDownList);
     _setDisplay(true)
   }
 
-  var _functinInput:string = "";
   var _selectDropDownList:string;
   
   var _setDisplay:Dispatch<SetStateAction<boolean>>;
   
-  function DropDownMenuAddFriend({nameOfMenu, functinInput}: DropDownProps) {
+function DropDownMenuAddFriend({}) {
     //drop down menu
-    _functinInput = functinInput;
     const [showDropDown, setShowDropDown] = useState<boolean>(false);
     const [selectDropDownList, setselectFriendList] = useState<string>("");
     const [display, setDisplay] = useState(true)
@@ -119,7 +112,7 @@ const handleDropDownFunction = (e: React.MouseEvent<HTMLButtonElement>) => {
           onBlur={(e: React.FocusEvent<HTMLButtonElement>): void =>
             dismissHandler(e)
           }>
-        <div>{_selectDropDownList ? "Submit to " + nameOfMenu +": " + _selectDropDownList : "Submit to " + nameOfMenu +": "} </div>
+        <div>{_selectDropDownList ? "add to " : "add to "} </div>
         {showDropDown && (
           <DropDown
             list={friendList()}
@@ -130,7 +123,7 @@ const handleDropDownFunction = (e: React.MouseEvent<HTMLButtonElement>) => {
         )}
       </button>
         <button type="submit" onClick={handleDropDownFunction}>
-        <div>{_selectDropDownList ? "Add" : ""} </div>
+        <div>{_selectDropDownList ? "Add" + _selectDropDownList : "Add"} </div>
         </button>
       </div>
     )

@@ -109,13 +109,22 @@ export class UserProfileService {
       async addFriend(id:string, idfriend: string):Promise<UserProfile> {
         const found = await this.userEntity.findOneBy({id});
         //get all the users into one list
-        console.log(idfriend);
+        console.log("idfriend ==",  idfriend);
         found.friendList.push(idfriend);
         await this.userEntity.save(found);
-        console.log(found);
         return found;
       }
 
+      async getUserIdWithName(username:string):Promise<string> {
+        const found = await this.userEntity.findOneBy({username});
+        const idFriend = found.id;
+        return idFriend
+      }
+
+      /**
+       * remove friends based on the id
+       * @returns 
+       */
       async removeFriend(id:string, idfriend: string):Promise<UserProfile> {
         const found = await this.userEntity.findOneBy({id});
         //get all the users into one list
@@ -125,47 +134,41 @@ export class UserProfileService {
         await this.userEntity.save(found);
 
         console.log("removed ", idfriend);
-        console.log(found.friendList);
         return found;
       }
 
       async getAllUsersIntoList():Promise<string[]> {
-        console.log("getallusersnames")
-        return (await this.userEntity.query("SELECT username FROM user_profile;")).map(user => user.username)
+        console.log("getalluserId's")
+        return (await this.userEntity.query("SELECT id FROM user_profile;")).map(user => user.id)
+
       }
 
       /**
        * 
        * @param id 
-       * @returns return a list of all the users
+       * @returns return a list of all the users, resuts an array of all id's
        */
       async getAllUsersByFriendList(id:string):Promise<string[]> {
         var newList: string[] = await this.getAllUsersIntoList()
-        const found = await this.userEntity.findOneBy({id});
         return(newList);
       }
 
       /**
        * 
        * @param id 
-       * @returns return a list of all the users it can add
+       * @returns return a list of all the users it can add, returns an array of id's
        */
       async getAllUsersAddList(id:string):Promise<string[]> {
         var fullList: string[] = await this.getAllUsersIntoList()
         const found = await this.userEntity.findOneBy({id});
-        var friendList: string[] = found.friendList;
-        fullList.splice(fullList.indexOf(found.username), 1);
-        var arrayLength = friendList.length;
-        for (var i = 0; i < arrayLength; i++) {
-          fullList.splice(fullList.indexOf(friendList[i]), 1);
-        }
-        return(fullList);
+        fullList = fullList.filter(user => !found.username.includes(user))
+        return fullList.filter(user => !found.friendList.includes(user))
       }
 
       /**
        * 
        * @param id 
-       * @returns get the users friendslist
+       * @returns get the users friendslist returns an array of the suers friendlist
        */
       async getUsersListFriendById(id:string):Promise<string[]> {
         const found = await this.userEntity.findOneBy({id});

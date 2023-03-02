@@ -88,6 +88,10 @@ async function asyncToggleGetName(){
   _setDisplay(true)
 };
 
+export async function asyncSetDisplay(){
+  _setDisplay(true)
+}
+
 function UserProfilePage() {
   const [Display, setDisplay] = useState<boolean>(false);
   _setDisplay = setDisplay
@@ -109,17 +113,11 @@ function UserProfilePage() {
         </div>
       </form>
       </div>
-      <DropDownMenuAddFriendList
-      nameOfMenu={"Add friendlist"}
-      functinInput={"friendList"}
-      //function
-      />
-      <DropDownMenuRemoveFriendListId
-      nameOfMenu={"remove friend"}
-      functinInput={"friendList"}
-      //function
-      />
-    </div>
+        <DropDownMenuAddFriendList
+        />
+        <DropDownMenuRemoveFriendListId
+        />
+      </div>
 
   );
 }

@@ -62,11 +62,6 @@ export function logoutButtonRefresh() {
   newWindow(<LoginPage />);
 }
 
-type DropDownProps = {
-    nameOfMenu: string;
-    functinInput: string;
-  };
-
 async function handleDropDownFunction (e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
     await removeFriendToList(_selectDropDownList);
@@ -79,7 +74,7 @@ async function handleDropDownFunction (e: React.MouseEvent<HTMLButtonElement>) {
   var _selectDropDownList:string;
 
 // const DropDownMenuRemoveFriend: React.FC<DropDownProps> = ({nameOfMenu}: DropDownProps): JSX.Element =>  {
-function DropDownMenuRemoveFriend({nameOfMenu}: DropDownProps) {
+function DropDownMenuRemoveFriend({}) {
     //remove a funciton to this list that needs to remove the string to the list.
 
     const [display, setDisplay] = useState(true)
@@ -122,7 +117,7 @@ function DropDownMenuRemoveFriend({nameOfMenu}: DropDownProps) {
           onBlur={(e: React.FocusEvent<HTMLButtonElement>): void =>
             dismissHandler(e)
           }>
-        <div>{_selectDropDownList ? "Submit to " + nameOfMenu +": " + _selectDropDownList : "Submit to " + nameOfMenu +": "} </div>
+        <div>{_selectDropDownList ? "Remove " : "Remove "} </div>
         {showDropDown && (
           <DropDown
             list={friendList()}
@@ -133,7 +128,7 @@ function DropDownMenuRemoveFriend({nameOfMenu}: DropDownProps) {
         )}
       </button>
         <button type="submit" onClick={handleDropDownFunction}>
-        <div>{_selectDropDownList ? "Remove" : ""} </div>
+        <div>{_selectDropDownList ? "Remove " + _selectDropDownList : "Remove "} </div>
         </button>
       </div>
     )
