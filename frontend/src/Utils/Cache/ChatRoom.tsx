@@ -2,11 +2,6 @@ import HTTP from "../HTTP";
 import { RoomEvent } from "../../Chat/Events/RoomEventHandle";
 import ChatUser from "./ChatUser";
 import NameStorage from "./NameStorage";
-import { asyncUpdateMemberList } from "../../Chat/Windows/Chat/Members/MembersList";
-import { asyncUpdateChatLog } from "../../Chat/Windows/Chat/ActualChat/ChatWindow";
-import { asyncUpdateRoomList } from "../../Chat/Windows/Chat/RoomSelect/RoomList";
-import { asyncUpdateFriendsList } from "../../Chat/Windows/Chat/RoomSelect/FriendsList";
-import { asyncUpdateMembersWindow } from "../../Chat/Windows/Chat/Members/MembersWindow";
 import ManualEventManager from "../../Events/ManualEventManager";
 
 export default class ChatRoom {
@@ -29,7 +24,7 @@ export default class ChatRoom {
 		if (!!room) {
 			this._chatRoomPass = (!room.Direct && room.OwnerID === ChatUser.ID) ? HTTP.Get(`chat/pass/${roomID}`) : ""
 			this._chatRoom = room
-			RoomEvent.SubscribeToUserEvent(`chat/event/room-${roomID}`)
+			RoomEvent.SubscribeServerSentEvent(`chat/event/room-${roomID}`)
 			NameStorage.Room.Set(room.ID, room.Name)
 			this.UpdateEvent.Run()
 		}

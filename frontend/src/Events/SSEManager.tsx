@@ -6,7 +6,7 @@ export default class SSEManager {
 	private _event: EventSource | null = null
 	private currentPath: string = ""
 	
-	async SubscribeToUserEvent(path: string) {
+	async SubscribeServerSentEvent(path: string) {
 		if (path === this.currentPath)
 			return
 		this.currentPath = path

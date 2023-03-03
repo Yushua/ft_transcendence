@@ -62,7 +62,7 @@ export async function asyncUpdateChatLog() {
 }
 
 var _setChatLog: React.Dispatch<React.SetStateAction<JSX.Element[]>> | null = null
-var _firstRender: boolean = true
+var _firstRender = true
 export default function ChatWindow() {
 	
 	const [chatLog, setChatLog] = useState<JSX.Element[]>([])
@@ -72,10 +72,11 @@ export default function ChatWindow() {
 		_firstRender = false
 		ChatRoom.ClearEvent.Subscribe(asyncUpdateChatLog)
 		ChatRoom.UpdateEvent.Subscribe(asyncUpdateChatLog)
-		asyncUpdateChatLog()
 	}
 	
-	if (ChatRoom.ID === "")
+	useEffect(() => {asyncUpdateChatLog()}, [])
+	
+	if (ChatRoom.ID === "" || chatLog.length === 0)
 		return <div style={{display: "table-cell"}}></div>
 	
 	return (

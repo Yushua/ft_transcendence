@@ -6,10 +6,8 @@ import User from "../../../../Utils/Cache/User";
 import HTTP from "../../../../Utils/HTTP";
 
 export async function asyncUpdateAddFriendList() {
-	if (!_setFriends)
-		return
-	
-	_setFriends(GenerateAddFriendJSX())
+	if (!!_setFriends)
+		_setFriends(GenerateAddFriendJSX())
 }
 
 function GenerateAddFriendJSX(): JSX.Element[] {

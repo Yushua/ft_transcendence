@@ -7,12 +7,10 @@ import ChatRoom from "../../../../Utils/Cache/ChatRoom"
 import ChatUser from "../../../../Utils/Cache/ChatUser"
 
 export async function asyncUpdateMembersWindow() {
-	if (ChatRoom.ID !== "") {
-		if (ChatRoom.Direct)
-			ChangeMemberWindow(ChatRoom.MemberIDs.find(userID => userID !== ChatUser.ID) ?? ChatUser.ID)
-		else
-			ChangeMemberWindow("members")
-	}
+	if (ChatRoom.ID !== "" && ChatRoom.Direct)
+		ChangeMemberWindow(ChatRoom.MemberIDs.find(userID => userID !== ChatUser.ID) ?? ChatUser.ID)
+	else
+		ChangeMemberWindow("members")
 }
 
 export function ChangeMemberWindow(window: string) {
@@ -21,11 +19,17 @@ export function ChangeMemberWindow(window: string) {
 }
 
 var _setDisplay: React.Dispatch<React.SetStateAction<string>> | null = null
-
+var _firstRender = true
 export default function MembersWindow() {
 	
 	const [display, setDisplay] = useState<string>("members")
 	_setDisplay = setDisplay
+	
+	if (_firstRender) {
+		_firstRender = false
+		ChatUser.UpdateEvent.Subscribe(asyncUpdateMembersWindow)
+		ChatUser.ClearEvent.Subscribe(asyncUpdateMembersWindow)
+	}
 	
 	var window
 	switch (display) {
@@ -33,10 +37,9 @@ export default function MembersWindow() {
 		case "edit": window = <RoomEdit/>; break
 		case "add": window = <AddFriend/>; break
 		default:
-			case "profile":
-				setMemberProfileID(display)
-				window = <MemberProfile/>;
-				break
+			setMemberProfileID(display)
+			window = <MemberProfile/>;
+			break
 	}
 	
 	return (

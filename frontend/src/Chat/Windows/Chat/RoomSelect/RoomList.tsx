@@ -6,10 +6,8 @@ import NameStorage from "../../../../Utils/Cache/NameStorage";
 import { asyncChangeRoom } from "../../MainChatWindow";
 
 export async function asyncUpdateRoomList() {
-	if (!_setRooms)
-		return
-	
-	_setRooms(GenerateRoomListJSX())
+	if (!!_setRooms)
+		_setRooms(GenerateRoomListJSX())
 }
 
 function GenerateRoomListJSX(): JSX.Element[] {
@@ -28,11 +26,18 @@ function GenerateRoomListJSX(): JSX.Element[] {
 }
 
 var _setRooms: React.Dispatch<React.SetStateAction<JSX.Element[]>> | null = null
-
+var _firstRender = true
 export default function RoomList() {
 	
 	const [rooms, setRooms] = useState<JSX.Element[]>(GenerateRoomListJSX())
 	_setRooms = setRooms
+	
+	if (_firstRender) {
+		_firstRender = false
+		ChatRoom.UpdateEvent.Subscribe(asyncUpdateRoomList)
+		ChatUser.UpdateEvent.Subscribe(asyncUpdateRoomList)
+		ChatUser.ClearEvent.Subscribe(asyncUpdateRoomList)
+	}
 	
 	return (
 		<div style={{overflowY: "scroll", overflowX: "hidden", width: "3.5cm", fontSize: ".45cm", height: "5cm"}}>

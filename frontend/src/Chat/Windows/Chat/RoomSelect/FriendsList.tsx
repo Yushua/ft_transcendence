@@ -7,10 +7,8 @@ import NameStorage from "../../../../Utils/Cache/NameStorage";
 import { asyncChangeRoom } from "../../MainChatWindow";
 
 export async function asyncUpdateFriendsList() {
-	if (!_setFriends)
-		return
-	
-	_setFriends(GenerateFriedListJSX())
+	if (!!_setFriends)
+		_setFriends(GenerateFriedListJSX())
 }
 
 function GenerateFriedListJSX(): JSX.Element[] {
@@ -30,8 +28,6 @@ function GenerateFriedListJSX(): JSX.Element[] {
 	})
 }
 
-var _setFriends: React.Dispatch<React.SetStateAction<JSX.Element[]>> | null = null
-
 async function _changeToFriendRoom(friendID: string) {
 	const index = ChatUser.FriedsWithDirect.indexOf(friendID)
 	if (index >= 0)
@@ -43,10 +39,19 @@ async function _changeToFriendRoom(friendID: string) {
 		})
 }
 
+var _setFriends: React.Dispatch<React.SetStateAction<JSX.Element[]>> | null = null
+var _firstRender = true
 export default function FriendsList() {
 	
 	const [friends, setFriends] = useState<JSX.Element[]>(GenerateFriedListJSX())
 	_setFriends = setFriends
+	
+	if (_firstRender) {
+		_firstRender = false
+		ChatRoom.UpdateEvent.Subscribe(asyncUpdateFriendsList)
+		ChatUser.UpdateEvent.Subscribe(asyncUpdateFriendsList)
+		ChatUser.ClearEvent.Subscribe(asyncUpdateFriendsList)
+	}
 	
 	return (
 		<div style={{overflowY: "scroll", overflowX: "hidden", width: "3.5cm", fontSize: ".45cm", height: "5cm"}}>

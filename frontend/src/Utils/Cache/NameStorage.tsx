@@ -13,7 +13,7 @@ export default class NameStorage {
 				
 			if (!forceUpdate) {
 				const user = this._nameMap.get(ID)
-				if (!!user && user[1] < Date.now())
+				if (!!user && user[1] > Date.now())
 					return user[0]
 			}
 			

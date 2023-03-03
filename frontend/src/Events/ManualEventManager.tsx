@@ -1,4 +1,8 @@
 export default class ManualEventManager {
+	constructor (events: (() => void)[] = []) {
+		this._events = events
+	}
+	
 	private _events: (() => void)[] = []
 	
 	Run() {

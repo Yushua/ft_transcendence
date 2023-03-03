@@ -5,10 +5,8 @@ import NameStorage from "../../../../Utils/Cache/NameStorage";
 import User from "../../../../Utils/Cache/User";
 
 export async function asyncUpdateMemberList() {
-	if (!_setMembers)
-		return
-	
-	_setMembers(GenerateRoomListJSX())
+	if (!!_setMembers)
+		_setMembers(GenerateRoomListJSX())
 }
 
 function GenerateRoomListJSX(): JSX.Element[] {
@@ -21,11 +19,17 @@ function GenerateRoomListJSX(): JSX.Element[] {
 }
 
 var _setMembers: React.Dispatch<React.SetStateAction<JSX.Element[]>> | null = null
-
+var _firstRender = true
 export default function MembersList() {
 	
 	const [members, setMembers] = useState<JSX.Element[]>(GenerateRoomListJSX())
 	_setMembers = setMembers
+	
+	if (_firstRender) {
+		_firstRender = false
+		ChatRoom.UpdateEvent.Subscribe(asyncUpdateMemberList)
+		ChatRoom.ClearEvent.Subscribe(asyncUpdateMemberList)
+	}
 	
 	if (ChatRoom.ID === "")
 		return <></>
