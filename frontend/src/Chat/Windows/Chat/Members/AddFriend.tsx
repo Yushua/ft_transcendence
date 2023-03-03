@@ -6,10 +6,8 @@ import User from "../../../../Utils/Cache/User";
 import HTTP from "../../../../Utils/HTTP";
 
 export async function asyncUpdateAddFriendList() {
-	if (!_setFriends)
-		return
-	
-	_setFriends(GenerateAddFriendJSX())
+	if (!!_setFriends)
+		_setFriends(GenerateAddFriendJSX())
 }
 
 function GenerateAddFriendJSX(): JSX.Element[] {
@@ -21,12 +19,12 @@ function GenerateAddFriendJSX(): JSX.Element[] {
 			<div key={friendID}><button
 				style={{height: ".5cm", width: "100%", textAlign: "left", fontSize: ".35cm"}}
 				disabled
-				>{"Banned: "}{NameStorage.GetUser(friendID)}</button></div>
+				>{"Banned: "}{NameStorage.User.Get(friendID)}</button></div>
 			:
 			<div key={friendID}><button
 				style={{height: ".5cm", width: "100%", textAlign: "left", fontSize: ".35cm"}}
 				onClick={async () => { await HTTP.asyncPatch(`chat/room/${ChatRoom.ID}/${friendID}`) }}
-				>{NameStorage.GetUser(friendID)}</button></div>
+				>{NameStorage.User.Get(friendID)}</button></div>
 		)
 }
 

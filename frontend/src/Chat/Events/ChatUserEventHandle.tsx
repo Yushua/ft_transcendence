@@ -1,6 +1,6 @@
 import ChatRoom from "../../Utils/Cache/ChatRoom";
 import ChatUser from "../../Utils/Cache/ChatUser";
-import SSEManager from "./SSEManager";
+import SSEManager from "../../Events/SSEManager";
 
 export const ChatUserEvent: SSEManager = new SSEManager(msg => {
 	console.log(msg)

@@ -1,3 +1,4 @@
+import ManualEventManager from "../../Events/ManualEventManager";
 import HTTP from "../HTTP";
 import ChatUser from "./ChatUser";
 import NameStorage from "./NameStorage";
@@ -5,9 +6,12 @@ import NameStorage from "./NameStorage";
 export default class User {
 	private static _user: any | null = null;
 	
+	static UpdateEvent = new ManualEventManager([ () => {ChatUser.asyncUpdate(this.ID)} ])
+	static ClearEvent = new ManualEventManager([ () => ChatUser.Clear() ])
+	
 	static Clear() {
 		this._user = null
-		this._clearEvent()
+		this.ClearEvent.Run()
 	}
 	
 	static async asyncUpdate(userID: string) {
@@ -18,7 +22,8 @@ export default class User {
 			console.log(user.id)
 			console.log(user.friendList)
 			this._user = user
-			this._updateEvent()
+			NameStorage.User.Set(user.id, user.username)
+			this.UpdateEvent.Run()
 		}
 	}
 	
@@ -28,21 +33,4 @@ export default class User {
 	static get Email():    string   { return this._user?.eMail ?? "" }
 	static get IconURL():  string   { return this._user?.profilePicture ?? "" }
 	static get Friends():  string[] { return this._user?.friendList ?? [] }
-	
-	private static _onClearFuncs: (() => void)[] = [
-		() => ChatUser.Clear(),
-	]
-	private static _onUpdateFuncs: ((userID: string) => void)[] = [
-		userID => {ChatUser.asyncUpdate(userID)},
-	]
-	
-	private static _clearEvent() {
-		for (const func of this._onClearFuncs)
-			func()
-	}
-	
-	private static _updateEvent() {
-		for (const func of this._onUpdateFuncs)
-			func(this.ID)
-	}
 }

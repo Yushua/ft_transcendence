@@ -1,34 +1,50 @@
 import HTTP from "../HTTP"
-import ChatRoom from "./ChatRoom"
 
 export default class NameStorage {
-	private static _users = new Map<string, string>
-	static GetUser(userID: string): string {
-		var name = this._users.get(userID) ?? ""
-		if (!!name)
-			return name
-		name = HTTP.Get(`user-profile/username/${userID}`) ?? undefined
-		if (!name)
-			return ""
-		this._users.set(userID, name)
-		return name
-	}
-	static ClearUser(userID: string) {
-		this._users.delete(userID)
+	static StorageMetaClass = class {
+		constructor(private _urlFunc: (id: string) => string) {}
+		
+		private _nameMap = new Map<string, [string, number]>
+		
+		Get(ID: string,
+			forceUpdate: boolean = false,
+			expirationTime: number = 4200 * 60)
+			: string {
+				
+			if (!forceUpdate) {
+				const user = this._nameMap.get(ID)
+				if (!!user && user[1] > Date.now())
+					return user[0]
+			}
+			
+			const name = HTTP.Get(this._urlFunc(ID))
+			this._nameMap.set(ID, [name, Date.now() + expirationTime])
+			return name ?? ""
+		}
+		
+		Clear(ID: string)
+			{ this._nameMap.delete(ID) }
+		
+		Set(ID: string, name: string, expirationTime: number = 4200 * 60)
+			{ this._nameMap.set(ID, [name, Date.now() + expirationTime]) }
 	}
 	
-	private static _rooms = new Map<string, string>
-	static GetRoom(roomID: string): string {
-		var name = this._rooms.get(roomID)
-		if (!!name)
-			return name
-		name = HTTP.Get(`chat/room/${roomID}/Name`) ?? undefined
-		if (!name)
-			return ""
-		this._rooms.set(roomID, name)
-		return name
-	}
-	static ClearRoom(roomID: string) {
-		this._rooms.delete(roomID)
-	}
+	static readonly User = new this.StorageMetaClass(ID => `user-profile/username/${ID}`)
+	static readonly Room = new this.StorageMetaClass(ID => `chat/room/${ID}/Name`)
+	
+	//#region Legacy Functions
+	static readonly GetRoom = (ID: string, forceUpdate: boolean = false, expirationTime: number = 4200 * 60)
+		: string => this.Room.Get(ID, forceUpdate, expirationTime)
+	static readonly SetRoom = (ID: string, name: string, expirationTime: number = 4200 * 60)
+		: void => this.Room.Set(ID, name, expirationTime)
+	static readonly ClearRoom = (ID: string)
+		: void => this.Room.Clear(ID)
+	
+	static readonly GetUser = (ID: string, forceUpdate: boolean = false, expirationTime: number = 4200 * 60)
+		: string => this.User.Get(ID, forceUpdate, expirationTime)
+	static readonly SetUser = (ID: string, name: string, expirationTime: number = 4200 * 60)
+		: void => this.User.Set(ID, name, expirationTime)
+	static readonly ClearUser = (ID: string)
+		: void => this.User.Clear(ID)
+	//#endregion
 }

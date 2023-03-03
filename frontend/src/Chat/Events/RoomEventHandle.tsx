@@ -1,6 +1,6 @@
 import ChatRoom from "../../Utils/Cache/ChatRoom";
 import { asyncUpdateChatLog } from "../Windows/Chat/ActualChat/ChatWindow";
-import SSEManager from "./SSEManager";
+import SSEManager from "../../Events/SSEManager";
 
 export const RoomEvent: SSEManager = new SSEManager(msg => {
 	switch (msg) {

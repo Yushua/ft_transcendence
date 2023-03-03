@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import HTTP from "../../../Utils/HTTP"
 import ChatUser from "../../../Utils/Cache/ChatUser"
 import ChatRoom from "../../../Utils/Cache/ChatRoom"
@@ -15,6 +15,7 @@ function _tryJoiningRoom(roomID: string, hasPass: boolean) {
 	}
 	else
 		password = "nothing"
+	
 	HTTP.asyncPatch(`chat/join/${roomID}/${ChatUser.ID}/${password}`, null, null, async mgs => {
 		if (mgs.responseText === "") {
 			alert("Faild to join room.")
@@ -26,7 +27,11 @@ function _tryJoiningRoom(roomID: string, hasPass: boolean) {
 	})
 }
 
-async function _updateRooms() {
+var _updating = false // No clue why it's needed, but it fixes it
+function _updateRooms() {
+	if (_updating)
+		return
+	_updating = true
 	SetRoom( [<div key={"l"}>Loading...</div>] )
 	HTTP.asyncGet("chat/public", null, null, 
 		async mgs => {
@@ -44,8 +49,12 @@ async function _updateRooms() {
 				SetRoom( [<div key={"n"}>No rooms to join.</div>] )
 			else
 				SetRoom(rooms)
+			_updating = false
 		},
-		() => SetRoom( [<div key={"c"}>Connection Error.</div>] ))
+		() => {
+			SetRoom( [<div key={"c"}>Connection Error.</div>] )
+			_updating = false
+		})
 }
 
 function SetRoom(data: JSX.Element[]) {
@@ -59,10 +68,9 @@ export default function RoomBrowser() {
 	const [rooms, setRooms] = useState<JSX.Element[]>([])
 	_setRooms = setRooms
 	
-	if (rooms.length === 0) {
+	if (rooms.length === 0)
 		_updateRooms()
-		return <></>
-	}
+	console.log(`RB ${rooms.length} ${rooms.length > 0 ? rooms[0].key : ""}`)
 	
 	return (
 		<div style={{display: "table-cell", width: "100%"}}>
