@@ -1,4 +1,13 @@
 export default class HTTP {
+	static HostRedirect(): string {
+		switch (process.env.NODE_ENV) {
+			case "development":
+				return "http://localhost:4242/"
+			default:
+				return ""
+		}
+	}
+	
 	static Get(url: string, body: string | object | null = null, hdr: Map<string, string> | null = null): string
 		{ return this.SendRequest("GET", url, body, hdr) }
 	
@@ -31,7 +40,7 @@ export default class HTTP {
 			detach: boolean)
 			: [XMLHttpRequest, string] {
 		var req = new XMLHttpRequest();
-		req.open(method, "http://localhost:4242/" + url, detach);
+		req.open(method, this.HostRedirect() + url, detach);
 		if (!!hdr)
 			for (const [key, value] of Array.from(hdr.entries()))
 				req.setRequestHeader(key, value)

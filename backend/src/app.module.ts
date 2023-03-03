@@ -4,6 +4,7 @@ import { UserProfileModule } from './user-profile/user-profile.module';
 import { LoginModule } from './login/login.module';
 import { AuthModule } from './auth/auth.module';
 import { ChatModule } from './chat/chat.module';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -21,10 +22,8 @@ import { ChatModule } from './chat/chat.module';
     LoginModule,
     AuthModule,
     ChatModule],
+  controllers: [
+    AppController
+  ]
 })
 export class AppModule {}
-
-/*
-
-use computer name and set that instead of localhost
-*/

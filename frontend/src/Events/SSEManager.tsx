@@ -1,3 +1,5 @@
+import HTTP from "../Utils/HTTP"
+
 export default class SSEManager {
 	constructor(private readonly _onEvent: (data: string) => void) {}
 	
@@ -10,7 +12,7 @@ export default class SSEManager {
 		this.currentPath = path
 		if (!!this._event)
 			this._event.close()
-		this._event = new EventSource("http://localhost:4242/" + path)
+		this._event = new EventSource(HTTP.HostRedirect() + path)
 		this._event.onmessage = msg => this._onEvent(msg.data)
 	}
 }
