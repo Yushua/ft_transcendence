@@ -138,21 +138,34 @@ export class UserProfileService {
       }
 
       async getAllUsersIntoList():Promise<string[]> {
-        console.log("getalluserId's")
         return (await this.userEntity.query("SELECT id FROM user_profile;")).map(user => user.id)
+
+      }
+      async getAllUsersUsernameIntoList():Promise<string[]> {
+        return (await this.userEntity.query("SELECT username FROM user_profile;")).map(user => user.id)
 
       }
 
       /**
        * 
        * @param id 
-       * @returns return a list of all the users, resuts an array of all id's
+       * @returns return users friendlist with ID's
        */
-      async getAllUsersByFriendList(id:string):Promise<string[]> {
-        var newList: string[] = await this.getAllUsersIntoList()
-        return(newList);
+      async UsersFriendlistID(id:string):Promise<string[]> {
+        const found = await this.userEntity.findOneBy({id});
+        return(found.friendList);
       }
 
+      /**
+       * 
+       * @param id 
+       * @returns return users friendlist with usernames
+       */
+        async UsersFriendlistUsername(id:string):Promise<string[]> {
+          const found = await this.userEntity.findOneBy({id});
+          return(found.friendList);
+        }
+      
       /**
        * 
        * @param id 
@@ -161,9 +174,21 @@ export class UserProfileService {
       async getAllUsersAddList(id:string):Promise<string[]> {
         var fullList: string[] = await this.getAllUsersIntoList()
         const found = await this.userEntity.findOneBy({id});
-        fullList = fullList.filter(user => !found.username.includes(user))
+        fullList = fullList.filter(user => !found.id.includes(user))
         return fullList.filter(user => !found.friendList.includes(user))
       }
+
+            /**
+       * 
+       * @param id 
+       * @returns return a list of all the users it can add, returns an array of usernames's
+       */
+            async getAllUsernamesAddList(id:string):Promise<string[]> {
+              var fullList: string[] = await this.getAllUsersUsernameIntoList()
+              const found = await this.userEntity.findOneBy({id});
+              fullList = fullList.filter(user => !found.username.includes(user))
+              return fullList.filter(user => !found.friendList.includes(user))
+            }
 
       /**
        * 

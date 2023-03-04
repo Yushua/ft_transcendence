@@ -34,7 +34,7 @@ async function removeFriendToList(usernameRemove: string) {
 
 export async function asyncGetFriendListById(){
   console.log("adding")
-  var input:string = 'http://localhost:4242/user-profile/userFriendList/' + getCookie('userID');
+  var input:string = 'http://localhost:4242/user-profile/userFriendListID/' + getCookie('userID');
   try
   {
     const response = await fetch(input, {
@@ -128,7 +128,7 @@ function DropDownMenuRemoveFriend({}) {
         )}
       </button>
         <button type="submit" onClick={handleDropDownFunction}>
-        <div>{_selectDropDownList ? "Remove " + _selectDropDownList : "Remove "} </div>
+        <div>{_selectDropDownList ? "Remove: " + _selectDropDownList : "Remove "} </div>
         </button>
       </div>
     )

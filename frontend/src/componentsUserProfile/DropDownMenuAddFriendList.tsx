@@ -31,7 +31,7 @@ async function addFriendToList(usernameFriend: string) {
 
 var list_:string[];
 export async function asyncGetFriendListById(){
-  var input:string = 'http://localhost:4242/user-profile/userAddList/' + getCookie('userID');
+  var input:string = 'http://localhost:4242/user-profile/userAddListId/' + getCookie('userID');
   try
   {
     const response = await fetch(input, {
@@ -47,6 +47,7 @@ export async function asyncGetFriendListById(){
      var result = await response.json()
       console.log('result is: ', result);
       list_ = await result;
+      console.log("friendaddlist==", list_);
   }
   catch (e: any) {
     console.log(e)
@@ -123,7 +124,7 @@ function DropDownMenuAddFriend({}) {
         )}
       </button>
         <button type="submit" onClick={handleDropDownFunction}>
-        <div>{_selectDropDownList ? "Add" + _selectDropDownList : "Add"} </div>
+        <div>{_selectDropDownList ? "Add: " + _selectDropDownList : "Add"} </div>
         </button>
       </div>
     )
