@@ -108,8 +108,6 @@ export class UserProfileService {
 
       async addFriend(id:string, idfriend: string):Promise<UserProfile> {
         const found = await this.userEntity.findOneBy({id});
-        //get all the users into one list
-        console.log("idfriend ==",  idfriend);
         found.friendList.push(idfriend);
         await this.userEntity.save(found);
         return found;
