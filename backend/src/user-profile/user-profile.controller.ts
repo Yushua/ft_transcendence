@@ -44,9 +44,9 @@ export class UserProfileController {
      /**
      * 
      * @param id 
-     * @returns get users all people the user can add, using ID
+     * @returns get users all people the user can add, using ID.
      */
-        @Get('/userAddListId/:id')
+        @Get('/userAddList/:id')
         getUserAddListById(
             @Param('id') id: string): Promise<string[]> {
             return this.userServices.getAllUsersAddList(id);
@@ -63,6 +63,17 @@ export class UserProfileController {
             return this.userServices.UsersFriendlistID(id);
         }
     
+    /**
+     * 
+     * @param id 
+     * @returns get users friendlist with usernames
+     */
+        @Get('/userFriendListUsername/:id')
+        getUseFriendListUsernameById(
+            @Param('id') id: string): Promise<string[]> {
+            return this.userServices.UsersFriendlistUsername(id);
+        }
+
     @Get("/username/:id")
     async ReturnNameById(
         @Param("id") id: string): Promise<string>

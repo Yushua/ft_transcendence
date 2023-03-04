@@ -142,7 +142,7 @@ export class UserProfileService {
 
       }
       async getAllUsersUsernameIntoList():Promise<string[]> {
-        return (await this.userEntity.query("SELECT username FROM user_profile;")).map(user => user.id)
+        return (await this.userEntity.query("SELECT username FROM user_profile;")).map(user => user.username)
 
       }
 
@@ -172,13 +172,13 @@ export class UserProfileService {
        * @returns return a list of all the users it can add, returns an array of id's
        */
       async getAllUsersAddList(id:string):Promise<string[]> {
-        var fullList: string[] = await this.getAllUsersIntoList()
+        var fullList: string[] = await this.getAllUsersUsernameIntoList()
         const found = await this.userEntity.findOneBy({id});
-        fullList = fullList.filter(user => !found.id.includes(user))
+        fullList = fullList.filter(user => !found.username.includes(user))
         return fullList.filter(user => !found.friendList.includes(user))
       }
 
-            /**
+      /**
        * 
        * @param id 
        * @returns return a list of all the users it can add, returns an array of usernames's
