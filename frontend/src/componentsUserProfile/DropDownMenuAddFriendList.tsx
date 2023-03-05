@@ -4,8 +4,33 @@ import { newWindow } from '../App';
 import LoginPage from '../Login';
 import DropDown from './FriendListDropDown';
 
-async function addFriendToList(usernameFriend: string) {
-  var inputString:string = 'http://localhost:4242/user-profile/friendlist/add/' + getCookies().userID + '/' + usernameFriend;
+var friendID:string = "";
+
+async function asyncReturnID(usernameFriend: string) {
+  var input:string = 'http://localhost:4242/user-profile/returnID/' + usernameFriend;
+  try
+  {
+    const response = await fetch(input, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': "application/x-www-form-urlencoded",
+      },
+    })
+    if (!response.ok) {
+      throw new Error(`Error! status: ${(await response.json()).message}`);
+    }
+    var result = await response.json()
+    console.log('username to ID is: ', result);
+    friendID = await result;
+  }
+  catch (e: any) {
+    console.log(e)
+  }
+}
+
+async function addFriendToList(_friendID: string) {
+  var inputString:string = 'http://localhost:4242/user-profile/friendlist/add/' + getCookies().userID + '/' + _friendID;
   console.log("add friend");
   try {
     // 👇️ const response: Response
@@ -62,7 +87,8 @@ export function logoutButtonRefresh() {
 
 const handleDropDownFunction = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    addFriendToList(_selectDropDownList);
+    asyncReturnID(_selectDropDownList);
+    addFriendToList(friendID);
     _setDisplay(true)
   }
 

@@ -12,7 +12,16 @@ export class UserProfileController {
     getAllTasks(@Query() filterDto: getTasksFilterDto): Promise<UserProfile[]> {
         return this.userServices.findAllUsers(filterDto);
     }
- 
+    @Get('/returnID/:username')
+    getReturnID(@Param('username') username:string): Promise<string> {
+        return this.userServices.ReturnID(username);
+    }
+
+    @Get('/returnID/:id')
+    getReturnUsername(@Param('id') id:string): Promise<string> {
+        return this.userServices.ReturnUsername(id);
+    }
+
     @Get('/user/:id')
     getUserById(
         @Param('id') id: string): Promise<UserProfile> {

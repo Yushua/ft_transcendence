@@ -3,9 +3,14 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserProfile } from 'src/user-profile/user.entity';
+import { PassportModule } from '@nestjs/passport';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [ TypeOrmModule.forFeature([UserProfile])],
+  imports: [
+    PassportModule.register({ defaultStrategy: 'jwt'}),
+    JwtModule.register({}),
+    TypeOrmModule.forFeature([UserProfile])],
   providers: [AuthService],
   controllers: [AuthController],
 })

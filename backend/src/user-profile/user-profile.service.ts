@@ -163,7 +163,26 @@ export class UserProfileService {
           const found = await this.userEntity.findOneBy({id});
           return(found.friendList);
         }
-      
+      /**
+       * 
+       * @param id 
+       * @returns give username, return ID
+       */
+      async ReturnID(username:string):Promise<string> {
+        const found = await this.userEntity.findOneBy({username});
+        return found.id;
+      }
+
+      /**
+       * 
+       * @param id 
+       * @returns give id, return username
+       */
+      async ReturnUsername(id:string):Promise<string> {
+        const found = await this.userEntity.findOneBy({id});
+        return found.username;
+      }
+
       /**
        * 
        * @param id 

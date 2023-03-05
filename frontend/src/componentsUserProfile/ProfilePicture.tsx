@@ -25,7 +25,8 @@ function ProfilePicture() {
   }
     return (
         <div>
-          <img src={link} alt="Image" onClick={handleProfilePicture}/>;
+          {/* <img src={link} alt="Image" onClick={handleProfilePicture}/>; */}
+          hello
         </div>
     )
 }
