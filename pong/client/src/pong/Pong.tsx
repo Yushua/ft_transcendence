@@ -17,6 +17,8 @@ export const Pong = () => {
 	const [inGame, setInGame] = React.useState(false)
 	const [gameData, setGameData] = React.useState(iniGameData)
 	const [gameList, setGameList] = React.useState(iniGameList)
+	const [showGameList, setShowGameList] = React.useState(false)
+	const [spectating, setSpectating] = React.useState(false)
 
 	function updateGameData(data:GameData)
 	{
@@ -85,7 +87,7 @@ export const Pong = () => {
 		socket.on('pending', () => {
 			setPending(true)
 		})
-		socket.on('joined', (gamenum: number) => {
+		socket.on('joined', () => {
 			game = new Canvas(socket)
 			setInGame(true)
 			setPending(false)
@@ -96,7 +98,15 @@ export const Pong = () => {
 		socket.on('gamelist', (gameList:string[]) => {
 			updateGameList(gameList)
 		})
-
+		socket.on('spectating', () => {
+			game = new Canvas(socket)
+			setSpectating(true)
+		})
+		socket.on('left', (s_gameData:GameData) => {
+			setPending(false)
+			setInGame(false)
+			setShowGameList(false)
+		})
 
 		/*  EVENTLISTENERS */
 		window.addEventListener('keydown', (event) => {
@@ -125,20 +135,25 @@ export const Pong = () => {
 	const findGame = () => {
 		socket.emit('LFG')
 	}
-	const spectateGame = () => {
-		
+	const leaveGame = () => {
+		socket.emit('leave')
+	}
+	const ShowGameList = () => {
+		setShowGameList(true)
 	}
 
 	return (
 		<div>
 			{pending ?
 			 	`Waiting for second player...` :
-			inGame ?
+			inGame || spectating ?
 				<Canvas instance={game} socket={socket} gameData={gameData}/> :
 				<button onClick={() => findGame()}>Join Game</button>}
-			<button onClick={() => spectateGame()}>Spectate Game</button>
-
-			<GameList list={gameList} />
+			{inGame ?
+				<button onClick={() => leaveGame()}>Leave Game</button> :
+			showGameList ?
+				<GameList list={gameList} socket={socket} /> : 
+				<button onClick={() => ShowGameList()}>Game List</button>}
 		</div>
 	)
 }

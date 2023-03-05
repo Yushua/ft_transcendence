@@ -12,6 +12,8 @@ setup:
 	npm i --save typescript
 	npm i --save-dev @types/uuid
 	npm i --save immutability-helper
+	npm i --save @mui/material @emotion/react @emotion/styled
+
 	npm add @nestjs/jwt @nestjs/passport passport passport-jwt
 	npm audit fix
 

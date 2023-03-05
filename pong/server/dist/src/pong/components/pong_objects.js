@@ -9,7 +9,7 @@ class GameData {
         this.gameNum = num;
         this.p1 = new Paddle(12, 1, 1500, 750, 20, 20, 100);
         this.p2 = new Paddle(12, 2, 1500, 750, 20, 20, 100);
-        this.ball = new Ball(1, 3, 1500, 750, 20, 20, 20);
+        this.ball = new Ball(3, 3, 1500, 750, 20, 20, 20);
         this.gameName = gamename;
         this.p1_name = p1name;
         this.p2_name = p2name;
@@ -17,12 +17,12 @@ class GameData {
     update(event) {
         if (event === 'p1_scored') {
             this.p1_score++;
-            if (this.p1_score === 2)
+            if (this.p1_score === 10)
                 this.gameState = 'p1_won';
         }
         else if (event === 'p2_scored') {
             this.p2_score++;
-            if (this.p2_score === 2) {
+            if (this.p2_score === 10) {
                 this.gameState = 'p2_won';
             }
         }

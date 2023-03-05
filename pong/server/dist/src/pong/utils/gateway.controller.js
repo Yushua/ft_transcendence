@@ -22,18 +22,25 @@ let game_name = 'game_0';
 let gamedata;
 let games = new Map;
 let roomIDs = new Array;
-let gameList = new Array;
 let dataIdTuple;
+let gameInfo = new Array;
+let gameList = new Array;
+let findTuple = new Map;
+let spectators = new Array;
 let MyGateway = class MyGateway {
     constructor() {
         this.interval = setInterval(() => {
             games.forEach((data_id_tuple, Client) => {
                 this.server.to(Client.id).emit('gamedata', data_id_tuple[0]);
-                if (data_id_tuple[0].gameState === 'p1_won' || data_id_tuple[0].gameState === 'p2_won')
+                if (data_id_tuple[0].gameState === 'p1_won' || data_id_tuple[0].gameState === 'p2_won') {
                     games.delete(Client);
-                else
+                    let strarr = [data_id_tuple[0].gameName, data_id_tuple[1][0], data_id_tuple[1][1]];
+                    let index = gameList.indexOf(strarr);
+                    gameList.splice(index, 1);
+                }
+                else if (spectators.find(element => element === Client.id) === undefined)
                     data_id_tuple[0].update(data_id_tuple[0].ball.update(data_id_tuple[0].p1, data_id_tuple[0].p2));
-                this.server.to(Client.id).emit('gamelist', gameList);
+                this.server.emit('gamelist', gameList);
             });
         }, 10);
     }
@@ -53,21 +60,23 @@ let MyGateway = class MyGateway {
             game_name = game_name.replace(n_game_rooms.toString(), (n_game_rooms + 1).toString());
             n_game_rooms++;
             console.log(game_name);
-            client.join(game_name);
-            queuedclient.join(game_name);
-            client.emit('joined', n_game_rooms);
-            queuedclient.emit('joined', n_game_rooms);
+            client.emit('joined');
+            queuedclient.emit('joined');
             let client2 = queuedclient;
             queuedclient = undefined;
             gamedata = new pong_objects_1.GameData(n_game_rooms, game_name, client.id, client2.id);
             roomIDs.push(client.id);
             roomIDs.push(client2.id);
-            gameList.push(game_name + ' ' + client.id);
-            gameList.push(game_name + ' ' + client2.id);
+            gameInfo.push(game_name);
+            gameInfo.push(client.id);
+            gameInfo.push(client2.id);
+            gameList.push(gameInfo);
             dataIdTuple = [gamedata, roomIDs];
+            findTuple.set(game_name, dataIdTuple);
             games.set(client, dataIdTuple);
             games.set(client2, dataIdTuple);
             roomIDs = [];
+            gameInfo = [];
         }
     }
     handleEvent(direction, client) {
@@ -78,6 +87,22 @@ let MyGateway = class MyGateway {
             if (game[1][1] === client.id)
                 game[0].p2.update(direction);
         }
+    }
+    handleSpectator(gameName, client) {
+        dataIdTuple = findTuple.get(gameName);
+        spectators.push(client.id);
+        games.set(client, dataIdTuple);
+        client.emit('spectating');
+    }
+    handleLeaver(client) {
+        let game = games.get(client);
+        if (game !== undefined) {
+            let strarr = [game[0].gameName, game[1][0], game[1][1]];
+            let index = gameList.indexOf(strarr);
+            gameList.splice(index, 1);
+            games.delete(client);
+        }
+        this.server.to(client.id).emit('left');
     }
 };
 __decorate([
@@ -99,6 +124,21 @@ __decorate([
     __metadata("design:paramtypes", [Number, socket_io_1.Socket]),
     __metadata("design:returntype", void 0)
 ], MyGateway.prototype, "handleEvent", null);
+__decorate([
+    (0, websockets_1.SubscribeMessage)('spectate'),
+    __param(0, (0, websockets_1.MessageBody)()),
+    __param(1, (0, websockets_1.ConnectedSocket)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, socket_io_1.Socket]),
+    __metadata("design:returntype", void 0)
+], MyGateway.prototype, "handleSpectator", null);
+__decorate([
+    (0, websockets_1.SubscribeMessage)('leave'),
+    __param(0, (0, websockets_1.ConnectedSocket)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [socket_io_1.Socket]),
+    __metadata("design:returntype", void 0)
+], MyGateway.prototype, "handleLeaver", null);
 MyGateway = __decorate([
     (0, websockets_1.WebSocketGateway)({
         cors: {

@@ -57,6 +57,7 @@ export class Canvas extends React.Component<any, any> {
 	}
 	render()
 	{
+		console.log(this.props)
 		// Pong.socket = this.props.socket
 		// console.log('data:', this.props.gameData)
 		if (this.props.gameData.p1_score === undefined)
