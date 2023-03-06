@@ -1,4 +1,7 @@
+import { getCookie } from "typescript-cookie"
+
 export default class HTTP {
+	
 	static HostRedirect(): string {
 		switch (process.env.NODE_ENV) {
 			case "development":
@@ -41,6 +44,9 @@ export default class HTTP {
 			: [XMLHttpRequest, string] {
 		var req = new XMLHttpRequest();
 		req.open(method, this.HostRedirect() + url, detach);
+		const token = getCookie("accessToken")
+		if (!!token)
+			req.setRequestHeader("Authorization", `Bearer ${token}`)
 		if (!!hdr)
 			for (const [name, value] of Object.entries(hdr))
 				req.setRequestHeader(name, value)
