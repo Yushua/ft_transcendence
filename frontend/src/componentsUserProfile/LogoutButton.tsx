@@ -11,7 +11,7 @@ export function logoutButtonRefresh() {
 
 function LogoutButtonComponent() {
     return (
-            <button onClick={() => {logoutButtonRefresh()}}>logout</button>
+      <button onClick={() => {logoutButtonRefresh()}}>logout</button>
     )
 }
 

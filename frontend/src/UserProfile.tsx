@@ -5,60 +5,20 @@ import { getCookie } from 'typescript-cookie';
 import DropDownMenuAddFriendList from './componentsUserProfile/DropDownMenuAddFriendList';
 import DropDownMenuRemoveFriendListId from './componentsUserProfile/DropDownMenuRemoveFriendListId';
 import ProfilePicture from './componentsUserProfile/ProfilePicture';
+import HTTP from './Utils/HTTP'
 
 var message:string = "";
 
 export async function asyncGetName() {
-  var input:string = 'http://localhost:4242/user-profile/user/' + getCookie('userID');
-  try
-  {
-    const response = await fetch(input, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': "application/x-www-form-urlencoded",
-      },
-    })
-    if (!response.ok) {
-      message = `Error! status: ${(await response.json()).message}`;
-      throw new Error(`Error! status: ${(await response.json()).message}`);
-    }
-      const result = (await response.json())
-      console.log('result name is: ', JSON.stringify(result, null, 4));
-      username = await result["username"];
-      message = "";
-  }
-  catch (e: any) {
-    message = e;
-    console.log(e)
-  }
+  const response = HTTP.Get(`user-profile/user/${getCookie('userID')}`, null, {Accept: 'application/json'})
+  var result = await JSON.parse(response)
+  username = await result["username"];
 }
 
-export async function asyncChangeName(username:string) {
-  var input:string = `http://localhost:4242/user-profile/userchange/${getCookie('userID')}/${username}`;
-  try
-  {
-    // 👇️ const response: Response
-    const response = await fetch(input, {
-      method: 'POST',
-      body: ``,
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': "application/x-www-form-urlencoded",
-      },
-    })
-    if (!response.ok) {
-      message = `Error! status: ${(await response.json()).message}`;
-      console.log(`Error! status: ${(await response.json()).message}`);
-      throw new Error(`Error! status: ${(await response.json()).message}`);
-    }
-      _setDisplay(false)
-      //if its the same name, error
-  }
-  catch (e: any) {
-    message = e;
-    console.log(e)
-  }
+export async function asyncChangeName(newUsername:string) {
+  HTTP.Post(`user-profile/userchange/${getCookie('userID')}/${newUsername}`, null, {Accept: 'application/json'})
+  console.log("name has changed")
+  _setDisplay(false)
 }
 
 interface FormElements extends HTMLFormControlsCollection {
@@ -72,12 +32,10 @@ export interface YourFormElement extends HTMLFormElement {
   readonly elements: FormElements
  }
 
-async function handleusernameChange(e: React.FormEvent<YourFormElement>){
+async function handleUsernameChange(e: React.FormEvent<YourFormElement>){
   e.preventDefault();
-  console.log("input username == [", e.currentTarget.elements.username.value, "]")
   await asyncChangeName(e.currentTarget.elements.username.value);
   _setDisplay(false)
-  // asyncChangeName(e.currentTarget.elements.username);
 }
 
 var username: string = "";
@@ -106,7 +64,7 @@ function UserProfilePage() {
         <label id="name" htmlFor="name">Welcome {username}</label>
       </div>
       <div>
-      <form onSubmit={handleusernameChange}>
+      <form onSubmit={handleUsernameChange}>
         <div>
           <label htmlFor="username">Username:</label>
           <input id="username" type="text" />

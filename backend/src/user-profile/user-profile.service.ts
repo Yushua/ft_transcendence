@@ -92,14 +92,18 @@ export class UserProfileService {
       async changeUsername(username: string, id: string): Promise<UserProfile> {
         const found = await this.findUserBy(id);
         found.username = username;
+        console.log("hello")
         try {
+          console.log("succesful")
           await this.userEntity.save(found);
-        } catch (error) {
-          console.log(`error "${error.code}`);
+        }
+        catch (error) {
             if (error.code === '23505'){
-                throw new ConflictException(`account name "${username} was already in use1`);
+              console.log("already in use")
+                throw new ConflictException(`account name "${username} was already in use`);
             }
             else {
+              console.log("already in use but different")
                 throw new InternalServerErrorException(`account name "${error.code} was already in use, but the error is different`);
             }
         }
@@ -113,6 +117,7 @@ export class UserProfileService {
         return found;
       }
 
+        /** */
       async getUserIdWithName(username:string):Promise<string> {
         const found = await this.userEntity.findOneBy({username});
         const idFriend = found.id;
@@ -130,18 +135,11 @@ export class UserProfileService {
         if (found.friendList == null)
           found.friendList = [];
         await this.userEntity.save(found);
-
-        console.log("removed ", idfriend);
         return found;
       }
 
       async getAllUsersIntoList():Promise<string[]> {
         return (await this.userEntity.query("SELECT id FROM user_profile;")).map(user => user.id)
-
-      }
-      async getAllUsersUsernameIntoList():Promise<string[]> {
-        return (await this.userEntity.query("SELECT username FROM user_profile;")).map(user => user.username)
-
       }
 
       /**
@@ -189,7 +187,6 @@ export class UserProfileService {
       async ReturnUsername(id:string):Promise<string> {
         const found = await this.userEntity.findOneBy({id});
         var tmp:string = found.username;
-        console.log("tmp == [", tmp, "]")
         return tmp;
       }
 
@@ -221,18 +218,6 @@ export class UserProfileService {
           }
           return fullList;
         }
-
-      /**
-       * 
-       * @param id 
-       * @returns return a list of all the users it can add, returns an array of usernames's
-       */
-            async getAllUsernamesAddList(id:string):Promise<string[]> {
-              var fullList: string[] = await this.getAllUsersUsernameIntoList()
-              const found = await this.userEntity.findOneBy({id});
-              fullList = fullList.filter(user => !found.username.includes(user))
-              return fullList.filter(user => !found.friendList.includes(user))
-            }
 
       /**
        * 

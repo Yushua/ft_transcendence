@@ -3,90 +3,27 @@ import React, { Dispatch, SetStateAction, useState } from 'react';
 import { getCookie, getCookies, removeCookie } from 'typescript-cookie';
 import { newWindow } from '../App';
 import LoginPage from '../Login';
+import NameStorage from '../Utils/Cache/NameStorage';
 import DropDown from './FriendListDropDown';
+import User from '../Utils/Cache/User';
+import HTTP from '../Utils/HTTP'
 
 var list_:string[];
 
 async function asyncReturnID(usernameFriend: string) {
-  var input:string = 'http://localhost:4242/user-profile/returnID/' + usernameFriend;
-  try
-  {
-    const response = await fetch(input, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': "application/x-www-form-urlencoded",
-      },
-    })
-    if (!response.ok) {
-      throw new Error(`Error! status: ${(await response.json()).message}`);
-    }
-    const result = (await response.json())
-    console.log('result name is: ', JSON.stringify(result, null, 4));
-    friendID = await result["id"];
-  }
-  catch (e: any) {
-    console.log("!here!")
-    console.log(e)
-  }
+  const response = HTTP.Get(`user-profile/returnID/${usernameFriend}`, null, {Accept: 'application/json'})
+  var result = await JSON.parse(response)
+  friendID = await result["id"];
 }
 
 async function removeFriendToList(usernameRemove: string) {
-  var inputString:string = 'http://localhost:4242/user-profile/friendlist/remove/' + getCookies().userID + '/' + usernameRemove;
-  console.log("remove friend", usernameRemove);
-  try {
-    // 👇️ const response: Response
-    const response = await fetch(inputString, {
-      method: 'PATCH',
-      body: ``,
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': "application/x-www-form-urlencoded",
-      },
-    })
-    if (!response.ok) {
-      throw new Error(`Error! status: ${(await response.json()).message}`);
-    }
-    
-    const result = (await response.json())
-    
-    console.log('result removing is: ', JSON.stringify(result, null, 4));
-  }
-  catch (e: any) {
-    console.log(e)
-  }
+  HTTP.Patch(`user-profile/friendlist/remove/${getCookie('userID')}/${usernameRemove}`, null, {Accept: 'application/json'})
 }
 
 export async function asyncGetFriendListById(){
-  console.log("adding")
-  var input:string = 'http://localhost:4242/user-profile/userFriendListUsername/' + getCookie('userID');
-  try
-  {
-    const response = await fetch(input, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': "application/x-www-form-urlencoded",
-      },
-    })
-    if (!response.ok) {
-      throw new Error(`Error! status: ${(await response.json()).message}`);
-    }
-     var result = await response.json()
-      console.log('result getting is: ', await result);
-      list_ =  await result;
-      console.log("friendlist == ", list_ )
-      //after this
-  }
-  catch (e: any) {
-    console.log(e)
-  }
-}
-
-export function logoutButtonRefresh() {
-  removeCookie('accessToken');
-  removeCookie('userID');
-  newWindow(<LoginPage />);
+  const response = HTTP.Get(`user-profile/user/${getCookie('userID')}`, null, {Accept: 'application/json'})
+  var result = await JSON.parse(response)
+  list_ =  result.friendList.map((userID: string) => NameStorage.User.Get(userID));
 }
 
 var friendID:string = "";
@@ -94,8 +31,6 @@ async function handleDropDownFunction (e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
     await asyncReturnID(_selectDropDownList);
     await removeFriendToList(friendID);
-    //update the display
-    await asyncGetFriendListById();
     _setDisplay(true)
   }
 

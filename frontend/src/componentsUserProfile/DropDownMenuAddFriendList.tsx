@@ -1,97 +1,32 @@
 import React, { Dispatch, SetStateAction, useState } from 'react';
-import { getCookie, getCookies, removeCookie } from 'typescript-cookie';
-import { newWindow } from '../App';
-import LoginPage from '../Login';
+import { getCookie } from 'typescript-cookie';
 import DropDown from './FriendListDropDown';
+import HTTP from '../Utils/HTTP'
 
 var friendID:string = "";
 
 async function asyncReturnID(usernameFriend: string) {
-  var input:string = 'http://localhost:4242/user-profile/returnID/' + usernameFriend;
-  try
-  {
-    const response = await fetch(input, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': "application/x-www-form-urlencoded",
-      },
-    })
-    if (!response.ok) {
-      throw new Error(`Error! status: ${(await response.json()).message}`);
-    }
-    const result = (await response.json())
-    console.log('result name is: ', JSON.stringify(result, null, 4));
-    friendID = await result["id"];
-  }
-  catch (e: any) {
-    console.log("!here!")
-    console.log(e)
-  }
+  const response = HTTP.Get(`user-profile/returnID/${usernameFriend}`, null, {Accept: 'application/json'})
+  var result = await JSON.parse(response)
+  friendID = result.id;
 }
 
 //add the ID to the list
 async function addFriendToList(_friendID: string) {
-  console.log("friendcode== ", friendID);
-  var inputString:string = 'http://localhost:4242/user-profile/friendlist/add/' + getCookies().userID + '/' + _friendID;
-  console.log("add friend");
-  try {
-    // 👇️ const response: Response
-    const response = await fetch(inputString, {
-      method: 'PATCH',
-      body: ``,
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': "application/x-www-form-urlencoded",
-      },
-    })
-    if (!response.ok) {
-      throw new Error(`Error! status: ${(await response.json()).message}`);
-    }
-    const result = (await response.json())  
-    console.log('result is: ', JSON.stringify(result, null, 4));
-    return result;
-  }
-  catch (e: any) {
-    console.log(e)
-  }
+  HTTP.Patch(`user-profile/friendlist/add/${getCookie('userID')}/${_friendID}`, null, {Accept: 'application/json'})
 }
 
 var list_:string[];
 export async function asyncGetFriendListById(){
-  var input:string = 'http://localhost:4242/user-profile/userAddListUsername/' + getCookie('userID');
-  try
-  {
-    const response = await fetch(input, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': "application/x-www-form-urlencoded",
-      },
-    })
-    if (!response.ok) {
-      throw new Error(`Error! status: ${(await response.json()).message}`);
-    }
-      const result = (await response.json())
-      console.log('result is: ', result);
-      list_ = await result;
-      console.log("friendaddlist==", list_);
-  }
-  catch (e: any) {
-    console.log(e)
-  }
-}
-
-export function logoutButtonRefresh() {
-  removeCookie('accessToken');
-  removeCookie('userID');
-  newWindow(<LoginPage />);
+  const response = HTTP.Get(`user-profile/userAddListUsername/${getCookie('userID')}`, null, {Accept: 'application/json'})
+  var result = await JSON.parse(response)
+  list_ = result
 }
 
 async function handleDropDownFunction(e: React.MouseEvent<HTMLButtonElement>){
     e.preventDefault();
     await asyncReturnID(_selectDropDownList);
-    addFriendToList(friendID);
+    await addFriendToList(friendID);
     _setDisplay(true)
   }
 
@@ -100,7 +35,6 @@ async function handleDropDownFunction(e: React.MouseEvent<HTMLButtonElement>){
   var _setDisplay:Dispatch<SetStateAction<boolean>>;
   
 function DropDownMenuAddFriend({}) {
-    //drop down menu
     const [showDropDown, setShowDropDown] = useState<boolean>(false);
     const [selectDropDownList, setselectFriendList] = useState<string>("");
     const [display, setDisplay] = useState(true)
@@ -113,7 +47,6 @@ function DropDownMenuAddFriend({}) {
     }
 
     const friendList = () => {
-      // asyncGetFriendListById();
       return list_;
     };
 
