@@ -60,6 +60,17 @@ export class UserProfileController {
             @Param('id') id: string): Promise<string[]> {
             return this.userServices.getAllUsersAddList(id);
         }
+         /**
+     * 
+     * @param id 
+     * @returns get users all people the user can add, using ID. 
+     * return array of usernames
+     */
+         @Get('/userAddListusername/:id')
+         getUserAddListByIdUsername(
+             @Param('id') id: string): Promise<string[]> {
+             return this.userServices.getAllUsersAddListUsername(id);
+         }
     
     /**
      * 

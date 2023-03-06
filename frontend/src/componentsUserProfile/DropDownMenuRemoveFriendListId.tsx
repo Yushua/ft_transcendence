@@ -3,7 +3,6 @@ import React, { Dispatch, SetStateAction, useState } from 'react';
 import { getCookie, getCookies, removeCookie } from 'typescript-cookie';
 import { newWindow } from '../App';
 import LoginPage from '../Login';
-import { asyncReturnID } from './DropDownMenuAddFriendList';
 import DropDown from './FriendListDropDown';
 
 var list_:string[];
