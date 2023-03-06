@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UserProfile } from 'src/user-profile/user.entity';
 import { Repository } from 'typeorm';
@@ -7,7 +7,7 @@ import { LoginService } from './login.service';
 
 @Controller('login')
 export class LoginController {
-    constructor( private loginService: LoginService ) {}
+    constructor( private loginService: LoginService) {}
 
     @Post('/signup')
     signUp(
@@ -27,5 +27,17 @@ export class LoginController {
     @UseGuards(AuthGuard())
     test(){
         console.log("proof")
+    }
+    @Post('/testId:id')
+    // @UseGuards(AuthGuard())
+    testId(@Param('id') id:string){
+        return this.loginService.checkId(id);
+    }
+    @Post('/validateEmail/:username/:email')
+    // @UseGuards(AuthGuard())
+    validateAndEmail(
+    @Param('username') username:string,
+    @Param('email') email:string){
+        return this.loginService.validateEmail(username,email);
     }
 }

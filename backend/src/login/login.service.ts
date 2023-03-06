@@ -67,4 +67,32 @@ export class LoginService {
 
     }
 
+    async checkId(id:string):Promise<boolean> {
+        const user = await this.userProfileEntityRepos.findOneBy({ id });
+        if (!user){
+            return false
+        }
+        return true
+    }
+
+    async validateInputEmail(email:string){
+         const result = String(email)
+          .toLowerCase()
+          .match(
+            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+          );
+        if (!result){
+            throw ("email is invalid")
+        }
+      }
+
+    async validateEmail(username:string, email:string){
+        const user = await this.userProfileEntityRepos.findOneBy({ username });
+        if (!user){
+            throw("user does not exist")
+        }
+        if (user.eMail != email){
+            throw("email does not belong to this user")
+        }
+    }
 }

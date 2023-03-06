@@ -1,10 +1,12 @@
-import React, { } from 'react';
+import React, { useState } from 'react';
 import './App.css';
-import { getCookies, removeCookie, setCookie } from 'typescript-cookie'
+import { Cookies, getCookie, getCookies, removeCookie, setCookie } from 'typescript-cookie'
 
 import { newWindow } from './App';
 import MainWindow from './MainWindow/MainWindow';
 import User from './Utils/Cache/User';
+import HTTP from './Utils/HTTP';
+import UserProfilePage from './UserProfile';
 
 var error1: string = "";
 var error2: string = "";
@@ -56,7 +58,6 @@ async function Acclogin(username: string, password: string, email:string) {
     
     const result = (await response.json())
     
-    console.log('result is: ', JSON.stringify(result, null, 4));
     var accessToken: string = result["accessToken"];
     var userID: string = result["userID"];
     // cookie
@@ -105,21 +106,41 @@ const handleAccCreate = (e: React.FormEvent<YourFormElement>) => {
 
 const handleAccLogin = (e: React.FormEvent<YourFormElement>) => {
   e.preventDefault();
-  Acclogin(e.currentTarget.elements.username.value,
-    e.currentTarget.elements.password.value,
-    e.currentTarget.elements.eMail.value);
-  const errorThingy = document.getElementById("errorCode")
-  if (!!errorThingy)
-    errorThingy.innerHTML = error2
+  //cherck if its the correct e-mail
+  try {
+    HTTP.Post(`login/validateEmail/${e.currentTarget.elements.username.value}/${e.currentTarget.elements.eMail.value}`, null, {Accept: 'application/json'})
+    //two-factor authentication
+    Acclogin(e.currentTarget.elements.username.value,
+      e.currentTarget.elements.password.value,
+      e.currentTarget.elements.eMail.value);
+  }
+  catch (error) {
+    alert(error)
+  }
+}
+/**
+ * if the authenticaiton fails
+ * if the username doesn't exist
+ * got to userProfile
+ */
+function checkLogin() {
+  //check if the auth works, and if the username exist
+  try {
+    HTTP.Post(`login/test`, null, {Accept: 'application/json'})
+    HTTP.Get(`login/testId/${getCookie('userID')}`, null, {Accept: 'application/json'})
+    newWindow(<UserProfilePage/>);
+  } catch (error) {
+    console.log(error)
+  }
+  return
 }
 
 const LoginPage: React.FC = () => {
-
-  // if (getCookie("accessToken") != null) {
-  //   //still need to check if its funcional.
-  //   //simple get http request to see if it returns an OK
-  //   newWindow(<UserProfilePage />);
-  // }
+  const [cookiesCheck, setcookiesCheck] = useState<boolean>(false);
+  // const [Storepicture, setStorePicture] = useState<string>("");
+  if (cookiesCheck == false){
+    checkLogin()
+  }
 
   return (
 
