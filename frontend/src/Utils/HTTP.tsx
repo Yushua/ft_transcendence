@@ -72,7 +72,7 @@ export default class HTTP {
 			: string {
 		var [req, fianlBody] = this._setupRequest(method, url, body, hdr, false)
 		req.send(fianlBody);
-		if (req.status === 200)
+		if (req.status < 300)
 			return req.responseText
 		console.log(req.responseText)
 		throw new Error(req.responseText)
