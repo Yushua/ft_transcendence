@@ -70,8 +70,8 @@ export default class HTTP {
 			body: string | object | null,
 			hdr: object | null)
 			: string {
-		var [req, fianlBody] = this._setupRequest(method, url, body, hdr, false)
-		req.send(fianlBody);
+		var [req, finalBody] = this._setupRequest(method, url, body, hdr, false)
+		req.send(finalBody);
 		if (req.status < 300)
 			return req.responseText
 		console.log(req.responseText)
@@ -85,13 +85,13 @@ export default class HTTP {
 			hdr: object | null,
 			callback: ((msg: XMLHttpRequest) => any) | null,
 			error: ((msg: XMLHttpRequest) => any) | null) {
-		var [req, fianlBody] = this._setupRequest(method, url, body, hdr, true)
+		var [req, finalBody] = this._setupRequest(method, url, body, hdr, true)
 		req.onload = function(ev) {
 			if (!!callback && req.status < 300)
 				callback(this)
 			else if (!!error)
 				error(this)
 		}
-		req.send(fianlBody)
+		req.send(finalBody)
 	}
 }
