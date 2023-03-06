@@ -203,16 +203,12 @@ export class UserProfileService {
         async getAllUsersAddListUsername(id:string):Promise<string[]> {
           var fullList: string[] = await this.getAllUsersAddList(id)
           var username:string;
-          console.log(fullList)
           for(var i = 0, len = fullList.length; i < len; ++i){
             var id:string = fullList[i]
-            console.log(id)
             const found = await this.userEntity.findOneBy({id})
             username = found.username
             fullList[i] = username
           }
-          console.log("GOOOOOOOOOOOOOOOOOOOOODBYE")
-          console.log(fullList);
           return fullList;
         }
 

@@ -20,9 +20,8 @@ async function asyncReturnID(usernameFriend: string) {
     if (!response.ok) {
       throw new Error(`Error! status: ${(await response.json()).message}`);
     }
-    var result = await response.json()
-    console.log('username to ID is: ', result);
-    friendID = await result;
+    friendID = await response.json()
+    console.log("FRIENDID IS ====== ", friendID)
   }
   catch (e: any) {
     console.log(e)
@@ -31,6 +30,7 @@ async function asyncReturnID(usernameFriend: string) {
 
 //add the ID to the list
 async function addFriendToList(_friendID: string) {
+  console.log("friendcode== ", friendID);
   var inputString:string = 'http://localhost:4242/user-profile/friendlist/add/' + getCookies().userID + '/' + _friendID;
   console.log("add friend");
   try {
@@ -86,9 +86,9 @@ export function logoutButtonRefresh() {
   newWindow(<LoginPage />);
 }
 
-const handleDropDownFunction = (e: React.MouseEvent<HTMLButtonElement>) => {
+async function handleDropDownFunction(e: React.MouseEvent<HTMLButtonElement>){
     e.preventDefault();
-    asyncReturnID(_selectDropDownList);
+    await asyncReturnID(_selectDropDownList);
     addFriendToList(friendID);
     _setDisplay(true)
   }
