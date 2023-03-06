@@ -107,6 +107,7 @@ const handleAccCreate = (e: React.FormEvent<YourFormElement>) => {
 const handleAccLogin = (e: React.FormEvent<YourFormElement>) => {
   e.preventDefault();
   //cherck if its the correct e-mail
+  //qauth
   try {
     HTTP.Post(`login/validateEmail/${e.currentTarget.elements.username.value}/${e.currentTarget.elements.eMail.value}`, null, {Accept: 'application/json'})
     //two-factor authentication
@@ -118,6 +119,7 @@ const handleAccLogin = (e: React.FormEvent<YourFormElement>) => {
     alert(error)
   }
 }
+
 /**
  * if the authenticaiton fails
  * if the username doesn't exist

@@ -34,7 +34,6 @@ export class LoginService {
             eMail,
             status: UserStatus.CREATION,
         });
-        console.log(_user);
         try {
             await this.userProfileEntityRepos.save(_user);
         } catch (error) {
