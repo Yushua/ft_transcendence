@@ -21,11 +21,12 @@ async function asyncReturnID(usernameFriend: string) {
     if (!response.ok) {
       throw new Error(`Error! status: ${(await response.json()).message}`);
     }
-    var result = await response.json()
-    console.log('username to ID is: ', result);
-    friendID = await result;
+    const result = (await response.json())
+    console.log('result name is: ', JSON.stringify(result, null, 4));
+    friendID = await result["id"];
   }
   catch (e: any) {
+    console.log("!here!")
     console.log(e)
   }
 }
@@ -74,6 +75,7 @@ export async function asyncGetFriendListById(){
      var result = await response.json()
       console.log('result getting is: ', await result);
       list_ =  await result;
+      console.log("friendlist == ", list_ )
       //after this
   }
   catch (e: any) {

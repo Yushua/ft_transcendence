@@ -161,16 +161,24 @@ export class UserProfileService {
        */
         async UsersFriendlistUsername(id:string):Promise<string[]> {
           const found = await this.userEntity.findOneBy({id});
-          return(found.friendList);
+          var username:string;
+          var fullList:string[] = found.friendList
+          for(var i = 0, len = fullList.length; i < len; ++i){
+            var id:string = fullList[i]
+            const found = await this.userEntity.findOneBy({id})
+            username = found.username
+            fullList[i] = username
+          }
+          return(fullList);
         }
       /**
        * 
        * @param id 
        * @returns give username, return ID
        */
-      async ReturnID(username:string):Promise<string> {
+      async ReturnWithUsername(username:string):Promise<UserProfile>  {
         const found = await this.userEntity.findOneBy({username});
-        return found.id;
+        return found;
       }
 
       /**
@@ -180,7 +188,9 @@ export class UserProfileService {
        */
       async ReturnUsername(id:string):Promise<string> {
         const found = await this.userEntity.findOneBy({id});
-        return found.username;
+        var tmp:string = found.username;
+        console.log("tmp == [", tmp, "]")
+        return tmp;
       }
 
       /**

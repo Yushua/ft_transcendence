@@ -18,8 +18,8 @@ export class UserProfileController {
      * @returns turns an username into an ID
      */
     @Get('/returnID/:username')
-    getReturnID(@Param('username') username:string): Promise<string> {
-        return this.userServices.ReturnID(username);
+    getReturnID(@Param('username') username:string): Promise<UserProfile> {
+        return this.userServices.ReturnWithUsername(username);
     }
 
     /**

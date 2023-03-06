@@ -7,7 +7,6 @@ import DropDown from './FriendListDropDown';
 var friendID:string = "";
 
 async function asyncReturnID(usernameFriend: string) {
-  console.log("username == ", usernameFriend)
   var input:string = 'http://localhost:4242/user-profile/returnID/' + usernameFriend;
   try
   {
@@ -21,9 +20,9 @@ async function asyncReturnID(usernameFriend: string) {
     if (!response.ok) {
       throw new Error(`Error! status: ${(await response.json()).message}`);
     }
-    friendID = (await response.json())
-    console.log('friendID is: ', JSON.stringify(friendID, null, 4));
-    console.log("FRIENDID IS ====== ", friendID)
+    const result = (await response.json())
+    console.log('result name is: ', JSON.stringify(result, null, 4));
+    friendID = await result["id"];
   }
   catch (e: any) {
     console.log("!here!")
