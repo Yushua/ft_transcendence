@@ -27,10 +27,10 @@ declare class Entity {
     draw(context: CanvasRenderingContext2D): void;
 }
 export declare class Paddle extends Entity {
-    keysPressed: Map<string, boolean>;
     update(direction: number): void;
 }
 export declare class Ball extends Entity {
+    private startDir;
     constructor(speed: number, type: number, gameCanvasWidth: number, gameCanvasHeight: number, wallOffset: number, width: number, height: number);
     update(p1: Paddle, p2: Paddle): "p1_scored" | "p2_scored" | "";
 }

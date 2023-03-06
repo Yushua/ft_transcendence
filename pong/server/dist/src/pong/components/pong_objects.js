@@ -17,12 +17,12 @@ class GameData {
     update(event) {
         if (event === 'p1_scored') {
             this.p1_score++;
-            if (this.p1_score === 10)
+            if (this.p1_score === 11)
                 this.gameState = 'p1_won';
         }
         else if (event === 'p2_scored') {
             this.p2_score++;
-            if (this.p2_score === 10) {
+            if (this.p2_score === 11) {
                 this.gameState = 'p2_won';
             }
         }
@@ -54,10 +54,6 @@ class Entity {
     }
 }
 class Paddle extends Entity {
-    constructor() {
-        super(...arguments);
-        this.keysPressed = new Map();
-    }
     update(direction) {
         if (direction === 1) {
             this.yVec = -1;
@@ -88,45 +84,77 @@ class Ball extends Entity {
             this.yVec = 1;
         else
             this.yVec = -1;
+        this.startDir = this.xVec;
     }
     update(p1, p2) {
         var randomDirection = Math.floor(Math.random() * 2) + 1;
         if (this.y <= 10) {
-            this.yVec = 1;
+            this.y = 10.1;
+            this.yVec = this.yVec * -1;
         }
         if (this.y + this.height >= this.gameCanvasHeight - 10) {
-            this.yVec = -1;
+            this.y = this.gameCanvasHeight - 10 - this.height - 0.1;
+            this.yVec = this.yVec * -1;
         }
         if (this.x <= 0) {
             this.x = this.gameCanvasWidth / 2 - this.height / 2;
-            this.xVec = -1 * this.xVec;
+            this.y = this.gameCanvasHeight / 2 - this.width / 2;
+            this.xVec = -1 * this.startDir;
+            this.startDir = this.xVec;
             if (randomDirection % 2)
                 this.yVec = 1;
             else
                 this.yVec = -1;
+            this.speed = 3;
             return 'p2_scored';
         }
         if (this.x + this.height >= this.gameCanvasWidth) {
             this.x = this.gameCanvasWidth / 2 - this.height / 2;
-            this.xVec = -1 * this.xVec;
+            this.y = this.gameCanvasHeight / 2 - this.width / 2;
+            this.xVec = -1 * this.startDir;
+            this.startDir = this.xVec;
             if (randomDirection % 2)
                 this.yVec = 1;
             else
                 this.yVec = -1;
+            this.speed = 2;
             return 'p1_scored';
         }
         if (this.x <= p1.x + p1.width) {
-            if (this.y >= p1.y && this.y + this.height <= p1.y + p1.height) {
+            if (this.y + this.height >= p1.y && this.y <= p1.y + p1.height) {
                 this.xVec = 1;
-                if (this.y > p1.y) {
-                    var yvec_amplifier = (this.y - p1.y) / (p1.height / 2);
-                    this.yVec = 0.5;
+                if (this.y + (this.height / 2) < p1.y + (p1.height / 2)) {
+                    var distance_from_middle = p1.y + (p1.height / 2) - (this.y + (this.height / 2));
+                    var percentage_from_middle = distance_from_middle / (p1.height / 2);
+                    this.yVec = -1 * percentage_from_middle;
                 }
+                else if (this.y > p1.y + (p1.height / 2)) {
+                    var distance_from_middle = (this.y + (this.height / 2)) - (p1.y + (p1.height / 2));
+                    var percentage_from_middle = distance_from_middle / (p1.height / 2);
+                    this.yVec = 1 * percentage_from_middle;
+                }
+                else
+                    this.yVec = 0;
             }
+            this.speed = 8;
         }
-        if (this.x + this.height >= p2.x) {
-            if (this.y >= p2.y && this.y + this.height <= p2.y + p2.height)
+        if (this.x + this.width >= p2.x) {
+            if (this.y + this.height >= p2.y && this.y <= p2.y + p2.height) {
                 this.xVec = -1;
+                if (this.y + (this.height / 2) < p2.y + (p2.height / 2)) {
+                    var distance_from_middle = p2.y + (p2.height / 2) - (this.y + (this.height / 2));
+                    var percentage_from_middle = distance_from_middle / (p2.height / 2);
+                    this.yVec = -1 * percentage_from_middle;
+                }
+                else if (this.y > p2.y + (p2.height / 2)) {
+                    var distance_from_middle = (this.y + (this.height / 2)) - (p2.y + (p2.height / 2));
+                    var percentage_from_middle = distance_from_middle / (p2.height / 2);
+                    this.yVec = 1 * percentage_from_middle;
+                }
+                else
+                    this.yVec = 0;
+            }
+            this.speed = 8;
         }
         this.x += this.xVec * this.speed;
         this.y += this.yVec * this.speed;

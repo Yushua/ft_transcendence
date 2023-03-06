@@ -5,12 +5,13 @@ import { Canvas } from './Canvas'
 import update from 'immutability-helper';
 import { GameList } from './GameList';
 
-var iniGameData = new GameData(0, '', '', '')
-var iniGameList = new Array<string>('')
 var game:Canvas
-var keysPressed: Map<string,boolean> = new Map<string,boolean>()
 
 export const Pong = () => {
+
+	var keysPressed: Map<string,boolean> = new Map<string,boolean>()
+	var iniGameData = new GameData(0, '', '', '')
+	var iniGameList = new Array<string>('')
 
 	const socket = React.useContext(WebsocketContext)
 	const [pending, setPending] = React.useState(false)
@@ -19,7 +20,7 @@ export const Pong = () => {
 	const [gameList, setGameList] = React.useState(iniGameList)
 	const [showGameList, setShowGameList] = React.useState(false)
 	const [spectating, setSpectating] = React.useState(false)
-
+	
 	function updateGameData(data:GameData)
 	{
 
@@ -77,7 +78,7 @@ export const Pong = () => {
 		newList = list
 		setGameList(newList)
 	}
-
+	
 	React.useEffect(() => {
 
 		/* INCOMING EVENTS ON SOCKET */
@@ -107,7 +108,10 @@ export const Pong = () => {
 			setInGame(false)
 			setShowGameList(false)
 		})
-
+		socket.on('disconnect', () => {
+			socket.emit('user disconnected')
+		})
+		
 		/*  EVENTLISTENERS */
 		window.addEventListener('keydown', (event) => {
 			keysPressed.set(event.key, true)
@@ -124,7 +128,6 @@ export const Pong = () => {
 				socket.emit('movement', -1)
 		}, 30)
 
-
 		return () => {
 			console.log('unregistering events')
 			socket.off('connect')
@@ -139,21 +142,42 @@ export const Pong = () => {
 		socket.emit('leave')
 	}
 	const ShowGameList = () => {
-		setShowGameList(true)
+		setShowGameList(!showGameList)
+	}
+	const Return = () => {
+		socket.emit('return')
 	}
 
 	return (
 		<div>
-			{pending ?
-			 	`Waiting for second player...` :
-			inGame || spectating ?
-				<Canvas instance={game} socket={socket} gameData={gameData}/> :
-				<button onClick={() => findGame()}>Join Game</button>}
+			{pending ? `Waiting for second player...` : <></>}
+			{inGame || spectating ?
+				<Canvas instance={game} socket={socket} gameData={gameData}/> : <></>}
+			{!inGame && !spectating ?
+				<button onClick={() => findGame()}>Join Game</button> : <></>}
 			{inGame ?
-				<button onClick={() => leaveGame()}>Leave Game</button> :
-			showGameList ?
-				<GameList list={gameList} socket={socket} /> : 
-				<button onClick={() => ShowGameList()}>Game List</button>}
+				<button onClick={() => leaveGame()}>Leave Game</button> : <></>}
+			{spectating ?
+				<button onClick={() => Return()}>Return</button> : <></>}
+			{showGameList ?
+				<GameList list={gameList} socket={socket} />: <></>}
+			{inGame ? <></> : <button onClick={() => ShowGameList()}>Game List</button>}
 		</div>
 	)
 }
+
+
+// return (
+// 	<div>
+// 		{pending ?
+// 			 `Waiting for second player...` :
+// 		inGame || spectating ?
+// 			<Canvas instance={game} socket={socket} gameData={gameData}/> :
+// 			<button onClick={() => findGame()}>Join Game</button>}
+// 		{inGame ?
+// 			<button onClick={() => leaveGame()}>Leave Game</button> :
+// 		showGameList ?
+// 			<GameList list={gameList} socket={socket} />: 
+// 			<button onClick={() => ShowGameList()}>Game List</button>}
+// 	</div>
+// )

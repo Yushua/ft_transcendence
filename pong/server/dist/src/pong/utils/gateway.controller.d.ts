@@ -6,6 +6,8 @@ export declare class MyGateway implements OnModuleInit {
     handleLFG(client: Socket): void;
     handleEvent(direction: number, client: Socket): void;
     handleSpectator(gameName: string, client: Socket): void;
+    handleDisconnect(client: Socket): void;
     handleLeaver(client: Socket): void;
-    private interval;
+    private emit_interval;
+    private update_interval;
 }

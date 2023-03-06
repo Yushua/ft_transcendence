@@ -12,7 +12,6 @@ export class Canvas extends React.Component<any, any> {
 	constructor(socket:Socket)
 	{
 		super(socket)
-		console.log('id:', socket.id)
 		this.gameCanvas = document.getElementById("game-canvas") as HTMLCanvasElement
 		this.gameCanvas.width = 1500
 		this.gameCanvas.height = 750
@@ -57,13 +56,11 @@ export class Canvas extends React.Component<any, any> {
 	}
 	render()
 	{
-		console.log(this.props)
-		// Pong.socket = this.props.socket
-		// console.log('data:', this.props.gameData)
 		if (this.props.gameData.p1_score === undefined)
 			return ( <h3>loading...</h3>)
+		// console.log('ball_x:', this.props.gameData.ball.x)
+		// console.log('ball_y:', this.props.gameData.ball.y)
 		this.props.instance.draw(this.props.gameData)
-		// canvas.draw(this.props.gameData)
 		return (<></>)
 	}
 }

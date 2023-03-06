@@ -19,7 +19,7 @@ export class GameData {
 		this.gameNum = num
 		this.p1 = new Paddle(12, 1, 1500, 750, 20, 20, 100)
 		this.p2 = new Paddle(12, 2, 1500, 750, 20, 20, 100)
-		this.ball = new Ball(1, 3, 1500, 750, 20, 20, 20)
+		this.ball = new Ball(6, 3, 1500, 750, 20, 20, 20)
 		this.gameName = gamename
 		this.p1_name = p1name
 		this.p2_name = p2name

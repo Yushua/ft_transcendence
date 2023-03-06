@@ -27,27 +27,34 @@ let gameInfo = new Array;
 let gameList = new Array;
 let findTuple = new Map;
 let spectators = new Array;
+let updated_games = new Array;
 let MyGateway = class MyGateway {
     constructor() {
-        this.interval = setInterval(() => {
+        this.emit_interval = setInterval(() => {
             games.forEach((data_id_tuple, Client) => {
                 this.server.to(Client.id).emit('gamedata', data_id_tuple[0]);
                 if (data_id_tuple[0].gameState === 'p1_won' || data_id_tuple[0].gameState === 'p2_won') {
                     games.delete(Client);
-                    let strarr = [data_id_tuple[0].gameName, data_id_tuple[1][0], data_id_tuple[1][1]];
-                    let index = gameList.indexOf(strarr);
+                    let index = gameList.indexOf([data_id_tuple[0].gameName, data_id_tuple[1][0], data_id_tuple[1][1]]);
                     gameList.splice(index, 1);
                 }
-                else if (spectators.find(element => element === Client.id) === undefined)
-                    data_id_tuple[0].update(data_id_tuple[0].ball.update(data_id_tuple[0].p1, data_id_tuple[0].p2));
                 this.server.emit('gamelist', gameList);
+            });
+        }, 10);
+        this.update_interval = setInterval(() => {
+            updated_games = [];
+            games.forEach((data_id_tuple, Client) => {
+                let index = updated_games.indexOf(data_id_tuple[0].gameName);
+                if (index === -1) {
+                    data_id_tuple[0].update(data_id_tuple[0].ball.update(data_id_tuple[0].p1, data_id_tuple[0].p2));
+                    updated_games.push(data_id_tuple[0].gameName);
+                }
             });
         }, 10);
     }
     onModuleInit() {
         this.server.on('connection', (socket) => {
-            console.log(socket.id);
-            console.log('Connected');
+            console.log(socket.id, ' connected');
         });
     }
     handleLFG(client) {
@@ -90,18 +97,21 @@ let MyGateway = class MyGateway {
     }
     handleSpectator(gameName, client) {
         dataIdTuple = findTuple.get(gameName);
-        spectators.push(client.id);
-        games.set(client, dataIdTuple);
-        client.emit('spectating');
+        if (dataIdTuple !== undefined) {
+            games.set(client, dataIdTuple);
+            client.emit('spectating');
+        }
+    }
+    handleDisconnect(client) {
+        console.log('client:', client.id, ' disconnected');
+        let game = games.get(client);
+        if (game !== undefined)
+            games.delete(client);
     }
     handleLeaver(client) {
         let game = games.get(client);
-        if (game !== undefined) {
-            let strarr = [game[0].gameName, game[1][0], game[1][1]];
-            let index = gameList.indexOf(strarr);
-            gameList.splice(index, 1);
+        if (game !== undefined)
             games.delete(client);
-        }
         this.server.to(client.id).emit('left');
     }
 };
@@ -132,6 +142,13 @@ __decorate([
     __metadata("design:paramtypes", [String, socket_io_1.Socket]),
     __metadata("design:returntype", void 0)
 ], MyGateway.prototype, "handleSpectator", null);
+__decorate([
+    (0, websockets_1.SubscribeMessage)('disconnect'),
+    __param(0, (0, websockets_1.ConnectedSocket)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [socket_io_1.Socket]),
+    __metadata("design:returntype", void 0)
+], MyGateway.prototype, "handleDisconnect", null);
 __decorate([
     (0, websockets_1.SubscribeMessage)('leave'),
     __param(0, (0, websockets_1.ConnectedSocket)()),
