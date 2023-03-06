@@ -6,7 +6,7 @@ import DropDown from './FriendListDropDown';
 
 var friendID:string = "";
 
-async function asyncReturnID(usernameFriend: string) {
+export async function asyncReturnID(usernameFriend: string) {
   var input:string = 'http://localhost:4242/user-profile/returnID/' + usernameFriend;
   try
   {
@@ -29,6 +29,7 @@ async function asyncReturnID(usernameFriend: string) {
   }
 }
 
+//add the ID to the list
 async function addFriendToList(_friendID: string) {
   var inputString:string = 'http://localhost:4242/user-profile/friendlist/add/' + getCookies().userID + '/' + _friendID;
   console.log("add friend");

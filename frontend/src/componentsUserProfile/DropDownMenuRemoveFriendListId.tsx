@@ -3,9 +3,34 @@ import React, { Dispatch, SetStateAction, useState } from 'react';
 import { getCookie, getCookies, removeCookie } from 'typescript-cookie';
 import { newWindow } from '../App';
 import LoginPage from '../Login';
+import { asyncReturnID } from './DropDownMenuAddFriendList';
 import DropDown from './FriendListDropDown';
 
 var list_:string[];
+
+async function asyncReturnID(usernameFriend: string) {
+  var input:string = 'http://localhost:4242/user-profile/returnID/' + usernameFriend;
+  try
+  {
+    const response = await fetch(input, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': "application/x-www-form-urlencoded",
+      },
+    })
+    if (!response.ok) {
+      throw new Error(`Error! status: ${(await response.json()).message}`);
+    }
+    var result = await response.json()
+    console.log('username to ID is: ', result);
+    friendID = await result;
+  }
+  catch (e: any) {
+    console.log(e)
+  }
+}
+
 async function removeFriendToList(usernameRemove: string) {
   var inputString:string = 'http://localhost:4242/user-profile/friendlist/remove/' + getCookies().userID + '/' + usernameRemove;
   console.log("remove friend", usernameRemove);
@@ -63,9 +88,11 @@ export function logoutButtonRefresh() {
   newWindow(<LoginPage />);
 }
 
+var friendID:string = "";
 async function handleDropDownFunction (e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
-    await removeFriendToList(_selectDropDownList);
+    await asyncReturnID(_selectDropDownList);
+    await removeFriendToList(friendID);
     //update the display
     await asyncGetFriendListById();
     _setDisplay(true)
