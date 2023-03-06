@@ -1,4 +1,5 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { UserProfile } from 'src/user-profile/user.entity';
 import { Repository } from 'typeorm';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
@@ -22,5 +23,10 @@ export class LoginController {
         //frontend will save this token and attach
         //it to every application afterwards
         return this.loginService.signIn(authCredentialsDto);
+    }
+    @Post('/test')
+    @UseGuards(AuthGuard())
+    test(){
+        console.log("proof")
     }
 }

@@ -1,4 +1,5 @@
 import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { UserStatus } from './user-profile-status.model';
 import { UserProfileService } from './user-profile.service';
