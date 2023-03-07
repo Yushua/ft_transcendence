@@ -8,7 +8,7 @@ import ProfilePicture from './ProfilePicture';
 import HTTP from '../Utils/HTTP'
 
 export async function asyncGetName() {
-  const response = HTTP.Get(`user-profile/user/${getCookie('userID')}`, null, {Accept: 'application/json'})
+  const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
   var result = await JSON.parse(response)
   username = await result["username"];
 }

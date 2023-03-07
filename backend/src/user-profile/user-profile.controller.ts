@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { UserStatus } from './user-profile-status.model';
@@ -8,10 +8,18 @@ import { UserProfile } from './user.entity';
 @Controller('user-profile')
 export class UserProfileController {
     constructor(private userServices: UserProfileService) {}
-
+    
     @Get('/user')
-    getAllTasks(@Query() filterDto: getTasksFilterDto): Promise<UserProfile[]> {
-        return this.userServices.findAllUsers(filterDto);
+    getUserByIdRequest(
+        @Request() req: Request): Promise<UserProfile> {
+
+        return this.userServices.findUserBy(req["user"].id);
+    }
+
+    @Get('/user/:id')
+    getUserById(
+        @Param('id') id: string): Promise<UserProfile> {
+        return this.userServices.findUserBy(id);
     }
     /**
      * 
@@ -34,11 +42,6 @@ export class UserProfileController {
         return this.userServices.ReturnUsername(id);
     }
 
-    @Get('/user/:id')
-    getUserById(
-        @Param('id') id: string): Promise<UserProfile> {
-        return this.userServices.findUserBy(id);
-    }
 
     /**
      * 
