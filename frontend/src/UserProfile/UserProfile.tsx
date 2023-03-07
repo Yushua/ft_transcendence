@@ -14,7 +14,7 @@ export async function asyncGetName() {
 }
 
 export async function asyncChangeName(newUsername:string) {
-  HTTP.Post(`user-profile/userchange/${getCookie('userID')}/${newUsername}`, null, {Accept: 'application/json'})
+  HTTP.Post(`user-profile/userchange/${newUsername}`, null, {Accept: 'application/json'})
   console.log("name has changed")
   _setDisplay(false)
 }

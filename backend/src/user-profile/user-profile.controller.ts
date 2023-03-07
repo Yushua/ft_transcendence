@@ -10,9 +10,9 @@ export class UserProfileController {
     constructor(private userServices: UserProfileService) {}
     
     @Get('/user')
+    @UseGuards(AuthGuard())
     getUserByIdRequest(
         @Request() req: Request): Promise<UserProfile> {
-
         return this.userServices.findUserBy(req["user"].id);
     }
 
@@ -116,24 +116,12 @@ export class UserProfileController {
         const found = this.userServices.returnNameById(id);
         return (await found).username;
     }
-    
-    // @Get('/status/:offline')
-    // getAllStatusOffline(
-    //     ): Promise<UserProfile> {
-    //     return this.userServices.findUserBy(UserStatus.OFFLINE);
-    // }
 
-    // @Get('/status/:online')
-    // getAllStatusOnline(
-    //     ): Promise<UserProfile> {
-    //     return this.userServices.findUserBy(UserStatus.ONLINE);
-    // }
-
-    @Post('/userchange/:id/:username')
+    @Post('/userchange/:username')
     changeUsername(
         @Param('username') username: string,
-        @Param('id') id: string): Promise<UserProfile> {
-        return this.userServices.changeUsername(username, id);
+        @Request() req: Request): Promise<UserProfile> {
+        return this.userServices.changeUsername(username, req["user"].id);
     }
     @Patch('/status/:status')
     changeStatus(
@@ -152,6 +140,7 @@ export class UserProfileController {
     }
 
     @Patch('/friendlist/remove/:id/:idFriend')
+    @UseGuards(AuthGuard())
     removeFriend(
         @Param('id') id: string,
         @Param('idFriend') idfriend: string,
