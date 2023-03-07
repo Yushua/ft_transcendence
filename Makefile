@@ -11,7 +11,7 @@ reset: stop
 .PHONY: all stop reset
 
 run-front:
-	cd ./frontend ; npm start
+	cd ./frontend ; npm run build
 
 run-back:
 	cd ./backend ; npm run start:dev
