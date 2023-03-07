@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { removeCookie } from 'typescript-cookie';
 import { newWindow } from '../App';
-import LoginPage from '../Login';
+import LoginPage from '../Login/Login';
 
 export function logoutButtonRefresh() {
   removeCookie('accessToken');

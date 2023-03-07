@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { YourFormElement } from '../UserProfile';
 
 async function handleProfilePicture (e: React.MouseEvent<HTMLButtonElement>){
     e.preventDefault();

@@ -1,11 +1,8 @@
 import {  } from 'q';
 import React, { Dispatch, SetStateAction, useState } from 'react';
-import { getCookie, getCookies, removeCookie } from 'typescript-cookie';
-import { newWindow } from '../App';
-import LoginPage from '../Login';
+import { getCookie } from 'typescript-cookie';
 import NameStorage from '../Utils/Cache/NameStorage';
 import DropDown from './FriendListDropDown';
-import User from '../Utils/Cache/User';
 import HTTP from '../Utils/HTTP'
 
 var list_:string[];

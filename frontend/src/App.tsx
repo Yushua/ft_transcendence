@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import './App.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import LoginPage from './Login/Login';
 
-import LoginPage from './Login';
+
 
 export function newWindow(newWindow:JSX.Element) {
   if (!!_setWindow)

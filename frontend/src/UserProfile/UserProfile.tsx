@@ -1,13 +1,11 @@
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import './UserProfile.css';
-import './App.css';
+import '../App.css';
 import { getCookie } from 'typescript-cookie';
-import DropDownMenuAddFriendList from './componentsUserProfile/DropDownMenuAddFriendList';
-import DropDownMenuRemoveFriendListId from './componentsUserProfile/DropDownMenuRemoveFriendListId';
-import ProfilePicture from './componentsUserProfile/ProfilePicture';
-import HTTP from './Utils/HTTP'
-
-var message:string = "";
+import DropDownMenuAddFriendList from './DropDownMenuAddFriendList';
+import DropDownMenuRemoveFriendListId from './DropDownMenuRemoveFriendListId';
+import ProfilePicture from './ProfilePicture';
+import HTTP from '../Utils/HTTP'
 
 export async function asyncGetName() {
   const response = HTTP.Get(`user-profile/user/${getCookie('userID')}`, null, {Accept: 'application/json'})
