@@ -125,7 +125,7 @@ const LoginPage: React.FC = () => {
 
     <div className="LoginPage">
         <span className="heading">
-          Login
+          Create Account
         </span>
         <form onSubmit={handleAccCreate}>
         <div>
@@ -139,6 +139,9 @@ const LoginPage: React.FC = () => {
         <div><label id="errorCode1" htmlFor="error1"></label></div>
         <button type="submit">Submit</button>
       </form>
+          <span className="heading">
+            Login
+          </span>
           <form onSubmit={
             ( handleAccLogin)}>
           <div>
@@ -150,7 +153,6 @@ const LoginPage: React.FC = () => {
             <input id="eMail" type="text" />
           </div>
             <div><label id="errorCode2" htmlFor="error2"></label></div>
-
             <button type="submit">Submit</button>
           </form>
     </div>

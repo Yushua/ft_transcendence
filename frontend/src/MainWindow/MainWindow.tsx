@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import UserProfilePage from "../UserProfile";
 import MainChatWindow from "../Chat/Windows/MainChatWindow";
 import LogoutButtonComponent from "../componentsUserProfile/LogoutButton";
+import { Pong } from "../Games/pong/Pong";
 
 export default function MainWindow() {
 	
@@ -10,6 +11,7 @@ export default function MainWindow() {
 	switch (window) {
 		case "profile": display = <UserProfilePage/>; break
 		case "chat": display = <MainChatWindow/>; break
+		case "pong": display = <Pong/>; break
 		default: break
 	}
 	
@@ -25,6 +27,10 @@ export default function MainWindow() {
 					onClick={() => setWindow("chat")}
 					disabled={window === "chat"}
 					>Chat</button>
+				<button
+					onClick={() => setWindow("pong")}
+					disabled={window === "chat"}
+					>Play Pong</button>
 			</div>
 			{display}
 		</div>

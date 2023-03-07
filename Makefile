@@ -27,7 +27,13 @@ setup:
 	npm install pg --save
 	npm install source-map-support
 	npm install @nestjs/platform-express
+	npm i --save socket.io-client
+	npm i --save socket.io
+	npm i --save @nestjs/websockets
+	npm i --save @nestjs/platform-socket.io
 
 react:
-	npm install --save typescript @types/node @types/react @types/react-dom @types/jest
-	npm install react-scripts
+	npm i --save typescript @types/node @types/react @types/react-dom @types/jest
+	npm i --save react-scripts
+	npm i --save @mui/material @emotion/react @emotion/styled
+	npm i --save immutability-helper
