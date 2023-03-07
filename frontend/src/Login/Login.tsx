@@ -6,7 +6,7 @@ import { newWindow } from '../App';
 import MainWindow from '../MainWindow/MainWindow';
 import User from '../Utils/Cache/User';
 import HTTP from '../Utils/HTTP';
-import UserProfilePage from '../componentsUserProfile/UserProfile';
+import UserProfilePage from '../UserProfile/UserProfile';
 
 var error1: string = "";
 var error2: string = "";

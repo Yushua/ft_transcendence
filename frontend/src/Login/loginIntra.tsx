@@ -4,7 +4,7 @@ import {  getCookie } from 'typescript-cookie'
 
 import { newWindow } from '../App';
 import HTTP from '../Utils/HTTP';
-import UserProfilePage from '../componentsUserProfile/UserProfile';
+import UserProfilePage from '../UserProfile/UserProfile';
 
 interface FormElements extends HTMLFormControlsCollection {
   username: HTMLInputElement
