@@ -1,5 +1,4 @@
 import React, { Dispatch, SetStateAction, useState } from 'react';
-import { getCookie } from 'typescript-cookie';
 import DropDown from './FriendListDropDown';
 import HTTP from '../Utils/HTTP'
 
@@ -13,12 +12,12 @@ async function asyncReturnID(usernameFriend: string) {
 
 //add the ID to the list
 async function addFriendToList(_friendID: string) {
-  HTTP.Patch(`user-profile/friendlist/add/${getCookie('userID')}/${_friendID}`, null, {Accept: 'application/json'})
+  HTTP.Patch(`user-profile/friendlist/add/${_friendID}`, null, {Accept: 'application/json'})
 }
 
 var list_:string[];
 export async function asyncGetFriendListById(){
-  const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
+  const response = HTTP.Get(`user-profile/userAddListusername`, null, {Accept: 'application/json'})
   var result = await JSON.parse(response)
   list_ = result
 }
@@ -42,7 +41,7 @@ function DropDownMenuAddFriend({}) {
     _setDisplay = setDisplay
 
     if (display === true){
-      asyncGetFriendListById();
+      // asyncGetFriendListById();
       _setDisplay(false)
     }
 

@@ -25,7 +25,7 @@ async function AccCreate(username: string, password: string, email:string){
       error1 = `Error! status: ${(await response.json()).message}`;
       throw new Error(`Error! status: ${(await response.json()).message}`);
     }
-    
+    console.log("hello");
     const result = (await response.json())
     
     console.log('result is: ', JSON.stringify(result, null, 4));
@@ -59,21 +59,16 @@ async function Acclogin(username: string, password: string, email:string) {
     
     console.log('result is: ', JSON.stringify(result, null, 4));
     var accessToken: string = result["accessToken"];
-    var userID: string = result["userID"];
     // cookie
     console.log('keycode: ', accessToken);
-    console.log('userID: ', userID);
     error2 = "succesfull";
     removeCookie('accessToken');
-    removeCookie('userID');
     setCookie('accessToken', accessToken,{ expires: 1 });
-    setCookie('userID', userID,{ expires: 1 });
     console.log('keycode c: ', getCookies());
     console.log('acces: ', getCookies().accessToken);
-    console.log('user: ', getCookies().userID);
     
     // Robin's changes
-    await User.asyncUpdate(getCookies().userID)
+    await User.asyncUpdate(result["userID"])
     newWindow(<MainWindow/>)
     //
     

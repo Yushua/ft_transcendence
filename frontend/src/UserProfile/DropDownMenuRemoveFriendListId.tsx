@@ -1,6 +1,5 @@
 import {  } from 'q';
 import React, { Dispatch, SetStateAction, useState } from 'react';
-import { getCookie } from 'typescript-cookie';
 import NameStorage from '../Utils/Cache/NameStorage';
 import DropDown from './FriendListDropDown';
 import HTTP from '../Utils/HTTP'
@@ -14,11 +13,11 @@ async function asyncReturnID(usernameFriend: string) {
 }
 
 async function removeFriendToList(usernameRemove: string) {
-  HTTP.Patch(`user-profile/friendlist/remove/${getCookie('userID')}/${usernameRemove}`, null, {Accept: 'application/json'})
+  HTTP.Patch(`user-profile/friendlist/remove/${usernameRemove}`, null, {Accept: 'application/json'})
 }
 
 export async function asyncGetFriendListById(){
-  const response = HTTP.Get(`user-profile/user/${getCookie('userID')}`, null, {Accept: 'application/json'})
+  const response = HTTP.Get(`user-profile/userFriendListID`, null, {Accept: 'application/json'})
   var result = await JSON.parse(response)
   list_ =  result.friendList.map((userID: string) => NameStorage.User.Get(userID));
 }
@@ -34,15 +33,10 @@ async function handleDropDownFunction (e: React.MouseEvent<HTMLButtonElement>) {
   var _setDisplay:Dispatch<SetStateAction<boolean>>;
   var _selectDropDownList:string;
 
-// const DropDownMenuRemoveFriend: React.FC<DropDownProps> = ({nameOfMenu}: DropDownProps): JSX.Element =>  {
 function DropDownMenuRemoveFriend({}) {
-    //remove a funciton to this list that needs to remove the string to the list.
-
     const [display, setDisplay] = useState(true)
     _setDisplay = setDisplay
     if (display === true){
-      //get the list trough http get request
-      asyncGetFriendListById();
       _setDisplay(false)
     }
 

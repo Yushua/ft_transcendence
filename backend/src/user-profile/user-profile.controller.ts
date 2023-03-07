@@ -1,26 +1,39 @@
-import { Body, Controller, Get, Param, Patch, Post, Query, Request, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { UserStatus } from './user-profile-status.model';
 import { UserProfileService } from './user-profile.service';
 import { UserProfile } from './user.entity';
 
 @Controller('user-profile')
+@UseGuards(AuthGuard())
 export class UserProfileController {
     constructor(private userServices: UserProfileService) {}
     
+    /**
+     * 
+     * @param username 
+     * @returns returns the user based on the JWT authenticaiton
+     */
     @Get('/user')
     @UseGuards(AuthGuard())
     getUserByIdRequest(
         @Request() req: Request): Promise<UserProfile> {
+        console.log("with")
         return this.userServices.findUserBy(req["user"].id);
     }
 
+    /**
+     * 
+     * @param usernam 
+     * @returns returns the user based on the id
+     */
     @Get('/user/:id')
     getUserById(
         @Param('id') id: string): Promise<UserProfile> {
+        console.log("without")
         return this.userServices.findUserBy(id);
     }
+
     /**
      * 
      * @param username 
@@ -81,10 +94,11 @@ export class UserProfileController {
      * @returns get users all people the user can add, using ID. 
      * return array of usernames
      */
-         @Get('/userAddListusername/:id')
+         @Get('/userAddListusername')
+         @UseGuards(AuthGuard())
          getUserAddListByIdUsername(
-             @Param('id') id: string): Promise<string[]> {
-             return this.userServices.getAllUsersAddListUsername(id);
+            @Request() req: Request): Promise<string[]> {
+             return this.userServices.getAllUsersAddListUsername(req["user"].id);
          }
     
     /**
@@ -92,10 +106,11 @@ export class UserProfileController {
      * @param id 
      * @returns get users friendlist with usernames
      */
-        @Get('/userFriendListID/:id')
+        @Get('/userFriendListID')
+        @UseGuards(AuthGuard())
         getUseFriendListIDById(
-            @Param('id') id: string): Promise<string[]> {
-            return this.userServices.UsersFriendlistID(id);
+            @Request() req: Request): Promise<string[]> {
+            return this.userServices.UsersFriendlistID(req["user"].id);
         }
     
     /**
@@ -118,6 +133,7 @@ export class UserProfileController {
     }
 
     @Post('/userchange/:username')
+    @UseGuards(AuthGuard())
     changeUsername(
         @Param('username') username: string,
         @Request() req: Request): Promise<UserProfile> {
@@ -130,23 +146,29 @@ export class UserProfileController {
         return this.userServices.changeStatus(status, id);
     }
 
-    @Patch('/friendlist/add/:id/:idFriend')
+    /**
+     * 
+     * @param username 
+     * @returns add id based on the jwt authentication
+     */
+    @Patch('/friendlist/add/:idFriend')
+    @UseGuards(AuthGuard())
     addFriend(
-        @Param('id') id: string,
+        @Request() req: Request,
         @Param('idFriend') idFriend: string,
         )
         : Promise<UserProfile> {
-        return this.userServices.addFriend(id, idFriend);
+        return this.userServices.addFriend(req["user"].id, idFriend);
     }
 
-    @Patch('/friendlist/remove/:id/:idFriend')
+    @Patch('/friendlist/remove/:idFriend')
     @UseGuards(AuthGuard())
     removeFriend(
-        @Param('id') id: string,
+        @Request() req: Request,
         @Param('idFriend') idfriend: string,
         )
         : Promise<UserProfile> {
-        return this.userServices.removeFriend(id, idfriend);
+        return this.userServices.removeFriend(req["user"].id, idfriend);
     }
 
 

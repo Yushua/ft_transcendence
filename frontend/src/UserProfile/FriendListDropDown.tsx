@@ -7,7 +7,6 @@ type DropDownProps = {
   friendSelection: Function;
 };
 
-
 const DropDown: React.FC<DropDownProps> = ({
   list,
   friendSelection,

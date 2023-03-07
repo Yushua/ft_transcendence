@@ -3,8 +3,6 @@ import './App.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import LoginPage from './Login/Login';
 
-
-
 export function newWindow(newWindow:JSX.Element) {
   if (!!_setWindow)
     _setWindow(newWindow)

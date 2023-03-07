@@ -1,7 +1,6 @@
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import './UserProfile.css';
 import '../App.css';
-import { getCookie } from 'typescript-cookie';
 import DropDownMenuAddFriendList from './DropDownMenuAddFriendList';
 import DropDownMenuRemoveFriendListId from './DropDownMenuRemoveFriendListId';
 import ProfilePicture from './ProfilePicture';
