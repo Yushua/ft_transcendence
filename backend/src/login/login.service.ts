@@ -55,9 +55,9 @@ export class LoginService {
 
         if (user && (await bcrypt.compare(password, user.password))) {
             //create account
-            const payload: JwtPayload = { username};
-            const accessToken: string = await this.jwtService.sign(payload);
             const userID = user.id;
+            const payload: JwtPayload = { username, userID};
+            const accessToken: string = await this.jwtService.sign(payload);
             return {accessToken, userID};
         }
         else {
