@@ -1,9 +1,9 @@
 import React from 'react'
 import { WebsocketContext } from "../contexts/WebsocketContext"
-import { GameData,  } from './pong_objects'
-import { Canvas } from './Canvas'
+import { GameData,  } from './components/pong_objects'
+import { Canvas } from './components/Canvas'
 import update from 'immutability-helper';
-import { GameList } from './GameList';
+import { GameList } from './components/GameList';
 
 var game:Canvas
 
