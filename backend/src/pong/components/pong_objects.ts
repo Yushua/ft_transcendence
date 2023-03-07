@@ -82,10 +82,6 @@ class Entity
 			this.y = this.gameCanvasHeight / 2 - this.width / 2
 		}
 	}
-	draw(context:CanvasRenderingContext2D){
-        context.fillStyle = "#fff";
-        context.fillRect(this.x,this.y,this.width,this.height);
-    }
 }
 
 export class Paddle extends Entity
