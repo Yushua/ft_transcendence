@@ -5,13 +5,14 @@ import { getCookies, removeCookie, setCookie } from 'typescript-cookie'
 import { newWindow } from '../App';
 import MainWindow from '../MainWindow/MainWindow';
 import User from '../Utils/Cache/User';
+import HTTP from '../Utils/HTTP';
 
 var error1: string = "";
 var error2: string = "";
 async function AccCreate(username: string, password: string, email:string){
   try {
     // 👇️ const response: Response
-    const response = await fetch('http://localhost:4242/login/signup', {
+    const response = await fetch(HTTP.HostRedirect() + 'login/signup', {
       method: 'POST',
       body: `username=${username}&password=${password}&eMail=${email}`,
       headers: {
@@ -41,7 +42,7 @@ async function AccCreate(username: string, password: string, email:string){
 async function Acclogin(username: string, password: string, email:string) {
   try {
     // 👇️ const response: Response
-    const response = await fetch('http://localhost:4242/login/signin', {
+    const response = await fetch(HTTP.HostRedirect() + 'login/signin', {
       method: 'POST',
       body: `username=${username}&password=${password}&eMail=${email}`,
       headers: {

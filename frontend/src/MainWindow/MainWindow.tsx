@@ -29,7 +29,7 @@ export default function MainWindow() {
 					>Chat</button>
 				<button
 					onClick={() => setWindow("pong")}
-					disabled={window === "chat"}
+					disabled={window === "pong"}
 					>Play Pong</button>
 			</div>
 			{display}

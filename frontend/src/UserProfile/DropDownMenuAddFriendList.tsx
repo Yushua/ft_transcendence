@@ -18,7 +18,7 @@ async function addFriendToList(_friendID: string) {
 
 var list_:string[];
 export async function asyncGetFriendListById(){
-  const response = HTTP.Get(`user-profile/userAddListUsername/${getCookie('userID')}`, null, {Accept: 'application/json'})
+  const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
   var result = await JSON.parse(response)
   list_ = result
 }
