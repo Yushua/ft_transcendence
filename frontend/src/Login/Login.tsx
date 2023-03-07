@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import './App.css';
+import '../App.css';
 import { Cookies, getCookie, getCookies, removeCookie, setCookie } from 'typescript-cookie'
 
-import { newWindow } from './App';
-import MainWindow from './MainWindow/MainWindow';
-import User from './Utils/Cache/User';
-import HTTP from './Utils/HTTP';
-import UserProfilePage from './UserProfile';
+import { newWindow } from '../App';
+import MainWindow from '../MainWindow/MainWindow';
+import User from '../Utils/Cache/User';
+import HTTP from '../Utils/HTTP';
+import UserProfilePage from '../componentsUserProfile/UserProfile';
 
 var error1: string = "";
 var error2: string = "";

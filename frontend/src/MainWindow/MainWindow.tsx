@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import UserProfilePage from "../UserProfile";
 import MainChatWindow from "../Chat/Windows/MainChatWindow";
 import LogoutButtonComponent from "../componentsUserProfile/LogoutButton";
+import UserProfilePage from "../componentsUserProfile/UserProfile";
 
 export default function MainWindow() {
 	

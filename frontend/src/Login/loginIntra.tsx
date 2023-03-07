@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
-import './App.css';
-import { Cookies, getCookie, getCookies, removeCookie, setCookie } from 'typescript-cookie'
+import '../App.css';
+import {  getCookie } from 'typescript-cookie'
 
-import { newWindow } from './App';
-import MainWindow from './MainWindow/MainWindow';
-import User from './Utils/Cache/User';
-import HTTP from './Utils/HTTP';
-import UserProfilePage from './UserProfile';
+import { newWindow } from '../App';
+import HTTP from '../Utils/HTTP';
+import UserProfilePage from '../componentsUserProfile/UserProfile';
 
 interface FormElements extends HTMLFormControlsCollection {
   username: HTMLInputElement
@@ -52,14 +50,12 @@ const LoginPage: React.FC = () => {
           Login
         </span>
           <form onSubmit={
-            ( handleAccLogin)}>
+            ( handleAccLogin )}>
           <div>
             <label htmlFor="username">Username:</label>
             <input id="username" type="text" />
             <label htmlFor="password">Password:</label>
             <input id="password" type="text" />
-            <label htmlFor="eMail">Email:</label>
-            <input id="eMail" type="text" />
           </div>
             <button type="submit">Submit</button>
           </form>

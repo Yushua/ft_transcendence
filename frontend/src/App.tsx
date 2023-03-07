@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import './App.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-
-import LoginPage from './Login';
+import LoginPage from './Login/Login';
 
 export function newWindow(newWindow:JSX.Element) {
   if (!!_setWindow)
@@ -10,7 +9,6 @@ export function newWindow(newWindow:JSX.Element) {
 }
 
 var _setWindow: React.Dispatch<React.SetStateAction<JSX.Element>> | null = null
-
 
 const App: React.FC = () => {
 
