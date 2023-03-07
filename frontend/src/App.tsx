@@ -11,7 +11,6 @@ export function newWindow(newWindow:JSX.Element) {
 
 var _setWindow: React.Dispatch<React.SetStateAction<JSX.Element>> | null = null
 
-
 const App = () => {
 
   const [window, setWindow] = useState<JSX.Element>(<LoginPage />)

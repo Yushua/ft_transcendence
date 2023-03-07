@@ -23,7 +23,7 @@ export class GameList extends React.Component<any, any> {
 	{
 		const rows = []
 	
-		for (let i = 0; i != list.length; i++)
+		for (let i = 0; i !== list.length; i++)
 		{
 			rows[i] = createData(i, list[i][0], list[i][1], list[i][2])
 		}

@@ -1,6 +1,6 @@
 import React from "react"
 import { Socket } from "socket.io-client"
-import { GameData, Ball, Paddle } from "./pong_objects"
+import { GameData } from "./pong_objects"
 
 
 export class Canvas extends React.Component<any, any> {
