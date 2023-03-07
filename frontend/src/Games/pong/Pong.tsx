@@ -134,7 +134,7 @@ export const Pong = () => {
 			console.log('unregistering events')
 			socket.off('connect')
 		}
-	}, [socket, gameData])
+	}, [socket])
 
 	const findGame = () => {
 		socket.emit('LFG')
