@@ -1,5 +1,4 @@
 export class GameData {
-	// gameState = new Map<string, boolean>()
 	gameState: string
 	gameNum: number
 	gameName: string
@@ -24,24 +23,6 @@ export class GameData {
 		this.p1_name = p1name
 		this.p2_name = p2name
 
-	}
-
-	update(event:string)
-	{
-		if (event === 'p1_scored')
-		{
-			this.p1_score++
-			if (this.p1_score === 11)
-				this.gameState = 'p1_won'
-		}
-		else if (event === 'p2_scored')
-		{
-			this.p2_score++
-			if (this.p2_score === 11)
-			{
-				this.gameState = 'p2_won'
-			}
-		}
 	}
 }
 
@@ -92,30 +73,13 @@ class Entity
 
 export class Paddle extends Entity
 {
-	public 	keysPressed = new Map<string, boolean>()
 
-	update(direction:number)
-	{
-		if (direction === 1)
-		{
-			this.yVec = -1
-			if (this.y <= 20)
-				this.yVec = 0
-		}
-		else if (direction === -1)
-		{
-			this.yVec = 1
-			if (this.y + this.height >= this.gameCanvasHeight - 20)
-				this.yVec = 0
-		}
-   		else
-			this.yVec = 0
-		this.y += this.yVec * this.speed
-	}
 }
 
 export class Ball extends Entity
 {
+	private startDir:number
+
 	constructor(
 		speed:number,
 		type:number,
@@ -145,83 +109,6 @@ export class Ball extends Entity
 			this.yVec = 1
 		else
 			this.yVec = -1
-	}
-	update(p1:Paddle, p2:Paddle)
-	{
-		var randomDirection = Math.floor(Math.random() * 2) + 1
-
-		//check top canvas bounds
-		if (this.y <= 10)
-		{
-			//update not just 1 or -1 
-			this.yVec = 1
-		}
-		//check bottom canvas bounds
-		if (this.y + this.height >= this.gameCanvasHeight - 10)
-		{
-			//update not just 1 or -1 
-			this.yVec = -1
-		}
-		//check left canvas bounds
-		if (this.x <= 0)
-		{ 
-			this.x = this.gameCanvasWidth / 2 - this.height / 2
-			this.xVec = -1 * this.xVec
-			if (randomDirection % 2)
-				this.yVec = 1
-			else
-				this.yVec = -1
-			return 'p2_scored'
-			// this.player_2_Score += 1
-			// if (this.player_2_Score === 11)
-			// {
-			// 	this.gameState.set("game_end", true)
-			// 	this.gameState.set("P2_won", true)
-			// }
-		}
-
-		//check right canvas bounds
-		if (this.x + this.height >= this.gameCanvasWidth)
-		{
-			this.x = this.gameCanvasWidth / 2 - this.height / 2
-			this.xVec = -1 * this.xVec
-			if (randomDirection % 2)
-				this.yVec = 1
-			else
-				this.yVec = -1
-			return 'p1_scored'
-			// this.playerScore += 1
-			// if (this.playerScore === 11)
-			// {
-			// 	this.gameState.set("game_end", true)
-			// 	this.gameState.set("P1_won", true)
-			// }
-		}
-
-		//check player1 collision
-		if (this.x <= p1.x + p1.width)
-		{
-			if (this.y >= p1.y && this.y + this.height <= p1.y + p1.height)
-			{
-				this.xVec = 1;
-				if (this.y > p1.y)
-				{
-					var yvec_amplifier:number = (this.y - p1.y) / (p1.height / 2 )
-					this.yVec = 0.5
-				}
-			}
-		}
-
-		//check player2 collision
-		if (this.x + this.height >= p2.x)
-		{
-			if (this.y >= p2.y && this.y + this.height <= p2.y + p2.height)
-				this.xVec = -1;
-		}
-		this.x += this.xVec * this.speed;
-		this.y += this.yVec * this.speed;
-		return ''
+		this.startDir = this.xVec
 	}
 }
-
-
