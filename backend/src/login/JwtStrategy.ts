@@ -18,13 +18,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
         })
     }
-    async validate(payload: JwtPayload): Promise<UserProfile> {
+    async validate(req: Request, payload: JwtPayload): Promise<UserProfile> {
         const { username } = payload;
         const user: UserProfile = await this.autEntityRepos.findOneBy({ username});
 
         if (!user){
             throw new UnauthorizedException();
         }
+        req["user"] = user
+        
         return user;
     }
 
