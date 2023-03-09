@@ -18,7 +18,9 @@ export class UserProfileController {
     @UseGuards(AuthGuard())
     getUserByIdRequest(
         @Request() req: Request): Promise<UserProfile> {
-        console.log("with")
+        console.log("without an id")
+        console.log('id ' + req["user"].id)
+        console.log('username ' + req["user"].username)
         return this.userServices.findUserBy(req["user"].id);
     }
 
@@ -30,7 +32,7 @@ export class UserProfileController {
     @Get('/user/:id')
     getUserById(
         @Param('id') id: string): Promise<UserProfile> {
-        console.log("without")
+        console.log("with an id " + id)
         return this.userServices.findUserBy(id);
     }
 

@@ -16,18 +16,23 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         super({
             secretOrKey: 'topSecret51',
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+            ignoreExpiration: false,
         })
     }
     async validate(req: Request, payload: JwtPayload): Promise<UserProfile> {
         const { userID } = payload;
         const id = userID
+        console.log("\n\nVALIDATE ACCESS")
+        console.log('id in validate ' + id)
+        console.log('userId in validate ' + userID)
         const user: UserProfile = await this.autEntityRepos.findOneBy({ id });
+        console.log("VALIDATE UPDATED USER")
+        console.log(user)
 
         if (!user){
             throw new UnauthorizedException();
         }
         req["user"] = user
-        
         return user;
     }
 

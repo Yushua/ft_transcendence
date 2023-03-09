@@ -45,19 +45,6 @@ export class TasksController {
         return this.taskServices.deleteTasksById(id);
     }
 
-    // //when its a get request, do this
-    // //http://localhost:4242/tasks
-    // @Get()
-    // getTask(@Query() filterDto: getTasksFilterDto): Task[] {
-    //     //if we have any filters defines, cal taskservices.getTskwithFilters
-    //     //otherwise, just get all tasks
-    //     if (Object.keys(filterDto).length) {
-    //         return this.taskServices.getTasksWithFilters(filterDto);
-    //     }
-    //     else {
-    //         return this.taskServices.getAllTasks();
-    //     }
-    // }
 
     @Patch('/:id/status')
     patchTaskById(

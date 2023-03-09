@@ -51,14 +51,16 @@ export class LoginService {
 
     async signIn(authCredentialsDto: AuthCredentialsDto): Promise<{ accessToken: string, userID:string }> {
         const {username, password} = authCredentialsDto;
-
+        console.log("VALIDATE SIGNIN")
+        console.log('username in signin ' + username)
         const user = await this.userProfileEntityRepos.findOneBy({ username });
 
         if (user && (await bcrypt.compare(password, user.password))) {
             //create account
+            console.log('userID in signin ' + user.id)
             const userID = user.id;
             const payload: JwtPayload = { userID };
-            const accessToken: string = await this.jwtService.sign(payload);
+            const accessToken: string = this.jwtService.sign(payload);
             return {accessToken, userID};
         }
         else {
