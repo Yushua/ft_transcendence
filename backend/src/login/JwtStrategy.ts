@@ -25,6 +25,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         console.log("\n\nVALIDATE ACCESS")
         console.log('id in validate ' + id)
         console.log('userId in validate ' + userID)
+        console.log('payload ' + payload)
         const user: UserProfile = await this.autEntityRepos.findOneBy({ id });
         console.log("VALIDATE UPDATED USER")
         console.log(user)
