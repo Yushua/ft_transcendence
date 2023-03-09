@@ -5,8 +5,8 @@ import NameStorage from "./NameStorage";
 import ManualEventManager from "../../Events/ManualEventManager";
 
 export default class ChatRoom {
-	private static _chatRoom: any | null = null
-	private static _chatRoomPass: string = ""
+	static _chatRoom: any | null = null
+	static _chatRoomPass: string = ""
 	
 	static UpdateEvent = new ManualEventManager()
 	static ClearEvent = new ManualEventManager()

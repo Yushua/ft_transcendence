@@ -41,7 +41,7 @@ export default class HTTP {
 			body: string | object | null,
 			hdr: object | null,
 			detach: boolean)
-			: [XMLHttpRequest, string] {
+			: [XMLHttpRequest, string | FormData] {
 		var req = new XMLHttpRequest();
 		req.open(method, this.HostRedirect() + url, detach);
 		const token = getCookie("accessToken")
@@ -50,18 +50,23 @@ export default class HTTP {
 		if (!!hdr)
 			for (const [name, value] of Object.entries(hdr))
 				req.setRequestHeader(name, value)
-		var fianlBody = ""
-		if (!!body)
-			switch (typeof body) {
-				case 'object':
-					req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")	
-					for (const [name, value] of Object.entries(body))
-						fianlBody += `${name}=${value}&`
-					break;
-				case 'string': fianlBody = body; break
-				default: break
-			}
-		return [req, fianlBody]
+		if (!body)
+			return [req, ""]
+		var finalBody: string | FormData = ""
+		switch (body.constructor.name) {
+			case 'File':
+				finalBody = new FormData()
+				finalBody.append("file", body as File, (body as File).name)
+				break
+			case 'Object':
+				req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+				for (const [name, value] of Object.entries(body))
+					finalBody += `${name}=${value}&`
+				break;
+			case 'String': finalBody = body as string; break
+			default: break
+		}
+		return [req, finalBody]
 	}
 	
 	static SendRequest(
