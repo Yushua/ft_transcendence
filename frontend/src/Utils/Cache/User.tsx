@@ -22,7 +22,7 @@ export default class User {
 			console.log(user.id)
 			console.log(user.friendList)
 			this._user = user
-			NameStorage.User.Set(user.id, user.username)
+			NameStorage.User._ManualSet(user.id, user.username)
 			this.UpdateEvent.Run()
 		}
 	}

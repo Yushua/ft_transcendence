@@ -25,7 +25,7 @@ export default class NameStorage {
 		Clear(ID: string)
 			{ this._nameMap.delete(ID) }
 		
-		Set(ID: string, name: string, expirationTime: number = 4200 * 60)
+		_ManualSet(ID: string, name: string, expirationTime: number = 4200 * 60)
 			{ this._nameMap.set(ID, [name, Date.now() + expirationTime]) }
 	}
 	
@@ -35,15 +35,11 @@ export default class NameStorage {
 	//#region Legacy Functions
 	static readonly GetRoom = (ID: string, forceUpdate: boolean = false, expirationTime: number = 4200 * 60)
 		: string => this.Room.Get(ID, forceUpdate, expirationTime)
-	static readonly SetRoom = (ID: string, name: string, expirationTime: number = 4200 * 60)
-		: void => this.Room.Set(ID, name, expirationTime)
 	static readonly ClearRoom = (ID: string)
 		: void => this.Room.Clear(ID)
 	
 	static readonly GetUser = (ID: string, forceUpdate: boolean = false, expirationTime: number = 4200 * 60)
 		: string => this.User.Get(ID, forceUpdate, expirationTime)
-	static readonly SetUser = (ID: string, name: string, expirationTime: number = 4200 * 60)
-		: void => this.User.Set(ID, name, expirationTime)
 	static readonly ClearUser = (ID: string)
 		: void => this.User.Clear(ID)
 	//#endregion

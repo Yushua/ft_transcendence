@@ -25,7 +25,7 @@ export default class ChatRoom {
 			this._chatRoomPass = (!room.Direct && room.OwnerID === ChatUser.ID) ? HTTP.Get(`chat/pass/${roomID}`) : ""
 			this._chatRoom = room
 			RoomEvent.SubscribeServerSentEvent(`chat/event/room-${roomID}`)
-			NameStorage.Room.Set(room.ID, room.Name)
+			NameStorage.Room._ManualSet(room.ID, room.Name)
 			this.UpdateEvent.Run()
 		}
 	}
