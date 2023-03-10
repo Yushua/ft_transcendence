@@ -18,23 +18,14 @@ export class LoginService {
 
     async createUser(authCredentialsDto: AuthCredentialsDto): Promise<UserProfile> {
         
-        const {
-            username,
-            password,
-            eMail
-        } = authCredentialsDto;
-        console.log(authCredentialsDto);
+        const { username, password, eMail } = authCredentialsDto;
         //hash
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(password, salt);
     
         const _user = this.userProfileEntityRepos.create({
-            username,
-            password: hashedPassword,
-            eMail,
-            status: UserStatus.CREATION,
+            username, password: hashedPassword, eMail, status: UserStatus.CREATION,
         });
-        console.log(_user);
         try {
             await this.userProfileEntityRepos.save(_user);
         } catch (error) {
@@ -57,12 +48,12 @@ export class LoginService {
             const payload: JwtPayload = { userID };
             const accessToken: string = this.jwtService.sign(payload);
             //only now can we validate
+            console.log("keycode [" + accessToken + ']')
             return {accessToken, userID};
         }
         else {
             throw new UnauthorizedException('Please check your login credentials');
         }
-
     }
 
 }

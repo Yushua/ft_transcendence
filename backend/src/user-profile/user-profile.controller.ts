@@ -34,6 +34,8 @@ export class UserProfileController {
      */
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     @Get('/user/:id')
+    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(AuthGuardEncryption)
     getUserById( 
         @Param('id') id: string): Promise<UserProfile> {
         console.log("I AM HERE")
