@@ -1,5 +1,6 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { AuthGuardEncryption } from 'src/auth/auth.guard';
 import { UserProfile } from 'src/user-profile/user.entity';
 import { Repository } from 'typeorm';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
@@ -19,12 +20,10 @@ export class LoginController {
     @Post('/signin')
     signIn(
         @Body() authCredentialsDto: AuthCredentialsDto
-        ): Promise<{ accessToken: string, user_:UserProfile}> {
-        console.log(authCredentialsDto)
+        ): Promise<{ accessToken: string, userID:string}> {
         return this.loginService.signIn(authCredentialsDto);
     }
     @Post('/test')
-    @UseGuards(AuthGuard())
     test(){
         console.log("proof")
     }
