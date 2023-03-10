@@ -3,10 +3,10 @@ import { Repository } from 'typeorm';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import * as bcrypt from 'bcrypt'
 import { UserProfile } from 'src/user-profile/user.entity';
-import { JwtPayload } from './jwt-payload.interface';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserStatus } from 'src/user-profile/user-profile-status.model';
+import { JwtPayload } from 'src/auth/jwt-payload.interface';
 
 @Injectable()
 export class LoginService {
@@ -51,16 +51,12 @@ export class LoginService {
 
     async signIn(authCredentialsDto: AuthCredentialsDto): Promise<{ accessToken: string, userID:string }> {
         const {username, password} = authCredentialsDto;
-        console.log("VALIDATE SIGNIN")
-        console.log('username in signin ' + username)
         const user = await this.userProfileEntityRepos.findOneBy({ username });
-
         if (user && (await bcrypt.compare(password, user.password))) {
-            //create account
-            console.log('userID in signin ' + user.id)
             const userID = user.id;
             const payload: JwtPayload = { userID };
             const accessToken: string = this.jwtService.sign(payload);
+            //only now can we validate
             return {accessToken, userID};
         }
         else {

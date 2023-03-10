@@ -16,8 +16,8 @@ export class UserProfileController {
      * @param username 
      * @returns returns the user based on the JWT authenticaiton
      */
+    @UseGuards(AuthGuard('jwt'))
     @Get('/user')
-    @UseGuards(AuthGuard())
     getUserByIdRequest(
         @Request() req: Request): Promise<UserProfile> {
         console.log("without an id")
@@ -32,7 +32,6 @@ export class UserProfileController {
      * @returns returns the user based on the id
      */
     @Get('/user/:id')
-    @UseGuards(AuthGuard())
     getUserById( 
         @Param('id') id: string): Promise<UserProfile> {
         console.log("I AM HERE")
