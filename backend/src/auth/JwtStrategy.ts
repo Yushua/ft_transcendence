@@ -24,6 +24,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     async validate(req: Request, payload: JwtPayload): Promise<UserProfile> {
         const { userID } = payload;
         const id = userID
+        //got some reaosn the payload is not updated. still it gets the user??? an old user?
+        //how?
         const user: UserProfile = await this.autEntityRepos.findOneBy({ id });
         console.log(user)
 

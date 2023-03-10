@@ -1,5 +1,6 @@
 import { Controller, Get, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { AuthGuardEncryption } from 'src/auth/auth.guard';
 import { UserStatus } from './user-profile-status.model';
 import { UserProfileService } from './user-profile.service';
 import { UserProfile } from './user.entity';
@@ -17,6 +18,7 @@ export class UserProfileController {
      * @returns returns the user based on the JWT authenticaiton
      */
     @UseGuards(AuthGuard('jwt'))
+    @UseGuards(AuthGuardEncryption)
     @Get('/user')
     getUserByIdRequest(
         @Request() req: Request): Promise<UserProfile> {
@@ -32,6 +34,8 @@ export class UserProfileController {
      * @returns returns the user based on the id
      */
     @Get('/user/:id')
+    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(AuthGuardEncryption)
     getUserById( 
         @Param('id') id: string): Promise<UserProfile> {
         console.log("I AM HERE")
