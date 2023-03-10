@@ -7,6 +7,7 @@ import ProfilePicture from './ProfilePicture';
 import HTTP from '../Utils/HTTP'
 
 async function asyncGetName() {
+  console.log("I am here with get username")
   const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
   var result = await JSON.parse(response)
   username = await result["username"];

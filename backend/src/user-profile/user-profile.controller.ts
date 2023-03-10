@@ -9,6 +9,8 @@ import { UserProfile } from './user.entity';
 export class UserProfileController {
     constructor(private userServices: UserProfileService) {}
     
+    //middleware 
+
     /**
      * 
      * @param username 
@@ -30,9 +32,13 @@ export class UserProfileController {
      * @returns returns the user based on the id
      */
     @Get('/user/:id')
-    getUserById(
+    @UseGuards(AuthGuard())
+    getUserById( 
         @Param('id') id: string): Promise<UserProfile> {
+        console.log("I AM HERE")
         console.log("with an id " + id)
+        if (id == "undefined")
+            return;
         return this.userServices.findUserBy(id);
     }
 
