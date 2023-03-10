@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserProfileController } from './user-profile.controller';
@@ -12,6 +13,6 @@ import { StatProfile } from './user.stat.entity';
   PassportModule.register({ defaultStrategy: 'jwt'}),
   ],
   controllers: [UserProfileController],
-  providers: [UserProfileService]
+  providers: [UserProfileService, JwtService]
 })
 export class UserProfileModule {}
