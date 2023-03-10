@@ -19,7 +19,7 @@ export class LoginController {
     @Post('/signin')
     signIn(
         @Body() authCredentialsDto: AuthCredentialsDto
-        ): Promise<{ accessToken: string, user_:UserProfile}> {
+        ): Promise<{ accessToken: string, userID:string}> {
         console.log(authCredentialsDto)
         return this.loginService.signIn(authCredentialsDto);
     }

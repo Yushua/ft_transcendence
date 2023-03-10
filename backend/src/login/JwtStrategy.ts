@@ -19,23 +19,21 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
             ignoreExpiration: false,
         })
     }
-    async validate(req: Request, payload: string): Promise<UserProfile> {
-        var id:string = payload
-        // const id = userID
+    async validate(req: Request, payload: JwtPayload): Promise<UserProfile> {
+        const { userID } = payload;
+        const id = userID
         console.log("\n\nVALIDATE ACCESS")
-        // console.log('id in validate [' + id + ']')
-        // console.log('userId in validate [' + userID + "]")
+        console.log('id in validate ' + id)
+        console.log('userId in validate ' + userID)
         console.log('payload ' + payload)
-        console.log('id ' + id)
         const user: UserProfile = await this.autEntityRepos.findOneBy({ id });
-        // console.log("VALIDATE UPDATED USER")
-        // console.log(user)
+        console.log("VALIDATE UPDATED USER")
+        console.log(user)
 
         if (!user){
             throw new UnauthorizedException();
         }
         req["user"] = user
-        console.log("END VALIDATION")
         return user;
     }
 

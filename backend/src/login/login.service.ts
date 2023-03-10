@@ -4,7 +4,7 @@ import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import * as bcrypt from 'bcrypt'
 import { UserProfile } from 'src/user-profile/user.entity';
 import { JwtPayload } from './jwt-payload.interface';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserStatus } from 'src/user-profile/user-profile-status.model';
 
@@ -49,16 +49,19 @@ export class LoginService {
         return _user;
     }
 
-    async signIn(authCredentialsDto: AuthCredentialsDto): Promise<{ accessToken: string, user_:UserProfile }> {
+    async signIn(authCredentialsDto: AuthCredentialsDto): Promise<{ accessToken: string, userID:string }> {
         const {username, password} = authCredentialsDto;
-        const user_= await this.userProfileEntityRepos.findOneBy({ username });
+        console.log("VALIDATE SIGNIN")
+        console.log('username in signin ' + username)
+        const user = await this.userProfileEntityRepos.findOneBy({ username });
 
-        if (user_&& (await bcrypt.compare(password, user_.password))) {
-            const userID = user_.id;
+        if (user && (await bcrypt.compare(password, user.password))) {
+            //create account
+            console.log('userID in signin ' + user.id)
+            const userID = user.id;
             const payload: JwtPayload = { userID };
             const accessToken: string = this.jwtService.sign(payload);
-            
-            return {accessToken, user_};
+            return {accessToken, userID};
         }
         else {
             throw new UnauthorizedException('Please check your login credentials');
