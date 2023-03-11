@@ -70,7 +70,6 @@ export default function RoomBrowser() {
 	
 	if (rooms.length === 0)
 		_updateRooms()
-	console.log(`RB ${rooms.length} ${rooms.length > 0 ? rooms[0].key : ""}`)
 	
 	return (
 		<div style={{display: "table-cell", width: "100%"}}>

@@ -18,6 +18,12 @@ export class PFPController {
 			private readonly userRepo: Repository<UserProfile>,
 	) {}
 	
+	@Get("user/:id")
+	async GetUserPFPURL(@Param("id") id: string) {
+		return this.userRepo.findOneBy({id})
+			.then(user => user.profilePicture)
+	}
+	
 	@Get(":path")
 	async GetPFP(
 		@Param("path") path: string,

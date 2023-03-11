@@ -2,13 +2,13 @@ import HTTP from "../HTTP"
 
 export default class NameStorage {
 	static StorageMetaClass = class {
-		constructor(private _urlFunc: (id: string) => string) {}
+		constructor(private _urlFunc: (id: string) => string, private defExpirationTime: number = 10000 * 60) {}
 		
 		private _nameMap = new Map<string, [string, number]>
 		
 		Get(ID: string,
 			forceUpdate: boolean = false,
-			expirationTime: number = 4200 * 60)
+			expirationTime: number | null = null)
 			: string {
 				
 			if (!forceUpdate) {
@@ -18,18 +18,19 @@ export default class NameStorage {
 			}
 			
 			const name = HTTP.Get(this._urlFunc(ID))
-			this._nameMap.set(ID, [name, Date.now() + expirationTime])
+			this._nameMap.set(ID, [name, Date.now() + (expirationTime ?? this.defExpirationTime)])
 			return name ?? ""
 		}
 		
 		Clear(ID: string)
 			{ this._nameMap.delete(ID) }
 		
-		_ManualSet(ID: string, name: string, expirationTime: number = 4200 * 60)
-			{ this._nameMap.set(ID, [name, Date.now() + expirationTime]) }
+		_ManualSet(ID: string, name: string, expirationTime: number | null = null)
+			{ this._nameMap.set(ID, [name, Date.now() + (expirationTime ?? this.defExpirationTime)]) }
 	}
 	
 	static readonly User = new this.StorageMetaClass(ID => `user-profile/username/${ID}`)
+	static readonly UserPFP = new this.StorageMetaClass(ID => `pfp/user/${ID}`)
 	static readonly Room = new this.StorageMetaClass(ID => `chat/room/${ID}/Name`)
 	
 	//#region Legacy Functions
