@@ -30,7 +30,7 @@ export class LoginService {
                 check = true;
             }
             else{
-                username = username + `${value}`
+                username = username + `_${value}`
             }
             value++
         }
