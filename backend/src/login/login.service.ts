@@ -18,13 +18,28 @@ export class LoginService {
 
     async createUser(authCredentialsDto: AuthCredentialsDto): Promise<UserProfile> {
         
-        const { username, password, eMail } = authCredentialsDto;
+        const { intraName, password } = authCredentialsDto;
         //hash
+        var check: boolean = false
+        var username:string;
+        var value:number = 0;
+        while (check == false){
+            username = intraName
+            const user = await this.userProfileEntityRepos.findOneBy({ username });
+            if (user){
+                check = true;
+            }
+            else{
+                username = username + `${value}`
+            }
+            value++
+        }
+        
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(password, salt);
-    
+        var eMail:string = ""
         const _user = this.userProfileEntityRepos.create({
-            username, password: hashedPassword, eMail, status: UserStatus.CREATION,
+            intraName, username, password: hashedPassword, status: UserStatus.CREATION, eMail
         });
         try {
             await this.userProfileEntityRepos.save(_user);
@@ -41,8 +56,8 @@ export class LoginService {
     }
 
     async signIn(authCredentialsDto: AuthCredentialsDto): Promise<{ accessToken: string, userID:string }> {
-        const {username, password} = authCredentialsDto;
-        const user = await this.userProfileEntityRepos.findOneBy({ username });
+        const { intraName, password } = authCredentialsDto;
+        const user = await this.userProfileEntityRepos.findOneBy({ intraName });
         if (user && (await bcrypt.compare(password, user.password))) {
             const userID = user.id;
             const payload: JwtPayload = { userID };

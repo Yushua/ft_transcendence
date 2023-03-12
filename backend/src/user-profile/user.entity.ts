@@ -12,6 +12,11 @@ export class UserProfile {
     @Column({
         unique: true
     })
+    intraName: string;
+
+    @Column({
+        unique: true,
+    })
     username: string;
 
     //string path towards the picture
@@ -21,9 +26,6 @@ export class UserProfile {
     @Column()
     password: string;
 
-    @Column({
-        unique: true
-    })
     eMail: string;
 
     @Column()
