@@ -7,6 +7,7 @@ import { UserProfile } from 'src/user-profile/user.entity';
 import { Repository } from 'typeorm';
 import { validateBufferMIMEType } from "validate-image-type";
 import { AuthGuard } from '@nestjs/passport';
+import { AuthGuardEncryption } from 'src/auth/auth.guard';
 
 @Controller("pfp")
 export class PFPController {
@@ -37,7 +38,7 @@ export class PFPController {
 	}
 	
 	@Post()
-	@UseGuards(AuthGuard())
+	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
 	@UseInterceptors(FileInterceptor('file'))
 	async PostPFP(
 		@Request() request: Request,

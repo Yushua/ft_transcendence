@@ -15,6 +15,7 @@ export default function ProfilePicture() {
 					return
 				const pfpURL = HTTP.Post("pfp", event.target.files[0])
 				User._user.profilePicture = pfpURL
+				NameStorage.UserPFP._ManualSet(User.ID, pfpURL)
 				setProfilePicture(pfpURL)
 			}}/>
 		</div>
