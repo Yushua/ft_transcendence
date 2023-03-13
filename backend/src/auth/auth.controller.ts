@@ -9,32 +9,35 @@ export class AuthController {
     private AuthService: AuthService,
         @Inject(REQUEST) private readonly request: Request) {}
     
-    @Get('Oauth')
-    signUpQauth(@Res() res: Response): Promise<Boolean> {
+    // @Get('Oauth')
+    // signUpQauth(@Res() res: Response): Promise<Boolean> {
         
-        return this.AuthService.OauthSystem(res);
-    }
+    //     return true;
+    // }
 
     @Get('login')
-    @Redirect(`https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-c73b865f02b3cf14638e1a50c5caa720828d13082db6ab753bdb24ca476e1a4c&redirect_uri=http%3A%2F%2Flocalhost%3A4243%2F&response_type=code`,
-        303
+    @Redirect(`https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-c73b865f02b3cf14638e1a50c5caa720828d13082db6ab753bdb24ca476e1a4c&redirect_uri=http%3A%2F%2Flocalhost%3A4242%2Fauth%2Ftoken&response_type=code`,
+        301
     )
     redirect() {}
 
     @Get('token')
     async getAuthToken(@Request() request, @Response() response):Promise<void>{
-        var Client_id:string = 'u-s4t2ud-c73b865f02b3cf14638e1a50c5caa720828d13082db6ab753bdb24ca476e1a4c'
-        var ClientSecret:string = `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`
-        var code:string //return code from function before
-        var Redirect_uri:string = "http://localhost:4243/auth/token"
-
+        // console.log(`response ${request['url']}`)
         const dataToPost = {
-            type: 'authorization_doze',
-            Client_id: 'u-s4t2ud-c73b865f02b3cf14638e1a50c5caa720828d13082db6ab753bdb24ca476e1a4c',
-            ClientSecret: `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`,
+            grant_type: 'authorization_code',
+            client_id: 'u-s4t2ud-c73b865f02b3cf14638e1a50c5caa720828d13082db6ab753bdb24ca476e1a4c',
+            client_secret: `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`,
             code: request['url'].split('code=')[1],
-            Redirect_url: "http://localhost:4243/auth/token",
+            redirect_uri: "http://localhost:4242/auth/token",
+            state: " super-secret",
         }
-        console.log(` data code back == ${dataToPost.code}`)
+        console.log(`[${dataToPost.code}]`)
+        this.AuthService.OauthSystemCodeToAccess(request, response, dataToPost);
+        //after done... go to the userprofile page. or,if email not set, set the email set page
+        //make account
+        //then go to setup account page
+        //make sure to get the URl there and then log in. this way you create the authentication 
+        //code
     }
 }
