@@ -9,9 +9,9 @@ export class Canvas extends React.Component<any, any> {
 	private	gameContext
 	// private socket:Socket
 
-	constructor(socket:Socket)
+	constructor(props:any)
 	{
-		super(socket)
+		super(props)
 		this.gameCanvas = document.getElementById("game-canvas") as HTMLCanvasElement
 		this.gameCanvas.width = 1500
 		this.gameCanvas.height = 750
@@ -20,6 +20,7 @@ export class Canvas extends React.Component<any, any> {
 	}
 	draw(gameData: GameData)
 	{
+		//draw background
 		this.gameContext.fillStyle = "#000"
 		this.gameContext.fillRect(0,0,this.gameCanvas.width,this.gameCanvas.height)
 		//draw court outline
@@ -49,10 +50,6 @@ export class Canvas extends React.Component<any, any> {
 		gameData.p1.draw(this.gameContext)
 		gameData.p2.draw(this.gameContext)
 	}
-	loop()
-	{
-
-	}
 	render()
 	{
 		if (this.props.gameData.p1_score === undefined)
@@ -61,24 +58,3 @@ export class Canvas extends React.Component<any, any> {
 		return (<></>)
 	}
 }
-// console.log('check2')
-// var canvas = new Pong('')
-
-// export class RenderPong extends React.Component<any, any> {
-// 	public static socket:Socket
-
-// 	render()
-// 	{
-// 		RenderPong.socket = this.props.socket
-// 		// console.log('data:', this.props.gameData)
-// 		if (this.props.gameData.p1_score === undefined)
-// 			return ( <h3>loading...</h3>)
-// 		canvas.draw(this.props.gameData, this.props.p1, this.props.p2, this.props.ball)
-// 		return (
-// 			<div>
-// 				<Pong socket={this.props.socket} />
-// 			</div>
-// 		)
-// 	}
-
-// }

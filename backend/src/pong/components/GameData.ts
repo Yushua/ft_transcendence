@@ -102,7 +102,7 @@ export class Paddle extends Entity
 		}
    		else
 			this.yVec = 0
-		this.y += this.yVec * this.speed
+		this.y += this.yVec * (this.speed / 2)
 	}
 	update_mouse(position:number)
 	{
@@ -111,7 +111,6 @@ export class Paddle extends Entity
 			this.y = this.gameCanvasHeight - 10 - this.height
 		if (this.y < 10)
 			this.y = 10
-
 	}
 }
 

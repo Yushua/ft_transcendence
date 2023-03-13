@@ -4,8 +4,15 @@ import { GameData,  } from './components/GameData'
 import { Canvas } from './components/Canvas'
 import update from 'immutability-helper';
 import { GameList } from './components/GameList';
+import { EmptyCanvas } from './components/EmtpyCanvas';
+import whale1 from './components/whale1.jpg'
+import User from '../../Utils/Cache/User';
+import HTTP from '../../Utils/HTTP';
+import NameStorage from '../../Utils/Cache/NameStorage';
 
 var game:Canvas
+var g_controls = ''
+
 
 export const Pong = () => {
 
@@ -19,12 +26,14 @@ export const Pong = () => {
 	const [gameList, setGameList] = React.useState(iniGameList)
 	const [showGameList, setShowGameList] = React.useState(false)
 	const [spectating, setSpectating] = React.useState(false)
-	
+	const [classicGame, setClassicGame] = React.useState(false)
+
 	React.useEffect(() => {
 
 		var keysPressed: Map<string,boolean> = new Map<string,boolean>()
 		var mousePosition:number
-
+		// empty = new Canvas(0, 0)
+		
 		/* FUNCTIONS TO UPDATE SNAPSHOTS OF DATA USED TO RENDER CANVAS */
 		function updateGameData(data:GameData)
 		{
@@ -82,7 +91,7 @@ export const Pong = () => {
 			newList = list
 			setGameList(newList)
 		}
-	
+				
 		/* INCOMING EVENTS ON SOCKET */
 		socket.on('connect', () => {
 			console.log('connected with gateway!', socket.id)
@@ -90,10 +99,11 @@ export const Pong = () => {
 		socket.on('pending', () => {
 			setPending(true)
 		})
-		socket.on('joined', () => {
-			game = new Canvas(socket)
+		socket.on('joined', (controls:string) => {
+			game = new Canvas('')
 			setInGame(true)
 			setPending(false)
+			g_controls = controls
 		})
 		socket.on('gamedata', (s_gameData:GameData) => {
 			updateGameData(s_gameData)
@@ -102,13 +112,14 @@ export const Pong = () => {
 			updateGameList(gameList)
 		})
 		socket.on('spectating', () => {
-			game = new Canvas(socket)
+			game = new Canvas('')
 			setSpectating(true)
 		})
 		socket.on('left', (s_gameData:GameData) => {
 			setPending(false)
 			setInGame(false)
 			setShowGameList(false)
+			setClassicGame(false)
 		})
 		socket.on('disconnect', () => {
 			socket.emit('user disconnected')
@@ -127,11 +138,16 @@ export const Pong = () => {
 		
 		/*  SEND DATA TO SERVER */
 		setInterval(() => {
-			if (keysPressed.get('ArrowUp'))
-				socket.emit('keyboard_movement', 1)
-			if (keysPressed.get('ArrowDown'))
-				socket.emit('keyboard_movement', -1)
-			socket.emit('mouse_movement', mousePosition)
+		// console.log('controls:', g_controls)
+			if (g_controls === 'keyboard')
+			{	
+				if (keysPressed.get('ArrowUp'))
+					socket.emit('keyboard_movement', 1)
+				if (keysPressed.get('ArrowDown'))
+					socket.emit('keyboard_movement', -1)
+			}
+			else if (g_controls === 'mouse')
+				socket.emit('mouse_movement', mousePosition)
 		}, 10)
 
 		return () => {
@@ -140,8 +156,13 @@ export const Pong = () => {
 		}
 	}, [socket])
 
-	const findGame = () => {
-		socket.emit('LFG')
+	const findGame = (controls:string) => {
+		let id = User.ID
+		let name = NameStorage.User.Get(User.ID)
+		console.log('id:', id)
+		console.log('name:', name)
+		socket.emit('LFG', {controls, id, name})
+
 	}
 	const leaveGame = () => {
 		socket.emit('leave')
@@ -149,17 +170,30 @@ export const Pong = () => {
 	const ShowGameList = () => {
 		setShowGameList(!showGameList)
 	}
-	const Return = () => {
-		socket.emit('return')
+	const isClassicGame = () => {
+		setClassicGame(!classicGame)
 	}
 
 	return (
 		<div>
 			{pending ? `Waiting for second player...` : <></>}
 			{inGame || spectating ?
-				<Canvas instance={game} socket={socket} gameData={gameData}/> : <></>}
+				<Canvas instance={game} socket={socket} gameData={gameData}/> : <EmptyCanvas/>}
 			{!inGame && !spectating ?
-				<button onClick={() => findGame()}>Join Game</button> : <></>}
+				<div className='menu-container'>
+					<div className='menu-trigger'>
+						<img src={whale1}></img>
+					</div>
+					<div className='dropdown-menu'>
+						<button onClick={() => isClassicGame()}>Join Classic Game</button>
+						{classicGame ? 
+						<ul>
+							<li className='dropdownItem'><button onClick={() => findGame('mouse')}>Mouse</button></li>
+							<li className='dropdownItem'><button onClick={() => findGame('keyboard')}>Keyboard</button></li>
+						</ul> : <></> }
+					</div>
+				</div> : <></>}
+
 			{inGame ?
 				<button onClick={() => leaveGame()}>Leave Game</button> : <></>}
 			{showGameList ?
@@ -168,19 +202,3 @@ export const Pong = () => {
 		</div>
 	)
 }
-
-
-// return (
-// 	<div>
-// 		{pending ?
-// 			 `Waiting for second player...` :
-// 		inGame || spectating ?
-// 			<Canvas instance={game} socket={socket} gameData={gameData}/> :
-// 			<button onClick={() => findGame()}>Join Game</button>}
-// 		{inGame ?
-// 			<button onClick={() => leaveGame()}>Leave Game</button> :
-// 		showGameList ?
-// 			<GameList list={gameList} socket={socket} />: 
-// 			<button onClick={() => ShowGameList()}>Game List</button>}
-// 	</div>
-// )

@@ -2,8 +2,10 @@ import { OnModuleInit } from "@nestjs/common";
 import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Server, Socket } from 'socket.io'
 import { GameData } from '../components/GameData'
+import { PongService } from "../pong.service";
 
-let queuedclient:Socket = undefined
+
+let queuedclient:[Socket, string] = [undefined, 'nope']
 let n_game_rooms:number = 0
 let game_name:string = 'game_0'
 let gamedata:GameData
@@ -15,6 +17,7 @@ let gameList:string[][] = new Array<string[]>
 let findTuple:Map<string, typeof dataIdTuple> = new Map<string, typeof dataIdTuple>
 let spectators:string[] = new Array<string>
 let updated_games:string[] = new Array<string>
+let p2Name:string
 
 @WebSocketGateway({
 	cors: {
@@ -29,29 +32,30 @@ export class MyGateway implements OnModuleInit {
 
 	onModuleInit() {
 		this.server.on('connection', (socket) => {
-			console.log(socket.id, ' connected (websocket server')
+			console.log(socket.id, ' connected (websocket server)')
 		})
 	}
 
 	@SubscribeMessage('LFG')
 	handleLFG(
+		@MessageBody() data: {controls: string, userID:string, p1Name:string},
 		@ConnectedSocket() client: Socket) {
-			// console.log(client.id)
-			if (queuedclient === undefined || client === queuedclient)
+			if (queuedclient[0] === undefined || client === queuedclient[0])
 			{
-				queuedclient = client
-				client.emit('pending')
+				queuedclient[0] = client
+				queuedclient[1] = data.controls
+				p2Name = data.p1Name
+				client.emit('pending')	
 			}
 			else
 			{
 				//create room with queue'd clientid and client.id
 				game_name = game_name.replace(n_game_rooms.toString(), (n_game_rooms+1).toString())
 				n_game_rooms++
-				// console.log(game_name)
-				client.emit('joined')
-				queuedclient.emit('joined')
-				let client2 = queuedclient
-				queuedclient = undefined
+				client.emit('joined', data.controls)
+				queuedclient[0].emit('joined', queuedclient[1])
+				let client2 = queuedclient[0]
+				queuedclient[0] = undefined
 
 				//create gameData which holds all game info client needs to render
 				gamedata = new GameData(n_game_rooms, game_name, client.id, client2.id)
@@ -62,9 +66,12 @@ export class MyGateway implements OnModuleInit {
 				roomIDs.push(client.id)
 				roomIDs.push(client2.id)
 				gameInfo.push(game_name)
-				gameInfo.push(client.id)
-				gameInfo.push(client2.id)
+				gameInfo.push(data.p1Name)
+				gameInfo.push(p2Name)
+				// console.log('p1:', data.p1Name)
+				// console.log('p2:', p2Name)
 				gameList.push(gameInfo)
+				// console.log('gamelist:', gameList)
 				dataIdTuple = [gamedata, roomIDs]
 				findTuple.set(game_name, dataIdTuple)
 				games.set(client, dataIdTuple)
