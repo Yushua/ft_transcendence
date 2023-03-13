@@ -22,7 +22,6 @@ export class GameData {
 		this.gameName = gamename
 		this.p1_name = p1name
 		this.p2_name = p2name
-
 	}
 }
 

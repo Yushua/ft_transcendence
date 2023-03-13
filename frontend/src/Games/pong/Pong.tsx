@@ -1,6 +1,6 @@
 import React from 'react'
 import { WebsocketContext } from "../contexts/WebsocketContext"
-import { GameData,  } from './components/pong_objects'
+import { GameData,  } from './components/GameData'
 import { Canvas } from './components/Canvas'
 import update from 'immutability-helper';
 import { GameList } from './components/GameList';
@@ -19,15 +19,15 @@ export const Pong = () => {
 	const [gameList, setGameList] = React.useState(iniGameList)
 	const [showGameList, setShowGameList] = React.useState(false)
 	const [spectating, setSpectating] = React.useState(false)
-		
+	
 	React.useEffect(() => {
 
 		var keysPressed: Map<string,boolean> = new Map<string,boolean>()
+		var mousePosition:number
 
 		/* FUNCTIONS TO UPDATE SNAPSHOTS OF DATA USED TO RENDER CANVAS */
 		function updateGameData(data:GameData)
 		{
-	
 			const newData = update(gameData, {
 				gameState: {$set: data.gameState},
 				gameNum: {$set: data.gameNum},
@@ -121,14 +121,18 @@ export const Pong = () => {
 		window.addEventListener('keyup', (event) => {
 			keysPressed.set(event.key, false)
 		})
-
+		window.addEventListener("mousemove", (event) => {
+			mousePosition = event.y
+		})
+		
 		/*  SEND DATA TO SERVER */
 		setInterval(() => {
 			if (keysPressed.get('ArrowUp'))
-				socket.emit('movement', 1)
+				socket.emit('keyboard_movement', 1)
 			if (keysPressed.get('ArrowDown'))
-				socket.emit('movement', -1)
-		}, 30)
+				socket.emit('keyboard_movement', -1)
+			socket.emit('mouse_movement', mousePosition)
+		}, 10)
 
 		return () => {
 			console.log('unregistering events')
@@ -158,8 +162,6 @@ export const Pong = () => {
 				<button onClick={() => findGame()}>Join Game</button> : <></>}
 			{inGame ?
 				<button onClick={() => leaveGame()}>Leave Game</button> : <></>}
-			{spectating ?
-				<button onClick={() => Return()}>Return</button> : <></>}
 			{showGameList ?
 				<GameList list={gameList} socket={socket} />: <></>}
 			{inGame ? <></> : <button onClick={() => ShowGameList()}>Game List</button>}

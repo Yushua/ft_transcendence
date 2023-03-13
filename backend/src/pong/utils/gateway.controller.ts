@@ -1,7 +1,7 @@
 import { OnModuleInit } from "@nestjs/common";
 import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Server, Socket } from 'socket.io'
-import { GameData } from '../components/pong_objects'
+import { GameData } from '../components/GameData'
 
 let queuedclient:Socket = undefined
 let n_game_rooms:number = 0
@@ -29,14 +29,14 @@ export class MyGateway implements OnModuleInit {
 
 	onModuleInit() {
 		this.server.on('connection', (socket) => {
-			console.log(socket.id, ' connected')
+			console.log(socket.id, ' connected (websocket server')
 		})
 	}
 
 	@SubscribeMessage('LFG')
 	handleLFG(
 		@ConnectedSocket() client: Socket) {
-			console.log(client.id)
+			// console.log(client.id)
 			if (queuedclient === undefined || client === queuedclient)
 			{
 				queuedclient = client
@@ -47,9 +47,7 @@ export class MyGateway implements OnModuleInit {
 				//create room with queue'd clientid and client.id
 				game_name = game_name.replace(n_game_rooms.toString(), (n_game_rooms+1).toString())
 				n_game_rooms++
-				console.log(game_name)
-				// client.join(game_name)
-				// queuedclient.join(game_name)
+				// console.log(game_name)
 				client.emit('joined')
 				queuedclient.emit('joined')
 				let client2 = queuedclient
@@ -78,19 +76,34 @@ export class MyGateway implements OnModuleInit {
 		}
 	//clients send movement events - using game map to fing the right game and its first or second
 	//ID to update either p1 or p2 of the gamedata
-	@SubscribeMessage('movement')
-	handleEvent(
+	@SubscribeMessage('keyboard_movement')
+	handleKeyboardInput(
 		@MessageBody() direction: number,
 		@ConnectedSocket() client: Socket) {
 			let game = games.get(client)
 			if (game !== undefined)
 			{
 				if (game[1][0] === client.id)
-					game[0].p1.update(direction)
+					game[0].p1.update_kb(direction)
 				if (game[1][1] === client.id)
-					game[0].p2.update(direction)
+					game[0].p2.update_kb(direction)
 			}
 	}
+
+	@SubscribeMessage('mouse_movement')
+	handleMouseMovement(
+		@MessageBody() position: number,
+		@ConnectedSocket() client: Socket) {
+			let game = games.get(client)
+			if (game !== undefined)
+			{
+				if (game[1][0] === client.id)
+					game[0].p1.update_mouse(position)
+				if (game[1][1] === client.id)
+					game[0].p2.update_mouse(position)
+			}
+	}
+
 
 	@SubscribeMessage('spectate')
 	handleSpectator(
@@ -140,6 +153,7 @@ export class MyGateway implements OnModuleInit {
 		})
 	}, 10)
 
+	//update gamedata - only once per game (games forEach loops over all clients)
 	private update_interval = setInterval(() => {
 		updated_games = []
 		games.forEach((data_id_tuple: [GameData, string[]], Client: Socket) => {
