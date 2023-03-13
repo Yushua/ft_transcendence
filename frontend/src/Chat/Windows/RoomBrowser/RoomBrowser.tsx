@@ -16,7 +16,7 @@ function _tryJoiningRoom(roomID: string, hasPass: boolean) {
 	else
 		password = "nothing"
 	
-	HTTP.asyncPatch(`chat/join/${roomID}/${ChatUser.ID}/${password}`, null, null, async mgs => {
+	HTTP.asyncPatch(`chat/join/${roomID}/${password}`, null, null, async mgs => {
 		if (mgs.responseText === "") {
 			alert("Faild to join room.")
 			return

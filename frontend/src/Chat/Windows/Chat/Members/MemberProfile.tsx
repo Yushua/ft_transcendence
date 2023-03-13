@@ -56,14 +56,15 @@ export default function MemberProfile() {
 	
 	return (
 		<>
-			{ ChatRoom.Direct ? <></> :
-				<div style={{width: "100%", display: "table"}}>
+			<div style={{width: "100%", display: "table"}}>
+				{ ChatRoom.Direct ? <></> :
 					<button
 						style={{height: ".5cm", boxSizing: "border-box"}}
 						onClick={() => ChangeMemberWindow("members")}
-						>Back</button> ProfileView
-				</div>
-			}
+						>Back</button>
+				}
+				ProfileView
+			</div>
 			
 			<div style={{overflowY: "scroll", overflowX: "hidden", width: "3.5cm", fontSize: ".45cm", height: "5cm"}}>
 				{/* Username */}

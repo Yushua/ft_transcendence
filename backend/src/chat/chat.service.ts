@@ -31,9 +31,12 @@ export class ChatService {
 		return this.chatRoomPassRepo.findOneBy({ ID: roomID })
 	}
 	
-	private async _getMsgID(roomID: string, index: number): Promise<string> {
-		if (index < 0)
-			index = (await this.GetRoom(roomID)).MessageGroupDepth + index + 1
+	private async _getMsgID(roomID: string, index: number, room: ChatRoom | null = null): Promise<string> {
+		if (index < 0) {
+			if (!room)
+				room = await this.GetRoom(roomID)
+			index = room.MessageGroupDepth + index + 1
+		}
 		return `${roomID}__${index}`
 	}
 	
@@ -53,13 +56,16 @@ export class ChatService {
 	
 	//#region RoomFrontEnd
 	
-	async EditRoom(roomID: string, roomDTO: ChatRoomDTO): Promise<void> {
+	async EditRoom(roomID: string, roomDTO: ChatRoomDTO, userID: string): Promise<void> {
 		
 		const { OwnerID, Name, Password, RoomType } =  roomDTO
 		
+		if (OwnerID !== userID)
+			throw new HttpException("", HttpStatus.UNAUTHORIZED)
+		
 		const [room, changed] = await this.ModifyRoom(roomID, async room => {
-			if (room.OwnerID !== OwnerID)
-				return false
+			if (room.OwnerID !== userID)
+				throw new HttpException("", HttpStatus.UNAUTHORIZED)
 			room.Name = Name
 			room.HasPassword = Password !== ""
 			room.RoomType = +ChatRoomType[RoomType]
@@ -75,8 +81,11 @@ export class ChatService {
 		this.Notify(`room-${roomID}`, "room")
 	}
 	
-	async UnBan(roomID: string, userID: string): Promise<void> {
+	async UnBan(roomID: string, userID: string, adminID: string): Promise<void> {
 		const [room, changed] = await this.ModifyRoom(roomID, async room => {
+			if (!room.AdminIDs.includes(adminID))
+				throw new HttpException("", HttpStatus.UNAUTHORIZED)
+			
 			const index = room.BanIDs.indexOf(userID);
 			if (index === -1)
 				return false
@@ -87,12 +96,15 @@ export class ChatService {
 			this.Notify(`room-${roomID}`, "mem")
 	}
 	
-	async Mute(roomID: string, userID: string, time: number): Promise<void> {
+	async Mute(roomID: string, userID: string, time: number, adminID: string): Promise<void> {
 		if (!Number.isInteger(time))
 			throw new HttpException(`"${time}" is not an integer`, HttpStatus.BAD_REQUEST)
 		if (time > 7 * 1000 * 60 * 60 * 24)
 			throw new HttpException(`Can't mute someone for longer then a week!`, HttpStatus.BAD_REQUEST)
 		await this.ModifyRoom(roomID, async room => {
+			if (!room.AdminIDs.includes(adminID))
+				throw new HttpException("", HttpStatus.UNAUTHORIZED)
+			
 			if (room.OwnerID === userID
 				|| room.AdminIDs.includes(userID))
 				return false
@@ -108,8 +120,11 @@ export class ChatService {
 		})
 	}
 	
-	async UnMute(roomID: string, userID: string): Promise<void> {
+	async UnMute(roomID: string, userID: string, adminID: string): Promise<void> {
 		await this.ModifyRoom(roomID, async room => {
+			if (!room.AdminIDs.includes(adminID))
+				throw new HttpException("", HttpStatus.UNAUTHORIZED)
+			
 			const index = room.MuteIDs.indexOf(userID)
 			if (index !== -1)
 				return false
@@ -147,9 +162,13 @@ export class ChatService {
 		return room.ID
 	}
 	
-	async NewRoom(roomDTO: ChatRoomDTO): Promise<string> {
+	async NewRoom(roomDTO: ChatRoomDTO, userID: string): Promise<string> {
 		
 		const { OwnerID, Name, Password, RoomType } =  roomDTO
+		
+		if (OwnerID !== userID)
+			throw new HttpException("", HttpStatus.UNAUTHORIZED)
+		
 		var room = await this.chatRoomRepo.create({
 			OwnerID, Name, HasPassword: Password !== "", RoomType: +ChatRoomType[RoomType],
 			MemberIDs:[OwnerID], AdminIDs:[OwnerID],
@@ -170,18 +189,27 @@ export class ChatService {
 		return room.ID
 	}
 	
-	async GetMessages(roomID: string, index: number): Promise<ChatMessage[]> {
+	async GetMessages(roomID: string, index: number, userID: string): Promise<ChatMessage[]> {
 		if (!Number.isInteger(index))
 			throw `${index} is not an integer`;
-		const msgGroupManager = await this.chatMessageRepo.findOneBy({ ID: await this._getMsgID(roomID, index) })
+		const room = await this.GetRoom(roomID);
+		if (!room.MemberIDs.includes(userID))
+			throw new HttpException("", HttpStatus.UNAUTHORIZED)
+		const msgGroupManager = await this.chatMessageRepo.findOneBy({ ID: await this._getMsgID(roomID, index, room) })
 		if (!msgGroupManager)
 			return []
 		return msgGroupManager.ToMessages()
 	}
 	
-	async PostNewMessage(roomID: string, msgDTO: ChatMessageDTO): Promise<string> {
+	async PostNewMessage(roomID: string, msgDTO: ChatMessageDTO, userID: string): Promise<string> {
 		
 		const { OwnerID, Message } = msgDTO
+		
+		console.log(`${OwnerID} ${userID}`)
+		
+		if (OwnerID !== userID)
+			throw new HttpException("", HttpStatus.UNAUTHORIZED)
+		
 		const msg = new ChatMessage(OwnerID, Message)
 		
 		const room = await this.GetRoom(roomID)
@@ -209,10 +237,15 @@ export class ChatService {
 		return ""
 	}
 	
-	async AddUserToRoom(roomID: string, userID: string, password: string | null): Promise<string> {
+	async AddUserToRoom(roomID: string, userID: string, password: string | null, memberID: string = ""): Promise<string> {
 		const [room, changed] = await this.ModifyRoom(roomID, async room => {
-			if (!!password && room.HasPassword && (await this.GetRoomPassword(roomID)).Password !== password)
-				return false
+			if (!!password) {
+				if (room.HasPassword && (await this.GetRoomPassword(roomID)).Password !== password)
+					return false
+			}
+			else if (!room.MemberIDs.includes(memberID))
+				throw new HttpException("", HttpStatus.UNAUTHORIZED)
+			
 			if (room.BanIDs.includes(userID) || room.MemberIDs.includes(userID))
 				return false
 			room.MemberIDs.push(userID)
@@ -267,19 +300,25 @@ export class ChatService {
 		return [user, changed]
 	}
 	
-	async MakeAdmin(roomID: string, userID: string): Promise<void> {
-		if (await this.ModifyRoom(roomID, async room => {
-			if (!room.AdminIDs.includes(userID) && room.MemberIDs.includes(userID)) {
-				room.AdminIDs.push(userID)
+	async MakeAdmin(roomID: string, memberID: string, userID: string): Promise<void> {
+		const [_, changed] = await this.ModifyRoom(roomID, async room => {
+			if (!room.AdminIDs.includes(userID))
+				throw new HttpException("", HttpStatus.UNAUTHORIZED)
+			if (!room.AdminIDs.includes(memberID) && room.MemberIDs.includes(memberID)) {
+				room.AdminIDs.push(memberID)
 				return true
 			}
 			return false
-		}))
-		this.Notify("room-" + roomID, "mem")
+		})
+		if (changed)
+			this.Notify("room-" + roomID, "mem")
 	}
 	
-	async RemoveAdmin(roomID: string, memberID: string): Promise<void> {
+	async RemoveAdmin(roomID: string, memberID: string, adminID: string): Promise<void> {
 		const [room, changed] = await this.ModifyRoom(roomID, async room => {
+			if (!room.AdminIDs.includes(adminID))
+				throw new HttpException("", HttpStatus.UNAUTHORIZED)
+			
 			var index = room.AdminIDs.indexOf(memberID);
 			if (index === -1)
 				return false
@@ -290,8 +329,11 @@ export class ChatService {
 			this.Notify(`room-${roomID}`, "mem")
 	}
 	
-	async RemoveMember(roomID: string, memberID: string, ban: boolean = false): Promise<void> {
+	async RemoveMember(roomID: string, memberID: string, ban: boolean = false, adminID: string | null): Promise<void> {
 		const [room, changed] = await this.ModifyRoom(roomID, async room => {
+			if (!!adminID && !room.AdminIDs.includes(adminID))
+				throw new HttpException("", HttpStatus.UNAUTHORIZED)
+			
 			if (room.OwnerID === memberID
 				|| room.AdminIDs.includes(memberID))
 				return false
@@ -322,7 +364,7 @@ export class ChatService {
 	async DeleteUser(userID: string): Promise<void> {
 		const user = await this.chatUserRepo.findOneBy({ ID: userID })
 		for (const roomID of user.ChatRoomsIn)
-			await this.RemoveMember(roomID, userID)
+			await this.RemoveMember(roomID, userID, false, null)
 		await this.chatUserRepo.remove(user)
 	}
 	

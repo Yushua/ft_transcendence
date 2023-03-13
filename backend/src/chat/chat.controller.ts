@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, Sse, Headers, Req, Request, Response, StreamableFile } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, Sse, Headers, Req, Request, Response, StreamableFile, UseGuards } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { ChatMessage } from './chat_entities/chat_message';
 import { ChatRoom, ChatRoomPreview } from './chat_entities/chat_room';
@@ -10,23 +10,14 @@ import { Observable } from 'rxjs';
 import { createReadStream } from "fs"
 import { join } from 'path';
 import { lookup } from 'mime-types';
+import { AuthGuard } from '@nestjs/passport';
+import { AuthGuardEncryption } from 'src/auth/auth.guard';
 
 @Controller("chat")
 export class ChatController {
 	
 	constructor (
 		private readonly service: ChatService) {}
-		
-	@Get("app/*")
-	GetRedirectToWebApp(
-		@Req() request: Request,
-		@Response({ passthrough: true }) response)
-			{ return ChatApp.GetWebAppFiles(request.url.substring(9), response)}
-	
-	@Get()
-	GetChatWebApp(
-		@Response({ passthrough: true }) response)
-			{ return ChatApp.GetWebAppFiles("index.html", response) }
 	
 	//#region Get
 	
@@ -41,12 +32,12 @@ export class ChatController {
 		@Param("userID") userID: string,
 		@Param("info") info: string)
 		: Promise<ChatUser>
-			{ return (await this.service.GetOrAddUser(userID))[info] }
+			{ return this.service.GetOrAddUser(userID).then(user => user[info]) }
 	
 	@Get("public")
 	async GetPublicRooms()
 		: Promise<ChatRoomPreview[]>
-			{ return await this.service.GetPublicRooms() }
+			{ return this.service.GetPublicRooms() }
 	
 	@Get("room/:roomID")
 	GetRoom(
@@ -59,130 +50,158 @@ export class ChatController {
 		@Param("roomID") roomID: string,
 		@Param("info") info: string)
 		: Promise<any>
-			{ return (await this.service.GetRoom(roomID))[info] }
+			{ return this.service.GetRoom(roomID).then(room => room[info]) }
 	
+	/* NEEDS A COMPLETE REWORK */
 	@Get("pass/:roomID")
 	async GetRoomPass(
 		@Param("roomID") roomID: string)
 		: Promise<any>
-			{ return (await this.service.GetRoomPassword(roomID)).Password }
-	
+			{ return this.service.GetRoomPassword(roomID).then(roomPass => roomPass.Password) }
+		
 	@Get("msg/:roomID/:index")
+	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
 	GetMessageGroup(
+		@Request() req: Request,
 		@Param("roomID") roomID: string,
 		@Param("index") index: string)
 		: Promise<ChatMessage[]>
-			{ return this.service.GetMessages(roomID, +index) }
+			{ return this.service.GetMessages(roomID, +index, req["user"].id) }
 	
 	//#endregion
 	
 	//#region Post
 	
-	@Post("direct/:userID/:memberID")
+	@Post("direct/:memberID")
+	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
 	async MakeDirectMessageGroup(
-		@Param("userID") userID: string,
+		@Request() req: Request,
 		@Param("memberID") memberID: string)
 		: Promise<string>
-			{ return await this.service.NewDirect(userID, memberID) }
+			{ return this.service.NewDirect(req["user"].id, memberID) }
 	
 	@Post("room")
+	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
 	async MakeNewRoom(
+		@Request() req: Request,
 		@Body() room: ChatRoomDTO)
 		: Promise<string>
-			{ return await this.service.NewRoom(room) }
+			{ return this.service.NewRoom(room, req["user"].id) }
 	
 	@Post("msg/:roomID")
+	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
 	async PostNewMessage(
+		@Request() req: Request,
 		@Param("roomID") roomID: string,
 		@Body() msg: ChatMessageDTO)
 		: Promise<string>
-			{ return await this.service.PostNewMessage(roomID, msg) }
+			{ return this.service.PostNewMessage(roomID, msg, req["user"].id) }
 	
 	//#endregion
 	
 	//#region Patch
 	
 	@Patch("room/:roomID")
+	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
 	async EditRoom(
+		@Request() req: Request,
 		@Param("roomID") roomID: string,
 		@Body() room: ChatRoomDTO)
 		: Promise<void>
-			{ await this.service.EditRoom(roomID, room) }
+			{ await this.service.EditRoom(roomID, room, req["user"].id) }
 	
-	@Patch("admin/:roomID/:userID")
+	@Patch("admin/:roomID/:memberID")
+	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
 	async MakeAdmin(
+		@Request() req: Request,
 		@Param("roomID") roomID: string,
-		@Param("userID") userID: string)
+		@Param("memberID") memberID: string)
 		: Promise<void>
-			{ await this.service.MakeAdmin(roomID, userID) }
+			{ await this.service.MakeAdmin(roomID, memberID, req["user"].id) }
 	
-	@Patch("join/:roomID/:userID/:pass")
+	@Patch("join/:roomID/:pass")
+	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
 	async JoinRoom(
+		@Request() req: Request,
 		@Param("roomID") roomID: string,
-		@Param("userID") userID: string,
 		@Param("pass") pass: string)
 		: Promise<string>
-			{ return await this.service.AddUserToRoom(roomID, userID, pass) }
+			{ return this.service.AddUserToRoom(roomID, req["user"].id, pass) }
 	
 	@Patch("room/:roomID/:userID")
+	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
 	async AddUser(
+		@Request() req: Request,
 		@Param("roomID") roomID: string,
 		@Param("userID") userID: string,)
 		: Promise<void>
-			{ await this.service.AddUserToRoom(roomID, userID, null) }
+			{ this.service.AddUserToRoom(roomID, userID, null, req["user"].id) }
 	
 	@Patch("unban/:roomID/:userID")
+	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
 	async UnBan(
+		@Request() req: Request,
 		@Param("roomID") roomID: string,
 		@Param("userID") userID: string)
 		: Promise<void>
-			{ await this.service.UnBan(roomID, userID) }
+			{ this.service.UnBan(roomID, userID, req["user"].id) }
 	
 	@Patch("mute/:roomID/:userID/:time")
+	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
 	async Mute(
+		@Request() req: Request,
 		@Param("roomID") roomID: string,
 		@Param("userID") userID: string,
 		@Param("time") time: string)
 		: Promise<void>
-			{ await this.service.Mute(roomID, userID, +time) }
+			{ this.service.Mute(roomID, userID, +time, req["user"].id) }
 	
 	@Patch("mute/:roomID/:userID")
+	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
 	async UnMute(
+		@Request() req: Request,
 		@Param("roomID") roomID: string,
 		@Param("userID") userID: string)
 		: Promise<void>
-			{ await this.service.UnMute(roomID, userID) }
+			{ this.service.UnMute(roomID, userID, req["user"].id) }
 	
 	//#endregion
 	
 	//#region Delete
 	
 	@Delete("member/:roomID/:memberID")
+	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
 	async KickMember(
+		@Request() req: Request,
 		@Param("roomID") roomID: string,
 		@Param("memberID") memberID: string,)
 		: Promise<void>
-			{ await this.service.RemoveMember(roomID, memberID) }
+			{ this.service.RemoveMember(roomID, memberID, false, req["user"].id) }
 	
 	@Delete("ban/:roomID/:memberID")
+	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
 	async BanMember(
+		@Request() req: Request,
 		@Param("roomID") roomID: string,
 		@Param("memberID") memberID: string,)
 		: Promise<void>
-			{ await this.service.RemoveMember(roomID, memberID, true)}
+			{ this.service.RemoveMember(roomID, memberID, true, req["user"].id)}
 	
 	@Delete("admin/:roomID/:memberID")
+	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
 	async RemoveAdmin(
+		@Request() req: Request,
 		@Param("roomID") roomID: string,
 		@Param("memberID") memberID: string,)
 		: Promise<void>
-			{ await this.service.RemoveAdmin(roomID, memberID) }
+			{ await this.service.RemoveAdmin(roomID, memberID, req["user"].id) }
 	
-	@Delete("user/:userID")
+	@Delete("user")
+	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
 	async DeleteUser(
-		@Param("userID") userID: string)
+		@Request() req: Request)
 		: Promise<void>
-			{ await this.service.DeleteUser(userID) }
+			{ await this.service.DeleteUser(req["user"].id) }
 	
 	//#endregion
 	

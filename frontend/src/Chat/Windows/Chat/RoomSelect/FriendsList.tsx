@@ -33,7 +33,7 @@ async function _changeToFriendRoom(friendID: string) {
 	if (index >= 0)
 		asyncChangeRoom(ChatUser.DirectChatsIn[index])
 	else
-		HTTP.asyncPost(`chat/direct/${ChatUser.ID}/${friendID}`, null, null, async msg => {
+		HTTP.asyncPost(`chat/direct/${friendID}`, null, null, async msg => {
 			await ChatUser.asyncUpdate(ChatUser.ID)
 			asyncChangeRoom(msg.responseText)
 		})

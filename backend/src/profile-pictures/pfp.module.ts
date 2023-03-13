@@ -15,6 +15,6 @@ import { JwtService } from '@nestjs/jwt';
 		PassportModule.register({ defaultStrategy: 'jwt'}),
 	],
 	controllers: [PFPController],
-	providers: [JwtService]
+	providers: [JwtService],
 })
 export class PFPModule {}
