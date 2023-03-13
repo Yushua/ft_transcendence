@@ -5,7 +5,6 @@ import LoginPage from '../Login/Login';
 
 export function logoutButtonRefresh() {
   removeCookie('accessToken');
-  removeCookie('userID');
   newWindow(<LoginPage />);
 }
 

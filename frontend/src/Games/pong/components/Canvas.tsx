@@ -1,6 +1,6 @@
 import React from "react"
 import { Socket } from "socket.io-client"
-import { GameData } from "./pong_objects"
+import { GameData } from "./GameData"
 
 
 export class Canvas extends React.Component<any, any> {
@@ -48,7 +48,6 @@ export class Canvas extends React.Component<any, any> {
 		gameData.ball.draw(this.gameContext)
 		gameData.p1.draw(this.gameContext)
 		gameData.p2.draw(this.gameContext)
-
 	}
 	loop()
 	{
@@ -58,8 +57,6 @@ export class Canvas extends React.Component<any, any> {
 	{
 		if (this.props.gameData.p1_score === undefined)
 			return ( <h3>loading...</h3>)
-		// console.log('ball_x:', this.props.gameData.ball.x)
-		// console.log('ball_y:', this.props.gameData.ball.y)
 		this.props.instance.draw(this.props.gameData)
 		return (<></>)
 	}

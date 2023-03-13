@@ -3,7 +3,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserProfile } from 'src/user-profile/user.entity';
-import { JwtStrategy } from './JwtStrategy';
+import { JwtStrategy } from '../auth/JwtStrategy';
 import { LoginController } from './login.controller';
 import { LoginService } from './login.service';
 

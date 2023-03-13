@@ -3,10 +3,10 @@ import { Repository } from 'typeorm';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import * as bcrypt from 'bcrypt'
 import { UserProfile } from 'src/user-profile/user.entity';
-import { JwtPayload } from './jwt-payload.interface';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserStatus } from 'src/user-profile/user-profile-status.model';
+import { JwtPayload } from 'src/auth/jwt-payload.interface';
 
 @Injectable()
 export class LoginService {
@@ -18,23 +18,14 @@ export class LoginService {
 
     async createUser(authCredentialsDto: AuthCredentialsDto): Promise<UserProfile> {
         
-        const {
-            username,
-            password,
-            eMail
-        } = authCredentialsDto;
-        console.log(authCredentialsDto);
+        const { username, password, eMail } = authCredentialsDto;
         //hash
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(password, salt);
     
         const _user = this.userProfileEntityRepos.create({
-            username,
-            password: hashedPassword,
-            eMail,
-            status: UserStatus.CREATION,
+            username, password: hashedPassword, eMail, status: UserStatus.CREATION,
         });
-        console.log(_user);
         try {
             await this.userProfileEntityRepos.save(_user);
         } catch (error) {
@@ -51,20 +42,18 @@ export class LoginService {
 
     async signIn(authCredentialsDto: AuthCredentialsDto): Promise<{ accessToken: string, userID:string }> {
         const {username, password} = authCredentialsDto;
-
         const user = await this.userProfileEntityRepos.findOneBy({ username });
-
         if (user && (await bcrypt.compare(password, user.password))) {
-            //create account
             const userID = user.id;
             const payload: JwtPayload = { userID };
-            const accessToken: string = await this.jwtService.sign(payload);
+            const accessToken: string = this.jwtService.sign(payload);
+            //only now can we validate
+            // console.log("keycode [" + accessToken + ']')
             return {accessToken, userID};
         }
         else {
             throw new UnauthorizedException('Please check your login credentials');
         }
-
     }
 
 }

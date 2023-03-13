@@ -1,5 +1,6 @@
 import { Controller, Get, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { AuthGuardEncryption } from 'src/auth/auth.guard';
 import { UserStatus } from './user-profile-status.model';
 import { UserProfileService } from './user-profile.service';
 import { UserProfile } from './user.entity';
@@ -9,17 +10,19 @@ import { UserProfile } from './user.entity';
 export class UserProfileController {
     constructor(private userServices: UserProfileService) {}
     
+    //middleware 
+
     /**
      * 
      * @param username 
      * @returns returns the user based on the JWT authenticaiton
      */
+    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     @Get('/user')
-    @UseGuards(AuthGuard())
     getUserByIdRequest(
         @Request() req: Request): Promise<UserProfile> {
-        console.log("with")
-        return this.userServices.findUserBy(req["user"].id);
+            console.log(req["user"].id);
+            return this.userServices.findUserBy(req["user"].id);
     }
 
     /**
@@ -27,10 +30,10 @@ export class UserProfileController {
      * @param usernam 
      * @returns returns the user based on the id
      */
+    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     @Get('/user/:id')
-    getUserById(
+    getUserById( 
         @Param('id') id: string): Promise<UserProfile> {
-        console.log("without")
         return this.userServices.findUserBy(id);
     }
 

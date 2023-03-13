@@ -1,4 +1,5 @@
 import { ConflictException, Injectable, InternalServerErrorException, NotFoundException, UseGuards } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -6,15 +7,12 @@ import { AddFriendListDto } from './dto/create-user.dto copy';
 import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { UserStatus } from './user-profile-status.model';
 import { UserProfile } from './user.entity';
-import { StatProfile } from './user.stat.entity';
 
 @Injectable()
 export class UserProfileService {
     constructor(
         @InjectRepository(UserProfile)
         private readonly userEntity: Repository<UserProfile>,
-        @InjectRepository(StatProfile)
-        private readonly statEntity: Repository<StatProfile>,
       ) {}
 
       async addFriendToID(userID: string, friendID: string):Promise<void>{
@@ -25,7 +23,6 @@ export class UserProfileService {
           user.friendList.forEach( (item) => {
             if(item === friendID){
               throw new NotFoundException(`Friend "${friendID}" already added`);
-              return ;
             }
           });
           user.friendList.push(friendID);
@@ -59,7 +56,6 @@ export class UserProfileService {
       } 
 
       async findUserBy(id: string): Promise<UserProfile> {
-        console.log(`should be id: ${id}`)
         const found = await this.userEntity.findOneBy({id});
         if (!found){
           throw new NotFoundException(`Task with ID "${id}" not found`);

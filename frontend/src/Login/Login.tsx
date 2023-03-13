@@ -7,11 +7,8 @@ import MainWindow from '../MainWindow/MainWindow';
 import User from '../Utils/Cache/User';
 import HTTP from '../Utils/HTTP';
 
-var error1: string = "";
-var error2: string = "";
 async function AccCreate(username: string, password: string, email:string){
   try {
-    // 👇️ const response: Response
     const response = await fetch(HTTP.HostRedirect() + 'login/signup', {
       method: 'POST',
       body: `username=${username}&password=${password}&eMail=${email}`,
@@ -22,18 +19,16 @@ async function AccCreate(username: string, password: string, email:string){
     })
     
     if (!response.ok) {
-      error1 = `Error! status: ${(await response.json()).message}`;
+      alert(`Error! status: ${(await response.json()).message}`)
       throw new Error(`Error! status: ${(await response.json()).message}`);
     }
-    console.log("hello");
     const result = (await response.json())
     
     console.log('result is: ', JSON.stringify(result, null, 4));
-    error1 = "succesfull";
     return result;
   }
   catch (e: any) {
-    error1 = e;
+    alert(e)
     console.log(e)
   }
 }
@@ -51,21 +46,17 @@ async function Acclogin(username: string, password: string, email:string) {
       },
     })
     if (!response.ok) {
-      error2 = `Error! status: ${(await response.json()).message}`;
-      throw new Error(`Error! status: ${(await response.json()).message}`);
+      alert(`Error! status: ${(await response.json()).message}`)
     }
     
     const result = (await response.json())
     
     console.log('result is: ', JSON.stringify(result, null, 4));
     var accessToken: string = result["accessToken"];
-    // cookie
     console.log('keycode: ', accessToken);
-    error2 = "succesfull";
     removeCookie('accessToken');
     setCookie('accessToken', accessToken,{ expires: 1 });
-    console.log('keycode c: ', getCookies());
-    console.log('acces: ', getCookies().accessToken);
+
     
     // Robin's changes
     await User.asyncUpdate(result["userID"])
@@ -75,7 +66,7 @@ async function Acclogin(username: string, password: string, email:string) {
     return result;
   }
   catch (e: any) {
-    console.log(e)
+    alert(e)
   }
 }
 
@@ -95,8 +86,6 @@ const handleAccCreate = (e: React.FormEvent<YourFormElement>) => {
     e.currentTarget.elements.password.value,
     e.currentTarget.elements.eMail.value);
   const errorThingy = document.getElementById("errorCode")
-  if (!!errorThingy)
-   errorThingy.innerHTML = error1
 }
 
 const handleAccLogin = (e: React.FormEvent<YourFormElement>) => {
@@ -105,18 +94,9 @@ const handleAccLogin = (e: React.FormEvent<YourFormElement>) => {
     e.currentTarget.elements.password.value,
     e.currentTarget.elements.eMail.value);
   const errorThingy = document.getElementById("errorCode")
-  if (!!errorThingy)
-    errorThingy.innerHTML = error2
 }
 
 const LoginPage: React.FC = () => {
-
-  // if (getCookie("accessToken") != null) {
-  //   //still need to check if its funcional.
-  //   //simple get http request to see if it returns an OK
-  //   newWindow(<UserProfilePage />);
-  // }
-
   return (
 
     <div className="LoginPage">
