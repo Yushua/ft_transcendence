@@ -10,6 +10,12 @@ var _logDepth = 30
 var _fillDepth = 10
 var _oldRoomID = ""
 
+function scrollDown(time: number) {
+	var log = document.getElementById("ChatLog") as HTMLElement
+	if (!!log)
+		setTimeout(() => log.scrollTop = log.scrollHeight, time)
+}
+
 export async function asyncUpdateChatLog() {
 	if (!_setChatLog)
 		return
@@ -41,7 +47,12 @@ export async function asyncUpdateChatLog() {
 			
 			for (let i = msgs.length - 1; count < target && i >= 0; i--) {
 				count++
-				newChatLog.unshift(<div key={count + _msgCount} style={{textAlign: "left"}}>{`${NameStorage.User.Get(msgs[i].OwnerID)}: ${msgs[i].Message}`}</div>)
+				newChatLog.unshift(
+					<div key={count + _msgCount} style={{textAlign: "left"}}>
+						<img src={HTTP.HostRedirect() + NameStorage.UserPFP.Get(msgs[i].OwnerID)} alt="" style={{width: ".5cm", height: ".5cm"}}/>
+						{`${NameStorage.User.Get(msgs[i].OwnerID)}: ${msgs[i].Message}`}
+					</div>
+				)
 			}
 		}
 		
@@ -55,10 +66,7 @@ export async function asyncUpdateChatLog() {
 		chatLog.unshift(<div key={`fill${fill}`}><span>&#8203;</span></div>)
 	
 	_setChatLog(chatLog)
-	
-	var log = document.getElementById("ChatLog") as HTMLElement
-	if (!!log)
-		log.scrollTop = log.scrollHeight
+	scrollDown(0)
 }
 
 var _setChatLog: React.Dispatch<React.SetStateAction<JSX.Element[]>> | null = null
@@ -78,6 +86,8 @@ export default function ChatWindow() {
 	
 	if (ChatRoom.ID === "" || chatLog.length === 0)
 		return <div style={{display: "table-cell"}}></div>
+	
+	scrollDown(100)
 	
 	return (
 		<div style={{display: "table-cell"}}>

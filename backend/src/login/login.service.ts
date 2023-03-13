@@ -48,7 +48,7 @@ export class LoginService {
             const payload: JwtPayload = { userID };
             const accessToken: string = this.jwtService.sign(payload);
             //only now can we validate
-            console.log("keycode [" + accessToken + ']')
+            // console.log("keycode [" + accessToken + ']')
             return {accessToken, userID};
         }
         else {

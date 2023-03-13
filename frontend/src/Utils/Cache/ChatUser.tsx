@@ -4,7 +4,7 @@ import { SetMainWindow } from "../../Chat/Windows/MainChatWindow";
 import ManualEventManager from "../../Events/ManualEventManager";
 
 export default class ChatUser {
-	private static _chatUser: any | null = null;
+	static _chatUser: any | null = null;
 	
 	static UpdateEvent = new ManualEventManager()
 	static ClearEvent = new ManualEventManager([ () => SetMainWindow("") ])

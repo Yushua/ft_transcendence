@@ -6,6 +6,8 @@ import { AuthModule } from './auth/auth.module';
 import { ChatModule } from './chat/chat.module';
 import { AppController } from './app.controller';
 import { GatewayModule } from './pong/utils/gateway.module';
+import { PFPController } from './profile-pictures/pfp.controller';
+import { PFPModule } from './profile-pictures/pfp.module';
 
 @Module({
   imports: [
@@ -23,7 +25,9 @@ import { GatewayModule } from './pong/utils/gateway.module';
     LoginModule,
     AuthModule,
     ChatModule,
-    GatewayModule],
+    GatewayModule,
+    PFPModule,
+  ],
   controllers: [
     AppController
   ]

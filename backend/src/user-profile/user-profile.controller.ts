@@ -21,10 +21,8 @@ export class UserProfileController {
     @Get('/user')
     getUserByIdRequest(
         @Request() req: Request): Promise<UserProfile> {
-        console.log("without an id")
-        console.log('id ' + req["user"].id)
-        console.log('username ' + req["user"].username)
-        return this.userServices.findUserBy(req["user"].id);
+            console.log(req["user"].id);
+            return this.userServices.findUserBy(req["user"].id);
     }
 
     /**
@@ -34,14 +32,8 @@ export class UserProfileController {
      */
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     @Get('/user/:id')
-    @UseGuards(AuthGuard('jwt'))
-    @UseGuards(AuthGuardEncryption)
     getUserById( 
         @Param('id') id: string): Promise<UserProfile> {
-        console.log("I AM HERE")
-        console.log("with an id " + id)
-        if (id == "undefined")
-            return;
         return this.userServices.findUserBy(id);
     }
 

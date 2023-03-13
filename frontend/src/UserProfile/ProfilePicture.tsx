@@ -1,33 +1,23 @@
 import React, { useState } from 'react';
+import HTTP from '../Utils/HTTP';
+import User from '../Utils/Cache/User';
+import NameStorage from '../Utils/Cache/NameStorage';
 
-async function handleProfilePicture (e: React.MouseEvent<HTMLButtonElement>){
-    e.preventDefault();
-    // asyncAddFriend(e.currentTarget.elements.newInput.value);
-    // const errorThingy = document.getElementById("errorCode")
-    // if (!!errorThingy)
-    //  errorThingy.innerHTML = message
-  }
-
-  /**
-   * sets the profile picture based on the id, and changed the path of the profile pciture when uploading a new picture
-    as a ResultType, the previous profile picture will be lost
-
-    the picture will be the button as a result
-   */
-var link:string = ""; 
-function ProfilePicture() {
-  const [profilePicture, setProfilePicture] = useState<boolean>(false);
-  // const [Storepicture, setStorePicture] = useState<string>("");
-  if (profilePicture === false){
-    link = "./backend"
-    setProfilePicture(true);
-  }
-    return (
-        <div>
-          {/* <img src={link} alt="Image" onClick={handleProfilePicture}/>; */}
-          hello
-        </div>
-    )
+export default function ProfilePicture() {
+	const [profilePicture, setProfilePicture] = useState<string>(User.ProfilePicture);
+	
+	return (
+		<div>
+			{/* <img src={link} alt="Image" onClick={handleProfilePicture}/>; */}
+			<img src={HTTP.HostRedirect() + NameStorage.UserPFP.Get(User.ID)} alt="" style={{width: "2cm", height: "2cm"}}/>
+			<input type="file" id="avatar" name="avatar" accept="image/png, image/jpeg, image/gif" onChange={event => {
+				if (!event.target.files)
+					return
+				const pfpURL = HTTP.Post("pfp", event.target.files[0])
+				User._user.profilePicture = pfpURL
+				NameStorage.UserPFP._ManualSet(User.ID, pfpURL)
+				setProfilePicture(pfpURL)
+			}}/>
+		</div>
+	)
 }
-
-export default ProfilePicture;

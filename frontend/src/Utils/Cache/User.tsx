@@ -4,7 +4,7 @@ import ChatUser from "./ChatUser";
 import NameStorage from "./NameStorage";
 
 export default class User {
-	private static _user: any | null = null;
+	static _user: any | null = null;
 	
 	static UpdateEvent = new ManualEventManager([ () => {ChatUser.asyncUpdate(this.ID)} ])
 	static ClearEvent = new ManualEventManager([ () => ChatUser.Clear() ])
@@ -33,4 +33,5 @@ export default class User {
 	static get Email():    string   { return this._user?.eMail ?? "" }
 	static get IconURL():  string   { return this._user?.profilePicture ?? "" }
 	static get Friends():  string[] { return this._user?.friendList ?? [] }
+	static get ProfilePicture():  string { return this._user?.profilePicture ?? "" }
 }

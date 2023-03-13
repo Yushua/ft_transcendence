@@ -56,73 +56,79 @@ export default function MemberProfile() {
 	
 	return (
 		<>
-			{ ChatRoom.Direct ? <></> :
-				<div style={{width: "100%", display: "table"}}>
+			<div style={{width: "100%", display: "table"}}>
+				{ ChatRoom.Direct ? <></> :
 					<button
 						style={{height: ".5cm", boxSizing: "border-box"}}
 						onClick={() => ChangeMemberWindow("members")}
-						>Back</button> ProfileView
+						>Back</button>
+				}
+				ProfileView
+			</div>
+			
+			<div style={{overflowY: "scroll", overflowX: "hidden", width: "3.5cm", fontSize: ".45cm", height: "5cm"}}>
+				{/* Username */}
+				
+				<img src={HTTP.HostRedirect() + NameStorage.UserPFP.Get(_memberProfileID)} alt="" style={{width: "2cm", height: "2cm"}}/>
+				
+				<div style={{width: "100%", display: "table"}}>
+					<div style={{textAlign: "left"}}>{NameStorage.User.Get(_memberProfileID)}</div>
 				</div>
-			}
-			
-			{/* Username */}
-			<div style={{width: "100%", display: "table"}}>
-				<div style={{textAlign: "left"}}>{NameStorage.User.Get(_memberProfileID)}</div>
+				
+				<div style={{width: "100%", display: "table"}}>
+					<button
+						style={{width: "100%", height: ".5cm", boxSizing: "border-box"}}
+						onClick={() => {}}
+						>View Profile</button>
+				</div>
+				<div style={{width: "100%", display: "table"}}>
+					<button
+						style={{width: "100%", height: ".5cm", boxSizing: "border-box"}}
+						onClick={() => {}}
+						>Block</button>
+				</div>
+				
+				{/* Admin Options */}
+				{ (ChatRoom.AdminIDs.includes(ChatUser.ID) && !ChatRoom.AdminIDs.includes(_memberProfileID)) ?
+					<>
+						<div style={{width: "100%", display: "table"}}>
+							<div style={{textAlign: "left"}}>Admin options:</div>
+						</div>
+						
+						<div style={{width: "100%", display: "table"}}>
+							<button
+								style={{width: "33%", height: ".5cm", boxSizing: "border-box"}}
+								onClick={Mute}
+								>Mute</button>
+							<button
+								style={{width: "33%", height: ".5cm", boxSizing: "border-box"}}
+								onClick={() => {
+									if (window.confirm(`Kick ${NameStorage.User.Get(_memberProfileID)}?`))
+										HTTP.asyncDelete(`chat/member/${ChatRoom.ID}/${_memberProfileID}`)
+								}}
+								>Kick</button>
+							<button
+								style={{width: "33%", height: ".5cm", boxSizing: "border-box"}}
+								onClick={() => {
+									if (window.confirm(`Ban ${NameStorage.User.Get(_memberProfileID)}?`))
+										HTTP.asyncDelete(`chat/ban/${ChatRoom.ID}/${_memberProfileID}`)
+								}}
+								>Ban</button>
+						</div>
+						<div style={{width: "100%", display: "table"}}>
+							<button
+								style={{width: "100%", height: ".5cm", boxSizing: "border-box"}}
+								onClick={() => {
+									if (window.confirm(`Make ${NameStorage.User.Get(_memberProfileID)} admin?`))
+										HTTP.asyncPatch(`chat/admin/${ChatRoom.ID}/${_memberProfileID}`)
+								}}
+								>Make Admin</button>
+						</div>
+					</>
+					:
+					<></>
+				}
 			</div>
-			
-			<div style={{width: "100%", display: "table"}}>
-				<button
-					style={{width: "100%", height: ".5cm", boxSizing: "border-box"}}
-					onClick={() => {}}
-					>View Profile</button>
-			</div>
-			<div style={{width: "100%", display: "table"}}>
-				<button
-					style={{width: "100%", height: ".5cm", boxSizing: "border-box"}}
-					onClick={() => {}}
-					>Block</button>
-			</div>
-			
-			{/* Admin Options */}
-			{ (ChatRoom.AdminIDs.includes(ChatUser.ID) && !ChatRoom.AdminIDs.includes(_memberProfileID)) ?
-				<>
-					<div style={{width: "100%", display: "table"}}>
-						<div style={{textAlign: "left"}}>Admin options:</div>
-					</div>
-					
-					<div style={{width: "100%", display: "table"}}>
-						<button
-							style={{width: "33%", height: ".5cm", boxSizing: "border-box"}}
-							onClick={Mute}
-							>Mute</button>
-						<button
-							style={{width: "33%", height: ".5cm", boxSizing: "border-box"}}
-							onClick={() => {
-								if (window.confirm(`Kick ${NameStorage.User.Get(_memberProfileID)}?`))
-									HTTP.asyncDelete(`chat/member/${ChatRoom.ID}/${_memberProfileID}`)
-							}}
-							>Kick</button>
-						<button
-							style={{width: "33%", height: ".5cm", boxSizing: "border-box"}}
-							onClick={() => {
-								if (window.confirm(`Ban ${NameStorage.User.Get(_memberProfileID)}?`))
-									HTTP.asyncDelete(`chat/ban/${ChatRoom.ID}/${_memberProfileID}`)
-							}}
-							>Ban</button>
-					</div>
-					<div style={{width: "100%", display: "table"}}>
-						<button
-							style={{width: "100%", height: ".5cm", boxSizing: "border-box"}}
-							onClick={() => {
-								if (window.confirm(`Make ${NameStorage.User.Get(_memberProfileID)} admin?`))
-									HTTP.asyncPatch(`chat/admin/${ChatRoom.ID}/${_memberProfileID}`)
-							}}
-							>Make Admin</button>
-					</div>
-				</>
-				:
-				<></>
-			}
 		</>
 	)
 }

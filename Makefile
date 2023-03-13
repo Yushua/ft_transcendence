@@ -34,6 +34,8 @@ setup:
 	npm i --save socket.io
 	npm i --save @nestjs/websockets
 	npm i --save @nestjs/platform-socket.io
+	npm i -D @types/multer @nestjs/platform-express
+	npm install validate-image-type
 
 react:
 	npm i --save typescript @types/node @types/react @types/react-dom @types/jest
