@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import './App.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import LoginPage from './Login/Login';
-import OAuthLoginPage from './Login/LoginOAuth';
+import SetupLogin from './Login/SetupLogin';
 
 export function newWindow(newWindow:JSX.Element) {
   if (!!_setWindow)
@@ -11,9 +10,9 @@ export function newWindow(newWindow:JSX.Element) {
 
 var _setWindow: React.Dispatch<React.SetStateAction<JSX.Element>> | null = null
 
-const App = () => {
+function App(){
 
-  const [window, setWindow] = useState<JSX.Element>(<OAuthLoginPage />)
+  const [window, setWindow] = useState<JSX.Element>(<SetupLogin />)
   _setWindow = setWindow
 
   return (

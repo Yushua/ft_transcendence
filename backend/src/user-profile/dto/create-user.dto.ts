@@ -8,9 +8,6 @@ export class CreateUserDto {
     })
     username: string;
 
-    @IsNotEmpty()
-    password: string;
-
     @Column({
         unique: true
     })

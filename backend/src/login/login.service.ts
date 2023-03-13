@@ -18,7 +18,7 @@ export class LoginService {
 
     async createUser(authCredentialsDto: AuthCredentialsDto): Promise<UserProfile> {
         
-        const { intraName, password } = authCredentialsDto;
+        const { intraName } = authCredentialsDto;
         //hash
         var check: boolean = false
         var username:string;
@@ -36,10 +36,10 @@ export class LoginService {
         }
         
         const salt = await bcrypt.genSalt();
-        const hashedPassword = await bcrypt.hash(password, salt);
+        // const hashedPassword = await bcrypt.hash(password, salt);
         var eMail:string = ""
         const _user = this.userProfileEntityRepos.create({
-            intraName, username, password: hashedPassword, status: UserStatus.CREATION, eMail
+            intraName, username, status: UserStatus.CREATION, eMail
         });
         try {
             await this.userProfileEntityRepos.save(_user);
@@ -56,9 +56,9 @@ export class LoginService {
     }
 
     async signIn(authCredentialsDto: AuthCredentialsDto): Promise<{ accessToken: string, userID:string }> {
-        const { intraName, password } = authCredentialsDto;
+        const { intraName } = authCredentialsDto;
         const user = await this.userProfileEntityRepos.findOneBy({ intraName });
-        if (user && (await bcrypt.compare(password, user.password))) {
+        if (user ) {
             const userID = user.id;
             const payload: JwtPayload = { userID };
             const accessToken: string = this.jwtService.sign(payload);

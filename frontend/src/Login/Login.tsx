@@ -7,11 +7,11 @@ import MainWindow from '../MainWindow/MainWindow';
 import User from '../Utils/Cache/User';
 import HTTP from '../Utils/HTTP';
 
-async function AccCreate(username: string, password: string, email:string){
+async function AccCreate(username: string){
   try {
     const response = await fetch(HTTP.HostRedirect() + 'login/signup', {
       method: 'POST',
-      body: `username=${username}&password=${password}&eMail=${email}`,
+      body: `username=${username}`,
       headers: {
         Accept: 'application/json',
         'Content-Type': "application/x-www-form-urlencoded",
@@ -34,12 +34,12 @@ async function AccCreate(username: string, password: string, email:string){
 }
 
 //when account created, returns the token that I need to use
-async function Acclogin(username: string, password: string, email:string) {
+async function Acclogin(username: string) {
   try {
     // 👇️ const response: Response
     const response = await fetch(HTTP.HostRedirect() + 'login/signin', {
       method: 'POST',
-      body: `username=${username}&password=${password}&eMail=${email}`,
+      body: `username=${username}`,
       headers: {
         Accept: 'application/json',
         'Content-Type': "application/x-www-form-urlencoded",
@@ -82,17 +82,13 @@ interface YourFormElement extends HTMLFormElement {
 
 const handleAccCreate = (e: React.FormEvent<YourFormElement>) => {
   e.preventDefault();
-  AccCreate(e.currentTarget.elements.username.value,
-    e.currentTarget.elements.password.value,
-    e.currentTarget.elements.eMail.value);
+  AccCreate(e.currentTarget.elements.username.value);
   const errorThingy = document.getElementById("errorCode")
 }
 
 const handleAccLogin = (e: React.FormEvent<YourFormElement>) => {
   e.preventDefault();
-  Acclogin(e.currentTarget.elements.username.value,
-    e.currentTarget.elements.password.value,
-    e.currentTarget.elements.eMail.value);
+  Acclogin(e.currentTarget.elements.username.value);
   const errorThingy = document.getElementById("errorCode")
 }
 

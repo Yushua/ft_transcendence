@@ -7,18 +7,40 @@ import MainWindow from '../MainWindow/MainWindow';
 import User from '../Utils/Cache/User';
 import HTTP from '../Utils/HTTP';
 
-async function Qauthentication(intraname: string, password: string){
-  var client_id:string = 'u-s4t2ud-c73b865f02b3cf14638e1a50c5caa720828d13082db6ab753bdb24ca476e1a4c'
-  var redirect_uri:string = "http://localhost:4243/"
-  var scope:string = "public"
-  var state:string = ""
-  var response_type:string = ""
-  var token:string = "https://api.up42.com/oauth/token";//to get a tmp token to use
-  var QauthResponseGet:string = `https://api.intra.42.fr/oauth/authorize`
+async function Qauthentication(){
+  //body: `client_ide=${client_id}&redirect_uri=${redirect_uri}&scope=${scope}&state=${state}&response_type=${response_type}`,
   try {
-    const response = await fetch('https://api.intra.42.fr/oauth/authorize', {
+    console.log(HTTP.HostRedirect() + 'auth/login')
+    const response = await fetch(HTTP.HostRedirect() + 'auth/login', {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json', 
+        'Content-Type': "application/x-www-form-urlencoded",
+      },
+      // credentials: "include",
+      // mode: "no-cors"
+    })
+    
+    if (!response.ok) {
+      alert(`Error! status: ${(await response.json()).message}`)
+      throw new Error(`Error! status: ${(await response.json()).message}`);
+    }
+    const result = (await response.json())
+    console.log(`Get Token Result == ${result}`);
+    console.log('result is: ', JSON.stringify(result, null, 4));
+    return result;
+  }
+  catch (e: any) {
+    alert(e)
+    console.log(e)
+  }
+}
+
+async function GetToken(token: string){
+  try {
+    const response = await fetch('https://api.intra.42.fr/oauth/' + token,{
       method: 'POST',
-      body: `client_ide=${client_id}&redirect_uri=${redirect_uri}&scope=${scope}&state=${state}&response_type=${response_type}`,
+      body: ``,
       headers: {
         Accept: 'application/json',
         'Content-Type': "application/x-www-form-urlencoded",
@@ -30,7 +52,7 @@ async function Qauthentication(intraname: string, password: string){
       throw new Error(`Error! status: ${(await response.json()).message}`);
     }
     const result = (await response.json())
-    
+    console.log(`Token Result == ${result}`);
     console.log('result is: ', JSON.stringify(result, null, 4));
     return result;
   }
@@ -112,11 +134,10 @@ interface YourFormElement extends HTMLFormElement {
  readonly elements: FormElements
 }
 
-const handleAccLogin = (e: React.FormEvent<YourFormElement>) => {
+const handleAccLogin = (e: any) => {
   e.preventDefault();
   console.log("hello")
-  console.log(`${ e.currentTarget.elements.password.value} ${e.currentTarget.elements.intraname.value}`)
-  // Qauthentication(e.currentTarget.elements.intraname.value, e.currentTarget.elements.password.value)
+  Qauthentication()
   /*
     check if the person is already logged in
     send to userProfile
@@ -136,26 +157,17 @@ const handleAccLogin = (e: React.FormEvent<YourFormElement>) => {
  */
 }
 
-function OAuthLoginPage(){
-
-  const [shown, setShown] = React.useState(false);
-
+function OAuthLoginpageV2(){
   return (
 
-    <div className="LoginPage">
+    <div className="LoginpageV2">
        <span className="heading">
           </span>
           <form onSubmit={( handleAccLogin)}>
-          <div>
-            <label htmlFor="intraname">intraname:</label>
-            <input id="intraname" type="text" />
-            <label htmlFor="password">Password:</label>
-            <input id="password" type={shown ? "text" : "password"} />
-          </div>
-            <button type="submit">Submit</button>
+          <button type="submit">Login</button>
           </form>
     </div>
   );
 }
 
-export default OAuthLoginPage;
+export default OAuthLoginpageV2;

@@ -20,7 +20,6 @@ export async function asyncChangeName(newUsername:string) {
 
 interface FormElements extends HTMLFormControlsCollection {
   username: HTMLInputElement
-  password: HTMLInputElement
   eMail: HTMLInputElement
   newInput: HTMLInputElement
 }

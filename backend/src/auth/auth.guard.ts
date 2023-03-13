@@ -19,13 +19,14 @@ export class AuthGuardEncryption implements CanActivate {
     acording to the http request, we're sending a user. which is the Yusha user if you log in at first...
     that shou... not be there?
 */
-  async validateRequest(request: any): Promise<boolean> {
+  async validateRequest(request: Request): Promise<boolean> {
     var tmp: boolean = true
     console.log("I am in validationrequest")
     // console.log(request)
     console.log(typeof(request))
     var keys = Object.keys(request)
     var tmpObject: object = request['rawHeaders']
+    console.log(request.headers.get("Authorization"))
     // console.log("rawHeaders", request["rawHeaders"])
     console.log("rawHeaders", tmpObject)
     console.log("request authentication [" + keys + ']')
