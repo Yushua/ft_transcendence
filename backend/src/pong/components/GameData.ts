@@ -86,7 +86,7 @@ class Entity
 
 export class Paddle extends Entity
 {
-	update(direction:number)
+	update_kb(direction:number)
 	{
 		if (direction === 1)
 		{
@@ -103,6 +103,15 @@ export class Paddle extends Entity
    		else
 			this.yVec = 0
 		this.y += this.yVec * this.speed
+	}
+	update_mouse(position:number)
+	{
+		this.y = position
+		if (this.y > this.gameCanvasHeight - 10 - this.height)
+			this.y = this.gameCanvasHeight - 10 - this.height
+		if (this.y < 10)
+			this.y = 10
+
 	}
 }
 
@@ -160,7 +169,7 @@ export class Ball extends Entity
 		}
 	
 		//check left canvas bounds
-		if (this.x <= 0)
+		if (this.x <= 10)
 		{ 
 			this.x = this.gameCanvasWidth / 2 - this.height / 2
 			this.y = this.gameCanvasHeight / 2 - this.width / 2
@@ -175,7 +184,7 @@ export class Ball extends Entity
 		}
 
 		//check right canvas bounds
-		if (this.x + this.height >= this.gameCanvasWidth)
+		if (this.x + this.width >= this.gameCanvasWidth - 10)
 		{
 			this.x = this.gameCanvasWidth / 2 - this.height / 2
 			this.y = this.gameCanvasHeight / 2 - this.width / 2
@@ -185,7 +194,7 @@ export class Ball extends Entity
 				this.yVec = 1
 			else
 				this.yVec = -1
-			this.speed = 2
+			this.speed = 3
 			return 'p1_scored'
 		}
 
@@ -209,8 +218,8 @@ export class Ball extends Entity
 				}
 				else
 					this.yVec = 0
+				this.speed = 9
 			}
-			this.speed = 8
 		}
 
 		//check player2 collision
@@ -233,8 +242,8 @@ export class Ball extends Entity
 				}
 				else
 					this.yVec = 0
+				this.speed = 9
 			}
-			this.speed = 8
 		}
 		this.x += this.xVec * this.speed
 		this.y += this.yVec * this.speed
