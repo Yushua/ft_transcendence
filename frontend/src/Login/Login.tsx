@@ -6,6 +6,7 @@ import { newWindow } from '../App';
 import MainWindow from '../MainWindow/MainWindow';
 import User from '../Utils/Cache/User';
 import HTTP from '../Utils/HTTP';
+import { EmptyCanvas } from '../Games/pong/components/EmtpyCanvas';
 
 async function AccCreate(username: string, password: string, email:string){
   try {
@@ -98,8 +99,8 @@ const handleAccLogin = (e: React.FormEvent<YourFormElement>) => {
 
 const LoginPage: React.FC = () => {
   return (
-
     <div className="LoginPage">
+        <EmptyCanvas/>
         <span className="heading">
           Create Account
         </span>
