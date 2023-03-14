@@ -143,11 +143,48 @@ export class MyGateway implements OnModuleInit {
 				games.delete(client)
 			this.server.to(client.id).emit('left')
 		}
+}
 
-	//send data to clients
-	private emit_interval = setInterval(() => {
-		//send game data to all clients currently in a game
-		games.forEach((data_id_tuple: [GameData, string[]], Client: Socket) => {
+//update gamedata - only once per game (games forEach loops over all clients)
+
+async function GameUpdateLoop() {
+	
+	const startTime = Date.now()
+	
+	const updated_games = {} // Make sure games don't get updated twice
+	const await_game_updates = [] // Array of game update promises
+	
+	for (var game of games) {
+		
+		const gamaData: GameData = game[1][0]
+		
+		/* Make sure games don't get updated twice */
+		const gameName: string = gamaData.gameName
+		if (!updated_games[gameName]) {
+			updated_games[gameName] = true
+			
+			/* Update game asyncronosly and add to await array */
+			await_game_updates.push((async () => {
+				gamaData.update(gamaData.ball.update(gamaData.p1, gamaData.p2))
+				this.server.emit('gamelist', gameList)
+			})())
+		}
+	}
+	
+	/* Await all game updates */
+	await Promise.all(await_game_updates)
+	
+	//send game data to all clients currently in a game
+	
+	// for (const game of games) {
+	// 	const gamaData: GameData = game[1][0]
+	// 	const gamaData: GameData = game[1][0]
+		
+		
+		
+	// }
+	
+	games.forEach((data_id_tuple: [GameData, string[]], Client: Socket) => {
 		this.server.to(Client.id).emit('gamedata', data_id_tuple[0])
 		if (data_id_tuple[0].gameState === 'p1_won' || data_id_tuple[0].gameState === 'p2_won')
 		{
@@ -157,20 +194,11 @@ export class MyGateway implements OnModuleInit {
 		}
 		//send gamelist to all clients
 		this.server.emit('gamelist', gameList)
-		})
-	}, 10)
-
-	//update gamedata - only once per game (games forEach loops over all clients)
-	private update_interval = setInterval(() => {
-		updated_games = []
-		games.forEach((data_id_tuple: [GameData, string[]], Client: Socket) => {
-
-			let index = updated_games.indexOf(data_id_tuple[0].gameName)
-			if (index === -1)
-			{
-				data_id_tuple[0].update(data_id_tuple[0].ball.update(data_id_tuple[0].p1, data_id_tuple[0].p2))
-				updated_games.push(data_id_tuple[0].gameName)
-			}
-		})
-	}, 10)
+	})
+	
+	/* Make sure games update in set intervals */
+	const endTime = Date.now()
+	const delta = endTime - startTime
+	setTimeout(GameUpdateLoop, Math.max(0, 20 - delta))
 }
+GameUpdateLoop()

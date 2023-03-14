@@ -1,3 +1,5 @@
+import { normalize } from "path"
+
 export class GameData {
 	gameState: string
 	gameNum: number
@@ -47,9 +49,11 @@ class Entity
 {
 	x:number
 	y:number
-	xVec:number = 0
-	yVec:number = 0
+	xVec:number
+	yVec:number
 	speed:number
+	initialSpeed = 10
+	acceleration = .5
 	gameCanvasWidth:number
 	gameCanvasHeight:number
 	wallOffset:number
@@ -69,7 +73,7 @@ class Entity
 		this.gameCanvasWidth = gameCanvasWidth
 		this.gameCanvasHeight = gameCanvasHeight
 		this.wallOffset = wallOffset
-		this.speed = speed
+		this.speed = this.initialSpeed
 		this.width = width
 		this.height = height
 		this.y = this.gameCanvasHeight / 2 - this.height / 2
@@ -178,7 +182,7 @@ export class Ball extends Entity
 				this.yVec = 1
 			else
 				this.yVec = -1
-			this.speed = 3
+			this.speed = this.initialSpeed
 			return 'p2_scored'
 		}
 
@@ -193,7 +197,7 @@ export class Ball extends Entity
 				this.yVec = 1
 			else
 				this.yVec = -1
-			this.speed = 3
+			this.speed = this.initialSpeed
 			return 'p1_scored'
 		}
 
@@ -217,7 +221,7 @@ export class Ball extends Entity
 				}
 				else
 					this.yVec = 0
-				this.speed = 9
+				this.speed += this.acceleration
 			}
 		}
 
@@ -241,13 +245,12 @@ export class Ball extends Entity
 				}
 				else
 					this.yVec = 0
-				this.speed = 9
+				this.speed += this.acceleration
 			}
 		}
-		this.x += this.xVec * this.speed
-		this.y += this.yVec * this.speed
+		var magnatude = Math.sqrt(this.xVec**2 + this.yVec**2) // Used to normalize vector
+		this.x += (this.xVec) / magnatude * this.speed
+		this.y += (this.yVec) / magnatude * this.speed
 		return ''
 	}
 }
-
-

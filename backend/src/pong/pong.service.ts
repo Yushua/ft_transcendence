@@ -10,8 +10,8 @@ import { UserProfileModule } from '../user-profile/user-profile.module';
 export class PongService {
 	constructor( 
 		@InjectRepository(PongRoom) private readonly GameRoomRepos: Repository<PongRoom>,
-		@InjectRepository(PongRoom) private readonly UserRepo: Repository<UserProfile>,
-		) { PongService._userRepo = UserRepo }
+		@InjectRepository(UserProfile) private readonly UserRepo: Repository<UserProfile>,
+		) { PongService._userRepo = this.UserRepo }
 
 	static async stopGame(userWonID: string) {
 		var user = await this._userRepo.findOneBy({id: userWonID})
