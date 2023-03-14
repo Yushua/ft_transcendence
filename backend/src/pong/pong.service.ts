@@ -5,20 +5,28 @@ import { Repository } from 'typeorm'
 import { PongRoom } from './components/pong_room'
 import { GameRoomDTO } from './dto/pong_room.dto'
 import { UserProfileModule } from '../user-profile/user-profile.module';
+import { StatProfile } from 'src/user-profile/user.stat.entity'
 
 @Injectable()
 export class PongService {
 	constructor( 
 		@InjectRepository(PongRoom) private readonly GameRoomRepos: Repository<PongRoom>,
-		@InjectRepository(PongRoom) private readonly UserRepo: Repository<UserProfile>,
-		) { PongService._userRepo = UserRepo }
+		// @InjectRepository(UserProfile) private readonly UserRepo: Repository<UserProfile>,
+		@InjectRepository(StatProfile) private readonly StatProfileRepo: Repository<StatProfile>
+		) {
+			PongService._statProfileRepo = StatProfileRepo
+		}
 
-	static async stopGame(userWonID: string) {
-		var user = await this._userRepo.findOneBy({id: userWonID})
-		await this._userRepo.save(user);
+	static async updateWinLoss(userWonID: string, userLostID:string) {
+		var winner = await this._statProfileRepo.findOneBy({id: userWonID})
+		var loser = await this._statProfileRepo.findOneBy({id: userLostID})
+		loser.losses++
+		winner.wins++
+		await this._statProfileRepo.save(winner);
+		await this._statProfileRepo.save(loser);
 	}
 
-	private static _userRepo: Repository<UserProfile>
+	private static _statProfileRepo: Repository<StatProfile>
 	
 	// async	createGame(PlayerIDs: string[], GameName: string, GameType: GameType, GameRoomType:	GameRoomType): Promise<GameRoom> {
     async	createGame(gameDTO: GameRoomDTO): Promise<PongRoom> {

@@ -157,11 +157,9 @@ export const Pong = () => {
 	}, [socket])
 
 	const findGame = (controls:string) => {
-		let id = User.ID
-		let name = NameStorage.User.Get(User.ID)
-		console.log('id:', id)
-		console.log('name:', name)
-		socket.emit('LFG', {controls, id, name})
+		let userID = User.ID
+		let userName = NameStorage.User.Get(User.ID)
+		socket.emit('LFG', {controls, userID, userName})
 
 	}
 	const leaveGame = () => {

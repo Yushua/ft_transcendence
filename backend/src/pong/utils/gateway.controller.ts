@@ -38,13 +38,13 @@ export class MyGateway implements OnModuleInit {
 
 	@SubscribeMessage('LFG')
 	handleLFG(
-		@MessageBody() data: {controls: string, userID:string, p1Name:string},
+		@MessageBody() data: {controls: string, userID:string, userName:string},
 		@ConnectedSocket() client: Socket) {
 			if (queuedclient[0] === undefined || client === queuedclient[0])
 			{
 				queuedclient[0] = client
 				queuedclient[1] = data.controls
-				p2Name = data.p1Name
+				p2Name = data.userName
 				client.emit('pending')	
 			}
 			else
@@ -66,19 +66,15 @@ export class MyGateway implements OnModuleInit {
 				roomIDs.push(client.id)
 				roomIDs.push(client2.id)
 				gameInfo.push(game_name)
-				gameInfo.push(data.p1Name)
+				gameInfo.push(data.userName)
 				gameInfo.push(p2Name)
-				// console.log('p1:', data.p1Name)
-				// console.log('p2:', p2Name)
 				gameList.push(gameInfo)
-				// console.log('gamelist:', gameList)
 				dataIdTuple = [gamedata, roomIDs]
 				findTuple.set(game_name, dataIdTuple)
 				games.set(client, dataIdTuple)
 				games.set(client2, dataIdTuple)
 				roomIDs = []
 				gameInfo = []
-
 			}
 		}
 	//clients send movement events - using game map to fing the right game and its first or second
@@ -151,6 +147,12 @@ export class MyGateway implements OnModuleInit {
 		this.server.to(Client.id).emit('gamedata', data_id_tuple[0])
 		if (data_id_tuple[0].gameState === 'p1_won' || data_id_tuple[0].gameState === 'p2_won')
 		{
+			//update database with win/loss for users
+			if (data_id_tuple[0].gameState === 'p1_won')
+				PongService.updateWinLoss(data_id_tuple[1][0], data_id_tuple[1][1])
+			else
+				PongService.updateWinLoss(data_id_tuple[1][1], data_id_tuple[1][0])
+			//delete clients from active game list and from games map to stop sending data
 			games.delete(Client)
 			let index = gameList.indexOf([data_id_tuple[0].gameName, data_id_tuple[1][0], data_id_tuple[1][1]])
 			gameList.splice(index, 1)
