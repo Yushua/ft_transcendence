@@ -1,4 +1,4 @@
-import { Controller, FileTypeValidator, Get, HttpException, HttpStatus, MaxFileSizeValidator, Param, ParseFilePipe, Post, Request, Response, StreamableFile, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Controller, FileTypeValidator, Get, HttpException, HttpStatus, MaxFileSizeValidator, Param, ParseFilePipe, Post, Delete, Request, Response, StreamableFile, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express'
 import { lookup, extension } from 'mime-types';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -18,6 +18,12 @@ export class PFPController {
 		@InjectRepository(UserProfile)
 			private readonly userRepo: Repository<UserProfile>,
 	) {}
+	
+	//#region DEBUG
+	
+	@Delete() deleteAll() { return this.pfpRepo.delete({}) }
+	
+	//#endregion
 	
 	@Get("user/:id")
 	async GetUserPFPURL(@Param("id") id: string) {
@@ -78,9 +84,9 @@ export class PFPController {
 		await this.userRepo.save(user)
 		
 		/* Delete old PFP if no User is using it */
-		const res: [] = await this.userRepo.query(`SELECT 1 FROM user_profile WHERE "profilePicture" = '${pfpOldURL}';`)
-		if (res.length === 0)
-			this.pfpRepo.delete({ID: pfpOldURL.substring(4, pfpOldURL.lastIndexOf('.'))})
+		this.userRepo.query(`SELECT 1 FROM user_profile WHERE "profilePicture" = '${pfpOldURL}';`)
+			.then(res => res.length === 0 && this.pfpRepo.delete({ID: pfpOldURL.substring(4, pfpOldURL.lastIndexOf('.'))}) )
+			.catch()
 		
 		return pfpURL
 	}
