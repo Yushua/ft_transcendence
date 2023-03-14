@@ -10,9 +10,9 @@ export class StatProfile {
     @Column()
     gameName: string;
     @Column()
-    wins: Number;
+    wins: number;
     @Column()
-    losses: Number;
+    losses: number;
     
     @ManyToOne((_type) => UserProfile, user => user.stat, { eager: false})
     user: UserProfile[];

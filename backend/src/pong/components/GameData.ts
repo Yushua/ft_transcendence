@@ -37,7 +37,7 @@ export class GameData {
 		else if (event === 'p2_scored')
 		{
 			this.p2_score++
-			if (this.p2_score === 11	)
+			if (this.p2_score === 11)
 			{
 				this.gameState = 'p2_won'
 			}

@@ -5,17 +5,27 @@ import { Repository } from 'typeorm'
 import { PongRoom } from './components/pong_room'
 import { GameRoomDTO } from './dto/pong_room.dto'
 import { UserProfileModule } from '../user-profile/user-profile.module';
+import { StatProfile } from 'src/user-profile/user.stat.entity'
 
 @Injectable()
 export class PongService {
 	constructor( 
 		@InjectRepository(PongRoom) private readonly GameRoomRepos: Repository<PongRoom>,
 		@InjectRepository(UserProfile) private readonly UserRepo: Repository<UserProfile>,
-		) { PongService._userRepo = this.UserRepo }
+		// @InjectRepository(StatProfile) private readonly StatProfileRepo: Repository<StatProfile>
+		) {
+			PongService._userRepo = UserRepo
+		}
 
-	static async stopGame(userWonID: string) {
-		var user = await this._userRepo.findOneBy({id: userWonID})
-		await this._userRepo.save(user);
+	static async updateWinLoss(userWonID: string, userLostID:string) {
+		console.log('userWonID', userWonID)
+		console.log('userLostID', userLostID)
+		var winner = await this._userRepo.findOneBy({id: userWonID})
+		var loser = await this._userRepo.findOneBy({id: userLostID})
+		loser.losses++
+		winner.wins++
+		await this._userRepo.save(winner);
+		await this._userRepo.save(loser);
 	}
 
 	private static _userRepo: Repository<UserProfile>

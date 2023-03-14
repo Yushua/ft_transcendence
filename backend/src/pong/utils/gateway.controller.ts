@@ -10,7 +10,7 @@ let n_game_rooms:number = 0
 let game_name:string = 'game_0'
 let gamedata:GameData
 let games:Map<Socket, [GameData, string[]]> = new Map<Socket,[GameData,string[]]>
-let roomIDs:string[] = new Array<string>
+let gameIDs:string[] = new Array<string>
 let dataIdTuple: [GameData, string[]]
 let gameInfo:string[] = new Array<string>
 let gameList:string[][] = new Array<string[]>
@@ -18,6 +18,7 @@ let findTuple:Map<string, typeof dataIdTuple> = new Map<string, typeof dataIdTup
 let spectators:string[] = new Array<string>
 let updated_games:string[] = new Array<string>
 let p2Name:string
+let p2UserID:string
 
 @WebSocketGateway({
 	cors: {
@@ -38,13 +39,14 @@ export class MyGateway implements OnModuleInit {
 
 	@SubscribeMessage('LFG')
 	handleLFG(
-		@MessageBody() data: {controls: string, userID:string, p1Name:string},
+		@MessageBody() data: {controls: string, userID:string, userName:string},
 		@ConnectedSocket() client: Socket) {
 			if (queuedclient[0] === undefined || client === queuedclient[0])
 			{
 				queuedclient[0] = client
 				queuedclient[1] = data.controls
-				p2Name = data.p1Name
+				p2Name = data.userName
+				p2UserID = data.userID
 				client.emit('pending')	
 			}
 			else
@@ -58,27 +60,25 @@ export class MyGateway implements OnModuleInit {
 				queuedclient[0] = undefined
 
 				//create gameData which holds all game info client needs to render
-				gamedata = new GameData(n_game_rooms, game_name, client.id, client2.id)
+				gamedata = new GameData(n_game_rooms, game_name, data.userName, p2Name)
 
 				//add this game with the client IDs to a gamelist and insert <client, [data, IDs]> in a map which
 				//can be used to access the right gamedata for movement events by clients, and based on ID order
 				//update the correct Paddle (first ID = p1 = left paddle, second ID = p2 = right paddle, extra IDs are spectators)
-				roomIDs.push(client.id)
-				roomIDs.push(client2.id)
+				gameIDs.push(client.id)
+				gameIDs.push(client2.id)
+				gameIDs.push(data.userID)
+				gameIDs.push(p2UserID)
 				gameInfo.push(game_name)
-				gameInfo.push(data.p1Name)
+				gameInfo.push(data.userName)
 				gameInfo.push(p2Name)
-				// console.log('p1:', data.p1Name)
-				// console.log('p2:', p2Name)
 				gameList.push(gameInfo)
-				// console.log('gamelist:', gameList)
-				dataIdTuple = [gamedata, roomIDs]
+				dataIdTuple = [gamedata, gameIDs]
 				findTuple.set(game_name, dataIdTuple)
 				games.set(client, dataIdTuple)
 				games.set(client2, dataIdTuple)
-				roomIDs = []
+				gameIDs = []
 				gameInfo = []
-
 			}
 		}
 	//clients send movement events - using game map to fing the right game and its first or second
@@ -101,6 +101,7 @@ export class MyGateway implements OnModuleInit {
 	handleMouseMovement(
 		@MessageBody() position: number,
 		@ConnectedSocket() client: Socket) {
+			
 			let game = games.get(client)
 			if (game !== undefined)
 			{
