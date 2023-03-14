@@ -11,22 +11,24 @@ import { StatProfile } from 'src/user-profile/user.stat.entity'
 export class PongService {
 	constructor( 
 		@InjectRepository(PongRoom) private readonly GameRoomRepos: Repository<PongRoom>,
-		// @InjectRepository(UserProfile) private readonly UserRepo: Repository<UserProfile>,
-		@InjectRepository(StatProfile) private readonly StatProfileRepo: Repository<StatProfile>
+		@InjectRepository(UserProfile) private readonly UserRepo: Repository<UserProfile>,
+		// @InjectRepository(StatProfile) private readonly StatProfileRepo: Repository<StatProfile>
 		) {
-			PongService._statProfileRepo = StatProfileRepo
+			PongService._userRepo = UserRepo
 		}
 
 	static async updateWinLoss(userWonID: string, userLostID:string) {
-		var winner = await this._statProfileRepo.findOneBy({id: userWonID})
-		var loser = await this._statProfileRepo.findOneBy({id: userLostID})
+		console.log('userWonID', userWonID)
+		console.log('userLostID', userLostID)
+		var winner = await this._userRepo.findOneBy({id: userWonID})
+		var loser = await this._userRepo.findOneBy({id: userLostID})
 		loser.losses++
 		winner.wins++
-		await this._statProfileRepo.save(winner);
-		await this._statProfileRepo.save(loser);
+		await this._userRepo.save(winner);
+		await this._userRepo.save(loser);
 	}
 
-	private static _statProfileRepo: Repository<StatProfile>
+	private static _userRepo: Repository<UserProfile>
 	
 	// async	createGame(PlayerIDs: string[], GameName: string, GameType: GameType, GameRoomType:	GameRoomType): Promise<GameRoom> {
     async	createGame(gameDTO: GameRoomDTO): Promise<PongRoom> {

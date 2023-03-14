@@ -18,6 +18,8 @@ export const Pong = () => {
 
 	var iniGameData = new GameData(0, '', '', '')
 	var iniGameList = new Array<string>('')
+	let userID = User.ID
+	let userName = NameStorage.User.Get(User.ID)
 
 	const socket = React.useContext(WebsocketContext)
 	const [pending, setPending] = React.useState(false)
@@ -32,7 +34,6 @@ export const Pong = () => {
 
 		var keysPressed: Map<string,boolean> = new Map<string,boolean>()
 		var mousePosition:number
-		// empty = new Canvas(0, 0)
 		
 		/* FUNCTIONS TO UPDATE SNAPSHOTS OF DATA USED TO RENDER CANVAS */
 		function updateGameData(data:GameData)
@@ -157,8 +158,6 @@ export const Pong = () => {
 	}, [socket])
 
 	const findGame = (controls:string) => {
-		let userID = User.ID
-		let userName = NameStorage.User.Get(User.ID)
 		socket.emit('LFG', {controls, userID, userName})
 
 	}

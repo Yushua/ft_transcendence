@@ -34,4 +34,11 @@ export class UserProfile {
 
     @OneToMany((_type) => StatProfile, stat => stat.user, { eager: true})
     stat: StatProfile[];
+
+    @Column({nullable: true})
+    wins: number;
+
+    @Column({nullable: true})
+    losses: number;
+
 }
