@@ -25,6 +25,7 @@ export class LoginService {
     
         const _user = this.userProfileEntityRepos.create({
             username, password: hashedPassword, eMail, status: UserStatus.CREATION,
+            wins: 0, losses: 0,
         });
         try {
             await this.userProfileEntityRepos.save(_user);

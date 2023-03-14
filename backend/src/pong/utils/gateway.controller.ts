@@ -9,12 +9,12 @@ let queuedclient:[Socket, string] = [undefined, 'nope']
 let n_game_rooms:number = 0
 let game_name:string = 'game_0'
 let gamedata:GameData
-let games:Map<Socket, [GameData, string[]]> = new Map<Socket,[GameData,string[]]>
+let games:Map<Socket, [GameData, string[]]> = new Map<Socket,[GameData,string[]]>()
 let gameIDs:string[] = new Array<string>
 let dataIdTuple: [GameData, string[]]
 let gameInfo:string[] = new Array<string>
 let gameList:string[][] = new Array<string[]>
-let findTuple:Map<string, typeof dataIdTuple> = new Map<string, typeof dataIdTuple>
+let findTuple:Map<string, typeof dataIdTuple> = new Map<string, typeof dataIdTuple>()
 let spectators:string[] = new Array<string>
 let updated_games:string[] = new Array<string>
 let p2Name:string
@@ -144,6 +144,48 @@ export class MyGateway implements OnModuleInit {
 				games.delete(client)
 			this.server.to(client.id).emit('left')
 		}
+	
+	private emit_interval = setInterval(() => {
+		//send game data to all clients currently in a game
+		
+		for (const game of games) {
+			
+			const client: Socket = game[0]
+			const gameData:GameData = game[1][0]
+			const gameName: string = gameData.gameName
+			
+			const string_array_in_tuple: string[] = game[1][1]
+			
+			this.server.to(client.id).emit('gamedata', gameData)
+			
+			const updated_games = {} // Make sure games don't get updated twice
+			
+			var winningPlayer: string | null = null
+			var losingPlayer: string | null = null
+			if (gameData.gameState === 'p1_won') {
+				winningPlayer = string_array_in_tuple[2]
+				losingPlayer = string_array_in_tuple[3]
+			}
+			else if (gameData.gameState === 'p2_won') {
+				winningPlayer = string_array_in_tuple[3]
+				losingPlayer = string_array_in_tuple[2]
+			}
+			if (!!winningPlayer)
+			{
+				/* Make sure games don't get updated twice */
+				if (!updated_games[gameName]) {
+					updated_games[gameName] = true
+					PongService.updateWinLoss(winningPlayer, losingPlayer);
+				}
+				
+				games.delete(client)
+				let index = gameList.indexOf([gameData.gameName, string_array_in_tuple[0], string_array_in_tuple[1]])
+				gameList.splice(index, 1)
+			}
+			//send gamelist to all clients
+			this.server.emit('gamelist', gameList)
+		}
+	}, 20)
 }
 
 //update gamedata - only once per game (games forEach loops over all clients)
@@ -167,35 +209,13 @@ async function GameUpdateLoop() {
 			/* Update game asyncronosly and add to await array */
 			await_game_updates.push((async () => {
 				gamaData.update(gamaData.ball.update(gamaData.p1, gamaData.p2))
-				this.server.emit('gamelist', gameList)
+				// this.server.emit('gamelist', gameList)
 			})())
 		}
 	}
 	
 	/* Await all game updates */
 	await Promise.all(await_game_updates)
-	
-	//send game data to all clients currently in a game
-	
-	// for (const game of games) {
-	// 	const gamaData: GameData = game[1][0]
-	// 	const gamaData: GameData = game[1][0]
-		
-		
-		
-	// }
-	
-	games.forEach((data_id_tuple: [GameData, string[]], Client: Socket) => {
-		this.server.to(Client.id).emit('gamedata', data_id_tuple[0])
-		if (data_id_tuple[0].gameState === 'p1_won' || data_id_tuple[0].gameState === 'p2_won')
-		{
-			games.delete(Client)
-			let index = gameList.indexOf([data_id_tuple[0].gameName, data_id_tuple[1][0], data_id_tuple[1][1]])
-			gameList.splice(index, 1)
-		}
-		//send gamelist to all clients
-		this.server.emit('gamelist', gameList)
-	})
 	
 	/* Make sure games update in set intervals */
 	const endTime = Date.now()
