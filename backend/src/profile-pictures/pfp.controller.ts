@@ -84,9 +84,10 @@ export class PFPController {
 		await this.userRepo.save(user)
 		
 		/* Delete old PFP if no User is using it */
-		this.userRepo.query(`SELECT 1 FROM user_profile WHERE "profilePicture" = '${pfpOldURL}';`)
-			.then(res => res.length === 0 && this.pfpRepo.delete({ID: pfpOldURL.substring(4, pfpOldURL.lastIndexOf('.'))}) )
-			.catch()
+		try {
+			this.userRepo.query(`SELECT 1 FROM user_profile WHERE "profilePicture" = '${pfpOldURL}';`)
+				.then(res => res.length === 0 && this.pfpRepo.delete({ID: pfpOldURL.substring(4, pfpOldURL.lastIndexOf('.'))}))
+		} catch (error) {}
 		
 		return pfpURL
 	}
