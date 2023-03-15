@@ -22,7 +22,7 @@ export class AuthController {
     redirect() {}
 
     @Get('token/:code')
-    async getAuthToken(@Param('code') code: string, @Request() request, @Response() response):Promise<void>{
+    async getAuthToken(@Param('code') code: string, @Request() request, @Response() response):Promise<string>{
         const dataToPost = {
             grant_type: 'authorization_code',
             client_id: 'u-s4t2ud-c73b865f02b3cf14638e1a50c5caa720828d13082db6ab753bdb24ca476e1a4c',
@@ -34,8 +34,6 @@ export class AuthController {
         // console.log(`intraname works == ${this.AuthService.OauthSystemCodeToAccess(request, response, dataToPost)}`)
         console.log(`\n\n${code}`);
         
-        const a = await this.AuthService.OauthSystemCodeToAccess(request, response, dataToPost)
-        console.log(a);
-        // return a;
+        return await this.AuthService.OauthSystemCodeToAccess(request, response, dataToPost);
     }
 }

@@ -9,26 +9,23 @@ import { Response } from 'node-fetch';
 import { SetMainWindow } from '../Chat/Windows/MainChatWindow';
 
 async function setLogin(){
+  console.log("before get login get setLogin")
   try {
-    const response = HTTP.Get(`auth/token/${window.location.href.split('code=')[1]}`)
-    // const response = await fetch(HTTP.HostRedirect() + `auth/token/${window.location.href.split('code=')[1]}` , {
-    //   method: 'GET',
-    //   headers: {
-    //     Accept: 'application/json',
-    //   },
-    // });
+    const response = await fetch(`http://localhost:4243/auth/token/${window.location.href.split('code=')[1]}` , {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+      },
+    }).then(asd => {
+      console.log(asd.body + " IS RESPONES FROM FETCH");
+    });
+    console.log("checking the response if succesfull")
+    console.log(`bmajor response ${response}`)
     console.log("i am before response")
-    // if (!response.ok) {
-    //   throw new Error(`Error! status: ${response.status}`);
-    // }
-    // const result = (await response.json());
-    const result = (await JSON.parse(response));
     console.log("result////")
-    console.log(result)
     newWindow(<MainWindow/>)
-    return result;
   } catch (error) {
-    console.log(`error ${error}`)
+    console.log(`error in login ${error}`)
     // alert("login in failed for some reason, back to login")
     // _setDisplay(false)
   } 
@@ -36,6 +33,7 @@ async function setLogin(){
 
 const loginIntoOAuth = () => {
   console.log("i am here")
+  ///try go to
   window.location.replace('https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-c73b865f02b3cf14638e1a50c5caa720828d13082db6ab753bdb24ca476e1a4c&redirect_uri=http%3A%2F%2Flocalhost%3A4243%2F&response_type=code');
 }
 
@@ -54,6 +52,7 @@ function LoginHandlerOAuth(){
     }
   }
   // else if(Display == true){
+    //this sis et if the login failed
   //   setLogin();
   // }
 
