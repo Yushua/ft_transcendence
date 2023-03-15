@@ -8,7 +8,7 @@ export class AuthService {
 
       async OauthSystemCodeToAccess(request: Request , response: Response, data):Promise<string>{
         var accessToken:string;
-        console.log("i am here to acess")
+        console.log("i am here to access the token")
         try {
             await axios.post(`https://api.intra.42.fr/oauth/token`, data).then((response) => {
               accessToken = response.data['access_token'];
