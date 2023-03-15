@@ -26,7 +26,7 @@ let p2UserID:string
 export class MyGateway implements OnModuleInit {
 	
 	public constructor() {
-		this._runGameLoop()
+		this._runGameLoop(1)
 	}
 	
 	@WebSocketServer()
@@ -159,9 +159,9 @@ export class MyGateway implements OnModuleInit {
 			this.server.to(client.id).emit('left')
 		}
 	
-	private _startGameLoop = () => this._runGameLoop()
+	private _startGameLoop = (deltaTime: number) => this._runGameLoop(deltaTime)
 	
-	private async _runGameLoop() {
+	private async _runGameLoop(deltaTime: number) {
 		
 		const startTime = Date.now()
 		
@@ -169,7 +169,7 @@ export class MyGateway implements OnModuleInit {
 		var await_updates = [] // Array of update promises
 		
 		/* Update all Games */
-		for (var game of connections) {
+		for (var game of games) {
 			
 			const gamaData: GameData = game[1][0]
 			
@@ -180,7 +180,7 @@ export class MyGateway implements OnModuleInit {
 				
 				/* Update game asyncronosly and add to await array */
 				await_updates.push((async () => 
-					gamaData.update(gamaData.ball.update(gamaData.p1, gamaData.p2))
+					gamaData.update(gamaData.ball.update(gamaData.p1, gamaData.p2, deltaTime))
 				)())
 			}
 		}
@@ -190,17 +190,15 @@ export class MyGateway implements OnModuleInit {
 		await_updates = [] // Clearing for new
 		
 		/* Send updated data */
-		for (const game of connections) {
-			const client: Socket = game[0]
-			const gameData: GameData = game[1][0]
-			const string_array_in_tuple: string[] = game[1][1]
+		for (const connection of connections) {
+			const client: Socket = connection[0]
+			const gameData: GameData = connection[1][0]
+			const string_array_in_tuple: string[] = connection[1][1]
 			
 			/* Send updated data */
 			await_updates.push((async () =>
 				this.server.to(client.id).emit('gamedata', gameData)
 			)())
-			
-			const updated_games = {} // Make sure games don't get updated twice
 			
 			/* Handle end of a game */
 			var winningPlayer: string | null = null
@@ -217,26 +215,41 @@ export class MyGateway implements OnModuleInit {
 				default: continue;
 			}
 			
-			/* Make sure wins/losses don't get updated twice */
-			if (!updated_games[gameData.gameName]) {
-				updated_games[gameData.gameName] = true
+			/* Make game gets removed only once */
+			if (games[gameData.gameName]) {
+				games.delete(gameData.gameName)
+				
 				PongService.updateWinLoss(winningPlayer, losingPlayer);
+				
+				let index = gameList.indexOf([gameData.gameName, string_array_in_tuple[0], string_array_in_tuple[1]])
+				if (index !== -1)
+					gameList.splice(index, 1)
 			}
-			
 			connections.delete(client)
-			let index = gameList.indexOf([gameData.gameName, string_array_in_tuple[0], string_array_in_tuple[1]])
-			if (index !== -1)
-				gameList.splice(index, 1)
 		}
+		
+		// await_updates.push(new Promise(res => setTimeout(res, Math.random() * 100)))
+		// await_updates.push(new Promise(res => setTimeout(res, 100)))
 		
 		/* Await all sends */
 		await Promise.all(await_updates)
 		
 		/* Make sure games update in set intervals */
 		const endTime = Date.now()
-		const delta = endTime - startTime
-		// if (delta > 1)
-		// 	console.log(delta)
-		setTimeout(this._startGameLoop, Math.max(0, targetResponseRate - delta))
+		var delta = endTime - startTime
+		
+		// if (delta < 2) {}
+		// else if (delta < 5) { console.log(`${"\x1b[37m"}${delta}${"\x1b[0m"}`) }
+		// else if (delta < 10) { console.log(`${"\x1b[33m"}${delta}${"\x1b[0m"}`) }
+		// else if (delta < 15) { console.log(`${"\x1b[43m"}${delta}${"\x1b[0m"}`) }
+		// else if (delta < 20) { console.log(`${"\x1b[31m"}${delta}${"\x1b[0m"}`) }
+		// else { console.log(`${"\x1b[41m"}${delta}${"\x1b[0m"}`) }
+		
+		/* Use fixed framerate to reserve resources */
+		if (delta < 20)
+			setTimeout(() => this._startGameLoop(.02), Math.max(0, targetResponseRate - delta))
+		/* Use delta time to make games playable under heavy or irregular load */
+		else
+			this._startGameLoop(Math.min(delta / 1000, .10))
 	}
 }

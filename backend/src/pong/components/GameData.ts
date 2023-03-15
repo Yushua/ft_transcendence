@@ -146,7 +146,7 @@ export class Ball extends Entity
 			this.yVec = -1
 		this.startDir = this.xVec
 	}
-	update(p1:Paddle, p2:Paddle)
+	update(p1:Paddle, p2:Paddle, deltaTime: number)
 	{
 		var randomDirection = Math.floor(Math.random() * 2) + 1
 
@@ -163,42 +163,10 @@ export class Ball extends Entity
 			this.y = this.gameCanvasHeight - 10 - this.height - 0.1 //so it doesnt loop inside the line
 			this.yVec = this.yVec * -1
 		}
-	
-		//check left canvas bounds
-		if (this.x <= 10)
-		{ 
-			this.x = this.gameCanvasWidth / 2 - this.height / 2
-			this.y = this.gameCanvasHeight / 2 - this.width / 2
-			this.xVec = -1 * this.startDir
-			this.startDir = this.xVec
-			if (randomDirection % 2)
-				this.yVec = 1
-			else
-				this.yVec = -1
-			this.speed = this.initialSpeed
-			return 'p2_scored'
-		}
 
-		//check right canvas bounds
-		if (this.x + this.width >= this.gameCanvasWidth - 10)
-		{
-			this.x = this.gameCanvasWidth / 2 - this.height / 2
-			this.y = this.gameCanvasHeight / 2 - this.width / 2
-			this.xVec = -1 * this.startDir
-			this.startDir = this.xVec
-			if (randomDirection % 2)
-				this.yVec = 1
-			else
-				this.yVec = -1
-			this.speed = this.initialSpeed
-			return 'p1_scored'
-		}
-
-		//check player1 collision
-		if (this.x <= p1.x + p1.width)
-		{
-			if (this.y + this.height >= p1.y && this.y <= p1.y + p1.height)
-			{
+		const bounceFromP1 = () => {
+			const hit = this.y + this.height >= p1.y && this.y <= p1.y + p1.height
+			if (hit) {
 				this.xVec = 1;
 				if (this.y + (this.height / 2) < p1.y + (p1.height / 2)) //above the middle
 				{
@@ -216,13 +184,12 @@ export class Ball extends Entity
 					this.yVec = 0
 				this.speed += this.acceleration
 			}
+			return hit
 		}
-
-		//check player2 collision
-		if (this.x + this.width >= p2.x)
-		{
-			if (this.y + this.height >= p2.y && this.y <= p2.y + p2.height)
-			{
+		
+		const bounceFromP2 = () => {
+			const hit = this.y + this.height >= p2.y && this.y <= p2.y + p2.height
+			if (hit) {
 				this.xVec = -1;
 				if (this.y + (this.height / 2) < p2.y + (p2.height / 2)) //above the middle
 				{
@@ -240,10 +207,46 @@ export class Ball extends Entity
 					this.yVec = 0
 				this.speed += this.acceleration
 			}
+			return hit
 		}
+		
+		//check left canvas bounds
+		if (this.x <= 10 && !bounceFromP1()) { 
+			this.x = this.gameCanvasWidth / 2 - this.height / 2
+			this.y = this.gameCanvasHeight / 2 - this.width / 2
+			this.xVec = -1 * this.startDir
+			this.startDir = this.xVec
+			if (randomDirection % 2)
+				this.yVec = 1
+			else
+				this.yVec = -1
+			this.speed = this.initialSpeed
+			return 'p2_scored'
+		}
+		//check player1 collision
+		else if (this.x <= p1.x + p1.width)
+			bounceFromP1()
+		
+		//check right canvas bounds
+		if (this.x + this.width >= this.gameCanvasWidth - 10 && !bounceFromP2()) {
+			this.x = this.gameCanvasWidth / 2 - this.height / 2
+			this.y = this.gameCanvasHeight / 2 - this.width / 2
+			this.xVec = -1 * this.startDir
+			this.startDir = this.xVec
+			if (randomDirection % 2)
+				this.yVec = 1
+			else
+				this.yVec = -1
+			this.speed = this.initialSpeed
+			return 'p1_scored'
+		}
+		//check player2 collision
+		else if (this.x + this.width >= p2.x)
+			bounceFromP2()
+			
 		var magnatude = Math.sqrt(this.xVec**2 + this.yVec**2) // Used to normalize vector
-		this.x += (this.xVec) / magnatude * this.speed
-		this.y += (this.yVec) / magnatude * this.speed
+		this.x += (this.xVec) / magnatude * this.speed * deltaTime * 50
+		this.y += (this.yVec) / magnatude * this.speed * deltaTime * 50
 		return ''
 	}
 }
