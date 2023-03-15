@@ -4,19 +4,21 @@ import { Server, Socket } from 'socket.io'
 import { GameData } from '../components/GameData'
 import { PongService } from "../pong.service";
 
+const targetFPS = 60
+const targetResponseRate = 1000 / targetFPS
 
 let queuedclient:[Socket, string] = [undefined, 'nope']
 let n_game_rooms:number = 0
 let game_name:string = 'game_0'
 let gamedata:GameData
 let games:Map<Socket, [GameData, string[]]> = new Map<Socket,[GameData,string[]]>()
-let gameIDs:string[] = new Array<string>
+let gameIDs:string[] = new Array<string>()
 let dataIdTuple: [GameData, string[]]
-let gameInfo:string[] = new Array<string>
-let gameList:string[][] = new Array<string[]>
+let gameInfo:string[] = new Array<string>()
+let gameList:string[][] = new Array<string[]>()
 let findTuple:Map<string, typeof dataIdTuple> = new Map<string, typeof dataIdTuple>()
-let spectators:string[] = new Array<string>
-let updated_games:string[] = new Array<string>
+let spectators:string[] = new Array<string>()
+let updated_games:string[] = new Array<string>()
 let p2Name:string
 let p2UserID:string
 
@@ -27,7 +29,11 @@ let p2UserID:string
 })
 
 export class MyGateway implements OnModuleInit {
-
+	
+	public constructor() {
+		this._runGameLoop()
+	}
+	
 	@WebSocketServer()
 	server:Server
 
@@ -145,81 +151,84 @@ export class MyGateway implements OnModuleInit {
 			this.server.to(client.id).emit('left')
 		}
 	
-	private emit_interval = setInterval(() => {
-		//send game data to all clients currently in a game
+	private _startGameLoop = () => this._runGameLoop()
+	
+	private async _runGameLoop() {
 		
+		const startTime = Date.now()
+		
+		const updated_games = {} // Make sure games don't get updated twice
+		var await_updates = [] // Array of update promises
+		
+		/* Update all Games */
+		for (var game of games) {
+			
+			const gamaData: GameData = game[1][0]
+			
+			/* Make sure games don't get updated twice */
+			const gameName: string = gamaData.gameName
+			if (!updated_games[gameName]) {
+				updated_games[gameName] = true
+				
+				/* Update game asyncronosly and add to await array */
+				await_updates.push((async () => 
+					gamaData.update(gamaData.ball.update(gamaData.p1, gamaData.p2))
+				)())
+			}
+		}
+		
+		/* Await all game updates */
+		await Promise.all(await_updates)
+		await_updates = [] // Clearing for new
+		
+		/* Send updated data */
 		for (const game of games) {
-			
 			const client: Socket = game[0]
-			const gameData:GameData = game[1][0]
-			const gameName: string = gameData.gameName
-			
+			const gameData: GameData = game[1][0]
 			const string_array_in_tuple: string[] = game[1][1]
 			
-			this.server.to(client.id).emit('gamedata', gameData)
+			/* Send updated data */
+			await_updates.push((async () =>
+				this.server.to(client.id).emit('gamedata', gameData)
+			)())
 			
 			const updated_games = {} // Make sure games don't get updated twice
 			
+			/* Handle end of a game */
 			var winningPlayer: string | null = null
 			var losingPlayer: string | null = null
-			if (gameData.gameState === 'p1_won') {
-				winningPlayer = string_array_in_tuple[2]
-				losingPlayer = string_array_in_tuple[3]
+			switch (gameData.gameState) {
+				case 'p1_won':
+					winningPlayer = string_array_in_tuple[2]
+					losingPlayer = string_array_in_tuple[3]
+					break;
+				case 'p2_won':
+					winningPlayer = string_array_in_tuple[3]
+					losingPlayer = string_array_in_tuple[2]
+					break;
+				default: continue;
 			}
-			else if (gameData.gameState === 'p2_won') {
-				winningPlayer = string_array_in_tuple[3]
-				losingPlayer = string_array_in_tuple[2]
-			}
-			if (!!winningPlayer)
-			{
-				/* Make sure games don't get updated twice */
-				if (!updated_games[gameName]) {
-					updated_games[gameName] = true
-					PongService.updateWinLoss(winningPlayer, losingPlayer);
-				}
-				
-				games.delete(client)
-				let index = gameList.indexOf([gameData.gameName, string_array_in_tuple[0], string_array_in_tuple[1]])
-				gameList.splice(index, 1)
-			}
-			//send gamelist to all clients
-			this.server.emit('gamelist', gameList)
-		}
-	}, 20)
-}
-
-//update gamedata - only once per game (games forEach loops over all clients)
-
-async function GameUpdateLoop() {
-	
-	const startTime = Date.now()
-	
-	const updated_games = {} // Make sure games don't get updated twice
-	const await_game_updates = [] // Array of game update promises
-	
-	for (var game of games) {
-		
-		const gamaData: GameData = game[1][0]
-		
-		/* Make sure games don't get updated twice */
-		const gameName: string = gamaData.gameName
-		if (!updated_games[gameName]) {
-			updated_games[gameName] = true
 			
-			/* Update game asyncronosly and add to await array */
-			await_game_updates.push((async () => {
-				gamaData.update(gamaData.ball.update(gamaData.p1, gamaData.p2))
-				// this.server.emit('gamelist', gameList)
-			})())
+			/* Make sure wins/losses don't get updated twice */
+			if (!updated_games[gameData.gameName]) {
+				updated_games[gameData.gameName] = true
+				PongService.updateWinLoss(winningPlayer, losingPlayer);
+			}
+			
+			games.delete(client)
+			let index = gameList.indexOf([gameData.gameName, string_array_in_tuple[0], string_array_in_tuple[1]])
+			if (index !== -1)
+				gameList.splice(index, 1)
 		}
+		
+		/* Await all sends */
+		await Promise.all(await_updates)
+		
+		/* Make sure games update in set intervals */
+		const endTime = Date.now()
+		const delta = endTime - startTime
+		// if (delta > 1)
+		// 	console.log(delta)
+		setTimeout(this._startGameLoop, Math.max(0, targetResponseRate - delta))
 	}
-	
-	/* Await all game updates */
-	await Promise.all(await_game_updates)
-	
-	/* Make sure games update in set intervals */
-	const endTime = Date.now()
-	const delta = endTime - startTime
-	setTimeout(GameUpdateLoop, Math.max(0, 20 - delta))
 }
-GameUpdateLoop()
