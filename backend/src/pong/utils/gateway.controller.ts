@@ -10,15 +10,10 @@ const targetResponseRate = 1000 / targetFPS
 let queuedclient:[Socket, string] = [undefined, 'nope']
 let n_game_rooms:number = 0
 let game_name:string = 'game_0'
-let games:Map<Socket, [GameData, string[]]> = new Map<Socket,[GameData,string[]]>()
-let gameIDs:string[] = new Array<string>()
-let dataIdTuple: [GameData, string[]]
-let gameInfo:string[] = new Array<string>()
+let connections:Map<Socket, [GameData, string[]]> = new Map<Socket,[GameData,string[]]>()
 let gameList:string[][] = new Array<string[]>()
 let customGameList:string[][] = new Array<string[]>()
-let findTuple:Map<string, [GameData, string[]]> = new Map<string, [GameData, string[]]>()
-let spectators:string[] = new Array<string>()
-let updated_games:string[] = new Array<string>()
+let games:Map<string, [GameData, string[]]> = new Map<string, [GameData, string[]]>()
 let p2Name:string
 let p2UserID:string
 
@@ -83,9 +78,9 @@ export class MyGateway implements OnModuleInit {
 				gameInfo.push(p2Name)
 				gameList.push(gameInfo)
 				dataIdTuple = [gamedata, gameIDs]
-				findTuple.set(game_name, dataIdTuple)
-				games.set(client, dataIdTuple)
-				games.set(client2, dataIdTuple)
+				games.set(game_name, dataIdTuple)
+				connections.set(client, dataIdTuple)
+				connections.set(client2, dataIdTuple)
 				gameIDs = []
 				gameInfo = []
 			}
@@ -106,7 +101,7 @@ export class MyGateway implements OnModuleInit {
 	handleKeyboardInput(
 		@MessageBody() direction: number,
 		@ConnectedSocket() client: Socket) {
-			let game = games.get(client)
+			let game = connections.get(client)
 			if (game !== undefined)
 			{
 				if (game[1][0] === client.id)
@@ -121,7 +116,7 @@ export class MyGateway implements OnModuleInit {
 		@MessageBody() position: number,
 		@ConnectedSocket() client: Socket) {
 			
-			let game = games.get(client)
+			let game = connections.get(client)
 			if (game !== undefined)
 			{
 				if (game[1][0] === client.id)
@@ -136,11 +131,11 @@ export class MyGateway implements OnModuleInit {
 	handleSpectator(
 		@MessageBody() gameName: string,
 		@ConnectedSocket() client: Socket) {
-			let dataIdTuple = findTuple.get(gameName)
+			let dataIdTuple = games.get(gameName)
 			// spectators.push(client.id)
 			if (dataIdTuple !== undefined)
 			{
-				games.set(client, dataIdTuple)
+				connections.set(client, dataIdTuple)
 				client.emit('spectating')
 			}
 		}
@@ -149,18 +144,18 @@ export class MyGateway implements OnModuleInit {
 	handleDisconnect(
 		@ConnectedSocket() client: Socket) {
 			console.log('client:', client.id, ' disconnected')
-			let game = games.get(client)
+			let game = connections.get(client)
 			if (game !== undefined)
-				games.delete(client)
+				connections.delete(client)
 		}
 
 	@SubscribeMessage('leave')
 	handleLeaver(
 		// @MessageBody() gameName: string,
 		@ConnectedSocket() client: Socket) {
-			let game = games.get(client)
+			let game = connections.get(client)
 			if (game !== undefined)
-				games.delete(client)
+				connections.delete(client)
 			this.server.to(client.id).emit('left')
 		}
 	
@@ -174,7 +169,7 @@ export class MyGateway implements OnModuleInit {
 		var await_updates = [] // Array of update promises
 		
 		/* Update all Games */
-		for (var game of games) {
+		for (var game of connections) {
 			
 			const gamaData: GameData = game[1][0]
 			
@@ -195,7 +190,7 @@ export class MyGateway implements OnModuleInit {
 		await_updates = [] // Clearing for new
 		
 		/* Send updated data */
-		for (const game of games) {
+		for (const game of connections) {
 			const client: Socket = game[0]
 			const gameData: GameData = game[1][0]
 			const string_array_in_tuple: string[] = game[1][1]
@@ -228,7 +223,7 @@ export class MyGateway implements OnModuleInit {
 				PongService.updateWinLoss(winningPlayer, losingPlayer);
 			}
 			
-			games.delete(client)
+			connections.delete(client)
 			let index = gameList.indexOf([gameData.gameName, string_array_in_tuple[0], string_array_in_tuple[1]])
 			if (index !== -1)
 				gameList.splice(index, 1)
