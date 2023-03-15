@@ -1,9 +1,4 @@
-import { Inject, Injectable, Request, Response, Scope } from '@nestjs/common';
-import { REQUEST } from '@nestjs/core';
-import e, { response } from 'express';
 import axios from 'axios';
-import { redirect } from 'react-router-dom';
-import { AuthCredentialsDto } from 'src/login/dto/auth-credentials.dto';
 
 export class AuthService {
 
@@ -11,21 +6,21 @@ export class AuthService {
         console.log("guard is working")
       }
 
-      async OauthSystemCodeToAccess(request: Request , response: Response, data):Promise<void>{
+      async OauthSystemCodeToAccess(request: Request , response: Response, data):Promise<string>{
         var accessToken:string;
-        console.log("i am here")
+        console.log("i am here to acess")
         try {
             await axios.post(`https://api.intra.42.fr/oauth/token`, data).then((response) => {
               accessToken = response.data['access_token'];
             })        
         } catch (error) {
-          alert("error in ToAccess")
+          //exemption
         }
         console.log(` accessToken == ${accessToken}`)
-        await this.startRequest(request, response, accessToken, data)
+        return this.startRequest(request, response, accessToken, data)
       }
 
-      async startRequest(request: Request , response: Response, accessToken: string, data):Promise<void>{
+      async startRequest(request: Request , response: Response, accessToken: string, data):Promise<string>{
         var userID:string
         var intraName:string;
         try {
@@ -37,10 +32,22 @@ export class AuthService {
             intraName = response['data'].login
           })
         } catch (error) {
-          alert("error in startRequest")
+          //exemption
         }
 
         console.log(`intraName == ${intraName}`)
+        return intraName
       }
-
+      async checkAccount(request: Request , response: Response, accessToken: string, intraName: string):Promise<void>{
+        //if the account is created, but the status is still in creation, then either two people try to log in. so
+          //need to write the email used, and auhtenticate
+        //make an exemption saying these two things
+        //go to error page application
+        //if intraname does not exist... start the name
+          //if email is empty, start the two factor autorization
+          //if name for the first time, start name creation
+        //if exist check if its logged in already
+          //if not, then two factor autorization.
+          //what if you're already logged in?
+      }
 }
