@@ -20,25 +20,25 @@ run-back:
 	cd ./backend ; npm run start:dev
 
 setup:
-	npm install @nestjs/common
-	npm install @nestjs/core
-	npm i --save @nestjs/config
-	npm install --save @nestjs/typeorm typeorm mysql2
-	npm install class-validator --save
-	npm add bcrypt
-	npm add @nestjs/jwt @nestjs/passport passport passport-jwt
-	npm install pg --save
-	npm install source-map-support
-	npm install @nestjs/platform-express
-	npm i --save socket.io-client
-	npm i --save socket.io
-	npm i --save @nestjs/websockets
-	npm i --save @nestjs/platform-socket.io
-	npm i -D @types/multer @nestjs/platform-express
-	npm install validate-image-type
+	npm i @nestjs/common
+	npm i @nestjs/core
+	npm i @nestjs/config
+	npm i @nestjs/typeorm typeorm mysql2
+	npm i class-validator
+	npm i bcrypt
+	npm i @nestjs/jwt @nestjs/passport passport passport-jwt
+	npm i pg
+	npm i source-map-support
+	npm i @nestjs/platform-express
+	npm i socket.io-client
+	npm i socket.io
+	npm i @nestjs/websockets
+	npm i @nestjs/platform-socket.io
+	npm i -D @types/multer
+	npm i validate-image-type
 
 react:
-	npm i --save typescript @types/node @types/react @types/react-dom @types/jest
-	npm i --save react-scripts
-	npm i --save @mui/material @emotion/react @emotion/styled
-	npm i --save immutability-helper
+	npm i typescript @types/node @types/react @types/react-dom @types/jest
+	npm i react-scripts
+	npm i @mui/material @emotion/react @emotion/styled
+	npm i immutability-helper

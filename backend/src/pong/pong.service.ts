@@ -35,7 +35,6 @@ export class PongService {
 		])
 	}
 
-	
 	// async	createGame(PlayerIDs: string[], GameName: string, GameType: GameType, GameRoomType:	GameRoomType): Promise<GameRoom> {
     async	createGame(gameDTO: GameRoomDTO): Promise<PongRoom> {
 

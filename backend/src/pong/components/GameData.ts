@@ -1,29 +1,23 @@
 import { normalize } from "path"
 
 export class GameData {
+	gameName:string
 	gameState: string
-	gameNum: number
-	gameName: string
 	p1_score: number
 	p2_score: number
 	p1: Paddle
 	p2: Paddle
 	ball: Ball
-	p1_name: string
-	p2_name: string
 
-	constructor(num:number, gamename:string, p1name:string, p2name:string)
+	constructor(gamename:string, speedpercent:number, paddleSizePercent:number)
 	{
+		this.gameName = gamename
 		this.gameState = 'newgame'
 		this.p1_score = 0
 		this.p2_score = 0
-		this.gameNum = num
-		this.p1 = new Paddle(12, 1, 1500, 750, 20, 20, 100)
-		this.p2 = new Paddle(12, 2, 1500, 750, 20, 20, 100)
-		this.ball = new Ball(3, 3, 1500, 750, 20, 20, 20)
-		this.gameName = gamename
-		this.p1_name = p1name
-		this.p2_name = p2name
+		this.p1 = new Paddle(12, 1, 1500, 750, 20, 20, paddleSizePercent)
+		this.p2 = new Paddle(12, 2, 1500, 750, 20, 20, paddleSizePercent)
+		this.ball = new Ball(10 * speedpercent / 100, 3, 1500, 750, 20, 20, 20)
 	}
 
 	update(event:string)
@@ -38,9 +32,7 @@ export class GameData {
 		{
 			this.p2_score++
 			if (this.p2_score === 11)
-			{
 				this.gameState = 'p2_won'
-			}
 		}
 	}
 }
@@ -52,7 +44,7 @@ class Entity
 	xVec:number
 	yVec:number
 	speed:number
-	initialSpeed = 10
+	initialSpeed:number
 	acceleration = .5
 	gameCanvasWidth:number
 	gameCanvasHeight:number
@@ -70,6 +62,7 @@ class Entity
 		height:number,
 		)
 	{
+		this.initialSpeed = speed
 		this.gameCanvasWidth = gameCanvasWidth
 		this.gameCanvasHeight = gameCanvasHeight
 		this.wallOffset = wallOffset
@@ -140,7 +133,7 @@ export class Ball extends Entity
 		wallOffset,
 		width,
 		height,	
-		)
+	)
 		var randomDirection = Math.floor(Math.random() * 2) + 1
 		if (randomDirection % 2)
 			this.xVec = 1

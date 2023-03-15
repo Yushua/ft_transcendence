@@ -4,19 +4,15 @@ import { Server, Socket } from 'socket.io'
 import { GameData } from '../components/GameData'
 import { PongService } from "../pong.service";
 
+//what if 2 ppl leave game and theyre in a loop, stuck with no winner
 
 let queuedclient:[Socket, string] = [undefined, 'nope']
 let n_game_rooms:number = 0
 let game_name:string = 'game_0'
-let gamedata:GameData
 let games:Map<Socket, [GameData, string[]]> = new Map<Socket,[GameData,string[]]>()
-let gameIDs:string[] = new Array<string>
-let dataIdTuple: [GameData, string[]]
-let gameInfo:string[] = new Array<string>
 let gameList:string[][] = new Array<string[]>
-let findTuple:Map<string, typeof dataIdTuple> = new Map<string, typeof dataIdTuple>()
-let spectators:string[] = new Array<string>
-let updated_games:string[] = new Array<string>
+let customGameList:string[][] = new Array<string[]>
+let findTuple:Map<string, [GameData, string[]]> = new Map<string, [GameData, string[]]>()
 let p2Name:string
 let p2UserID:string
 
@@ -51,6 +47,9 @@ export class MyGateway implements OnModuleInit {
 			}
 			else
 			{
+				let gameInfo:string[] = new Array<string>
+				let gameIDs:string[] = new Array<string>
+				let dataIdTuple: [GameData, string[]]	
 				//create room with queue'd clientid and client.id
 				game_name = game_name.replace(n_game_rooms.toString(), (n_game_rooms+1).toString())
 				n_game_rooms++
@@ -59,8 +58,8 @@ export class MyGateway implements OnModuleInit {
 				let client2 = queuedclient[0]
 				queuedclient[0] = undefined
 
-				//create gameData which holds all game info client needs to render
-				gamedata = new GameData(n_game_rooms, game_name, data.userName, p2Name)
+				//create gameData with default settings which holds all game info client needs to render
+				let gamedata = new GameData('classic ' + game_name, 100, 100)
 
 				//add this game with the client IDs to a gamelist and insert <client, [data, IDs]> in a map which
 				//can be used to access the right gamedata for movement events by clients, and based on ID order
@@ -81,6 +80,16 @@ export class MyGateway implements OnModuleInit {
 				gameInfo = []
 			}
 		}
+
+	@SubscribeMessage('createGame')
+	handleCreateGame(
+	@MessageBody() data: {userID:string, userName:string, customSettings:any},
+	@ConnectedSocket() client: Socket) {
+		let gamedata = new GameData('custom', data.customSettings.ballSpeed, data.customSettings.paddleSize)
+		
+
+	}
+
 	//clients send movement events - using game map to fing the right game and its first or second
 	//ID to update either p1 or p2 of the gamedata
 	@SubscribeMessage('keyboard_movement')
@@ -117,7 +126,7 @@ export class MyGateway implements OnModuleInit {
 	handleSpectator(
 		@MessageBody() gameName: string,
 		@ConnectedSocket() client: Socket) {
-			dataIdTuple = findTuple.get(gameName)
+			let dataIdTuple = findTuple.get(gameName)
 			// spectators.push(client.id)
 			if (dataIdTuple !== undefined)
 			{
@@ -144,6 +153,7 @@ export class MyGateway implements OnModuleInit {
 				games.delete(client)
 			this.server.to(client.id).emit('left')
 		}
+	
 	
 	private emit_interval = setInterval(() => {
 		//send game data to all clients currently in a game

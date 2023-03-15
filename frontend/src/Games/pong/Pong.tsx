@@ -9,6 +9,8 @@ import whale1 from './components/whale1.jpg'
 import User from '../../Utils/Cache/User';
 import HTTP from '../../Utils/HTTP';
 import NameStorage from '../../Utils/Cache/NameStorage';
+import { Box, Slider, Typography } from '@mui/material';
+import { LabelDisplayedRowsArgs } from '@mui/base';
 
 var game:Canvas
 var g_controls = ''
@@ -16,7 +18,7 @@ var g_controls = ''
 
 export const Pong = () => {
 
-	var iniGameData = new GameData(0, '', '', '')
+	var iniGameData = new GameData()
 	var iniGameList = new Array<string>('')
 	let userID = User.ID
 	let userName = NameStorage.User.Get(User.ID)
@@ -29,56 +31,37 @@ export const Pong = () => {
 	const [showGameList, setShowGameList] = React.useState(false)
 	const [spectating, setSpectating] = React.useState(false)
 	const [classicGame, setClassicGame] = React.useState(false)
+	const [customGame, setCustomGame] = React.useState(false)
+	const [ballSpeed, setBallSpeed] = React.useState(100)
+	const [paddleSize, setPaddleSize] = React.useState(100)
 
 	React.useEffect(() => {
 
 		var keysPressed: Map<string,boolean> = new Map<string,boolean>()
 		var mousePosition:number
 		
-		/* FUNCTIONS TO UPDATE SNAPSHOTS OF DATA USED TO RENDER CANVAS */
+		/* FUNCTIONS TO UPDATE DATA USED TO RENDER CANVAS */
 		function updateGameData(data:GameData)
 		{
 			const newData = update(gameData, {
 				gameState: {$set: data.gameState},
-				gameNum: {$set: data.gameNum},
-				gameName: {$set: data.gameName},
 				p1_score: {$set: data.p1_score},
 				p2_score: {$set: data.p2_score},
-				p1_name: {$set: data.p1_name},
-				p2_name: {$set: data.p2_name},
 				p1: {
 					x: {$set: data.p1.x},
 					y: {$set: data.p1.y},
-					xVec: {$set: data.p1.xVec},
-					yVec: {$set: data.p1.yVec},
-					speed: {$set: data.p1.speed},
-					gameCanvasWidth: {$set: data.p1.gameCanvasWidth},
-					gameCanvasHeight: {$set: data.p1.gameCanvasHeight},
-					wallOffset: {$set: data.p1.wallOffset},
 					width: {$set: data.p1.width},
 					height: {$set: data.p1.height},
 				},
 				p2: {
 					x: {$set: data.p2.x},
 					y: {$set: data.p2.y},
-					xVec: {$set: data.p2.xVec},
-					yVec: {$set: data.p2.yVec},
-					speed: {$set: data.p2.speed},
-					gameCanvasWidth: {$set: data.p2.gameCanvasWidth},
-					gameCanvasHeight: {$set: data.p2.gameCanvasHeight},
-					wallOffset: {$set: data.p2.wallOffset},
 					width: {$set: data.p2.width},
 					height: {$set: data.p2.height},
 				},
 				ball: {
 					x: {$set: data.ball.x},
 					y: {$set: data.ball.y},
-					xVec: {$set: data.ball.xVec},
-					yVec: {$set: data.ball.yVec},
-					speed: {$set: data.ball.speed},
-					gameCanvasWidth: {$set: data.ball.gameCanvasWidth},
-					gameCanvasHeight: {$set: data.ball.gameCanvasHeight},
-					wallOffset: {$set: data.ball.wallOffset},
 					width: {$set: data.ball.width},
 					height: {$set: data.ball.height},
 				}
@@ -157,9 +140,9 @@ export const Pong = () => {
 		}
 	}, [socket])
 
+	/* BUTTON HANDLERS */
 	const findGame = (controls:string) => {
 		socket.emit('LFG', {controls, userID, userName})
-
 	}
 	const leaveGame = () => {
 		socket.emit('leave')
@@ -169,6 +152,22 @@ export const Pong = () => {
 	}
 	const isClassicGame = () => {
 		setClassicGame(!classicGame)
+	}
+	const isCustomGame = () => {
+		setCustomGame(!customGame)
+	}
+	const handleBallChange = (event: Event, newValue: number | number[]) => {
+		if (typeof newValue === 'number') {
+			setBallSpeed(newValue);
+		}
+	}
+	const handlePaddleChange = (event: Event, newValue: number | number[]) => {
+		if (typeof newValue === 'number') {
+			setPaddleSize(newValue);
+		}
+	}
+	const createGame = (customSettings: any) => {
+		socket.emit('createGame', {userID, userName, customSettings})
 	}
 
 	return (
@@ -189,8 +188,45 @@ export const Pong = () => {
 							<li className='dropdownItem'><button onClick={() => findGame('keyboard')}>Keyboard</button></li>
 						</ul> : <></> }
 					</div>
+					<div className='dropdown-menu'>
+						<button onClick={() => isCustomGame()}>Create Unranked Custom Game</button>
+						{customGame ? 
+						<ul>
+							<li className='dropdownItem'>Choose Ball Speed</li>
+								<Box sx={{ width: 250 }}>
+									<Typography id="non-linear-slider" gutterBottom>
+										{ballSpeed}%
+									</Typography>
+									<Slider
+										value={ballSpeed}
+										min={100}
+										step={1}
+										max={200}
+										onChange={handleBallChange}
+										valueLabelDisplay="auto"
+										aria-labelledby="non-linear-slider"
+									/>
+								</Box>
+							<li className='dropdownItem'>Choose Paddle Size</li>
+								<Box sx={{ width: 250 }}>
+									<Typography id="non-linear-slider" gutterBottom>
+										{paddleSize}%
+									</Typography>
+									<Slider
+										value={paddleSize}
+										min={5}
+										step={1}
+										max={500}
+										onChange={handlePaddleChange}
+										valueLabelDisplay="auto"
+										aria-labelledby="non-linear-slider"
+									/>
+								</Box>
+								{/* <value></value> */}
+							<li className='dropdownItem'><button onClick={() => createGame({ballSpeed, paddleSize})}>Create Game</button></li>
+						</ul> : <></> }
+					</div>
 				</div> : <></>}
-
 			{inGame ?
 				<button onClick={() => leaveGame()}>Leave Game</button> : <></>}
 			{showGameList ?
