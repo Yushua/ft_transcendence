@@ -14,7 +14,7 @@ async function getAuthToken(username:string){
   var code:string = window.location.href.split('code=')[1]
   console.log("i am in loginpage")
   try {
-    const response = await fetch(`http://localhost:4242/auth/loginNew/${code}/${username}` , {
+    const response = await fetch(HTTP.HostRedirect() + `auth/loginNew/${code}/${username}` , {
       headers: {
         Accept: 'application/json',
       },
@@ -38,7 +38,8 @@ async function getAuthToken(username:string){
     }
   } catch (error) {
     console.log(`error ${error}`)
-    alert(error)
+    //check the error, exeption needs to be called better from backend
+    alert(`error in newAccount ${error}`)
     newWindow(<NewAccount/>)
   }
 }
@@ -57,18 +58,11 @@ const handleUsername = (e: any) => {
   getAuthToken(e.currentTarget.elements.username.value)
 }
 
-const loginIntoOAuth = () => {
-  window.location.replace('https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-c73b865f02b3cf14638e1a50c5caa720828d13082db6ab753bdb24ca476e1a4c&redirect_uri=http%3A%2F%2Flocalhost%3A4242%2F&response_type=code');
-}
-
 const ReturnToLoginPage = () => {
   newWindow(<LoginPage/>)
 }
 
 function NewAccount(){
-  if (window.location.href.split('code=')[1] == undefined){
-    loginIntoOAuth()
-  }
   return (
     <div className="setting up new account for Team Zero">
       <button onClick={() => {ReturnToLoginPage()}}>Return to LoginPage</button>

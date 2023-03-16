@@ -20,9 +20,6 @@ export class UserProfile {
     @Column({ default: ""})
     profilePicture: string
 
-    @Column()
-    password: string;
-
     //check if the email unique "" default is not hampering more than one account
     @Column({
         unique: true,
