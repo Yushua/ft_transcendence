@@ -144,12 +144,6 @@ export class MyGateway implements OnModuleInit {
 				client.emit('spectating')
 			}
 		}
-	@SubscribeMessage('refreshGameList')
-	handleRefresh(
-		@ConnectedSocket() client: Socket) {
-			const serializedMap = [...games.entries()];
-			client.emit('gamelist', serializedMap)
-		}
 	
 	@SubscribeMessage('disconnect')
 	handleDisconnect(
