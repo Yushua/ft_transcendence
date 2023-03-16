@@ -4,8 +4,8 @@ import { Server, Socket } from 'socket.io'
 import { GameData } from '../components/GameData'
 import { PongService } from "../pong.service";
 
-const targetFPS = 60
-const targetResponseRate = 1000 / targetFPS
+export const targetFPS = 60
+export const targetResponseRate = 1000 / targetFPS
 
 let queuedclient:[Socket, string] = [undefined, 'nope']
 let n_game_rooms:number = 0
