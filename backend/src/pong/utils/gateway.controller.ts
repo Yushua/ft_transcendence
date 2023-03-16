@@ -227,7 +227,7 @@ export class MyGateway implements OnModuleInit {
 			}
 
 			/* Make game gets removed only once */
-			if (gameData.gameName) {
+			if (games.get(gameData.gameName)) {
 				games.delete(gameData.gameName)
 				PongService.updateWinLoss(winningPlayer, losingPlayer);
 				let strarr = []
