@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
 import { UserProfile } from 'src/user-profile/user.entity';
 import { Repository } from 'typeorm';
-import { CreateUserDto } from './dto/create-user.dto';
 import { JwtPayload } from './jwt-payload.interface';
 
 export class AuthService {
@@ -25,7 +24,7 @@ export class AuthService {
               accessToken = response.data['access_token'];
             })        
         } catch (error) {
-          //exemption
+          throw new ConflictException(`intraPull failed, problem with OAuth API. input Data out of date`);
         }
         return accessToken
       }
@@ -45,7 +44,7 @@ export class AuthService {
             intraName = response['data'].login
           })
         } catch (error) {
-          //exemption
+          throw new ConflictException(`intraPull failed, problem with OAuth API. input Data out of date`);
         }
 
         console.log(`intraName == ${intraName}`)
@@ -88,20 +87,21 @@ export class AuthService {
        * @param eMail 
        * @returns create account when it is new. its also checked
        */
-      async newAccountSystem(intraName:string, createUserDto:CreateUserDto):Promise<string> {
-        const { username, eMail } = createUserDto;
-
+      async newAccountSystem(intraName:string, username: string, eMail:string):Promise<string> {
         var authToken:string = ""
         var user:UserProfile
-        //if it fails?
-          user = this.userProfileEntityRepos.create({
-              intraName, username, eMail
-          });
-          //add checks if the account creation fails
+        user = this.userProfileEntityRepos.create({
+            intraName, username, eMail
+        });
+        //add checks if the account creation fails
+        try {
           await this.userProfileEntityRepos.save(user);
-          const userID = user.id;
-          const payload: JwtPayload = { userID };
-          const aauthToken: string = this.jwtService.sign(payload);
-          return authToken;
+        } catch (error) {
+            throw new ConflictException(`account name/email "${username} was already in use`);
+        }
+        const userID = user.id;
+        const payload: JwtPayload = { userID };
+        const aauthToken: string = this.jwtService.sign(payload);
+        return authToken;
       }
 }

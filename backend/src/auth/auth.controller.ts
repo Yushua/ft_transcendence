@@ -40,22 +40,8 @@ export class AuthController {
         }
     }
 
-    @Get('login/:intraName')
-    async getAuthorization(@Param('intraName') intraName: string){
-        var check:boolean = await this.AuthService.checkUserExist(intraName)
-        var authorizationToken:string;
-        var path:JSX.IntrinsicElements;
-        //check if the suer exist, if now, create, and change status to <create account>
-        if ( check == false){
-            //make account
-        }
-        //login account
-        return {
-            authorizationToken, path, check
-        }
-    }
     @Get('loginNew/:code/:token')
     async getNewAccount(@Param('code') code: string, @Param('token') token: string){
-        
+
     }
 }
