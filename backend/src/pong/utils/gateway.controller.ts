@@ -11,7 +11,6 @@ let queuedclient:[Socket, string] = [undefined, 'nope']
 let n_game_rooms:number = 0
 let game_name:string = 'game_0'
 let connections:Map<Socket, [GameData, string[]]> = new Map<Socket,[GameData,string[]]>()
-let gameList:string[][] = new Array<string[]>()
 let customGameList:string[][] = new Array<string[]>()
 let games:Map<string, [GameData, string[]]> = new Map<string, [GameData, string[]]>()
 let p2Name:string
@@ -80,14 +79,12 @@ export class MyGateway implements OnModuleInit {
 				gameIDs.push(client2.id)
 				gameIDs.push(data.userID)
 				gameIDs.push(p2UserID)
-				gameInfo.push(game_name)
-				gameInfo.push(data.userName)
-				gameInfo.push(p2Name)
-				gameList.push(gameInfo)
 				dataIdTuple = [gamedata, gameIDs]
 				games.set(game_name, dataIdTuple)
 				connections.set(client, dataIdTuple)
 				connections.set(client2, dataIdTuple)
+				const serializedMap = [...games.entries()];
+				this.server.emit('gamelist', serializedMap)
 				gameIDs = []
 				gameInfo = []
 			}
@@ -107,13 +104,15 @@ export class MyGateway implements OnModuleInit {
 	handleKeyboardInput(
 		@MessageBody() direction: number,
 		@ConnectedSocket() client: Socket) {
-			let game = connections.get(client)
-			if (game !== undefined)
+			const connection = connections.get(client)
+			if (connection !== undefined)
 			{
-				if (game[1][0] === client.id)
-					game[0].p1.update_kb(direction)
-				if (game[1][1] === client.id)
-					game[0].p2.update_kb(direction)
+				const gamedata = connection[0]
+				const gameIDs = connection[1]	
+				if (gameIDs[IDs.p1_socket_id] === client.id)
+					gamedata.p1.update_kb(direction)
+				if (gameIDs[IDs.p2_socket_id] === client.id)
+					gamedata.p2.update_kb(direction)
 			}
 	}
 
@@ -121,17 +120,17 @@ export class MyGateway implements OnModuleInit {
 	handleMouseMovement(
 		@MessageBody() position: number,
 		@ConnectedSocket() client: Socket) {
-			
-			let game = connections.get(client)
-			if (game !== undefined)
+			const connection = connections.get(client)
+			if (connection !== undefined)
 			{
-				if (game[1][0] === client.id)
-					game[0].p1.update_mouse(position)
-				if (game[1][1] === client.id)
-					game[0].p2.update_mouse(position)
+				const gamedata = connection[0]
+				const gameIDs = connection[1]	
+				if (gameIDs[IDs.p1_socket_id] === client.id)
+					gamedata.p1.update_mouse(position)
+				if (gameIDs[IDs.p2_socket_id] === client.id)
+					gamedata.p2.update_mouse(position)
 			}
-	}
-
+		}
 
 	@SubscribeMessage('spectate')
 	handleSpectator(
@@ -148,7 +147,8 @@ export class MyGateway implements OnModuleInit {
 	@SubscribeMessage('refreshGameList')
 	handleRefresh(
 		@ConnectedSocket() client: Socket) {
-			client.emit('gamelist', gameList)
+			const serializedMap = [...games.entries()];
+			client.emit('gamelist', serializedMap)
 		}
 	
 	@SubscribeMessage('disconnect')
@@ -162,7 +162,6 @@ export class MyGateway implements OnModuleInit {
 
 	@SubscribeMessage('leave')
 	handleLeaver(
-		// @MessageBody() gameName: string,
 		@ConnectedSocket() client: Socket) {
 			let game = connections.get(client)
 			if (game !== undefined)
@@ -183,7 +182,7 @@ export class MyGateway implements OnModuleInit {
 		for (var game of games) {
 			
 			const gamaData: GameData = game[1][0]
-			
+
 			/* Make sure games don't get updated twice */
 			const gameName: string = gamaData.gameName
 			if (!updated_games[gameName]) {
@@ -230,11 +229,8 @@ export class MyGateway implements OnModuleInit {
 			if (games.get(gameData.gameName)) {
 				games.delete(gameData.gameName)
 				PongService.updateWinLoss(winningPlayer, losingPlayer);
-				let strarr = []
-				strarr = [gameData.gameName, gameData.p1_name, gameData.p2_name]
-				let index = gameList.indexOf(strarr)
-				if (index !== -1)
-					gameList.splice(index, 1)
+				const serializedMap = [...games.entries()];
+				this.server.emit('gamelist', serializedMap)
 			}
 			connections.delete(client)
 		}
