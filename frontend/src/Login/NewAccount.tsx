@@ -12,6 +12,7 @@ import LoginPage from './LoginPage';
 
 async function getAuthToken(username:string){
   var code:string = window.location.href.split('code=')[1]
+  console.log("i am in loginpage")
   try {
     const response = await fetch(`http://localhost:4242/auth/loginNew/${code}/${username}` , {
       headers: {
