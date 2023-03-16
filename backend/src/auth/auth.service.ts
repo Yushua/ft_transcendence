@@ -1,4 +1,4 @@
-import { ConflictException, InternalServerErrorException } from '@nestjs/common';
+import { ConflictException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
@@ -19,13 +19,16 @@ export class AuthService {
 
       async OauthSystemCodeToAccess(data):Promise<string>{
         var accessToken:string;
+        console.log("i am here1")
         try {
             await axios.post(`https://api.intra.42.fr/oauth/token`, data).then((response) => {
               accessToken = response.data['access_token'];
-            })        
+            })
+            console.log("i am here2")
         } catch (error) {
           throw new ConflictException(`intraPull failed, problem with OAuth API. input Data out of date`);
         }
+        console.log("i am here3")
         return accessToken
       }
 
@@ -55,10 +58,10 @@ export class AuthService {
        * 
        * @returns checs if the user exists and returns a boolean
        */
-      async checkUserExist(intraName: string):Promise<boolean>{
-        const user = await this.userProfileEntityRepos.findOneBy({ intraName })
+      async checkUserExist(username: string):Promise<boolean>{
+        const user = await this.userProfileEntityRepos.findOneBy({ username })
         if(!user){
-          return false
+          throw new NotFoundException(`username "${username}" already in use`);
         }
         return true
       }
@@ -91,14 +94,16 @@ export class AuthService {
         var authToken:string = ""
         var user:UserProfile
         console.log("I am in login for new account");
+        console.log(`intraname${intraName} username${username}`)
         user = this.userProfileEntityRepos.create({
             intraName, username
         });
         //add checks if the account creation fails
+        console.log("i am ehre")
         try {
           await this.userProfileEntityRepos.save(user);
         } catch (error) {
-            throw new ConflictException(`account name/email "${username} was already in use`);
+          throw new NotFoundException(`username "${username}" already in use`);
         }
         const userID = user.id;
         const payload: JwtPayload = { userID };

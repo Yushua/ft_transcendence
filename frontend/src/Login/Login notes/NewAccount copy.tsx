@@ -1,19 +1,17 @@
 import React, { } from 'react';
 import '../App.css';
 
-import { newWindow } from '../App';
-import MainWindow from '../MainWindow/MainWindow';
-import User from '../Utils/Cache/User';
-import HTTP from '../Utils/HTTP';
-import LoginHandlerOAuth from './LoginHandlerOAuth';
-import UserProfilePage from '../UserProfile/UserProfile';
+import { newWindow } from '../../App';
+import MainWindow from '../../MainWindow/MainWindow';
+import User from '../../Utils/Cache/User';
+import HTTP from '../../Utils/HTTP';
+import LoginHandlerOAuth from '../LoginHandlerOAuth';
+import UserProfilePage from '../../UserProfile/UserProfile';
 import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
-import LoginPage from './LoginPage';
 
 async function getAuthToken(username:string){
-  var code:string = window.location.href.split('code=')[1]
   try {
-    const response = await fetch(`http://localhost:4242/auth/loginNew/${code}/${username}` , {
+    const response = await fetch(`http://localhost:4242/auth/loginNew/${getCookie("code")}/${username}` , {
       headers: {
         Accept: 'application/json',
       },
@@ -26,13 +24,12 @@ async function getAuthToken(username:string){
     if (authToken == undefined || authToken == ""){
       alert("access to changing the eMail errored. check back at OAuth")
       //if failed, delete account
-      newWindow(<NewAccount/>)
+      newWindow(<LoginHandlerOAuth/>)
     }
     else{
       removeCookie("authToken")
       removeCookie('code');
-      setCookie('authToken', authToken,{ expires: 10000 });
-      console.log("created account succesfull")
+      setCookie('authToken', authToken,{ expires: 1 });
       newWindow(<UserProfilePage/>)
     }
   } catch (error) {
@@ -56,21 +53,10 @@ const handleUsername = (e: any) => {
   getAuthToken(e.currentTarget.elements.username.value)
 }
 
-const loginIntoOAuth = () => {
-  window.location.replace('https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-c73b865f02b3cf14638e1a50c5caa720828d13082db6ab753bdb24ca476e1a4c&redirect_uri=http%3A%2F%2Flocalhost%3A4242%2F&response_type=code');
-}
-
-const ReturnToLoginPage = () => {
-  newWindow(<LoginPage/>)
-}
-
 function NewAccount(){
-  if (window.location.href.split('code=')[1] == undefined){
-    loginIntoOAuth()
-  }
+
   return (
     <div className="setting up new account for Team Zero">
-      <button onClick={() => {ReturnToLoginPage()}}>Return to LoginPage</button>
         <form onSubmit={(handleUsername)}>
           <div>
             <label htmlFor="username">Username:</label>

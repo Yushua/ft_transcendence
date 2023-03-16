@@ -1,10 +1,10 @@
 import React, { } from 'react';
 import '../App.css';
 
-import { newWindow } from '../App';
-import MainWindow from '../MainWindow/MainWindow';
-import User from '../Utils/Cache/User';
-import HTTP from '../Utils/HTTP';
+import { newWindow } from '../../App';
+import MainWindow from '../../MainWindow/MainWindow';
+import User from '../../Utils/Cache/User';
+import HTTP from '../../Utils/HTTP';
 
 interface FormElements extends HTMLFormControlsCollection {
   intraname: HTMLInputElement

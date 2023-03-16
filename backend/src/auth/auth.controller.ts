@@ -1,4 +1,4 @@
-import { Controller, Get, Inject, Post, Redirect, Res, Response, Request, Param } from '@nestjs/common';
+import { Controller, Get, Inject, Post, Redirect, Res, Response, Request, Param, ConflictException } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 // import { Request } from 'node-fetch';
 import { AuthService } from './auth.service';
@@ -30,7 +30,9 @@ export class AuthController {
 
     @Get('loginNew/:code/:username')
     async getNewAccount(@Param('code') code: string, @Param('username') username: string){
-        console.log("i am in getNew ACCOUnt1")
+        console.log("new 1")
+        await this.AuthService.checkUserExist(username)
+        console.log("new 2")
         const dataToPost = {
             grant_type: 'authorization_code',
             client_id: 'u-s4t2ud-c73b865f02b3cf14638e1a50c5caa720828d13082db6ab753bdb24ca476e1a4c',
@@ -39,13 +41,10 @@ export class AuthController {
             redirect_uri: "http://localhost:4242/",
             state: " super-secret",
         }
-        console.log("i am in getNew ACCOUnt2")
         var accesssToken:string = await this.AuthService.OauthSystemCodeToAccess(dataToPost)
-        console.log("i am in getNew ACCOUnt3")
         var intraName:string = await this.AuthService.startRequest(accesssToken)
-        console.log("i am in getNew ACCOUnt4")
         var authToken:string = await this.AuthService.newAccountSystem(intraName, username)
-        console.log("i am in getNew ACCOUnt5")
+        console.log(`authToken successfull ${authToken}`)
         return authToken
     }
 }

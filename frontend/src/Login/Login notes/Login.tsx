@@ -1,11 +1,10 @@
 import React, { } from 'react';
 import '../App.css';
 import { getCookies, removeCookie, setCookie } from 'typescript-cookie'
-
-import { newWindow } from '../App';
-import MainWindow from '../MainWindow/MainWindow';
-import User from '../Utils/Cache/User';
-import HTTP from '../Utils/HTTP';
+import HTTP from '../../Utils/HTTP';
+import User from '../../Utils/Cache/User';
+import { newWindow } from '../../App';
+import MainWindow from '../../MainWindow/MainWindow';
 
 async function AccCreate(username: string){
   try {
@@ -89,10 +88,10 @@ const handleAccLogin = (e: React.FormEvent<YourFormElement>) => {
   const errorThingy = document.getElementById("errorCode")
 }
 
-const LoginPage: React.FC = () => {
+const Login: React.FC = () => {
   return (
 
-    <div className="LoginPage">
+    <div className="Login">
         <span className="heading">
           Create Account
         </span>
@@ -128,4 +127,4 @@ const LoginPage: React.FC = () => {
   );
 }
 
-export default LoginPage;
+export default Login;

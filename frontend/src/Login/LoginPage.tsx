@@ -17,19 +17,18 @@ const loginIntoOAuth = () => {
   //means you can normally log in, jsut need ot check if it works. so log in
 }
 
-function LoginHandlerOAuth(){
+function LoginPage(){
 
   if (getCookie("authToken") != undefined){
     checkAuthentication()
   }
 
   return (
-
     <div className="LoginpageV2">
        <button onClick={() => {submitNewAccount()}}>new account</button>
-       <button onClick={() => {submitNewAccount()}}>loginIntoOAuth</button>
+       <button onClick={() => {loginIntoOAuth()}}> Login</button>
     </div>
   );
 }
 
-export default LoginHandlerOAuth;
+export default LoginPage;
