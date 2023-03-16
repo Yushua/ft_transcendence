@@ -22,7 +22,7 @@ export class AuthController {
     redirect() {}
 
     @Get('token/:code')
-    async getAuthToken(@Param('code') code: string, @Request() request, @Response() response):Promise<string>{
+    async getAuthToken(@Param('code') code: string, @Request() request, @Response() response):Promise<Response>{
         console.log("I am in there backend")
         const dataToPost = {
             grant_type: 'authorization_code',
@@ -34,7 +34,8 @@ export class AuthController {
         }
         // console.log(`intraname works == ${this.AuthService.OauthSystemCodeToAccess(request, response, dataToPost)}`)
         console.log(`\n\n${code}`);
-        
-        return await this.AuthService.OauthSystemCodeToAccess(request, response, dataToPost);
+
+        response["intraname"] = await this.AuthService.OauthSystemCodeToAccess(request, response, dataToPost)
+        response.sending()
     }
 }
