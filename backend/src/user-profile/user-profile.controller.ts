@@ -37,8 +37,6 @@ export class UserProfileController {
     @UseGuards(AuthGuardEncryption)
     getUserById( 
         @Param('id') id: string): Promise<UserProfile> {
-        console.log("I AM HERE")
-        console.log("with an id " + id)
         if (id == "undefined")
             return;
         return this.userServices.findUserBy(id);

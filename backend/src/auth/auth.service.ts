@@ -87,11 +87,12 @@ export class AuthService {
        * @param eMail 
        * @returns create account when it is new. its also checked
        */
-      async newAccountSystem(intraName:string, username: string, eMail:string):Promise<string> {
+      async newAccountSystem(intraName:string, username: string):Promise<string> {
         var authToken:string = ""
         var user:UserProfile
+        console.log("I am in login for new account");
         user = this.userProfileEntityRepos.create({
-            intraName, username, eMail
+            intraName, username
         });
         //add checks if the account creation fails
         try {

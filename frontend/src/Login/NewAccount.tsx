@@ -7,11 +7,11 @@ import User from '../Utils/Cache/User';
 import HTTP from '../Utils/HTTP';
 import LoginHandlerOAuth from './LoginHandlerOAuth';
 import UserProfilePage from '../UserProfile/UserProfile';
-import { getCookie } from 'typescript-cookie';
+import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
 
 async function getAuthToken(username:string){
   try {
-    const response = await fetch(`http://localhost:4242/auth/loginNew/${getCookie("code")}/${getCookie("authToken")}/`  , {
+    const response = await fetch(`http://localhost:4242/auth/loginNew/${getCookie("code")}/${username}` , {
       headers: {
         Accept: 'application/json',
       },
@@ -27,6 +27,9 @@ async function getAuthToken(username:string){
       newWindow(<LoginHandlerOAuth/>)
     }
     else{
+      removeCookie("authToken")
+      removeCookie('code');
+      setCookie('authToken', authToken,{ expires: 1 });
       newWindow(<UserProfilePage/>)
     }
   } catch (error) {
@@ -47,8 +50,7 @@ interface YourFormElement extends HTMLFormElement {
 
 const handleUsername = (e: any) => {
   e.preventDefault();
-  //username
-  //check email
+  getAuthToken(e.currentTarget.elements.username.value)
 }
 
 function NewAccount(){
@@ -59,8 +61,6 @@ function NewAccount(){
           <div>
             <label htmlFor="username">Username:</label>
             <input id="username" type="text" />
-            <label htmlFor="eMail">eMail:</label>
-            <input id="eMail" type="text" />
           </div>
         </form>
     </div>

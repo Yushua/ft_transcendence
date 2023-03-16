@@ -23,7 +23,11 @@ export class UserProfile {
     @Column()
     password: string;
 
-    @Column()
+    //check if the email unique "" default is not hampering more than one account
+    @Column({
+        unique: true,
+        default: ""
+    })
     eMail: string;
 
     @Column("text", { array: true , default: "{}"})
