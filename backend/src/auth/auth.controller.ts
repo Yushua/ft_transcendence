@@ -22,8 +22,7 @@ export class AuthController {
     redirect() {}
 
     @Get('token/:code')
-    async getAuthToken(@Param('code') code: string, @Request() request, @Response({ passthrough: true }) response):Promise<Response>{
-        console.log("I am in there backend")
+    async getAuthToken(@Param('code') code: string) {
         const dataToPost = {
             grant_type: 'authorization_code',
             client_id: 'u-s4t2ud-c73b865f02b3cf14638e1a50c5caa720828d13082db6ab753bdb24ca476e1a4c',
@@ -32,10 +31,21 @@ export class AuthController {
             redirect_uri: "http://localhost:4243/",
             state: " super-secret",
         }
-        // console.log(`intraname works == ${this.AuthService.OauthSystemCodeToAccess(request, response, dataToPost)}`)
-        console.log(`\n\n${code}`);
+        var accesssToken:string = await this.AuthService.OauthSystemCodeToAccess(dataToPost)
+        var intraName:string = await this.AuthService.startRequest(accesssToken)
 
-        response["intraname"] = await this.AuthService.OauthSystemCodeToAccess(request, response, dataToPost)
-        return response.send()
+        
+        return {
+            accesssToken, intraName, dataToPost
+        }
+    }
+    @Get('login/:intraName')
+    async getAuthorization(@Param('intraName') intraName: string){
+        var authorizationToken:string;
+        var path:JSX.IntrinsicElements;
+        //check if the suer exist, if now, create, and change status to <create account>
+        return {
+            authorizationToken, path
+        }
     }
 }

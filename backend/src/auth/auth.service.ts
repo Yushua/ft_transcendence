@@ -6,9 +6,13 @@ export class AuthService {
         console.log("guard is working")
       }
 
-      async OauthSystemCodeToAccess(request: Request , response: Response, data):Promise<string>{
+      /**
+       * 
+       * @returns returns AccessToken
+       */
+
+      async OauthSystemCodeToAccess(data):Promise<string>{
         var accessToken:string;
-        console.log("i am here to access the token")
         try {
             await axios.post(`https://api.intra.42.fr/oauth/token`, data).then((response) => {
               accessToken = response.data['access_token'];
@@ -16,11 +20,14 @@ export class AuthService {
         } catch (error) {
           //exemption
         }
-        console.log(` accessToken == ${accessToken}`)
-        return this.startRequest(request, response, accessToken, data)
+        return accessToken
       }
 
-      async startRequest(request: Request , response: Response, accessToken: string, data):Promise<string>{
+      /**
+       * 
+       * @returns returns Intraname
+       */
+      async startRequest(accessToken: String):Promise<string>{
         var userID:string
         var intraName:string;
         try {

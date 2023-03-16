@@ -5,7 +5,6 @@ import HTTP from '../Utils/HTTP';
 
 const handleAccLogin = (e: any) => {
   e.preventDefault();
-  redirect(`http://localhost:4242/auth/login`)
   //after this, you are logged in here
   console.log(HTTP.HostRedirect())
 }
@@ -13,12 +12,8 @@ const handleAccLogin = (e: any) => {
 function SetupLogin(){
   return (
 
-    <div className="LoginPage">
-       <span className="heading">
-          </span>
-          <form onSubmit={( handleAccLogin)}>
-          <button type="submit">Start Intra login</button>
-          </form>
+    <div className="Loging in">
+       
     </div>
   );
 }

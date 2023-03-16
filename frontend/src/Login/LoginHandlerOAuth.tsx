@@ -4,46 +4,51 @@ import '../App.css';
 import { newWindow } from '../App';
 import MainWindow from '../MainWindow/MainWindow';
 
+async function handleLoginWithIntraName(intraName:string){
+  try {
+    const response = await fetch(`http://localhost:4242/auth/login/` + intraName , {
+      headers: {
+        Accept: 'application/json',
+      },
+    })
+    if (!response.ok) {
+      throw new Error(`Error! status: ${response.status}`);
+    }
+    var result = await response.json();
+    var path:JSX.IntrinsicElements = result["path"]
+    var authToken:string = result["authToken"]
+    newWindow(<path/>)
+  } catch (error) {
+    console.log(`error ${error}`)
+    alert("access to authorization token failed\ncheck available access to the acount creation\nand its creation of the accessToken")
+    newWindow(<LoginHandlerOAuth/>)
+  }
+}
+
 async function setLogin(){
   try {
     const response = await fetch(`http://localhost:4242/auth/token/${window.location.href.split('code=')[1]}` , {
       headers: {
         Accept: 'application/json',
       },
-    }).then(asd => {
-      console.log(asd.body + " IS RESPONES FROM FETCH");
-    });
-    console.log("checking the response if succesfull")
-    console.log(`bmajor response ${response}`)
-    console.log("i am before response")
-    // if (!response.ok) {
-    //   throw new Error(`Error! status: ${response.status}`);
-    // }
-    // const result = (await response.json());
-    const result = (await JSON.parse(response));
-    console.log("result////")
-    console.log(result)
-    newWindow(<MainWindow/>)
-    return result;
+    })
+    if (!response.ok) {
+      throw new Error(`Error! status: ${response.status}`);
+    }
+    var result = await response.json();
+    var accessToken:string = result["accesssToken"]
+    var intraName:string = result["intraName"]
+    const data = result["dataToPost"]
+    console.log(`accessToken ${accessToken}`)
+    console.log(`intraName ${intraName}`)
+    console.log(`data ${data}`)
+    // var intraName:string = response["intraName"].
+    handleLoginWithIntraName(intraName);
   } catch (error) {
     console.log(`error ${error}`)
-    // alert("login in failed for some reason, back to login")
-    // _setDisplay(false)
+    // alert(error)
+    newWindow(<LoginHandlerOAuth/>)
   }
-  var intraName:string
-  // try {
-  //   const intraPull = await axios.get(`http://localhost:4243/auth/token/${window.location.href.split('code=')[1]}`, {
-  //     headers: {
-  //       Accept: 'application/json',
-  //     },
-  //   }).then((response) => {
-  //     console.log(`response login page${response}`)
-  //     // intraName = response['data'].login
-  //   })
-  // } catch (error) {
-  //   //exemption
-  // }
-
 }
 
 const loginIntoOAuth = () => {
