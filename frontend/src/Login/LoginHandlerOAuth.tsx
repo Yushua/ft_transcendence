@@ -16,10 +16,17 @@ async function setLogin(){
     console.log("checking the response if succesfull")
     console.log(`bmajor response ${response}`)
     console.log("i am before response")
+    // if (!response.ok) {
+    //   throw new Error(`Error! status: ${response.status}`);
+    // }
+    // const result = (await response.json());
+    const result = (await JSON.parse(response));
     console.log("result////")
+    console.log(result)
     newWindow(<MainWindow/>)
+    return result;
   } catch (error) {
-    console.log(`error in login ${error}`)
+    console.log(`error ${error}`)
     // alert("login in failed for some reason, back to login")
     // _setDisplay(false)
   }
@@ -41,8 +48,7 @@ async function setLogin(){
 
 const loginIntoOAuth = () => {
   console.log("i am here")
-  ///try go to
-  window.location.replace('https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-c73b865f02b3cf14638e1a50c5caa720828d13082db6ab753bdb24ca476e1a4c&redirect_uri=http%3A%2F%2Flocalhost%3A4242%2F&response_type=code');
+  window.location.replace('https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-c73b865f02b3cf14638e1a50c5caa720828d13082db6ab753bdb24ca476e1a4c&redirect_uri=http%3A%2F%2Flocalhost%3A4243%2F&response_type=code');
 }
 
 var _setDisplay:React.Dispatch<React.SetStateAction<boolean>>
@@ -60,7 +66,6 @@ function LoginHandlerOAuth(){
     }
   }
   // else if(Display == true){
-    //this sis et if the login failed
   //   setLogin();
   // }
 
