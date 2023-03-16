@@ -1,6 +1,5 @@
-import { IsNotEmpty } from "class-validator";
+
 import { Column } from "typeorm";
-import { UserStatus } from "../user-profile-status.model";
 
 export class CreateUserDto {
     @Column({
@@ -12,9 +11,4 @@ export class CreateUserDto {
         unique: true
     })
     eMail: string;
-
-    // @Column()
-    // friendlist: Array<string>;
-
-    status: UserStatus
 }

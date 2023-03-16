@@ -24,12 +24,12 @@ const handleAccCreation = (e: any) => {
 function NewAccount(){
   return (
 
-    <div className="LoginpageV2">
-       <span className="heading">
+    <div className="setting up new account for Team Zero">
+       {/* <span className="heading">
           </span>
           <form onSubmit={(handleAccCreation)}>
           <button type="submit">Login</button>
-          </form>
+          </form> */}
     </div>
   );
 }

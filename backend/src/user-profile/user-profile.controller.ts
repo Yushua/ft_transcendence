@@ -1,7 +1,6 @@
 import { Controller, Get, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthGuardEncryption } from 'src/auth/auth.guard';
-import { UserStatus } from './user-profile-status.model';
 import { UserProfileService } from './user-profile.service';
 import { UserProfile } from './user.entity';
 
@@ -149,12 +148,6 @@ export class UserProfileController {
         @Param('username') username: string,
         @Request() req: Request): Promise<UserProfile> {
         return this.userServices.changeUsername(username, req["user"].id);
-    }
-    @Patch('/status/:status')
-    changeStatus(
-        @Param('status') status: UserStatus,
-        @Param('id') id: string): Promise<UserProfile> {
-        return this.userServices.changeStatus(status, id);
     }
 
     /**

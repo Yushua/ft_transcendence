@@ -56,13 +56,10 @@ async function Acclogin(username: string) {
     console.log('keycode: ', accessToken);
     removeCookie('accessToken');
     setCookie('accessToken', accessToken,{ expires: 1 });
-
-    
     // Robin's changes
     await User.asyncUpdate(result["userID"])
     newWindow(<MainWindow/>)
     //
-    
     return result;
   }
   catch (e: any) {

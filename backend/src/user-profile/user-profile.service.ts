@@ -1,11 +1,7 @@
 import { ConflictException, Injectable, InternalServerErrorException, NotFoundException, UseGuards } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { AuthGuard } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { AddFriendListDto } from './dto/create-user.dto copy';
 import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
-import { UserStatus } from './user-profile-status.model';
 import { UserProfile } from './user.entity';
 
 @Injectable()
@@ -37,7 +33,7 @@ export class UserProfileService {
       }
 
       async findAllUsers(filterDto: getTasksFilterDto): Promise<UserProfile[]> {
-        const { status, search } = filterDto;
+        const { search } = filterDto;
         const query = this.userEntity.createQueryBuilder('userProfile');
      
         if (status) {
@@ -76,13 +72,6 @@ export class UserProfileService {
         if (!found){
           throw new NotFoundException(`Task with ID "${id}" not found`);
         }
-        return found;
-      }
-
-      async changeStatus(status: UserStatus, id: string): Promise<UserProfile> {
-        const found = await this.findUserBy(id);
-        found.status = status;
-        await this.userEntity.save(found);
         return found;
       }
 

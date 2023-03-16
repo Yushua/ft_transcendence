@@ -1,7 +1,4 @@
-import { Exclude } from "class-transformer";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { UserStatus } from "./user-profile-status.model";
-import { FriendsProfile } from "./user.entity.friends";
 import { StatProfile } from "./user.stat.entity";
 
 @Entity()
@@ -26,10 +23,8 @@ export class UserProfile {
     @Column()
     password: string;
 
-    eMail: string;
-
     @Column()
-    status: UserStatus;
+    eMail: string;
 
     @Column("text", { array: true , default: "{}"})
     friendList: string[];

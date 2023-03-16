@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import '../App.css';
 
 import { newWindow } from '../App';
-import MainWindow from '../MainWindow/MainWindow';
+import UserProfilePage from '../UserProfile/UserProfile';
+import NewAccount from './NewAccount';
 
 async function handleLoginWithIntraName(intraName:string){
   try {
@@ -15,9 +16,18 @@ async function handleLoginWithIntraName(intraName:string){
       throw new Error(`Error! status: ${response.status}`);
     }
     var result = await response.json();
-    var path:JSX.IntrinsicElements = result["path"]
     var authToken:string = result["authToken"]
-    newWindow(<path/>)
+    var check:boolean = result["check"]
+    if (authToken == undefined || check == undefined){
+      newWindow(<LoginHandlerOAuth/>)
+    }
+    else if (check == false){
+      newWindow(<NewAccount/>)
+    }
+    else {
+      //check if maybe tow people logging into the same acount
+      newWindow(<UserProfilePage/>)
+    }
   } catch (error) {
     console.log(`error ${error}`)
     alert("access to authorization token failed\ncheck available access to the acount creation\nand its creation of the accessToken")
@@ -38,12 +48,15 @@ async function setLogin(){
     var result = await response.json();
     var accessToken:string = result["accesssToken"]
     var intraName:string = result["intraName"]
+    var authToken:boolean = result["authken"]
     const data = result["dataToPost"]
     console.log(`accessToken ${accessToken}`)
     console.log(`intraName ${intraName}`)
+    console.log(`authToken ${authToken}`)
     console.log(`data ${data}`)
-    // var intraName:string = response["intraName"].
-    handleLoginWithIntraName(intraName);
+    // check in handel login if the account is not yet created
+
+    // handleLoginWithIntraName(intraName);
   } catch (error) {
     console.log(`error ${error}`)
     // alert(error)

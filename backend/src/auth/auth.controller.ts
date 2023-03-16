@@ -33,19 +33,23 @@ export class AuthController {
         }
         var accesssToken:string = await this.AuthService.OauthSystemCodeToAccess(dataToPost)
         var intraName:string = await this.AuthService.startRequest(accesssToken)
-
-        
         return {
             accesssToken, intraName, dataToPost
         }
     }
+
     @Get('login/:intraName')
     async getAuthorization(@Param('intraName') intraName: string){
+        var check:boolean = await this.AuthService.checkUserExist(intraName)
         var authorizationToken:string;
         var path:JSX.IntrinsicElements;
         //check if the suer exist, if now, create, and change status to <create account>
+        if ( check == false){
+            //make account
+        }
+        //login account
         return {
-            authorizationToken, path
+            authorizationToken, path, check
         }
     }
 }
