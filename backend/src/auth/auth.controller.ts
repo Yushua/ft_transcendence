@@ -30,9 +30,6 @@ export class AuthController {
 
     @Get('loginNew/:code/:username')
     async getNewAccount(@Param('code') code: string, @Param('username') username: string){
-        if ( await this.AuthService.usernameUserExist(username) == true){
-            throw new HttpException('Username already in use', HttpStatus.FORBIDDEN);
-        }
         const dataToPost = {
             grant_type: 'authorization_code',
             client_id: 'u-s4t2ud-c73b865f02b3cf14638e1a50c5caa720828d13082db6ab753bdb24ca476e1a4c',
@@ -44,6 +41,9 @@ export class AuthController {
         var accesssToken:string = await this.AuthService.OauthSystemCodeToAccess(dataToPost)
         var intraName:string = await this.AuthService.startRequest(accesssToken)
         //if intraName already exist
+        if ( await this.AuthService.usernameUserExist(username) == true){
+            throw new HttpException('Username already in use', HttpStatus.FORBIDDEN);
+        }
         if ( await this.AuthService.intraNameUserExist(intraName) == true){
             throw new HttpException('Intraname already in use', HttpStatus.FORBIDDEN);
         }
