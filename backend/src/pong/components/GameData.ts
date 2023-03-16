@@ -138,16 +138,8 @@ export class Ball extends Entity
 		width,
 		height,	
 	)
-		var randomDirection = Math.floor(Math.random() * 2) + 1
-		if (randomDirection % 2)
-			this.xVec = 1
-		else
-			this.xVec = -1
-		randomDirection = Math.floor(Math.random() * 2) + 1
-		if (randomDirection % 2)
-			this.yVec = 1
-		else
-			this.yVec = -1
+		this.yVec = Math.random() < .5 ? 1 : -1
+		this.xVec = Math.random() < .5 ? 1 : -1
 		this.startDir = this.xVec
 	}
 	
