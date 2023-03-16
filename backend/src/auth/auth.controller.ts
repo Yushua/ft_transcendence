@@ -48,6 +48,6 @@ export class AuthController {
             throw new HttpException('Intraname already in use', HttpStatus.FORBIDDEN);
         }
         var authToken:string = await this.AuthService.newAccountSystem(intraName, username)
-        return authToken
+        return {authToken}
     }
 }

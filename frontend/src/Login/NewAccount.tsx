@@ -19,9 +19,11 @@ async function getAuthToken(username:string){
         Accept: 'application/json',
       },
     })
+    console.log("still in")
     if (!response.ok) {
       throw new Error(`Error! status: ${response.status}`);
     }
+    console.log("i am out")
     var result = await response.json();
     var authToken:string = result["authToken"]
     if (authToken == undefined || authToken == ""){

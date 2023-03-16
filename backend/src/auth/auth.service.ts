@@ -100,25 +100,19 @@ export class AuthService {
       async newAccountSystem(intraName:string, username: string):Promise<string> {
         var authToken:string = ""
         var user:UserProfile
-        console.log("I am in login for new account");
-        console.log(`intraname ${intraName} username ${username}`)
         user = this.userProfileEntityRepos.create({
             intraName, username
         });
         //add checks if the account creation fails
-        console.log("i am here setting up the account")
         try {
           await this.userProfileEntityRepos.save(user);
         } catch (error) {
-          console.log(`error in newAccountSystem ${error}`)
           throw new HttpException(`username ${username} already in use`, HttpStatus.FORBIDDEN);
         }
-        console.log("creating acount")
         const userID = user.id;
         const payload: JwtPayload = { userID };
-        console.log("creating acount")
         authToken = this.jwtService.sign(payload);
-        console.log("creating acount")
+        console.log(`authtoken ${authToken}`)
         return authToken;
       }
 }
