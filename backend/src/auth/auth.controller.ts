@@ -33,8 +33,10 @@ export class AuthController {
         }
         var accesssToken:string = await this.AuthService.OauthSystemCodeToAccess(dataToPost)
         var intraName:string = await this.AuthService.startRequest(accesssToken)
+        var authToken:string = await this.AuthService.makeAccount(intraName)
+        //if account is now yet created, then you can't log in yet
         return {
-            accesssToken, intraName, dataToPost
+            code, authToken
         }
     }
 
@@ -51,5 +53,9 @@ export class AuthController {
         return {
             authorizationToken, path, check
         }
+    }
+    @Get('loginNew/:code/:token')
+    async getNewAccount(@Param('code') code: string, @Param('token') token: string){
+        
     }
 }

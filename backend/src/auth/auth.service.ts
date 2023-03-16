@@ -4,6 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
 import { UserProfile } from 'src/user-profile/user.entity';
 import { Repository } from 'typeorm';
+import { CreateUserDto } from './dto/create-user.dto';
+import { JwtPayload } from './jwt-payload.interface';
 
 export class AuthService {
     constructor(
@@ -71,38 +73,35 @@ export class AuthService {
 
         var user:UserProfile = await this.userProfileEntityRepos.findOneBy({ intraName })
         if(!user){
-          var eMail:string = ""
-          var username:string = ""
+          return ""
+        }
+        const userID = user.id;
+        const payload: JwtPayload = { userID };
+        const aauthToken: string = this.jwtService.sign(payload);
+        return authToken;
+      }
+
+      /**
+       * 
+       * @param intraName 
+       * @param username 
+       * @param eMail 
+       * @returns create account when it is new. its also checked
+       */
+      async newAccountSystem(intraName:string, createUserDto:CreateUserDto):Promise<string> {
+        const { username, eMail } = createUserDto;
+
+        var authToken:string = ""
+        var user:UserProfile
+        //if it fails?
           user = this.userProfileEntityRepos.create({
               intraName, username, eMail
           });
           //add checks if the account creation fails
           await this.userProfileEntityRepos.save(user);
-          return ""
-        }
-        //so now created, and use it to log in
-
-        return authToken
+          const userID = user.id;
+          const payload: JwtPayload = { userID };
+          const aauthToken: string = this.jwtService.sign(payload);
+          return authToken;
       }
-    //   async createUser(authCredentialsDto: AuthCredentialsDto): Promise<UserProfile> {
-        
-    //     const salt = await bcrypt.genSalt();
-    //     // const hashedPassword = await bcrypt.hash(password, salt);
-    //     var eMail:string = ""
-    //     const _user = this.userProfileEntityRepos.create({
-    //         intraName, username, status: UserStatus.CREATION, eMail
-    //     });
-    //     try {
-    //         await this.userProfileEntityRepos.save(_user);
-    //     } catch (error) {
-    //         console.log(`error "${error.code}`);
-    //         if (error.code === '23505'){
-    //             throw new ConflictException(`account name/email "${username} was already in use1`);
-    //         }
-    //         else {
-    //             throw new InternalServerErrorException(`account name/email "${error.code} was already in use, but the error is different`);
-    //         }
-    //     }
-    //     return _user;
-    // }
 }

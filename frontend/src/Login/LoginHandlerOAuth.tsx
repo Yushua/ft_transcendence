@@ -4,36 +4,7 @@ import '../App.css';
 import { newWindow } from '../App';
 import UserProfilePage from '../UserProfile/UserProfile';
 import NewAccount from './NewAccount';
-
-async function handleLoginWithIntraName(intraName:string){
-  try {
-    const response = await fetch(`http://localhost:4242/auth/login/` + intraName , {
-      headers: {
-        Accept: 'application/json',
-      },
-    })
-    if (!response.ok) {
-      throw new Error(`Error! status: ${response.status}`);
-    }
-    var result = await response.json();
-    var authToken:string = result["authToken"]
-    var check:boolean = result["check"]
-    if (authToken == undefined || check == undefined){
-      newWindow(<LoginHandlerOAuth/>)
-    }
-    else if (check == false){
-      newWindow(<NewAccount/>)
-    }
-    else {
-      //check if maybe tow people logging into the same acount
-      newWindow(<UserProfilePage/>)
-    }
-  } catch (error) {
-    console.log(`error ${error}`)
-    alert("access to authorization token failed\ncheck available access to the acount creation\nand its creation of the accessToken")
-    newWindow(<LoginHandlerOAuth/>)
-  }
-}
+import { removeCookie, setCookie } from 'typescript-cookie';
 
 async function setLogin(){
   try {
@@ -46,17 +17,25 @@ async function setLogin(){
       throw new Error(`Error! status: ${response.status}`);
     }
     var result = await response.json();
-    var accessToken:string = result["accesssToken"]
-    var intraName:string = result["intraName"]
-    var authToken:boolean = result["authken"]
-    const data = result["dataToPost"]
-    console.log(`accessToken ${accessToken}`)
-    console.log(`intraName ${intraName}`)
-    console.log(`authToken ${authToken}`)
-    console.log(`data ${data}`)
-    // check in handel login if the account is not yet created
-
-    // handleLoginWithIntraName(intraName);
+    var authToken:string = result["authToken"]
+    var code:string = result["code"]
+    //can't send the intraname around, so instead the Authtoken, because you need information in it
+    if (authToken == undefined){
+      newWindow(<LoginHandlerOAuth/>)
+    }
+    else if (authToken == ""){
+      removeCookie('code');
+      removeCookie('authToken');
+      setCookie('authToken', authToken,{ expires: 1 });
+      setCookie('code', code,{ expires: 1 });
+      newWindow(<NewAccount/>)
+    }
+    else {
+      //check if you're logged in
+      removeCookie('accessToken');
+      setCookie('accessToken', authToken,{ expires: 1 });
+      newWindow(<UserProfilePage/>)
+    }
   } catch (error) {
     console.log(`error ${error}`)
     // alert(error)
