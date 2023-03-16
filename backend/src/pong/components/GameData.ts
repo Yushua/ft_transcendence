@@ -9,10 +9,14 @@ export class GameData {
 	p1: Paddle
 	p2: Paddle
 	ball: Ball
+	p1_name: string
+	p2_name: string
 
-	constructor(gamename:string, speedpercent:number, paddleSizePercent:number)
+	constructor(gamename:string, p1_name:string, p2_name:string, speedpercent:number, paddleSizePercent:number)
 	{
 		this.gameName = gamename
+		this.p1_name = p1_name
+		this.p2_name = p2_name
 		this.gameState = 'newgame'
 		this.p1_score = 0
 		this.p2_score = 0
@@ -26,13 +30,13 @@ export class GameData {
 		switch (this.ball.update(this.p1, this.p2, deltaTime)) {
 			case 'p1_scored':
 				this.p1_score++
-				if (this.p1_score === 11)
+				if (this.p1_score === 1)
 					this.gameState = 'p1_won'
 				break;
 			
 			case 'p2_scored':
 				this.p2_score++
-				if (this.p2_score === 11)
+				if (this.p2_score === 1)
 					this.gameState = 'p2_won'
 				break;
 		

@@ -17,6 +17,13 @@ let games:Map<string, [GameData, string[]]> = new Map<string, [GameData, string[
 let p2Name:string
 let p2UserID:string
 
+const IDs = {
+	p1_socket_id: 0,
+	p2_socket_id: 1,
+	p1_userID: 2,
+	p2_userID: 3
+}
+
 @WebSocketGateway({
 	cors: {
 		origin: ['http://localhost:4243']
@@ -64,7 +71,7 @@ export class MyGateway implements OnModuleInit {
 				queuedclient[0] = undefined
 
 				//create gameData with default settings which holds all game info client needs to render
-				let gamedata = new GameData('classic ' + game_name, 100, 100)
+				let gamedata = new GameData(game_name, data.userName, p2Name, 100, 100)
 
 				//add this game with the client IDs to a gamelist and insert <client, [data, IDs]> in a map which
 				//can be used to access the right gamedata for movement events by clients, and based on ID order
@@ -90,9 +97,8 @@ export class MyGateway implements OnModuleInit {
 	handleCreateGame(
 	@MessageBody() data: {userID:string, userName:string, customSettings:any},
 	@ConnectedSocket() client: Socket) {
-		let gamedata = new GameData('custom', data.customSettings.ballSpeed, data.customSettings.paddleSize)
+		let gamedata = new GameData('custom', data.userName, 'placeholder', data.customSettings.ballSpeed, data.customSettings.paddleSize)
 		
-
 	}
 
 	//clients send movement events - using game map to fing the right game and its first or second
@@ -139,7 +145,12 @@ export class MyGateway implements OnModuleInit {
 				client.emit('spectating')
 			}
 		}
-
+	@SubscribeMessage('refreshGameList')
+	handleRefresh(
+		@ConnectedSocket() client: Socket) {
+			client.emit('gamelist', gameList)
+		}
+	
 	@SubscribeMessage('disconnect')
 	handleDisconnect(
 		@ConnectedSocket() client: Socket) {
@@ -193,7 +204,7 @@ export class MyGateway implements OnModuleInit {
 		for (const connection of connections) {
 			const client: Socket = connection[0]
 			const gameData: GameData = connection[1][0]
-			const string_array_in_tuple: string[] = connection[1][1]
+			const gameIDs: string[] = connection[1][1]
 			
 			/* Send updated data */
 			await_updates.push((async () =>
@@ -205,23 +216,23 @@ export class MyGateway implements OnModuleInit {
 			var losingPlayer: string | null = null
 			switch (gameData.gameState) {
 				case 'p1_won':
-					winningPlayer = string_array_in_tuple[2]
-					losingPlayer = string_array_in_tuple[3]
+					winningPlayer = gameIDs[IDs.p1_userID]
+					losingPlayer = gameIDs[IDs.p2_userID]
 					break;
 				case 'p2_won':
-					winningPlayer = string_array_in_tuple[3]
-					losingPlayer = string_array_in_tuple[2]
+					winningPlayer = gameIDs[IDs.p2_userID]
+					losingPlayer = gameIDs[IDs.p1_userID]
 					break;
 				default: continue;
 			}
-			
+
 			/* Make game gets removed only once */
-			if (games[gameData.gameName]) {
+			if (gameData.gameName) {
 				games.delete(gameData.gameName)
-				
 				PongService.updateWinLoss(winningPlayer, losingPlayer);
-				
-				let index = gameList.indexOf([gameData.gameName, string_array_in_tuple[0], string_array_in_tuple[1]])
+				let strarr = []
+				strarr = [gameData.gameName, gameData.p1_name, gameData.p2_name]
+				let index = gameList.indexOf(strarr)
 				if (index !== -1)
 					gameList.splice(index, 1)
 			}
