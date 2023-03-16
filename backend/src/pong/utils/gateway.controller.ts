@@ -64,7 +64,7 @@ export class MyGateway implements OnModuleInit {
 				queuedclient[0] = undefined
 
 				//create gameData with default settings which holds all game info client needs to render
-				let gamedata = new GameData('classic ' + game_name, 100, 100)
+				let gamedata = new GameData(game_name, 100, 100)
 
 				//add this game with the client IDs to a gamelist and insert <client, [data, IDs]> in a map which
 				//can be used to access the right gamedata for movement events by clients, and based on ID order
@@ -216,7 +216,7 @@ export class MyGateway implements OnModuleInit {
 			}
 			
 			/* Make game gets removed only once */
-			if (games[gameData.gameName]) {
+			if (games.get(gameData.gameName)) {
 				games.delete(gameData.gameName)
 				
 				PongService.updateWinLoss(winningPlayer, losingPlayer);
