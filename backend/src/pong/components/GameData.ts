@@ -20,19 +20,22 @@ export class GameData {
 		this.ball = new Ball(10 * speedpercent / 100, 3, 1500, 750, 20, 20, 20)
 	}
 
-	update(event:string)
+	update(deltaTime: number)
 	{
-		if (event === 'p1_scored')
-		{
-			this.p1_score++
-			if (this.p1_score === 11)
-				this.gameState = 'p1_won'
-		}
-		else if (event === 'p2_scored')
-		{
-			this.p2_score++
-			if (this.p2_score === 11)
-				this.gameState = 'p2_won'
+		switch (this.ball.update(this.p1, this.p2, deltaTime)) {
+			case 'p1_scored':
+				this.p1_score++
+				if (this.p1_score === 11)
+					this.gameState = 'p1_won'
+				break;
+			
+			case 'p2_scored':
+				this.p2_score++
+				if (this.p2_score === 11)
+					this.gameState = 'p2_won'
+				break;
+		
+			default: break;
 		}
 	}
 }

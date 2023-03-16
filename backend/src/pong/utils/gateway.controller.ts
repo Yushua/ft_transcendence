@@ -180,7 +180,7 @@ export class MyGateway implements OnModuleInit {
 				
 				/* Update game asyncronosly and add to await array */
 				await_updates.push((async () => 
-					gamaData.update(gamaData.ball.update(gamaData.p1, gamaData.p2, deltaTime))
+					gamaData.update(deltaTime)
 				)())
 			}
 		}
@@ -228,6 +228,7 @@ export class MyGateway implements OnModuleInit {
 			connections.delete(client)
 		}
 		
+		/* Simulate Lag */
 		// await_updates.push(new Promise(res => setTimeout(res, Math.random() * 100)))
 		// await_updates.push(new Promise(res => setTimeout(res, 100)))
 		
@@ -238,6 +239,7 @@ export class MyGateway implements OnModuleInit {
 		const endTime = Date.now()
 		var delta = endTime - startTime
 		
+		/* Print Slowdown */
 		// if (delta < 2) {}
 		// else if (delta < 5) { console.log(`${"\x1b[37m"}${delta}${"\x1b[0m"}`) }
 		// else if (delta < 10) { console.log(`${"\x1b[33m"}${delta}${"\x1b[0m"}`) }
