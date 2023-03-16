@@ -16,15 +16,14 @@ function _tryJoiningRoom(roomID: string, hasPass: boolean) {
 	else
 		password = "nothing"
 	
-	HTTP.asyncPatch(`chat/join/${roomID}/${password}`, null, null, async mgs => {
-		if (mgs.responseText === "") {
-			alert("Faild to join room.")
-			return
-		}
-		await ChatUser.asyncUpdate(ChatUser.ID)
-		await ChatRoom.asyncUpdate(roomID)
-		SetMainWindow("chat")
-	})
+	HTTP.asyncPatch(`chat/join/${roomID}/${password}`, null, null,
+		async ok => {
+			await Promise.all([
+				ChatUser.asyncUpdate(ChatUser.ID),
+				ChatRoom.asyncUpdate(roomID),
+			])
+			SetMainWindow("chat")},
+		error => {alert("Failed to join room.")})
 }
 
 var _updating = false // No clue why it's needed, but it fixes it

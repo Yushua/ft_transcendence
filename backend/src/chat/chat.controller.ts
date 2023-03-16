@@ -52,13 +52,6 @@ export class ChatController {
 		: Promise<any>
 			{ return this.service.GetRoom(roomID).then(room => room[info]) }
 	
-	/* NEEDS A COMPLETE REWORK */
-	@Get("pass/:roomID")
-	async GetRoomPass(
-		@Param("roomID") roomID: string)
-		: Promise<any>
-			{ return this.service.GetRoomPassword(roomID).then(roomPass => roomPass.Password) }
-		
 	@Get("msg/:roomID/:index")
 	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
 	GetMessageGroup(
@@ -116,8 +109,8 @@ export class ChatController {
 		@Request() req: Request,
 		@Param("roomID") roomID: string,
 		@Param("memberID") memberID: string)
-		: Promise<void>
-			{ await this.service.MakeAdmin(roomID, memberID, req["user"].id) }
+		: Promise<boolean>
+			{ return this.service.MakeAdmin(roomID, memberID, req["user"].id) }
 	
 	@Patch("join/:roomID/:pass")
 	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
@@ -135,7 +128,7 @@ export class ChatController {
 		@Param("roomID") roomID: string,
 		@Param("userID") userID: string,)
 		: Promise<void>
-			{ this.service.AddUserToRoom(roomID, userID, null, req["user"].id) }
+			{ this.service.AddUserToRoom(roomID, userID, "", req["user"].id) }
 	
 	@Patch("unban/:roomID/:userID")
 	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
@@ -143,8 +136,8 @@ export class ChatController {
 		@Request() req: Request,
 		@Param("roomID") roomID: string,
 		@Param("userID") userID: string)
-		: Promise<void>
-			{ this.service.UnBan(roomID, userID, req["user"].id) }
+		: Promise<boolean>
+			{ return this.service.UnBan(roomID, userID, req["user"].id) }
 	
 	@Patch("mute/:roomID/:userID/:time")
 	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
@@ -153,8 +146,8 @@ export class ChatController {
 		@Param("roomID") roomID: string,
 		@Param("userID") userID: string,
 		@Param("time") time: string)
-		: Promise<void>
-			{ this.service.Mute(roomID, userID, +time, req["user"].id) }
+		: Promise<boolean>
+			{ return this.service.Mute(roomID, userID, +time, req["user"].id) }
 	
 	@Patch("mute/:roomID/:userID")
 	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
@@ -162,8 +155,8 @@ export class ChatController {
 		@Request() req: Request,
 		@Param("roomID") roomID: string,
 		@Param("userID") userID: string)
-		: Promise<void>
-			{ this.service.UnMute(roomID, userID, req["user"].id) }
+		: Promise<boolean>
+			{ return this.service.UnMute(roomID, userID, req["user"].id) }
 	
 	//#endregion
 	
@@ -175,8 +168,8 @@ export class ChatController {
 		@Request() req: Request,
 		@Param("roomID") roomID: string,
 		@Param("memberID") memberID: string,)
-		: Promise<void>
-			{ this.service.RemoveMember(roomID, memberID, false, req["user"].id) }
+		: Promise<boolean>
+			{ return this.service.RemoveMember(roomID, memberID, false, req["user"].id) }
 	
 	@Delete("ban/:roomID/:memberID")
 	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
@@ -184,8 +177,8 @@ export class ChatController {
 		@Request() req: Request,
 		@Param("roomID") roomID: string,
 		@Param("memberID") memberID: string,)
-		: Promise<void>
-			{ this.service.RemoveMember(roomID, memberID, true, req["user"].id)}
+		: Promise<boolean>
+			{ return this.service.RemoveMember(roomID, memberID, true, req["user"].id)}
 	
 	@Delete("admin/:roomID/:memberID")
 	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
@@ -193,8 +186,8 @@ export class ChatController {
 		@Request() req: Request,
 		@Param("roomID") roomID: string,
 		@Param("memberID") memberID: string,)
-		: Promise<void>
-			{ await this.service.RemoveAdmin(roomID, memberID, req["user"].id) }
+		: Promise<boolean>
+			{ return this.service.RemoveAdmin(roomID, memberID, req["user"].id) }
 	
 	@Delete("user")
 	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
