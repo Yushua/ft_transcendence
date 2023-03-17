@@ -324,13 +324,13 @@ export class ChatService {
 		return changed
 	}
 	
-	async RemoveMember(roomID: string, memberID: string, ban: boolean = false, adminID: string | null): Promise<boolean> {
+	async RemoveMember(roomID: string, memberID: string, ban: boolean = false, adminID: string | null, selfID: string): Promise<boolean> {
 		const [_, changed] = await this.ModifyRoom(roomID, async room => {
 			if (!!adminID && !room.AdminIDs.includes(adminID))
 				throw new HttpException("", HttpStatus.UNAUTHORIZED)
 			
 			if (room.OwnerID === memberID
-				|| room.AdminIDs.includes(memberID))
+				|| (room.AdminIDs.includes(memberID) && memberID !== selfID))
 				throw new HttpException("", HttpStatus.UNAUTHORIZED)
 			
 			var index = room.MemberIDs.indexOf(memberID);

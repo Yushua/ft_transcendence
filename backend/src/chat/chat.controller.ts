@@ -168,7 +168,7 @@ export class ChatController {
 		@Request() req: Request,
 		@Param("roomID") roomID: string,)
 		: Promise<boolean>
-			{ return this.service.RemoveMember(roomID, req["user"].id, false, null) }
+			{ return this.service.RemoveMember(roomID, req["user"].id, false, null, req["user"].id) }
 	
 	@Delete("member/:roomID/:memberID")
 	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
@@ -177,7 +177,7 @@ export class ChatController {
 		@Param("roomID") roomID: string,
 		@Param("memberID") memberID: string,)
 		: Promise<boolean>
-			{ return this.service.RemoveMember(roomID, memberID, false, req["user"].id) }
+			{ return this.service.RemoveMember(roomID, memberID, false, req["user"].id, req["user"].id) }
 	
 	@Delete("ban/:roomID/:memberID")
 	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
@@ -186,7 +186,7 @@ export class ChatController {
 		@Param("roomID") roomID: string,
 		@Param("memberID") memberID: string,)
 		: Promise<boolean>
-			{ return this.service.RemoveMember(roomID, memberID, true, req["user"].id)}
+			{ return this.service.RemoveMember(roomID, memberID, true, req["user"].id, req["user"].id)}
 	
 	@Delete("admin/:roomID/:memberID")
 	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
