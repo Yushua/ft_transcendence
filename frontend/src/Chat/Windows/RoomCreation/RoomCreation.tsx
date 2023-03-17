@@ -12,7 +12,7 @@ export default function RoomCreation() {
 	return (
 		<div style={{border: "solid", width: "8cm"}}>
 			Room name: <input id="_RoomName" type="text" /><br />
-			Password: <input id="_RoomPassword" type="text" /><br />
+			Password: <input id="_RoomPassword" type="password" /><br />
 			Private: <input id="_RoomType" type="checkbox" /><br />
 			<button
 				disabled={disabled}
