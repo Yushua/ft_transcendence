@@ -1,4 +1,4 @@
-import { ConflictException, HttpException, HttpStatus, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
@@ -12,11 +12,11 @@ export class AuthService {
       private readonly userProfileEntityRepos: Repository<UserProfile>,
       private jwtService: JwtService,
   ) {}
+  
       /**
        * 
        * @returns returns AccessToken
        */
-
       async OauthSystemCodeToAccess(data:Object):Promise<string>{
         var accessToken:string;
         try {
