@@ -2,39 +2,50 @@ import React, { useState } from 'react';
 import '../App.css';
 
 import { newWindow } from '../App';
-import UserProfilePage from '../UserProfile/UserProfile';
 import NewAccount from './NewAccount';
-import { getCookie, getCookies, removeCookie, setCookie } from 'typescript-cookie';
+import { getCookie } from 'typescript-cookie';
 import LoginHandlerOAuth from './LoginHandlerOAuth';
+import HTTP from '../Utils/HTTP';
 
 async function checkAuthentication(){
+  try {
+    const response = await fetch(HTTP.HostRedirect() + `auth/check` , {
+      headers: {
+        Accept: 'application/json',
+        Authentication: `Bearer ${getCookie("authToken")}`,
+      },
+    })
+    if (!response.ok) {
+      throw new Error(`Error! status: ${response.status}`);
+    }
+  
+  } catch (error) {
+    alert(`authentication code invalid ${error}`)
+    // newWindow(<NewAccount/>)
+  }
   console.log("check token if it can be passed already")
 }
 
 const submitNewAccount = () => {
+  //when you want to make a new account
   newWindow(<NewAccount/>)
 }
 
 const loginNormal = () => {
+  //when you want to login when you haven't
   newWindow(<LoginHandlerOAuth/>)
-}
-
-const loginIntoOAuth = () => {
-  window.location.replace('https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-c73b865f02b3cf14638e1a50c5caa720828d13082db6ab753bdb24ca476e1a4c&redirect_uri=http%3A%2F%2Flocalhost%3A4242%2F&response_type=code');
 }
 
 function LoginPage(){
 
   if (getCookie("authToken") != undefined){
+    //when you can login because you have an authenToken Cookie
     checkAuthentication()
-  }
-  if (window.location.href.split('code=')[1] == undefined){
-    loginIntoOAuth()
   }
   return (
     <div className="LoginpageV2">
        <button onClick={() => {submitNewAccount()}}>new account</button>
-       <button onClick={() => {loginIntoOAuth()}}> Login</button>
+       <button onClick={() => {loginNormal()}}> Login</button>
     </div>
   );
 }

@@ -1,5 +1,6 @@
-import { Controller, Get, Inject, Post, Redirect, Res, Response, Request, Param, ConflictException, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Inject, Post, Redirect, Res, Response, Request, Param, ConflictException, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
+import { AuthGuard } from '@nestjs/passport';
 // import { Request } from 'node-fetch';
 import { AuthService } from './auth.service';
 
@@ -9,6 +10,11 @@ export class AuthController {
         private AuthService: AuthService,
     ) {}
 
+    @Get('check')
+    @UseGuards(AuthGuard('jwt'))
+    async getAuthJWTToken(){
+        console.log("I am in");
+    }
     @Get('token/:code')
     async getAuthToken(@Param('code') code: string) {
         const dataToPost = {

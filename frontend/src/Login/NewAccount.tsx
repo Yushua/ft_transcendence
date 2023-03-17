@@ -36,7 +36,7 @@ async function getAuthToken(username:string){
       removeCookie('code');
       setCookie('authToken', authToken,{ expires: 10000 });
       console.log("created account succesfull")
-      newWindow(<UserProfilePage/>)
+      newWindow(<LoginPage/>)
     }
   } catch (error) {
     console.log(`error ${error}`)
@@ -64,7 +64,14 @@ const ReturnToLoginPage = () => {
   newWindow(<LoginPage/>)
 }
 
+const loginIntoOAuth = () => {
+  window.location.replace('https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-c73b865f02b3cf14638e1a50c5caa720828d13082db6ab753bdb24ca476e1a4c&redirect_uri=http%3A%2F%2Flocalhost%3A4242%2F&response_type=code');
+}
+
 function NewAccount(){
+  if (window.location.href.split('code=')[1] == undefined){
+    loginIntoOAuth()
+  }
   return (
     <div className="setting up new account for Team Zero">
       <button onClick={() => {ReturnToLoginPage()}}>Return to LoginPage</button>
