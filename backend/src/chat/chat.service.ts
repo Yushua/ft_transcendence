@@ -46,7 +46,7 @@ export class ChatService {
 	
 	async EditRoom(roomID: string, roomDTO: ChatRoomDTO, userID: string): Promise<void> {
 		
-		const { OwnerID, Name, Password, RoomType } =  roomDTO
+		const { OwnerID, Name, HasPassword, Password, RoomType } =  roomDTO
 		
 		if (OwnerID !== userID)
 			throw new HttpException("", HttpStatus.UNAUTHORIZED)
@@ -57,11 +57,9 @@ export class ChatService {
 			room.Name = Name
 			room.RoomType = +ChatRoomType[RoomType]
 			
-			switch (Password) {
-				case null: return true
-				case "": room.HasPassword = false; break
-				default: room.HasPassword = true; break
-			}
+			if (HasPassword === 'f')
+				return true
+			room.HasPassword = Password !== ""
 			await this.chatRoomPassRepo.findOneBy({ID: roomID})
 				.then(async rPass => {
 					rPass.Password = room.HasPassword ? await bcrypt.hash(Password, 10) : "";
@@ -69,6 +67,7 @@ export class ChatService {
 				})
 			return true
 		})
+		console.log(`${room.HasPassword}`)
 		if (!changed)
 			return
 		for (const userID of room.MemberIDs)
@@ -269,8 +268,8 @@ export class ChatService {
 	async GetRoom(roomID: string): Promise<ChatRoom>
 		{ return this.chatRoomRepo.findOneBy({ ID: roomID }) }
 	
-	async ModifyRoom(roomID: string, func: (ChatUser: ChatRoom) => Promise<boolean>): Promise<[ChatRoom, boolean]> {
-		var room = await this.GetRoom(roomID)
+	async ModifyRoom(roomID: string, func: (ChatUser: ChatRoom) => Promise<boolean>, room: ChatRoom | null = null): Promise<[ChatRoom, boolean]> {
+		room ??= await this.GetRoom(roomID)
 		var changed = await func(room)
 		if (changed)
 			room = await this.chatRoomRepo.save(room)
@@ -286,8 +285,8 @@ export class ChatService {
 		}))
 	}
 	
-	async ModifyUser(ID: string, func: (ChatUser: ChatUser) => Promise<boolean>): Promise<[ChatUser, boolean]> {
-		var user = await this.GetOrAddUser(ID)
+	async ModifyUser(ID: string, func: (ChatUser: ChatUser) => Promise<boolean>, user: ChatUser | null = null): Promise<[ChatUser, boolean]> {
+		user ??= await this.GetOrAddUser(ID)
 		const changed = await func(user)
 		if (changed)
 			user = await this.chatUserRepo.save(user)
@@ -309,9 +308,9 @@ export class ChatService {
 		return changed
 	}
 	
-	async RemoveAdmin(roomID: string, memberID: string, adminID: string): Promise<boolean> {
+	async RemoveAdmin(roomID: string, memberID: string, ownerID: string): Promise<boolean> {
 		const [_, changed] = await this.ModifyRoom(roomID, async room => {
-			if (!room.AdminIDs.includes(adminID))
+			if (room.OwnerID !== ownerID || room.OwnerID === memberID)
 				throw new HttpException("", HttpStatus.UNAUTHORIZED)
 			
 			var index = room.AdminIDs.indexOf(memberID);
@@ -332,7 +331,7 @@ export class ChatService {
 			
 			if (room.OwnerID === memberID
 				|| room.AdminIDs.includes(memberID))
-				return false
+				throw new HttpException("", HttpStatus.UNAUTHORIZED)
 			
 			var index = room.MemberIDs.indexOf(memberID);
 			if (index === -1)
@@ -358,11 +357,29 @@ export class ChatService {
 		return changed
 	}
 	
-	async DeleteUser(userID: string): Promise<void> {
-		const user = await this.chatUserRepo.findOneBy({ ID: userID })
-		for (const roomID of user.ChatRoomsIn)
-			await this.RemoveMember(roomID, userID, false, null)
-		await this.chatUserRepo.remove(user)
+	async DeleteRoom(ownerID: string, roomID: string) {
+		const room = await this.GetRoom(roomID);
+		if (ownerID !== room.OwnerID)
+			throw new HttpException("", HttpStatus.UNAUTHORIZED)
+		
+		for (const memberID of room.MemberIDs) {
+			this.ModifyUser(memberID, async user => {
+				const index = user.ChatRoomsIn.indexOf(roomID);
+				if (index === -1)
+					return false
+				user.ChatRoomsIn.splice(index, 1)
+				this.Notify(`user-${memberID}`, "kick")
+				return true
+			})
+		}
+		
+		for (let index = 1; index <= room.MessageGroupDepth; index++)
+			this._getMsgID(roomID, index, room)
+				.then(ID => this.chatMessageRepo.delete({ID}))
+		
+		this.chatRoomPassRepo.delete({ID: roomID})
+		
+		await this.chatRoomRepo.remove(room);
 	}
 	
 	//#region Debug

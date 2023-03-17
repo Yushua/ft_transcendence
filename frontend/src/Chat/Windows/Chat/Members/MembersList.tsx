@@ -3,6 +3,7 @@ import { ChangeMemberWindow, asyncUpdateMembersWindow } from "./MembersWindow";
 import ChatRoom from "../../../../Utils/Cache/ChatRoom";
 import NameStorage from "../../../../Utils/Cache/NameStorage";
 import User from "../../../../Utils/Cache/User";
+import HTTP from "../../../../Utils/HTTP";
 
 export async function asyncUpdateMemberList() {
 	if (!!_setMembers)
@@ -48,8 +49,11 @@ export default function MembersList() {
 		return (
 		<>
 			<div style={{display: "table", width: "100%"}}>
-				{User.ID === ChatRoom.OwnerID ? <button style={{width: "50%", height: ".5cm"}}
-					onClick={() => ChangeMemberWindow("edit")}>Edit</button> : <></>}
+				{User.ID === ChatRoom.OwnerID
+					? <button style={{width: "50%", height: ".5cm"}}
+						onClick={() => ChangeMemberWindow("edit")}>Edit</button>
+					: <button style={{width: "50%", height: ".5cm"}}
+						onClick={() => HTTP.Delete(`chat/leave/${ChatRoom.ID}`)}>Leave</button>}
 				<button style={{width: "50%", height: ".5cm"}}
 					onClick={() => ChangeMemberWindow("add")}>Add</button>
 			</div>

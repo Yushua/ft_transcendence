@@ -162,6 +162,14 @@ export class ChatController {
 	
 	//#region Delete
 	
+	@Delete("leave/:roomID")
+	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+	async LeaveRoom(
+		@Request() req: Request,
+		@Param("roomID") roomID: string,)
+		: Promise<boolean>
+			{ return this.service.RemoveMember(roomID, req["user"].id, false, null) }
+	
 	@Delete("member/:roomID/:memberID")
 	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
 	async KickMember(
@@ -189,12 +197,13 @@ export class ChatController {
 		: Promise<boolean>
 			{ return this.service.RemoveAdmin(roomID, memberID, req["user"].id) }
 	
-	@Delete("user")
+	@Delete("room/:roomID")
 	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
-	async DeleteUser(
-		@Request() req: Request)
+	async DeleteRoom(
+		@Request() req: Request,
+		@Param("roomID")roomID: string)
 		: Promise<void>
-			{ await this.service.DeleteUser(req["user"].id) }
+			{ await this.service.DeleteRoom(req["user"].id, roomID) }
 	
 	//#endregion
 	

@@ -27,7 +27,8 @@ export default function MembersWindow() {
 	
 	if (_firstRender) {
 		_firstRender = false
-		ChatRoom.UpdateEvent.Subscribe(asyncUpdateMembersWindow)
+		ChatRoom.ChangeEvent.Subscribe(asyncUpdateMembersWindow)
+		ChatRoom.ClearEvent.Subscribe(asyncUpdateMembersWindow)
 		ChatUser.UpdateEvent.Subscribe(asyncUpdateMembersWindow)
 		ChatUser.ClearEvent.Subscribe(asyncUpdateMembersWindow)
 	}
