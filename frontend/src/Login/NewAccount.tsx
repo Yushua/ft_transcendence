@@ -2,12 +2,8 @@ import React, { } from 'react';
 import '../App.css';
 
 import { newWindow } from '../App';
-import MainWindow from '../MainWindow/MainWindow';
-import User from '../Utils/Cache/User';
 import HTTP from '../Utils/HTTP';
-import LoginHandlerOAuth from './LoginHandlerOAuth';
-import UserProfilePage from '../UserProfile/UserProfile';
-import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
+import { removeCookie, setCookie } from 'typescript-cookie';
 import LoginPage from './LoginPage';
 
 async function getAuthToken(username:string){

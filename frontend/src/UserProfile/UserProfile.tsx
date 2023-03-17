@@ -50,7 +50,7 @@ function UserProfilePage() {
   if (Display === false){
     asyncToggleGetName()
   }
-
+  //maybe add a remove account
   return (
     <div className="UserProfile">
       <div>

@@ -1,5 +1,6 @@
 import { Controller, Get, Param,  HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { AuthGuardEncryption } from './auth.guard';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
@@ -8,15 +9,20 @@ export class AuthController {
         private AuthService: AuthService,
     ) {}
 
-    @UseGuards(AuthGuard())
+    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     @Get('check')
     async getAuthJWTToken(){
-
-        console.log("I am in");
+        console.log("i am in")
+        var result:boolean = true;
+        return {
+            result
+        }
     }
 
     @Get('token/:code')
     async getAuthToken(@Param('code') code: string) {
+        //get data from conf, if anything is NULL, because conf is not there, return error access
+        //because conf is not there
         const dataToPost = {
             grant_type: 'authorization_code',
             client_id: 'u-s4t2ud-c73b865f02b3cf14638e1a50c5caa720828d13082db6ab753bdb24ca476e1a4c',
@@ -36,6 +42,7 @@ export class AuthController {
 
     @Get('loginNew/:code/:username')
     async getNewAccount(@Param('code') code: string, @Param('username') username: string){
+        console.log(`code ${code}`)
         const dataToPost = {
             grant_type: 'authorization_code',
             client_id: 'u-s4t2ud-c73b865f02b3cf14638e1a50c5caa720828d13082db6ab753bdb24ca476e1a4c',

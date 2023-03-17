@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import '../App.css';
 
 import { newWindow } from '../App';
-import NewAccount from './NewAccount';
-import { getCookie } from 'typescript-cookie';
+import { getCookie, removeCookie } from 'typescript-cookie';
 import LoginHandlerOAuth from './LoginHandlerOAuth';
 import HTTP from '../Utils/HTTP';
+import NewAccount from './NewAccount';
+import UserProfilePage from '../UserProfile/UserProfile';
 
 async function checkAuthentication(){
   console.log(`auth token is in ${getCookie("authToken")}`)
@@ -13,16 +14,28 @@ async function checkAuthentication(){
     const response = await fetch(HTTP.HostRedirect() + `auth/check` , {
       headers: {
         Accept: 'application/json',
-        Authentication: `Bearer ${getCookie("authToken")}`,
+        'Authorization': 'Bearer ' + getCookie("authToken"),
+        'Content-Type': 'application/json',
       },
+      method: 'GET'
     })
     if (!response.ok) {
       throw new Error(`Error! status: ${response.status}`);
     }
-  
+    console.log("i am out")
+    var result = await response.json();
+    if (result["result"] == true){
+      newWindow(<UserProfilePage/>)
+      //or whats stored in the position
+    }
+    else {
+      removeCookie("authToken")
+      newWindow(<LoginPage/>)
+    }
   } catch (error) {
     alert(`authentication code invalid ${error}`)
-    // newWindow(<NewAccount/>)
+    removeCookie("authToken")
+    newWindow(<LoginPage/>)
   }
 }
 
