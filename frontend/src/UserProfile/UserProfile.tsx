@@ -5,6 +5,8 @@ import DropDownMenuAddFriendList from './DropDownMenuAddFriendList';
 import DropDownMenuRemoveFriendListId from './DropDownMenuRemoveFriendListId';
 import ProfilePicture from './ProfilePicture';
 import HTTP from '../Utils/HTTP'
+import { newWindow } from '../App';
+import SetUsername from './SetUsername';
 
 async function asyncGetName() {
   const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
@@ -49,6 +51,9 @@ function UserProfilePage() {
   _setDisplay = setDisplay
   if (Display === false){
     asyncToggleGetName()
+  }
+  if (username == ""){
+    newWindow(<SetUsername/>)
   }
   //maybe add a remove account
   return (

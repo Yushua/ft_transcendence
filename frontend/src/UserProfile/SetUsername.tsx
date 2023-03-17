@@ -1,0 +1,71 @@
+import React, { useState } from 'react';
+import '../App.css';
+
+import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
+import HTTP from '../Utils/HTTP';
+import LogoutButtonComponent from './LogoutButton';
+import UserProfilePage from './UserProfile';
+import { newWindow } from '../App';
+
+async function getAccessToken(username:string){
+  var code:string | undefined = getCookie('code');
+  removeCookie('code');
+  try {
+    const response = await fetch(HTTP.HostRedirect() + `auth/ChangeUsername/${username}` , {
+      headers: {
+        Accept: 'application/json',
+        'Authorization': 'Bearer ' + getCookie("authToken"),
+        'Content-Type': 'application/json',
+      },
+      method: 'GET'
+    })
+    if (!response.ok) {
+      throw new Error(`Error! status: ${response.status}`);
+    }
+    var result = await response.json();
+    var status:string = result["status"]
+    if (status == undefined || status == ""){
+      alert("JWT authorization failed, returned nothing")
+      window.location.replace('http://localhost:4242/');
+    }
+    else{
+      newWindow(<UserProfilePage/>)
+    }
+  } catch (error) {
+    console.log(`error ${error}`)
+    alert(`error in SetUsername ${error}`)
+    //failed so try again
+    window.location.replace('http://localhost:4242/');
+  }
+}
+
+interface FormElements extends HTMLFormControlsCollection {
+  eMail: HTMLInputElement
+  username: HTMLInputElement
+}
+
+interface YourFormElement extends HTMLFormElement {
+ readonly elements: FormElements
+}
+
+const handleUsername = (e: any) => {
+  e.preventDefault();
+  getAccessToken(e.currentTarget.elements.username.value)
+}
+
+function SetUsername(){
+
+  return (
+    <div className="setting up new account for Team Zero">
+      <LogoutButtonComponent/>
+        <form onSubmit={(handleUsername)}>
+          <div>
+            <label htmlFor="username">Username:</label>
+            <input id="username" type="text" />
+          </div>
+        </form>
+    </div>
+  );
+}
+
+export default SetUsername;
