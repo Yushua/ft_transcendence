@@ -110,14 +110,16 @@ export class AuthService {
           await this.userProfileEntityRepos.save(user);
         } catch (error) {
           console.log("2")
-          throw new HttpException(`username ${username} already in use`, HttpStatus.FORBIDDEN);
+          throw new HttpException(`username ${username} already in use`, HttpStatus.BAD_REQUEST);
         }
-        console.log("3")
-        const userID = user.id;
         console.log("4")
-        const payload: JwtPayload = { userID };
-        console.log("5")
-        authToken = this.jwtService.sign(payload);
+        const payload: JwtPayload = { userID: user.id };
+        console.log(` id = ${user.id}`)
+        try {
+          authToken = this.jwtService.sign(payload);          
+        } catch (error) {
+          this.userProfileEntityRepos.delete({})
+        }
         console.log(`authtoken ${authToken}`)
         return authToken;
       }
