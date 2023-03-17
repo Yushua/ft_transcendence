@@ -25,6 +25,7 @@ export class AuthService {
             })
           } catch (error) {
             console.log(error.response.data)
+            console.log("Post")
             throw new HttpException('intraPull failed, problem with OAuth API. input Data out of date', HttpStatus.BAD_REQUEST);
         }
         return accessToken
@@ -46,6 +47,7 @@ export class AuthService {
           })
         } catch (error) {
           console.log(error.response.data)
+          console.log("Get")
           throw new HttpException('intraPull failed, problem with OAuth API. input Data out of date', HttpStatus.BAD_REQUEST);
         }
         console.log(`intraname ${intraName}`)
@@ -119,6 +121,7 @@ export class AuthService {
          const authToken = this.jwtService.sign(payload);          
         } catch (error) {
           console.log(error)
+          console.log("authToken")
           throw new HttpException(`jwtService sign failed`, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         console.log(`authtoken ${authToken}`)

@@ -4,8 +4,8 @@ import '../App.css';
 
 import { removeCookie, setCookie } from 'typescript-cookie';
 import { newWindow } from '../../App';
-import NewAccount from '../NewAccount';
 import UserProfilePage from '../../UserProfile/UserProfile';
+import NewAccount from './NewAccount copy';
 
 async function setLogin(){
   try {

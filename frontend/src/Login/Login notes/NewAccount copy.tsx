@@ -1,13 +1,10 @@
-import React, { } from 'react';
+import React, { useState } from 'react';
 import '../App.css';
 
 import { newWindow } from '../../App';
-import MainWindow from '../../MainWindow/MainWindow';
-import User from '../../Utils/Cache/User';
-import HTTP from '../../Utils/HTTP';
-import LoginHandlerOAuth from '../LoginHandlerOAuth';
 import UserProfilePage from '../../UserProfile/UserProfile';
 import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
+import LoginHandlerOAuth from './LoginHandlerOAuth copy';
 
 async function getAuthToken(username:string){
   try {
@@ -53,7 +50,10 @@ const handleUsername = (e: any) => {
   getAuthToken(e.currentTarget.elements.username.value)
 }
 
+var _setDisplay:React.Dispatch<React.SetStateAction<boolean>>
 function NewAccount(){
+  const [Display, setDisplay] = useState<boolean>(false);
+  _setDisplay = setDisplay;
 
   return (
     <div className="setting up new account for Team Zero">

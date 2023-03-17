@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
-import { newWindow } from '../App';
+import { getCookie, removeCookie } from 'typescript-cookie';
+import { newWindow } from '../../App';
+import UserProfilePage from '../../UserProfile/UserProfile';
+import HTTP from '../../Utils/HTTP';
 import '../App.css';
-import UserProfilePage from '../UserProfile/UserProfile';
-import HTTP from '../Utils/HTTP';
+import LoginHandlerOAuth from './LoginHandlerOAuth copy';
+import NewAccount from './NewAccount copy';
+
 
 async function checkAuthentication(){
   console.log(`auth token is in ${getCookie("authToken")}`)
@@ -36,54 +39,33 @@ async function checkAuthentication(){
   }
 }
 
-async function setLogin(){
-  try {
-    const response = await fetch(HTTP.HostRedirect() + `auth/token/${window.location.href.split('code=')[1]}` , {
-      headers: {
-        Accept: 'application/json',
-      },
-    })
-    if (!response.ok) {
-      throw new Error(`Error! status: ${response.status}`);
-    }
-    var result = await response.json();
-    var authToken:string = result["authToken"]
-    if (authToken == undefined){
-      window.location.replace(HTTP.HostRedirect());
-    }
-    else {
-      //check if you're logged in
-      removeCookie('accessToken');
-      setCookie('accessToken', authToken,{ expires: 1 });
-      newWindow(<UserProfilePage/>)
-    }
-  } catch (error) {
-    console.log(`error ${error}`)
-    removeCookie("authToken")
-    HTTP.HostRedirect()
-  }
+const submitNewAccount = () => {
+  //when you want to make a new account
+  newWindow(<NewAccount/>)
+}
+
+const loginNormal = () => {
+  //when you want to login when you haven't
+  newWindow(<LoginHandlerOAuth/>)
 }
 
 const loginIntoOAuth = () => {
   window.location.replace('https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-c73b865f02b3cf14638e1a50c5caa720828d13082db6ab753bdb24ca476e1a4c&redirect_uri=http%3A%2F%2Flocalhost%3A4242%2F&response_type=code');
 }
 
-function LoginPage(){
-  //to check if your AuthToken is already valid
+function LoginPage() {
+
   if (getCookie("authToken") != undefined){
     //when you can login because you have an authenToken Cookie
     checkAuthentication()
   }
-  //to check to see if the login works
-  if (window.location.href.split('code=')[1] != undefined){
-    setLogin()
-  }
-  //log into Oauth
-  else {
+  if (window.location.href.split('code=')[1] == undefined){
     loginIntoOAuth()
   }
   return (
-    <div className="Loginpage">
+    <div className="LoginpageV2">
+       <button onClick={() => {submitNewAccount()}}>new account</button>
+       <button onClick={() => {loginNormal()}}> Login</button>
     </div>
   );
 }

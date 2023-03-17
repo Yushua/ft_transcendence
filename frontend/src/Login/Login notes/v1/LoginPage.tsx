@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
-import { newWindow } from '../App';
+import { newWindow } from '../../../App';
+import UserProfilePage from '../../../UserProfile/UserProfile';
+import HTTP from '../../../Utils/HTTP';
 import '../App.css';
-import UserProfilePage from '../UserProfile/UserProfile';
-import HTTP from '../Utils/HTTP';
+import NewAccount from './NewAccount';
 
 async function checkAuthentication(){
   console.log(`auth token is in ${getCookie("authToken")}`)
@@ -38,7 +39,7 @@ async function checkAuthentication(){
 
 async function setLogin(){
   try {
-    const response = await fetch(HTTP.HostRedirect() + `auth/token/${window.location.href.split('code=')[1]}` , {
+    const response = await fetch(`http://localhost:4242/auth/token/${window.location.href.split('code=')[1]}` , {
       headers: {
         Accept: 'application/json',
       },
@@ -48,8 +49,16 @@ async function setLogin(){
     }
     var result = await response.json();
     var authToken:string = result["authToken"]
+    var code:string = result["code"]
     if (authToken == undefined){
-      window.location.replace(HTTP.HostRedirect());
+      newWindow(<LoginPage/>)
+    }
+    else if (authToken == ""){
+      removeCookie('code');
+      removeCookie('authToken');
+      setCookie('code', code,{ expires: 1 });
+      //set new name
+      newWindow(<NewAccount/>)
     }
     else {
       //check if you're logged in
@@ -60,30 +69,31 @@ async function setLogin(){
   } catch (error) {
     console.log(`error ${error}`)
     removeCookie("authToken")
-    HTTP.HostRedirect()
+    newWindow(<LoginPage/>)
   }
 }
 
+
 const loginIntoOAuth = () => {
+  console.log("i am here")
   window.location.replace('https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-c73b865f02b3cf14638e1a50c5caa720828d13082db6ab753bdb24ca476e1a4c&redirect_uri=http%3A%2F%2Flocalhost%3A4242%2F&response_type=code');
 }
 
 function LoginPage(){
-  //to check if your AuthToken is already valid
   if (getCookie("authToken") != undefined){
     //when you can login because you have an authenToken Cookie
     checkAuthentication()
   }
-  //to check to see if the login works
-  if (window.location.href.split('code=')[1] != undefined){
-    setLogin()
-  }
-  //log into Oauth
-  else {
+  if (window.location.href.split('code=')[1] == undefined){
     loginIntoOAuth()
   }
+  else if (window.location.href.split('code=')[1] != undefined){
+    setLogin()
+  }
   return (
-    <div className="Loginpage">
+
+    <div className="LoginpageV2">
+
     </div>
   );
 }
