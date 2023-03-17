@@ -8,6 +8,7 @@ import LoginHandlerOAuth from './LoginHandlerOAuth';
 import HTTP from '../Utils/HTTP';
 
 async function checkAuthentication(){
+  console.log(`auth token is in ${getCookie("authToken")}`)
   try {
     const response = await fetch(HTTP.HostRedirect() + `auth/check` , {
       headers: {
@@ -23,7 +24,6 @@ async function checkAuthentication(){
     alert(`authentication code invalid ${error}`)
     // newWindow(<NewAccount/>)
   }
-  console.log("check token if it can be passed already")
 }
 
 const submitNewAccount = () => {
