@@ -6,7 +6,7 @@ import HTTP from '../Utils/HTTP';
 import { removeCookie, setCookie } from 'typescript-cookie';
 import LoginPage from './LoginPage';
 
-async function getAuthToken(username:string){
+async function getAccessToken(username:string){
   var code:string = window.location.href.split('code=')[1]
   console.log("i am in loginpage")
   try {
@@ -21,24 +21,23 @@ async function getAuthToken(username:string){
     }
     console.log("i am out")
     var result = await response.json();
-    var authToken:string = result["authToken"]
-    if (authToken == undefined || authToken == ""){
+    var accessToken:string = result["accessToken"]
+    if (accessToken == undefined || accessToken == ""){
       alert("access to changing the eMail errored. check back at OAuth")
       //if failed, delete account
-      newWindow(<NewAccount/>)
+      window.location.replace('http://localhost:4242/');
     }
     else{
-      removeCookie("authToken")
+      removeCookie("accessToken")
       removeCookie('code');
-      setCookie('authToken', authToken,{ expires: 10000 });
+      setCookie('accessToken', accessToken,{ expires: 10000 });
       console.log("created account succesfull")
       newWindow(<LoginPage/>)
     }
   } catch (error) {
     console.log(`error ${error}`)
-    //check the error, exeption needs to be called better from backend
     alert(`error in newAccount ${error}`)
-    newWindow(<NewAccount/>)
+    window.location.replace('http://localhost:4242/');
   }
 }
 
@@ -53,7 +52,7 @@ interface YourFormElement extends HTMLFormElement {
 
 const handleUsername = (e: any) => {
   e.preventDefault();
-  getAuthToken(e.currentTarget.elements.username.value)
+  getAccessToken(e.currentTarget.elements.username.value)
 }
 
 const ReturnToLoginPage = () => {
@@ -62,7 +61,7 @@ const ReturnToLoginPage = () => {
 
 function NewAccount(){
   if (window.location.href.split('code=')[1] == undefined){
-    loginIntoOAuth()
+    newWindow(<LoginPage/>)
   }
   return (
     <div className="setting up new account for Team Zero">

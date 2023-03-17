@@ -10,7 +10,7 @@ export class AuthService {
     constructor(
       @InjectRepository(UserProfile)
       private readonly userProfileEntityRepos: Repository<UserProfile>,
-      private jwtService: JwtService,
+      private readonly jwtService: JwtService,
   ) {}
   
       /**
@@ -24,7 +24,8 @@ export class AuthService {
               accessToken = response.data['access_token'];
             })
           } catch (error) {
-          throw new HttpException('intraPull failed, problem with OAuth API. input Data out of date', HttpStatus.FORBIDDEN);
+            console.log(error.response.data)
+            throw new HttpException('intraPull failed, problem with OAuth API. input Data out of date', HttpStatus.BAD_REQUEST);
         }
         return accessToken
       }
@@ -44,8 +45,10 @@ export class AuthService {
             intraName = response['data'].login
           })
         } catch (error) {
-          throw new HttpException('intraPull failed, problem with OAuth API. input Data out of date', HttpStatus.FORBIDDEN);
+          console.log(error.response.data)
+          throw new HttpException('intraPull failed, problem with OAuth API. input Data out of date', HttpStatus.BAD_REQUEST);
         }
+        console.log(`intraname ${intraName}`)
         return intraName
       }
 
@@ -54,6 +57,7 @@ export class AuthService {
        * @returns checs if the user exists and returns a boolean
        */
       async usernameUserExist(username: string):Promise<boolean>{
+        console.log(`username ${username}`)
         const user = await this.userProfileEntityRepos.findOneBy({ username })
         if(user){
           return true
@@ -100,25 +104,22 @@ export class AuthService {
       async newAccountSystem(intraName:string, username: string):Promise<string> {
         var authToken:string = ""
         var user:UserProfile
-        console.log("6")
         user = this.userProfileEntityRepos.create({
             intraName, username
         });
         //add checks if the account creation fails
-        console.log("1")
         try {
           await this.userProfileEntityRepos.save(user);
         } catch (error) {
-          console.log("2")
           throw new HttpException(`username ${username} already in use`, HttpStatus.BAD_REQUEST);
         }
-        console.log("4")
-        const payload: JwtPayload = { userID: user.id };
         console.log(` id = ${user.id}`)
+        const payload: JwtPayload = { userID: user.id };
         try {
-          authToken = this.jwtService.sign(payload);          
+         const authToken = this.jwtService.sign(payload);          
         } catch (error) {
-          this.userProfileEntityRepos.delete({})
+          console.log(error)
+          throw new HttpException(`jwtService sign failed`, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         console.log(`authtoken ${authToken}`)
         return authToken;

@@ -13,11 +13,12 @@ import { JwtStrategy } from './JwtStrategy';
     JwtModule.register({
       secret: 'topSecret51',
       signOptions: {
-        expiresIn: 3600,
+        expiresIn: '3600s',
       },
     }),
     TypeOrmModule.forFeature([UserProfile])],
   providers: [AuthService, JwtStrategy],
   controllers: [AuthController],
+  exports: [JwtStrategy, PassportModule],
 })
 export class AuthModule {}
