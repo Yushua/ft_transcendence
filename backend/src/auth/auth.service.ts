@@ -133,4 +133,18 @@ export class AuthService {
         console.log(`authtoken ${authToken}`)
         return authToken;
       }
+
+      async changeUsername(username:string):Promise<boolean>{
+        var status:boolean = false;
+        console.log("here")
+        var user:UserProfile = await this.userProfileEntityRepos.findOneBy({ username })
+        if (!user){
+          user.username = username;
+          console.log("here now")
+          await this.userProfileEntityRepos.save(user);
+        }
+        console.log("here now failed")
+        return status
+      }
+  
 }

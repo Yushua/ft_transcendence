@@ -63,4 +63,11 @@ export class AuthController {
         var authToken:string = await this.AuthService.newAccountSystem(intraName, username)
         return {authToken}
     }
+
+    @UseGuards(AuthGuard())
+    @Get('ChangeUsername/:username')
+    async setNewUsername(@Param('username') username: string){
+    return {
+        status: await this.AuthService.changeUsername(username)
+    }}
 }
