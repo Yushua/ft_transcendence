@@ -13,6 +13,7 @@ export class UserProfile {
 
     @Column({
         unique: true,
+        default: "",
     })
     username: string;
 

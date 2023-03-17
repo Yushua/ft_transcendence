@@ -84,15 +84,21 @@ export class AuthService {
        * @param intraName makes account if intraname is new
        */
       async makeAccount(intraName: string):Promise<string>{
-        var authToken:string = ""
-
         var user:UserProfile = await this.userProfileEntityRepos.findOneBy({ intraName })
         if(!user){
-          return ""
+          user = this.userProfileEntityRepos.create({
+            intraName
+          });
+          try {
+            await this.userProfileEntityRepos.save(user);
+          } catch (error) {
+            throw new HttpException(`creating an account for the first time with ${intraName}\ncannot be created on the database`, HttpStatus.BAD_REQUEST);
+          }
         }
+        //two factor authentication, but how? if this is true, then log out.
         const userID = user.id;
         const payload: JwtPayload = { userID };
-        const aauthToken: string = this.jwtService.sign(payload);
+        const authToken: string = this.jwtService.sign(payload);
         return authToken;
       }
 
