@@ -18,6 +18,9 @@ export class UserProfile {
     @Column({ default: ""})
     profilePicture: string
 
+    @Column({ default: false})
+    twoFactor: boolean
+
     //check if the email unique "" default is not hampering more than one account
     @Column({
         unique: true,

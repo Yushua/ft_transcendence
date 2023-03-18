@@ -7,6 +7,8 @@ import ProfilePicture from './ProfilePicture';
 import HTTP from '../Utils/HTTP'
 import { newWindow } from '../App';
 import SetUsername from './SetUsername';
+import TwoFactorAuthentication from '../Login/TwoFactorAuthentication';
+import LogoutButtonComponent from './LogoutButton';
 
 async function asyncGetName():Promise<string> {
   const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
@@ -52,9 +54,9 @@ function UserProfilePage() {
     console.log(`username change {${username}}`)
     newWindow(<SetUsername/>)
   }
-  //maybe add a remove account
   return (
     <div className="UserProfile">
+      <LogoutButtonComponent/>
       <div>
         <ProfilePicture/>
         <label id="name" htmlFor="name">Welcome {username}</label>
@@ -68,12 +70,13 @@ function UserProfilePage() {
         </div>
       </form>
       </div>
-        <DropDownMenuAddFriendList
-        />
-        <DropDownMenuRemoveFriendListId
-        />
+        <DropDownMenuAddFriendList/>
+        <DropDownMenuRemoveFriendListId/>
+      <div>
+        <TwoFactorAuthentication/>
       </div>
-
+    </div>
+    //logout when initialized
   );
 }
 
