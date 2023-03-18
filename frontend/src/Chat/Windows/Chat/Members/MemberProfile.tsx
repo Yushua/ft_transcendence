@@ -4,6 +4,7 @@ import NameStorage from "../../../../Utils/Cache/NameStorage";
 import ChatRoom from "../../../../Utils/Cache/ChatRoom";
 import ChatUser from "../../../../Utils/Cache/ChatUser";
 import HTTP from "../../../../Utils/HTTP";
+import User from "../../../../Utils/Cache/User";
 
 export function setMemberProfileID(userID: string) {
 	_memberProfileID = userID
@@ -89,7 +90,7 @@ export default function MemberProfile() {
 				</div>
 				
 				{/* Admin Options */}
-				{ (ChatRoom.AdminIDs.includes(ChatUser.ID) && !ChatRoom.AdminIDs.includes(_memberProfileID)) ?
+				{ (ChatRoom.AdminIDs.includes(User.ID) && !ChatRoom.AdminIDs.includes(_memberProfileID)) ?
 					<>
 						<div style={{width: "100%", display: "table"}}>
 							<div style={{textAlign: "left"}}>Admin options:</div>
@@ -123,6 +124,29 @@ export default function MemberProfile() {
 										HTTP.asyncPatch(`chat/admin/${ChatRoom.ID}/${_memberProfileID}`)
 								}}
 								>Make Admin</button>
+						</div>
+					</>
+					:
+					<></>
+				}
+				
+				{/* Owner Options */}
+				{ (ChatRoom.OwnerID === User.ID
+					&& User.ID !== _memberProfileID
+					&& ChatRoom.AdminIDs.includes(_memberProfileID)) ?
+					<>
+						<div style={{width: "100%", display: "table"}}>
+							<div style={{textAlign: "left"}}>Owner options:</div>
+						</div>
+						
+						<div style={{width: "100%", display: "table"}}>
+							<button
+								style={{width: "100%", height: ".5cm", boxSizing: "border-box"}}
+								onClick={() => {
+									if (window.confirm(`Remove admin role from ${NameStorage.User.Get(_memberProfileID)}?`))
+										HTTP.asyncDelete(`chat/admin/${ChatRoom.ID}/${_memberProfileID}`)
+								}}
+								>Remove Admin</button>
 						</div>
 					</>
 					:

@@ -9,6 +9,7 @@ export default class ChatRoom {
 	static _chatRoomPass: string = ""
 	
 	static UpdateEvent = new ManualEventManager()
+	static ChangeEvent = new ManualEventManager()
 	static ClearEvent = new ManualEventManager()
 	
 	static Clear() {
@@ -22,11 +23,13 @@ export default class ChatRoom {
 			return
 		const room = await JSON.parse(HTTP.Get(`chat/room/${roomID}`)) ?? null
 		if (!!room) {
-			this._chatRoomPass = (!room.Direct && room.OwnerID === ChatUser.ID) ? HTTP.Get(`chat/pass/${roomID}`) : ""
+			const oldID = this._chatRoom?.id;
 			this._chatRoom = room
 			RoomEvent.SubscribeServerSentEvent(`chat/event/room-${roomID}`)
 			NameStorage.Room._ManualSet(room.ID, room.Name)
 			this.UpdateEvent.Run()
+			if (this.ID !== oldID)
+				this.ChangeEvent.Run()
 		}
 	}
 	
@@ -55,5 +58,4 @@ export default class ChatRoom {
 	static get MessageGroupDepth(): number   { return this._chatRoom?.MessageGroupDepth ?? 0 }
 	static get MessageCount():      number   { return this._chatRoom?.MessageCount ?? 0 }
 	static get Direct():            boolean  { return this._chatRoom?.Direct ?? true }
-	static get Password():          string   { return this._chatRoomPass }
 }
