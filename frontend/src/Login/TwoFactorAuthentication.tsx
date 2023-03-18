@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import '../App.css';
 import QRCode from 'qrcode.react';
 import HTTP from '../Utils/HTTP';
-import { display } from '@mui/system';
 import { removeCookie, setCookie } from 'typescript-cookie';
 
 async function getStatusTwoFactor():Promise<boolean> {
@@ -13,8 +12,12 @@ async function getStatusTwoFactor():Promise<boolean> {
   return status
 }
 
-async function changeStatusTwoFactor(status: boolean){
-  HTTP.Post(`auth/changeStatusAuth/` + status , null, {Accept: 'application/json'})
+//updating the token. adding it in
+export async function changeStatusTwoFactor(status: boolean){
+  const response = HTTP.Get(`auth/changeStatusAuth/` + status , null, {Accept: 'application/json'})
+  var result = await JSON.parse(response)
+  removeCookie("TwoFactorToken")
+  setCookie("TwoFactorToken", await result["TwoFactorToken"] ,{ expires: 10000 });
 }
 
 async function startTwoFactorSystem():Promise<string> {
@@ -29,6 +32,7 @@ async function enableTwoFactorAuthentication() {
     qrText = await startTwoFactorSystem()
     //status, so enabled
     await changeStatusTwoFactor(true)
+    //true
     _setDisplayTwo(false)
   }
   else{
