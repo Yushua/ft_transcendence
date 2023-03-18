@@ -11,10 +11,7 @@ export class UserProfile {
     })
     intraName: string;
 
-    @Column({
-        unique: true,
-        default: "",
-    })
+    @Column({ default: ""})
     username: string;
 
     //string path towards the picture

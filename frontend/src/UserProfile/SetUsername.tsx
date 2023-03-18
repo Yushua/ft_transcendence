@@ -14,7 +14,7 @@ async function getAccessToken(username:string){
     const response = await fetch(HTTP.HostRedirect() + `auth/ChangeUsername/${username}` , {
       headers: {
         Accept: 'application/json',
-        'Authorization': 'Bearer ' + getCookie("authToken"),
+        'Authorization': 'Bearer ' + getCookie("accessToken"),
         'Content-Type': 'application/json',
       },
       method: 'GET'
@@ -23,18 +23,21 @@ async function getAccessToken(username:string){
       throw new Error(`Error! status: ${response.status}`);
     }
     var result = await response.json();
-    var status:string = result["status"]
-    if (status == undefined || status == ""){
+    var status:boolean = result["status"]
+    console.log(`status == ${status}`)
+    if (status == undefined){
       alert("JWT authorization failed, returned nothing")
       window.location.replace('http://localhost:4242/');
     }
-    else{
+    if (status == false){
+      alert(`error in SetUsername already in use ${username}`)
+    }
+    else if (status == true){
       newWindow(<UserProfilePage/>)
     }
   } catch (error) {
     console.log(`error ${error}`)
-    alert(`error in SetUsername ${error}`)
-    //failed so try again
+    alert(`error in SetUsername already in use${error} username ${username}`)
     window.location.replace('http://localhost:4242/');
   }
 }

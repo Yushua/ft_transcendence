@@ -6,12 +6,12 @@ import UserProfilePage from '../UserProfile/UserProfile';
 import HTTP from '../Utils/HTTP';
 
 async function checkAuthentication(){
-  console.log(`auth token is in ${getCookie("authToken")}`)
+  console.log(`auth token is in ${getCookie("accessToken")}`)
   try {
     const response = await fetch(HTTP.HostRedirect() + `auth/check` , {
       headers: {
         Accept: 'application/json',
-        'Authorization': 'Bearer ' + getCookie("authToken"),
+        'Authorization': 'Bearer ' + getCookie("accessToken"),
         'Content-Type': 'application/json',
       },
       method: 'GET'
@@ -26,12 +26,12 @@ async function checkAuthentication(){
       //or whats stored in the position
     }
     else {
-      removeCookie("authToken")
+      removeCookie("accessToken")
       newWindow(<LoginPage/>)
     }
   } catch (error) {
     alert(`authentication code invalid ${error}`)
-    removeCookie("authToken")
+    removeCookie("accessToken")
     newWindow(<LoginPage/>)
   }
 }
@@ -47,19 +47,19 @@ async function setLogin(){
       throw new Error(`Error! status: ${response.status}`);
     }
     var result = await response.json();
-    var authToken:string = result["authToken"]
-    if (authToken == undefined){
+    var accessToken:string = result["accessToken"]
+    if (accessToken == undefined){
       window.location.replace(HTTP.HostRedirect());
     }
     else {
       //check if you're logged in
       removeCookie('accessToken');
-      setCookie('accessToken', authToken,{ expires: 1 });
+      setCookie('accessToken', accessToken,{ expires: 1 });
       newWindow(<UserProfilePage/>)
     }
   } catch (error) {
     console.log(`error ${error}`)
-    removeCookie("authToken")
+    removeCookie("accessToken")
     HTTP.HostRedirect()
   }
 }
@@ -69,8 +69,8 @@ const loginIntoOAuth = () => {
 }
 
 function LoginPage(){
-  //to check if your AuthToken is already valid
-  if (getCookie("authToken") != undefined){
+  //to check if your accessToken is already valid
+  if (getCookie("accessToken") != undefined){
     //when you can login because you have an authenToken Cookie
     checkAuthentication()
   }

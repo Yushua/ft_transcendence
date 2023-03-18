@@ -96,8 +96,7 @@ export class AuthService {
           }
         }
         //two factor authentication, but how? if this is true, then log out.
-        const userID = user.id;
-        const payload: JwtPayload = { userID };
+        const payload: JwtPayload = { userID: user.id, twoFactor: false };
         const authToken: string = this.jwtService.sign(payload);
         return authToken;
       }
@@ -122,7 +121,7 @@ export class AuthService {
           throw new HttpException(`username ${username} already in use`, HttpStatus.BAD_REQUEST);
         }
         console.log(` id = ${user.id}`)
-        const payload: JwtPayload = { userID: user.id };
+        const payload: JwtPayload = { userID: user.id, twoFactor: false };
         try {
          const authToken = this.jwtService.sign(payload);          
         } catch (error) {
@@ -134,17 +133,15 @@ export class AuthService {
         return authToken;
       }
 
-      async changeUsername(username:string):Promise<boolean>{
-        var status:boolean = false;
-        console.log("here")
+      async changeUsername(username:string, intraName:string):Promise<boolean>{
         var user:UserProfile = await this.userProfileEntityRepos.findOneBy({ username })
         if (!user){
+          var user:UserProfile = await this.userProfileEntityRepos.findOneBy({ intraName })
           user.username = username;
-          console.log("here now")
           await this.userProfileEntityRepos.save(user);
+          return true
         }
-        console.log("here now failed")
-        return status
+        return false
       }
   
 }

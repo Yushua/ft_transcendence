@@ -8,10 +8,10 @@ import HTTP from '../Utils/HTTP'
 import { newWindow } from '../App';
 import SetUsername from './SetUsername';
 
-async function asyncGetName() {
+async function asyncGetName():Promise<string> {
   const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
   var result = await JSON.parse(response)
-  username = await result["username"];
+  return await result["username"];
 }
 
 export async function asyncChangeName(newUsername:string) {
@@ -38,13 +38,9 @@ var username: string = "";
 var _setDisplay: Dispatch<SetStateAction<boolean>>
 
 async function asyncToggleGetName(){
-  await asyncGetName()
+  username = await asyncGetName()
   _setDisplay(true)
 };
-
-export async function asyncSetDisplay(){
-  _setDisplay(true)
-}
 
 function UserProfilePage() {
   const [Display, setDisplay] = useState<boolean>(false);
@@ -52,7 +48,8 @@ function UserProfilePage() {
   if (Display === false){
     asyncToggleGetName()
   }
-  if (username == ""){
+  else if (Display == true && username == ""){
+    console.log(`username change {${username}}`)
     newWindow(<SetUsername/>)
   }
   //maybe add a remove account

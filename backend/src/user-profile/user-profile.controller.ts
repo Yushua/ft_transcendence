@@ -20,9 +20,6 @@ export class UserProfileController {
     @Get('/user')
     getUserByIdRequest(
         @Request() req: Request): Promise<UserProfile> {
-        console.log("without an id")
-        console.log('id ' + req["user"].id)
-        console.log('username ' + req["user"].username)
         return this.userServices.findUserBy(req["user"].id);
     }
 

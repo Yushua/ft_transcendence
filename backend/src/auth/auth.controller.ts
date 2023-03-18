@@ -1,4 +1,4 @@
-import { Controller, Get, Param,  HttpException, HttpStatus, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param,  HttpException, HttpStatus, UseGuards, Request } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthGuardEncryption } from './auth.guard';
 import { AuthService } from './auth.service';
@@ -31,12 +31,12 @@ export class AuthController {
             redirect_uri: "http://localhost:4242/",
             state: " super-secret",
         }
-        var accesssToken:string = await this.AuthService.OauthSystemCodeToAccess(dataToPost)
-        var intraName:string = await this.AuthService.startRequest(accesssToken)
-        var authToken:string = await this.AuthService.makeAccount(intraName)
+        var OAuthToken:string = await this.AuthService.OauthSystemCodeToAccess(dataToPost)
+        var intraName:string = await this.AuthService.startRequest(OAuthToken)
+        var accessToken:string = await this.AuthService.makeAccount(intraName)
         //if account is now yet created, then you can't log in yet
         return {
-            code, authToken
+            code, accessToken
         }
     }
 
@@ -51,8 +51,8 @@ export class AuthController {
             redirect_uri: "http://localhost:4242/",
             state: " super-secret",
         }
-        var accesssToken:string = await this.AuthService.OauthSystemCodeToAccess(dataToPost)
-        var intraName:string = await this.AuthService.startRequest(accesssToken)
+        var OAuthToken:string = await this.AuthService.OauthSystemCodeToAccess(dataToPost)
+        var intraName:string = await this.AuthService.startRequest(OAuthToken)
         //if intraName already exist
         if ( await this.AuthService.usernameUserExist(username) == true){
             throw new HttpException('Username already in use', HttpStatus.FORBIDDEN);
@@ -60,14 +60,15 @@ export class AuthController {
         if ( await this.AuthService.intraNameUserExist(intraName) == true){
             throw new HttpException('Intraname already in use', HttpStatus.FORBIDDEN);
         }
-        var authToken:string = await this.AuthService.newAccountSystem(intraName, username)
-        return {authToken}
+        var accessToken:string = await this.AuthService.newAccountSystem(intraName, username)
+        return {accessToken}
     }
 
     @UseGuards(AuthGuard())
+    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     @Get('ChangeUsername/:username')
-    async setNewUsername(@Param('username') username: string){
+    async setNewUsername(@Param('username') username: string,  @Request() req: Request){
     return {
-        status: await this.AuthService.changeUsername(username)
+        status: await this.AuthService.changeUsername(username, req["user"].intraName)
     }}
 }
