@@ -14,10 +14,7 @@ async function getStatusTwoFactor():Promise<boolean> {
 }
 
 async function changeStatusTwoFactor(status: boolean){
-  const response = HTTP.Get(`auth/changeStatusAuth/` + status , null, {Accept: 'application/json'})
-  var result = await JSON.parse(response)
-  removeCookie('accessToken');
-  setCookie('accessToken', await result["accessToken"] ,{ expires: 10000 });
+  HTTP.Post(`auth/changeStatusAuth/` + status , null, {Accept: 'application/json'})
 }
 
 async function startTwoFactorSystem():Promise<string> {
@@ -45,6 +42,7 @@ async function disableTwoFactorAuthentication() {
   //turn the status to false. and make a new JWT authentication with the twoFactor turned to false
   await changeStatusTwoFactor(false)
   _setDisplayTwo(true)
+  //if the JWT twoFactor is true, then it wont be updated
 }
 
 interface FormElements extends HTMLFormControlsCollection {
