@@ -54,7 +54,7 @@ async function setLogin(){
     else {
       //check if you're logged in
       removeCookie('accessToken');
-      setCookie('accessToken', accessToken,{ expires: 1 });
+      setCookie('accessToken', accessToken,{ expires: 10000 });
       newWindow(<UserProfilePage/>)
     }
   } catch (error) {

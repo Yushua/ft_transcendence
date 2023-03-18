@@ -71,4 +71,13 @@ export class AuthController {
     return {
         status: await this.AuthService.changeUsername(username, req["user"].intraName)
     }}
+
+    @UseGuards(AuthGuard())
+    @Get('changeStatusAuth/:status')
+    async getNewAuthToken(@Param('status') status: boolean,  @Request() req: Request){
+
+    return {
+        accessToken: await this.AuthService.changeStatusAuth(status, req["user"].id)
+    }}
+
 }
