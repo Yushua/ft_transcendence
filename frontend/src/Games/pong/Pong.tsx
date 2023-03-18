@@ -184,7 +184,7 @@ export const Pong = () => {
 						</div> :
 							<button onClick={() => ShowGameList()}>Game List</button>}
 				</div>}
-			{showGameList ? <GameList listmap={gameListMap} socket={socket} /> : <></>}
+			{showGameList && !inGame? <GameList listmap={gameListMap} socket={socket} /> : <></>}
 		</React.Fragment>
 	)
 }

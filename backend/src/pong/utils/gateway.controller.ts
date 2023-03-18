@@ -7,7 +7,8 @@ import { PongService } from "../pong.service";
 export const targetFPS = 60
 export const targetResponseRate = 1000 / targetFPS
 
-let queuedclient:[Socket, string] = [undefined, 'nope']
+let queuedclient:[Socket, string] = [undefined, '']
+let gamecreator:[Socket, string] = [undefined, '']
 let n_game_rooms:number = 0
 let game_name:string = 'game_0'
 let connections:Map<Socket, [GameData, string[]]> = new Map<Socket,[GameData,string[]]>()
@@ -67,10 +68,11 @@ export class MyGateway implements OnModuleInit {
 				client.emit('joined', data.controls)
 				queuedclient[0].emit('joined', queuedclient[1])
 				let client2 = queuedclient[0]
+				let controlsp2 = queuedclient[1]
 				queuedclient[0] = undefined
 
 				//create gameData with default settings which holds all game info client needs to render
-				let gamedata = new GameData(game_name, data.userName, p2Name, 100, 100)
+				let gamedata = new GameData(game_name, data.userName, p2Name, data.controls, controlsp2, 100, 100)
 
 				//add this game with the client IDs to a gamelist and insert <client, [data, IDs]> in a map which
 				//can be used to access the right gamedata for movement events by clients, and based on ID order
@@ -94,8 +96,17 @@ export class MyGateway implements OnModuleInit {
 	handleCreateGame(
 	@MessageBody() data: {userID:string, userName:string, customSettings:any},
 	@ConnectedSocket() client: Socket) {
-		let gamedata = new GameData('custom', data.userName, 'placeholder', data.customSettings.ballSpeed, data.customSettings.paddleSize)
+		let gamedata = new GameData('custom', data.userName, 'placeholder', '', '', data.customSettings.ballSpeed, data.customSettings.paddleSize)
 		
+
+		if (gamecreator[0] === undefined || client === gamecreator[0])
+		{
+			gamecreator[0] = client
+			// gamecreator[1] = data.controls
+			p2Name = data.userName
+			p2UserID = data.userID
+			client.emit('pending')	
+		}
 	}
 
 	//clients send movement events - using game map to fing the right game and its first or second
@@ -136,30 +147,70 @@ export class MyGateway implements OnModuleInit {
 	handleSpectator(
 		@MessageBody() gameName: string,
 		@ConnectedSocket() client: Socket) {
-			let dataIdTuple = games.get(gameName)
-			// spectators.push(client.id)
-			if (dataIdTuple !== undefined)
+			let game = games.get(gameName)
+			if (game !== undefined)
 			{
-				connections.set(client, dataIdTuple)
+				connections.set(client, game)
 				client.emit('spectating')
 			}
 		}
+
+	//switching to pong window automatically tries to reconnect to any ongoing games
+	@SubscribeMessage('reconnect')
+	handleReconnect(
+		@ConnectedSocket() client: Socket) {
+			for (var game of games) {
+				const clients = game[1][1]
+				if (client.id === clients[0])
+				{
+					connections.set(client, game[1])
+					client.emit('joined', game[1][0].p1_controls)
+					break; 
+				}
+				if (client.id === clients[1])
+				{
+					connections.set(client, game[1])
+					client.emit('joined', game[1][0].p2_controls)
+					break;
+				}
+			}
+		}
 	
+	@SubscribeMessage('refreshGameList')
+	handleRefresh(
+		@ConnectedSocket() client: Socket) {
+			const serializedMap = [...games.entries()];
+			this.server.emit('gamelist', serializedMap)
+		}
+
 	@SubscribeMessage('disconnect')
 	handleDisconnect(
 		@ConnectedSocket() client: Socket) {
 			console.log('client:', client.id, ' disconnected')
-			let game = connections.get(client)
-			if (game !== undefined)
+			let connection = connections.get(client)
+			if (connection !== undefined)
 				connections.delete(client)
 		}
 
+	//remove client from connections on leave. Also unset the ID in the games map so it cant
+	//reconnect automatically when switching from-to pong window
 	@SubscribeMessage('leave')
 	handleLeaver(
+		@MessageBody() gameName: string,
 		@ConnectedSocket() client: Socket) {
-			let game = connections.get(client)
-			if (game !== undefined)
+			let connection = connections.get(client)
+			if (connection !== undefined)
+			{
 				connections.delete(client)
+				let game = games.get(gameName)
+				if (game !== undefined)
+				{
+					if (client.id === game[1][0])
+						game[1][0] = ''
+					else if (client.id === game[1][1])
+						game[1][1] = ''
+				}
+			}
 			this.server.to(client.id).emit('left')
 		}
 	
