@@ -144,12 +144,13 @@ export class AuthService {
         return false
       }
       
-      async changeStatusAuth(twoFactor:boolean, id:string):Promise<string>{
+      async changeStatusAuth(twoFactor:boolean, id:string){
         var accessToken = ""
         var user:UserProfile = await this.userProfileEntityRepos.findOneBy({ id })
         user.twoFactor = twoFactor;
         await this.userProfileEntityRepos.save(user);
-        const payload: JwtPayload = { userID: user.id, twoFactor: twoFactor };
-        return this.jwtService.sign(payload); 
+        //this is ONLY when the the authentication in login succeeds
+        // const payload: JwtPayload = { userID: user.id, twoFactor: twoFactor };
+        // return this.jwtService.sign(payload); 
       }
 }

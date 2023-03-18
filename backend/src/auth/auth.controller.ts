@@ -1,4 +1,4 @@
-import { Controller, Get, Param,  HttpException, HttpStatus, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Param,  HttpException, HttpStatus, UseGuards, Request, Post } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthGuardEncryption } from './auth.guard';
 import { AuthService } from './auth.service';
@@ -73,11 +73,10 @@ export class AuthController {
     }}
 
     @UseGuards(AuthGuard())
-    @Get('changeStatusAuth/:status')
-    async getNewAuthToken(@Param('status') status: boolean,  @Request() req: Request){
-
-    return {
-        accessToken: await this.AuthService.changeStatusAuth(status, req["user"].id)
-    }}
+    @Post('changeStatusAuth/:status')
+    async getNewAuthToken(@Param('status') status: boolean,  @Request() req: Request){  
+        await this.AuthService.changeStatusAuth(status, req["user"].id)
+        return
+    }
 
 }
