@@ -7,6 +7,7 @@ import ChatRoom from "../../Utils/Cache/ChatRoom";
 import RoomBrowser from "./RoomBrowser/RoomBrowser";
 import User from "../../Utils/Cache/User";
 import HTTP from "../../Utils/HTTP";
+import { EmptyCanvas } from "../../Games/pong/components/EmtpyCanvas";
 
 export async function asyncChangeRoom(roomID: string) {
 	await ChatRoom.asyncUpdate(roomID)
@@ -72,6 +73,7 @@ export default function MainChatWindow() {
 			HTTP.Delete("chat/all")
 			ChatRoom.Clear()
 		}}>DEBUG: Delete all chat data</button>
+		<EmptyCanvas/>
 	</center>
 	)
 }

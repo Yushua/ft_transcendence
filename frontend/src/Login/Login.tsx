@@ -100,7 +100,6 @@ const handleAccLogin = (e: React.FormEvent<YourFormElement>) => {
 const LoginPage: React.FC = () => {
   return (
     <div className="LoginPage">
-        <EmptyCanvas/>
         <span className="heading">
           Create Account
         </span>
@@ -132,6 +131,7 @@ const LoginPage: React.FC = () => {
             <div><label id="errorCode2" htmlFor="error2"></label></div>
             <button type="submit">Submit</button>
           </form>
+      <EmptyCanvas/>
     </div>
   );
 }

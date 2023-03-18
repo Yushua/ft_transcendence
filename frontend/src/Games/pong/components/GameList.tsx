@@ -19,19 +19,21 @@ export class GameList extends React.Component<any, any> {
 		if (gameName !== undefined)
 			socket.emit('spectate', gameName)
 	}
-	setRows(list:string[][])
+
+	setRows(listmap:Map<string, string[]>)
 	{
 		const rows = []
-	
-		for (let i = 0; i !== list.length; i++)
-		{
-			rows[i] = createData(i, list[i][0], list[i][1], list[i][2])
+		let i = 0
+		for (var list of listmap) {
+			rows[i] = createData(i, list[0], list[1][0], list[1][1])
+			i++
 		}
 		return rows
 	}
+
 	render()
 	{
-		const rows = this.setRows(this.props.list)
+		const rows = this.setRows(this.props.listmap)
 		return (
 			<React.Fragment>
 			<h3>Active Games</h3>

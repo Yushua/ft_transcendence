@@ -5,6 +5,7 @@ export class GameData {
 	p1: Paddle
 	p2: Paddle
 	ball: Ball
+	gameName:string
 
 	constructor()
 	{
