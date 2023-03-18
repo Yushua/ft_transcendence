@@ -74,6 +74,7 @@ var _Display: boolean
 function TwoFactorAuthentication(){
   const [DisplayTwo, setDisplayTwo] = useState<boolean>(true);
   const [Display, setDisplay] = useState<boolean>(true);
+
   //enable the display of the text
   // if its false, then its enabled, and you can only disable
   //when you disable, it gets true again,a nd enable is set, and the QR code dissapears
@@ -81,21 +82,8 @@ function TwoFactorAuthentication(){
   _setDisplay = setDisplay
   _Display = Display
 
-  //
-  //get the status of twoFactor Authentication
-
-  /* on click, use this, else, use this */
-
-  /* if its false then continue to UserProfile */
-  
-  /* if true, AND in token the two factor is false, then request a code, which is checked
-    if the token is correct, change the authentication code into that of true
-    
-    if token is true, then twof ctor has aready taken place, continue to userprofile
-  */
   if (Display == true){
     checkDisplay()
-
   }
   return (
     <div className="TwoFactorAuthentication">
