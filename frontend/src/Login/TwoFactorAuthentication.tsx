@@ -94,7 +94,7 @@ function TwoFactorAuthentication(){
     if token is true, then twof ctor has aready taken place, continue to userprofile
   */
   if (Display == true){
-    //checking one time
+    checkDisplay()
 
   }
   return (
