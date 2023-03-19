@@ -9,7 +9,7 @@ import { TwoFactorAuthService } from '../two-factor-auth/two-factor-auth.service
 export class AuthController {
     constructor(
         private AuthService: AuthService,
-        private TwoFactorAuthServices: TwoFactorAuthService,
+        private readonly TwoFactorAuthServices: TwoFactorAuthService,
     ) {}
 
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
@@ -38,17 +38,12 @@ export class AuthController {
         var intraName:string = await this.AuthService.startRequest(OAuthToken)
 
         var accessToken:string = await this.AuthService.makeAccount(intraName)
-        //if you create the account BUT the tft is already there. then something is wrong
-        if (tft == undefined){
-            var secretCode:string = crypto.randomBytes(Math.ceil(length / 2)).toString('hex').slice(0, length)
-            var twoFactorToken:string = await this.TwoFactorAuthServices.createNewToken(await this.AuthService.getUserID(intraName), false, secretCode)
-            throw new HttpException('Two Factor Token is already there', HttpStatus.BAD_REQUEST);
-        }
-        else {
-            twoFactorToken = tft
-        }
+        //creating new TFT token
+        var secretCode:string = crypto.randomBytes(Math.ceil(length / 2)).toString('hex').slice(0, length)
+        var id = await this.AuthService.getUserID(intraName);
+        // var twoFactorToken:string = await this.TwoFactorAuthServices.createNewToken(id, false, secretCode)
         return {
-            code, accessToken, twoFactorToken: tft
+            code, accessToken, twoFactorToken: ""
         }
     }
 
@@ -86,9 +81,37 @@ export class AuthController {
 
     @UseGuards(AuthGuard())
     @Post('changeStatusAuth/:status')
-    async getNewAuthToken(@Param('status') status: boolean,  @Request() req: Request){  
-        await this.AuthService.changeStatusAuth(status, req["user"].id)
-        return
+    async getNewAuthToken(@Param('status') status: boolean,  @Request() req: Request){
+        var secretCode:string = crypto.randomBytes(Math.ceil(length / 2)).toString('hex').slice(0, length)
+        return { twoFactorToken: await this.TwoFactorAuthServices.createNewToken(req["user"].id, status, secretCode) }
     }
 
+    /**
+     * first check in the UserTFT if its on or not
+     * ifnot, return false, thenit is not on
+     * if it is true, and in the TFT it is true, then it already was on
+     * if it is true and in the TFT it is false, then it is not enabled
+     * @param token 
+     * @param req 
+     * @returns 
+     */
+    @UseGuards(AuthGuard())
+    @Post('checkTwoStatus/:token')
+    async checkTwoStatus(@Param('token') token: string){ 
+        if (await this.TwoFactorAuthServices.checkToken(token) != true){
+            throw new HttpException('here has been an attempted breach, using an invalid token', HttpStatus.BAD_REQUEST)
+        }
+        if (await this.TwoFactorAuthServices.getUserIDNotToken(token) == true){
+            if (await this.TwoFactorAuthServices.getStatus(token) == false){
+                console.log("new browser perhaps")
+                return { status: false }
+            }
+            else { console.log("already enabled")
+            return { status: true } }
+        }
+        else {
+            console.log("not enabled")
+            return { status: true }
+        }
+    }
 }

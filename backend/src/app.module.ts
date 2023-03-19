@@ -25,9 +25,7 @@ import { TwoFactorAuthModule } from './two-factor-auth/two-factor-auth.module';
     ChatModule,
     GatewayModule,
     TwoFactorAuthModule],
-  controllers: [
-    AppController
+  controllers: [AppController
   ],
-  providers: [TwoFactorAuthService]
 })
 export class AppModule {}

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
 import { newWindow } from '../App';
 import '../App.css';
-import { changeStatusTwoFactor } from '../TwoFactorSystem/TwoFactorAuthentication';
+import TwoFactorLoginCheck, { getStatusTwoFactor } from '../TwoFactorSystem/TwoFactorLoginCheck';
 import UserProfilePage from '../UserProfile/UserProfile';
 import HTTP from '../Utils/HTTP';
 
@@ -59,8 +59,9 @@ async function setLogin(){
       removeCookie('twoFactorToken');
       setCookie('accessToken', accessToken,{ expires: 10000 });
       setCookie('twoFactorToken', accessToken,{ expires: 7 * 24 * 60 * 60 * 1000 });
-      //go to two factorCheck
-      changeStatusTwoFactor(false)
+      if (await getStatusTwoFactor() == false){
+        newWindow(<TwoFactorLoginCheck/>)
+      }
       newWindow(<UserProfilePage/>)
     }
   } catch (error) {

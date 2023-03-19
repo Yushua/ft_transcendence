@@ -8,11 +8,4 @@ export class TwoFactorAuthController {
         private TwoFactorAuthServices: TwoFactorAuthService,
     ) {}
 
-    @UseGuards(AuthGuard('jwt'))
-    @Get('check')
-    async checkJwtTwoFactorToken(){
-        return {
-            result: true
-        }
-    }
 }

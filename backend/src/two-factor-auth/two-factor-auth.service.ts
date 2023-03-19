@@ -5,14 +5,11 @@ import { Repository } from 'typeorm';
 import { JwtPayload } from './jwt-payload.interface';
 import { UserTwoFactor } from './user.entity';
 import axios from 'axios';
-import { UserProfile } from 'src/user-profile/user.entity';
-import { truncate } from 'fs';
 
-@Injectable()
 export class TwoFactorAuthService {
     constructor(
         @InjectRepository(UserTwoFactor)
-        private readonly userTwoFactorEntityRepos: Repository<UserTwoFactor>,
+        private readonly UserTwoFactorEntityRepos: Repository<UserTwoFactor>,
         private readonly jwtService: JwtService,
     ) {}
 
@@ -68,16 +65,16 @@ export class TwoFactorAuthService {
         async createNewToken(userID: string, twoFactor: boolean, secretCode:string):Promise<string>{
             const payload: JwtPayload= { userID, twoFactor: twoFactor, secretCode };
             const authToken: string = this.jwtService.sign(payload);
-            var user:UserTwoFactor = await this.userTwoFactorEntityRepos.findOneBy({ id:userID })
+            var user:UserTwoFactor = await this.UserTwoFactorEntityRepos.findOneBy({ id:userID })
             if (user){
                 user.secretCode = secretCode
-                await this.userTwoFactorEntityRepos.save(user)
+                await this.UserTwoFactorEntityRepos.save(user)
             }
             else {
-                user = this.userTwoFactorEntityRepos.create({
+                user = this.UserTwoFactorEntityRepos.create({
                     id:userID, twoFactor, secretCode
                   });
-                await this.userTwoFactorEntityRepos.save(user)
+                await this.UserTwoFactorEntityRepos.save(user)
             }
             return authToken;
         }
@@ -112,7 +109,7 @@ export class TwoFactorAuthService {
          */
         async checkSecretCode(twoFactorToken:string):Promise<boolean>{
             var UserID:string = await this.getUserID(twoFactorToken)
-            const user = await this.userTwoFactorEntityRepos.findOneBy({ id:UserID })
+            const user = await this.UserTwoFactorEntityRepos.findOneBy({ id:UserID })
 
             if (await this.getSecret(twoFactorToken) == user.secretCode){
                 return true
@@ -147,6 +144,12 @@ export class TwoFactorAuthService {
         async getUserID(twoFactorToken:string):Promise<string>{
             var tokenPayload = this.jwtService.decode(twoFactorToken);
             return tokenPayload["userID"]
+        }
+
+        async getUserIDNotToken(twoFactorToken:string):Promise<boolean>{
+            var UserID:string = await this.getUserID(twoFactorToken)
+            const user = await this.UserTwoFactorEntityRepos.findOneBy({ id:UserID })
+            return user.twoFactor
         }
 
 }

@@ -5,14 +5,14 @@ import { PassportStrategy } from '@nestjs/passport'
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
-import { UserProfile } from 'src/user-profile/user.entity';
 import { JwtPayload } from './jwt-payload.interface';
+import { UserTwoFactor } from './user.entity';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
     constructor(
-        @InjectRepository(UserProfile)
-        private readonly autEntityRepos: Repository<UserProfile>,
+        @InjectRepository(UserTwoFactor)
+        private readonly autEntityRepos: Repository<UserTwoFactor>,
     ) {
         super({
             secretOrKey: 'topSecret51TwoFactor',
@@ -21,11 +21,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         })
     }
     
-    async validate(req: Request, payload: JwtPayload): Promise<UserProfile> {
+    async validate(req: Request, payload: JwtPayload): Promise<UserTwoFactor> {
         const { userID } = payload;
         const id = userID
-        console.log("I am in validate")
-        const user: UserProfile = await this.autEntityRepos.findOneBy({ id });
+        const user: UserTwoFactor = await this.autEntityRepos.findOneBy({ id });
 
         if (!user){
             throw new UnauthorizedException();
