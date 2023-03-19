@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
 import { newWindow } from '../App';
 import '../App.css';
+import { changeStatusTwoFactor } from '../TwoFactorSystem/TwoFactorAuthentication';
 import UserProfilePage from '../UserProfile/UserProfile';
 import HTTP from '../Utils/HTTP';
-import { changeStatusTwoFactor } from './TwoFactorAuthentication';
 
 async function checkAuthentication(){
   console.log(`auth token is in ${getCookie("accessToken")}`)
@@ -49,13 +49,16 @@ async function setLogin(){
     }
     var result = await response.json();
     var accessToken:string = result["accessToken"]
-    if (accessToken == undefined){
+    var TF:string = result["twoFactorToken"]
+    if (accessToken == undefined || TF == undefined){
       window.location.replace(HTTP.HostRedirect());
     }
     else {
       //check if you're logged in
       removeCookie('accessToken');
+      removeCookie('twoFactorToken');
       setCookie('accessToken', accessToken,{ expires: 10000 });
+      setCookie('twoFactorToken', accessToken,{ expires: 7 * 24 * 60 * 60 * 1000 });
       //go to two factorCheck
       changeStatusTwoFactor(false)
       newWindow(<UserProfilePage/>)
@@ -63,6 +66,7 @@ async function setLogin(){
   } catch (error) {
     console.log(`error ${error}`)
     removeCookie("accessToken")
+    removeCookie('twoFactorToken');
     HTTP.HostRedirect()
   }
 }

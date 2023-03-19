@@ -2,11 +2,14 @@ import { Controller, Get, Param,  HttpException, HttpStatus, UseGuards, Request,
 import { AuthGuard } from '@nestjs/passport';
 import { AuthGuardEncryption } from './auth.guard';
 import { AuthService } from './auth.service';
+import * as crypto from 'crypto';
+import { TwoFactorAuthService } from '../two-factor-auth/two-factor-auth.service';
 
 @Controller('auth')
 export class AuthController {
     constructor(
         private AuthService: AuthService,
+        private TwoFactorAuthServices: TwoFactorAuthService,
     ) {}
 
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
@@ -19,7 +22,7 @@ export class AuthController {
         }
     }
 
-    @Get('token/:code')
+    @Get('token/:code/:tft')
     async getAuthToken(@Param('code') code: string) {
         //get data from conf, if anything is NULL, because conf is not there, return error access
         //because conf is not there
@@ -33,10 +36,19 @@ export class AuthController {
         }
         var OAuthToken:string = await this.AuthService.OauthSystemCodeToAccess(dataToPost)
         var intraName:string = await this.AuthService.startRequest(OAuthToken)
+
         var accessToken:string = await this.AuthService.makeAccount(intraName)
-        //if account is now yet created, then you can't log in yet
+        //if you create the account BUT the tft is already there. then something is wrong
+        if (tft == undefined){
+            var secretCode:string = crypto.randomBytes(Math.ceil(length / 2)).toString('hex').slice(0, length)
+            var twoFactorToken:string = await this.TwoFactorAuthServices.createNewToken(await this.AuthService.getUserID(intraName), false, secretCode)
+            throw new HttpException('Two Factor Token is already there', HttpStatus.BAD_REQUEST);
+        }
+        else {
+            twoFactorToken = tft
+        }
         return {
-            code, accessToken
+            code, accessToken, twoFactorToken: tft
         }
     }
 
