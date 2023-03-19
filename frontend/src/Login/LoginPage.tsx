@@ -4,6 +4,7 @@ import { newWindow } from '../App';
 import '../App.css';
 import UserProfilePage from '../UserProfile/UserProfile';
 import HTTP from '../Utils/HTTP';
+import { changeStatusTwoFactor } from './TwoFactorAuthentication';
 
 async function checkAuthentication(){
   console.log(`auth token is in ${getCookie("accessToken")}`)
@@ -54,7 +55,9 @@ async function setLogin(){
     else {
       //check if you're logged in
       removeCookie('accessToken');
-      setCookie('accessToken', accessToken,{ expires: 1 });
+      setCookie('accessToken', accessToken,{ expires: 10000 });
+      //go to two factorCheck
+      changeStatusTwoFactor(false)
       newWindow(<UserProfilePage/>)
     }
   } catch (error) {
