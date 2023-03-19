@@ -7,8 +7,8 @@ import ProfilePicture from './ProfilePicture';
 import HTTP from '../Utils/HTTP'
 import { newWindow } from '../App';
 import SetUsername from './SetUsername';
-import TwoFactorAuthentication from '../TwoFactorSystem/TwoFactorAuthentication';
 import LogoutButtonComponent from './LogoutButton';
+import TwoFactorLoginCheckProfile from '../TwoFactorSystem/TwoFactorLoginCheckProfile';
 
 async function asyncGetName():Promise<string> {
   const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
@@ -73,7 +73,7 @@ function UserProfilePage() {
         <DropDownMenuAddFriendList/>
         <DropDownMenuRemoveFriendListId/>
       <div>
-        <TwoFactorAuthentication/>
+        <TwoFactorLoginCheckProfile/>
       </div>
     </div>
     //logout when initialized

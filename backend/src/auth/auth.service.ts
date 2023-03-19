@@ -103,8 +103,10 @@ export class AuthService {
           }
         }
         //two factor authentication, but how? if this is true, then log out.
+        console.log("JWT sign")
         const payload: JwtPayload = { userID: user.id, twoFactor: false };
         const authToken: string = this.jwtService.sign(payload);
+        console.log("JWT sign done")
         return authToken;
       }
 
@@ -153,7 +155,7 @@ export class AuthService {
       
 
       async controllerGetAuthToken(intraName: string){
-        var secretCode:string = crypto.randomBytes(Math.ceil(length / 2)).toString('hex').slice(0, length)
+        var secretCode:string = crypto.randomBytes(Math.ceil(10 / 2)).toString('hex').slice(0, 10)
         var id = await this.getUserID(intraName);
         var twoFactorToken:string = await this.TwoFactorAuthServices.createNewToken(id, false, secretCode)
         return twoFactorToken
@@ -166,19 +168,18 @@ export class AuthService {
       async controllerCheckTwoStatus(token:string):Promise<boolean>{
         if (await this.TwoFactorAuthServices.checkToken(token) != true){
           throw new HttpException('here has been an attempted breach, using an invalid token', HttpStatus.BAD_REQUEST)
-      }
-      if (await this.TwoFactorAuthServices.getUserIDNotToken(token) == true){
-          if (await this.TwoFactorAuthServices.getStatus(token) == false){
-              console.log("new browser perhaps")
-              return false
-          }
-          else { console.log("already enabled")
-          return true }
         }
+        if (await this.TwoFactorAuthServices.getUserIDNotToken(token) == true){
+            if (await this.TwoFactorAuthServices.getStatus(token) == false){
+                console.log("new browser perhaps")
+                return false
+            }
+            else { console.log("already enabled")
+            return true }
+          }
         else {
             console.log("not enabled")
             return true
         }
       }
-
 }

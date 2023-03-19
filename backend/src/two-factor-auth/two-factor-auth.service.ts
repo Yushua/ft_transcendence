@@ -16,7 +16,7 @@ export class TwoFactorAuthService {
          * @returns 
          */
         async checkInputbeforeCodeCheck(twoFactorToken:string):Promise<boolean>{
-            //getting in ehre means tow factor is enabled
+            //getting in here means tow factor is enabled
             if (await this.checkToken(twoFactorToken) == true){
                 if (await this.getStatus(twoFactorToken) == false){
                     //in here means tw factor Token is corrrectly made
@@ -40,7 +40,7 @@ export class TwoFactorAuthService {
         async checkCode(twoFactorToken:string, code: string):Promise<boolean>{
             try {
                 if (await this.checkInputbeforeCodeCheck(twoFactorToken) == true){
-                    //no need to check/ code is already valid
+                    console.log(`will it`)
                     return true
                 }
                 //check the code. if this fails, send HTTP error
@@ -60,10 +60,12 @@ export class TwoFactorAuthService {
          * @returns 
          */
         async createNewToken(userID: string, twoFactor: boolean, secretCode:string):Promise<string>{
+            console.log("TWT sign")
             const payload: JwtPayload= { userID, twoFactor: twoFactor, secretCode };
-            const authToken: string = this.jwtService.sign(payload);
+            const TFT: string = this.jwtService.sign(payload);
+            console.log("TWT done")
             await this.userTwoFactorEntityRepository.createUser(userID, twoFactor, secretCode)
-            return authToken;
+            return TFT;
         }
 
         /**

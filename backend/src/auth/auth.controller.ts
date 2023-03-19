@@ -20,7 +20,7 @@ export class AuthController {
         }
     }
 
-    @Get('token/:code/:tft')
+    @Get('token/:code')
     async getAuthToken(@Param('code') code: string) {
         //get data from conf, if anything is NULL, because conf is not there, return error access
         //because conf is not there
@@ -74,7 +74,7 @@ export class AuthController {
     @UseGuards(AuthGuard())
     @Post('changeStatusAuth/:status')
     async getNewAuthToken(@Param('status') status: boolean,  @Request() req: Request){
-        var secretCode:string = crypto.randomBytes(Math.ceil(length / 2)).toString('hex').slice(0, length)
+        var secretCode:string = crypto.randomBytes(Math.ceil(10 / 2)).toString('hex').slice(0, 10)
         return { twoFactorToken: await this.AuthService.controllergetNewAuthToken(req["user"].id, status, secretCode)}
     }
 

@@ -6,7 +6,7 @@ import { getCookie, removeCookie } from 'typescript-cookie';
 import { newWindow } from '../App';
 import LoginPage from '../Login/LoginPage';
 
-async function getStatusTwoFactor():Promise<boolean> {try {
+export async function getStatusTwoFactor():Promise<boolean> {try {
   const response = HTTP.Get(`auth/checkTwoStatus/${getCookie("TwoFactorToken")}`, null, {Accept: 'application/json'})
   var result = await JSON.parse(response)
   console.log(`status ${await result["status"]}`)

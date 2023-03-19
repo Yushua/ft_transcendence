@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
 import { newWindow } from '../App';
 import '../App.css';
-import TwoFactorLoginCheck, { getStatusTwoFactor } from '../TwoFactorSystem/TwoFactorLoginCheck';
+import TwoFactorLoginCheck, { getStatusTwoFactor } from '../TwoFactorSystem/TwoFactorLoginCheckProfile';
 import UserProfilePage from '../UserProfile/UserProfile';
 import HTTP from '../Utils/HTTP';
 
@@ -43,14 +43,15 @@ async function setLogin(){
       headers: {
         Accept: 'application/json',
       },
+      method: 'GET'
     })
     if (!response.ok) {
       throw new Error(`Error! status: ${response.status}`);
     }
     var result = await response.json();
     var accessToken:string = result["accessToken"]
-    var TF:string = result["twoFactorToken"]
-    if (accessToken == undefined || TF == undefined){
+    var TFT:string = result["twoFactorToken"]
+    if (accessToken == undefined || TFT == undefined){
       window.location.replace(HTTP.HostRedirect());
     }
     else {

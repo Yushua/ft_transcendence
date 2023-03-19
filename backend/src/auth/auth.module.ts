@@ -19,7 +19,7 @@ import { TwoFactorAuthService } from 'src/two-factor-auth/two-factor-auth.servic
     }),
     TypeOrmModule.forFeature([UserProfile])],
   controllers: [AuthController],
-  providers: [AuthService, TwoFactorAuthService, JwtStrategy, JwtService, ],
+  providers: [AuthService, TwoFactorAuthService, JwtStrategy],
   exports: [JwtStrategy, PassportModule],
 })
 export class AuthModule {}
