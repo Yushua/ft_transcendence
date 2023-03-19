@@ -7,7 +7,7 @@ import ProfilePicture from './ProfilePicture';
 import HTTP from '../Utils/HTTP'
 import { newWindow } from '../App';
 import SetUsername from './SetUsername';
-import TwoFactorAuthentication from '../Login/TwoFactorAuthentication';
+import TwoFactorAuthentication from '../TwoFactorSystem/TwoFactorAuthentication';
 import LogoutButtonComponent from './LogoutButton';
 
 async function asyncGetName():Promise<string> {

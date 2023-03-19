@@ -59,6 +59,7 @@ export class TwoFactorAuthService {
          * it creates the token, when, on first Login or if no Authoken was made, but enabled was true
          *  or if enabled is updated
          *  create the account with the same secret code.
+         * create suer or update the user
          * @param userID 
          * @param twoFactor 
          * @param secretCode
