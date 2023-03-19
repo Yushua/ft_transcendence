@@ -3,13 +3,11 @@ import { AuthGuard } from '@nestjs/passport';
 import { AuthGuardEncryption } from './auth.guard';
 import { AuthService } from './auth.service';
 import * as crypto from 'crypto';
-import { TwoFactorAuthService } from '../two-factor-auth/two-factor-auth.service';
 
 @Controller('auth')
 export class AuthController {
     constructor(
         private AuthService: AuthService,
-        private readonly TwoFactorAuthServices: TwoFactorAuthService,
     ) {}
 
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
@@ -36,14 +34,8 @@ export class AuthController {
         }
         var OAuthToken:string = await this.AuthService.OauthSystemCodeToAccess(dataToPost)
         var intraName:string = await this.AuthService.startRequest(OAuthToken)
-
-        var accessToken:string = await this.AuthService.makeAccount(intraName)
-        //creating new TFT token
-        var secretCode:string = crypto.randomBytes(Math.ceil(length / 2)).toString('hex').slice(0, length)
-        var id = await this.AuthService.getUserID(intraName);
-        // var twoFactorToken:string = await this.TwoFactorAuthServices.createNewToken(id, false, secretCode)
         return {
-            code, accessToken, twoFactorToken: ""
+            code, accessToken: await this.AuthService.makeAccount(intraName), twoFactorToken: await this.AuthService.controllerGetAuthToken(intraName)
         }
     }
 
@@ -83,7 +75,7 @@ export class AuthController {
     @Post('changeStatusAuth/:status')
     async getNewAuthToken(@Param('status') status: boolean,  @Request() req: Request){
         var secretCode:string = crypto.randomBytes(Math.ceil(length / 2)).toString('hex').slice(0, length)
-        return { twoFactorToken: await this.TwoFactorAuthServices.createNewToken(req["user"].id, status, secretCode) }
+        return { twoFactorToken: await this.AuthService.controllergetNewAuthToken(req["user"].id, status, secretCode)}
     }
 
     /**
@@ -98,20 +90,7 @@ export class AuthController {
     @UseGuards(AuthGuard())
     @Post('checkTwoStatus/:token')
     async checkTwoStatus(@Param('token') token: string){ 
-        if (await this.TwoFactorAuthServices.checkToken(token) != true){
-            throw new HttpException('here has been an attempted breach, using an invalid token', HttpStatus.BAD_REQUEST)
-        }
-        if (await this.TwoFactorAuthServices.getUserIDNotToken(token) == true){
-            if (await this.TwoFactorAuthServices.getStatus(token) == false){
-                console.log("new browser perhaps")
-                return { status: false }
-            }
-            else { console.log("already enabled")
-            return { status: true } }
-        }
-        else {
-            console.log("not enabled")
-            return { status: true }
-        }
+        var status:boolean = await this.AuthService.controllerCheckTwoStatus(token)
+       return { status }
     }
 }

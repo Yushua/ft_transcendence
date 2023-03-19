@@ -5,12 +5,15 @@ import axios from 'axios';
 import { UserProfile } from 'src/user-profile/user.entity';
 import { Repository } from 'typeorm';
 import { JwtPayload } from './jwt-payload.interface';
+import * as crypto from 'crypto';
+import { TwoFactorAuthService } from 'src/two-factor-auth/two-factor-auth.service';
 
 export class AuthService {
     constructor(
       @InjectRepository(UserProfile)
       private readonly userProfileEntityRepos: Repository<UserProfile>,
       private readonly jwtService: JwtService,
+      private readonly TwoFactorAuthServices: TwoFactorAuthService,
   ) {}
   
       /**
@@ -148,4 +151,34 @@ export class AuthService {
         return false
       }
       
+
+      async controllerGetAuthToken(intraName: string){
+        var secretCode:string = crypto.randomBytes(Math.ceil(length / 2)).toString('hex').slice(0, length)
+        var id = await this.getUserID(intraName);
+        var twoFactorToken:string = await this.TwoFactorAuthServices.createNewToken(id, false, secretCode)
+        return twoFactorToken
+      }
+
+      async controllergetNewAuthToken(id:string, status: boolean, secretCode:string){
+        return await this.TwoFactorAuthServices.createNewToken(id, status, secretCode)
+      }
+
+      async controllerCheckTwoStatus(token:string):Promise<boolean>{
+        if (await this.TwoFactorAuthServices.checkToken(token) != true){
+          throw new HttpException('here has been an attempted breach, using an invalid token', HttpStatus.BAD_REQUEST)
+      }
+      if (await this.TwoFactorAuthServices.getUserIDNotToken(token) == true){
+          if (await this.TwoFactorAuthServices.getStatus(token) == false){
+              console.log("new browser perhaps")
+              return false
+          }
+          else { console.log("already enabled")
+          return true }
+        }
+        else {
+            console.log("not enabled")
+            return true
+        }
+      }
+
 }

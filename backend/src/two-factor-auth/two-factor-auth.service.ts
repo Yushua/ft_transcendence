@@ -1,16 +1,13 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { JwtPayload } from './jwt-payload.interface';
-import { UserTwoFactor } from './user.entity';
 import axios from 'axios';
+import { UserTwoFactorEntityRepository } from './two-factor-auth.repository';
 
 export class TwoFactorAuthService {
     constructor(
-        @InjectRepository(UserTwoFactor)
-        private readonly UserTwoFactorEntityRepos: Repository<UserTwoFactor>,
         private readonly jwtService: JwtService,
+        private readonly userTwoFactorEntityRepository: UserTwoFactorEntityRepository
     ) {}
 
         /**
@@ -65,17 +62,7 @@ export class TwoFactorAuthService {
         async createNewToken(userID: string, twoFactor: boolean, secretCode:string):Promise<string>{
             const payload: JwtPayload= { userID, twoFactor: twoFactor, secretCode };
             const authToken: string = this.jwtService.sign(payload);
-            var user:UserTwoFactor = await this.UserTwoFactorEntityRepos.findOneBy({ id:userID })
-            if (user){
-                user.secretCode = secretCode
-                await this.UserTwoFactorEntityRepos.save(user)
-            }
-            else {
-                user = this.UserTwoFactorEntityRepos.create({
-                    id:userID, twoFactor, secretCode
-                  });
-                await this.UserTwoFactorEntityRepos.save(user)
-            }
+            await this.userTwoFactorEntityRepository.createUser(userID, twoFactor, secretCode)
             return authToken;
         }
 
@@ -108,8 +95,8 @@ export class TwoFactorAuthService {
          * @returns 
          */
         async checkSecretCode(twoFactorToken:string):Promise<boolean>{
-            var UserID:string = await this.getUserID(twoFactorToken)
-            const user = await this.UserTwoFactorEntityRepos.findOneBy({ id:UserID })
+            var id:string = await this.getUserID(twoFactorToken)
+            const user = await this.userTwoFactorEntityRepository.returnUserWithId(id)
 
             if (await this.getSecret(twoFactorToken) == user.secretCode){
                 return true
@@ -147,8 +134,8 @@ export class TwoFactorAuthService {
         }
 
         async getUserIDNotToken(twoFactorToken:string):Promise<boolean>{
-            var UserID:string = await this.getUserID(twoFactorToken)
-            const user = await this.UserTwoFactorEntityRepos.findOneBy({ id:UserID })
+            var id:string = await this.getUserID(twoFactorToken)
+            const user = await this.userTwoFactorEntityRepository.returnUserWithId( id )
             return user.twoFactor
         }
 
