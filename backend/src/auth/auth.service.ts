@@ -31,6 +31,10 @@ export class AuthService {
         return accessToken
       }
 
+      async getUserID(intraName: string):Promise<string>{
+        var user:UserProfile = await this.userProfileEntityRepos.findOneBy({ intraName })
+        return user.id
+      }
       /**
        * 
        * @returns returns Intraname

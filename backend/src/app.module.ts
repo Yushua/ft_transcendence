@@ -5,6 +5,8 @@ import { AuthModule } from './auth/auth.module';
 import { ChatModule } from './chat/chat.module';
 import { AppController } from './app.controller';
 import { GatewayModule } from './pong/utils/gateway.module';
+import { TwoFactorAuthService } from './two-factor-auth/two-factor-auth.service';
+import { TwoFactorAuthModule } from './two-factor-auth/two-factor-auth.module';
 
 @Module({
   imports: [
@@ -21,9 +23,11 @@ import { GatewayModule } from './pong/utils/gateway.module';
       }),
     AuthModule,
     ChatModule,
-    GatewayModule],
+    GatewayModule,
+    TwoFactorAuthModule],
   controllers: [
     AppController
-  ]
+  ],
+  providers: [TwoFactorAuthService]
 })
 export class AppModule {}
