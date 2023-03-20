@@ -37,6 +37,10 @@ async function checkAuthentication(){
   }
 }
 
+/**
+ * set login makes two tokens. one for the JWT token and one TWT token
+ * To is set wihth a secret code, false and the user ID to get information
+ */
 async function setLogin(){
   try {
     const response = await fetch(HTTP.HostRedirect() + `auth/token/${window.location.href.split('code=')[1]}` , {

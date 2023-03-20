@@ -19,6 +19,11 @@ export class AuthController {
         }
     }
 
+    /**
+     * setup for the login
+     * @param code 
+     * @returns authtoken JWT token
+     */
     @Get('token/:code')
     async getAuthToken(@Param('code') code: string) {
         //get data from conf, if anything is NULL, because conf is not there, return error access
@@ -36,7 +41,7 @@ export class AuthController {
         var accessToken:string = await this.AuthService.makeAccount(intraName)
         //if account is now yet created, then you can't log in yet
         return {
-            code, accessToken
+            accessToken
         }
     }
 

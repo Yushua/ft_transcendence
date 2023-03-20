@@ -5,11 +5,13 @@ import axios from 'axios';
 import { UserProfile } from 'src/user-profile/user.entity';
 import { Repository } from 'typeorm';
 import { JwtPayload } from './jwt-payload.interface';
+import { UserTWT } from './userTWT.entity';
 
 export class AuthService {
     constructor(
       @InjectRepository(UserProfile)
       private readonly userProfileEntityRepos: Repository<UserProfile>,
+      private readonly userTWTEntityRepos: Repository<UserTWT>,
       private readonly jwtService: JwtService,
   ) {}
   
@@ -83,7 +85,7 @@ export class AuthService {
        * 
        * @param intraName makes account if intraname is new
        */
-      async makeAccount(intraName: string):Promise<string>{
+      async makeAccount(intraName: string, secretCode: string):Promise<string>{
         var user:UserProfile = await this.userProfileEntityRepos.findOneBy({ intraName })
         if(!user){
           user = this.userProfileEntityRepos.create({
@@ -96,7 +98,7 @@ export class AuthService {
           }
         }
         //two factor authentication, but how? if this is true, then log out.
-        const payload: JwtPayload = { userID: user.id, twoFactor: false };
+        const payload: JwtPayload = { userID: user.id, twoFactor: false, secretCode};
         const authToken: string = this.jwtService.sign(payload);
         return authToken;
       }
