@@ -30,10 +30,10 @@ function createData(id: number, gameName: string, p1: string, controls:string, B
 
 export class CustomGameList extends React.Component<any, any> {
 
-	join(gameName:string, socket:Socket)
+	join(gameName:string, userID:string, userName:string, socket:Socket)
 	{
 		if (gameName !== undefined)
-			socket.emit('spectate', gameName)
+			socket.emit('joinCustomGame', {gameName, userID, userName})
 	}
 
 	setRows(customGames:Map<string, any[]>)
@@ -50,7 +50,6 @@ export class CustomGameList extends React.Component<any, any> {
 
 	render()
 	{
-		console.log('props:', this.props)
 		const rows = this.setRows(this.props.customGames)
 		return (
 			<React.Fragment>
@@ -73,7 +72,7 @@ export class CustomGameList extends React.Component<any, any> {
 					<TableCell>{row.controls}</TableCell>
 					<TableCell>{row.BallSpeed}</TableCell>
 					<TableCell>{row.PaddleSize}</TableCell>
-					<TableCell><Button onClick={() => this.join(row.gameName, this.props.socket)}>Join Game</Button></TableCell>
+					<TableCell><Button variant="contained" onClick={() => this.join(row.gameName, this.props.userID, this.props.userName, this.props.socket)}>Join Game</Button></TableCell>
 				  </TableRow>
 				))}
 			  </TableBody>

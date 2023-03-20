@@ -1,3 +1,4 @@
+import { Button } from '@mui/material'
 import React from 'react'
 
 export const JoinClassicButton = (props:any) => {
@@ -15,11 +16,13 @@ export const JoinClassicButton = (props:any) => {
 
 	return (
 		<div className='dropdown-menu'>
-			<button onClick={() => isClassicGame()}>Join Classic Game</button>
+			<Button variant="outlined" onClick={() => isClassicGame()}>Join Classic Game</Button>
 			{classicGame ? 
 			<ul>
-				<li className='dropdownItem'><button onClick={() => findGame('mouse')}>Mouse</button></li>
-				<li className='dropdownItem'><button onClick={() => findGame('keyboard')}>Keyboard</button></li>
+				&nbsp;
+				<li className='dropdownItem'><Button variant="contained" onClick={() => findGame('mouse')}>Mouse</Button></li>
+				&nbsp;
+				<li className='dropdownItem'><Button variant="contained" onClick={() => findGame('keyboard')}>Keyboard</Button></li>
 			</ul> : <></> }
 		</div>
 	)

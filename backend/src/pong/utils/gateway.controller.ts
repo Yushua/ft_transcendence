@@ -3,7 +3,7 @@ import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSo
 import { Server, Socket } from 'socket.io'
 import { GameData } from '../components/GameData'
 import { PongService } from "../pong.service";
-import  DefaultConfig from "../components/Config"
+import  Config from "../components/Config"
 
 export const targetFPS = 60
 export const targetResponseRateS = 1 / targetFPS
@@ -12,8 +12,8 @@ export const targetResponseRateMS = 1000 / targetFPS
 
 const IDs = {
 	p1_socket_id: 0,
-	p2_socket_id: 1,
-	p1_userID: 2,
+	p1_userID: 1,
+	p2_socket_id: 2,
 	p2_userID: 3
 }
 
@@ -23,7 +23,7 @@ let game_name:string = 'game_0'
 let connections:Map<Socket, [GameData, string[]]> = new Map<Socket,[GameData,string[]]>()
 let customGames:Map<string, [GameData, string[]]> = new Map<string, [GameData, string[]]>()
 let games:Map<string, [GameData, string[]]> = new Map<string, [GameData, string[]]>()
-let Config = DefaultConfig
+let gameConfig = new Config()
 
 @WebSocketGateway({
 	cors: {
@@ -53,43 +53,41 @@ export class MyGateway implements OnModuleInit {
 			if (player2 === undefined || player === player2)
 			{
 				player2 = player
-				Config.p2_controls = playerInfo.controls
-				Config.p2_name = playerInfo.userName
-				Config.p2_userID = playerInfo.userID
+				gameConfig.p2_controls = playerInfo.controls
+				gameConfig.p2_name = playerInfo.userName
+				gameConfig.p2_userID = playerInfo.userID
 				player.emit('pending')	
 			}
 			else
 			{
 				game_name = game_name.replace(n_games.toString(), (n_games+1).toString())
 				n_games++
-				Config.gameName = game_name
-				Config.p1_name = playerInfo.userName
-				Config.p1_controls = playerInfo.controls
-				Config.p1_userID = playerInfo.userID
-				player.emit('joined', Config.p1_controls)
-				player2.emit('joined', Config.p2_controls)
+				gameConfig.gameName = game_name
+				gameConfig.p1_name = playerInfo.userName
+				gameConfig.p1_controls = playerInfo.controls
+				gameConfig.p1_userID = playerInfo.userID
+				player.emit('joined', gameConfig.p1_controls)
+				player2.emit('joined', gameConfig.p2_controls)
 
 				//create gameData with default settings which holds all game info client needs to render
-				let gamedata = new GameData(Config)
+				let gamedata = new GameData(gameConfig)
 
 				//add this game with the client IDs to a gamelist and insert <client, [data, IDs]> in a map which
 				//can be used to access the right gamedata for movement events by clients, and based on ID order
 				//update the correct Paddle (first ID = p1 = left paddle, second ID = p2 = right paddle, extra IDs are spectators)
-				let gameInfo:string[] = new Array<string>
-				let gameIDs:string[] = new Array<string>
+				let gameIDs:string[] = new Array<string>()
 				let dataIdTuple: [GameData, string[]]	
 				
 				gameIDs.push(player.id)
+				gameIDs.push(gameConfig.p1_userID)
 				gameIDs.push(player2.id)
-				gameIDs.push(Config.p1_userID)
-				gameIDs.push(Config.p2_userID)
+				gameIDs.push(gameConfig.p2_userID)
 				dataIdTuple = [gamedata, gameIDs]
 				games.set(game_name, dataIdTuple)
 				connections.set(player, dataIdTuple)
 				connections.set(player2, dataIdTuple)
 				player2 = undefined
 				gameIDs = []
-				gameInfo = []
 
 				const serializedMap = [...games.entries()];
 				this.server.emit('gamelist', serializedMap)
@@ -101,43 +99,57 @@ export class MyGateway implements OnModuleInit {
 	@MessageBody() gameInfo: {userID:string, userName:string, customSettings:any},
 	@ConnectedSocket() player: Socket) {
 		if (player2 === player)
-			player2 === undefined
-		let CustomConfig = DefaultConfig
+		{
+			player2.emit('stop_pending')
+			player2 = undefined
+		}
+		let CustomConfig = new Config()
 		CustomConfig.p1_controls = gameInfo.customSettings.controls
 		CustomConfig.p2_controls = gameInfo.customSettings.controls
 		CustomConfig.p1_name = gameInfo.userName
 		CustomConfig.p1_userID = gameInfo.userID
 		CustomConfig.ballSpeed = gameInfo.customSettings.ballSpeed
 		CustomConfig.paddleSize = gameInfo.customSettings.paddleSize
-		let gamedata = new GameData(CustomConfig)
-		let gameIDs:string[] = new Array<string>
-		gameIDs.push(player.id)
-		customGames.set(gameInfo.customSettings.gameName, [gamedata, gameIDs])
+		CustomConfig.gameName = 'gameName'
+		let gameData = new GameData(CustomConfig)
+		customGames.set('gameName', [gameData, [player.id, gameInfo.userID]])
+		connections.set(player, [undefined, [player.id, gameInfo.userID]])
 		const serializedMap = [...customGames.entries()];
 		this.server.emit('custom_gamelist', serializedMap)
-		player.emit('game_created', gamedata)
+		player.emit('game_created', gameData)
 	}
 
 
-	// @SubscribeMessage('joinCustomGame')
-	// handleJoin(
-	// @MessageBody() playerInfo: {userID:string, userName:string, customSettings:any},
-	// @ConnectedSocket() player: Socket) {
-	// 	if (player2 === player)
-	// 		player2 === undefined
-	// 	let CustomConfig = DefaultConfig
-	// 	CustomConfig.p1_controls = gameInfo.customSettings.controls
-	// 	CustomConfig.p2_controls = gameInfo.customSettings.controls
-	// 	CustomConfig.p1_name = gameInfo.userName
-	// 	CustomConfig.p1_userID = gameInfo.userID
-	// 	CustomConfig.BallSpeed = gameInfo.customSettings.BallSpeed
-	// 	CustomConfig.paddleSize = gameInfo.customSettings.paddleSize
-	// 	let gamedata = new GameData(CustomConfig)
-	// 	customGames.push(gamedata)
-	// 	player.emit('game_created', gamedata)
-	// 	this.server.emit('custom_gamelist', customGames)
-	// }
-
+	@SubscribeMessage('joinCustomGame')
+	handleJoin(
+	@MessageBody() playerInfo: { gameName:string, userID:string, userName:string},
+	@ConnectedSocket() player: Socket) {
+		let customGame = customGames.get(playerInfo.gameName)
+		if (customGame && customGame[1][IDs.p1_socket_id] !== player.id)
+		{
+			customGames.delete(playerInfo.gameName)
+			const serializedMap = [...customGames.entries()];
+			this.server.emit('custom_gamelist', serializedMap)
+			let gameData = customGame[0]
+			gameData.p2_name = playerInfo.userName
+			let _IDs = customGame[1]
+			let p2:Socket = undefined
+			for (const connection of connections) {
+				if (connection[1][1][0] === _IDs[IDs.p1_socket_id])
+				{
+					p2 = connection[0]
+					break;
+				}
+			}
+			_IDs.push(player.id)
+			_IDs.push(playerInfo.userID)
+			games.set(playerInfo.gameName, [gameData, _IDs])
+			connections.set(player, [gameData, _IDs])
+			connections.set(p2, [gameData, _IDs])
+			player.emit('joined', gameData.p1_controls)
+			p2.emit('joined', gameData.p2_controls)
+		}
+	}
 
 	//clients send movement events - using game map to fing the right game and its first or second
 	//ID to update either p1 or p2 of the gamedata
@@ -191,13 +203,13 @@ export class MyGateway implements OnModuleInit {
 		@ConnectedSocket() client: Socket) {
 			for (var game of games) {
 				const clients = game[1][1]
-				if (client.id === clients[0])
+				if (client.id === clients[IDs.p1_socket_id])
 				{
 					connections.set(client, game[1])
 					client.emit('joined', game[1][0].p1_controls)
 					break; 
 				}
-				if (client.id === clients[1])
+				if (client.id === clients[IDs.p2_socket_id])
 				{
 					connections.set(client, game[1])
 					client.emit('joined', game[1][0].p2_controls)
@@ -242,10 +254,16 @@ export class MyGateway implements OnModuleInit {
 				let game = games.get(gameName)
 				if (game !== undefined)
 				{
-					if (client.id === game[1][0])
-						game[1][0] = ''
-					else if (client.id === game[1][1])
-						game[1][1] = ''
+					if (client.id === game[1][IDs.p1_socket_id])
+					{
+						game[1][IDs.p1_socket_id] = ''
+						games.set(gameName, game)
+					}
+					else if (client.id === game[1][IDs.p2_socket_id])
+					{
+						game[1][IDs.p2_socket_id] = ''
+						games.set(gameName, game)
+					}
 				}
 			}
 			this.server.to(client.id).emit('left')
@@ -263,36 +281,20 @@ export class MyGateway implements OnModuleInit {
 		/* Update all Games */
 		for (var game of games) {
 			
-			const gamaData: GameData = game[1][0]
-
+			const gameData: GameData = game[1][0]
+			const gameIDs:string[] = game[1][1]
+			
 			/* Make sure games don't get updated twice */
-			const gameName: string = gamaData.gameName
+			const gameName: string = gameData.gameName
 			if (!updated_games[gameName]) {
 				updated_games[gameName] = true
 				
 				/* Update game asyncronosly and add to await array */
 				await_updates.push((async () => 
-					gamaData.update(deltaTime)
+					gameData.update(deltaTime)
 				)())
 			}
-		}
-		
-		/* Await all game updates */
-		await Promise.all(await_updates)
-		await_updates = [] // Clearing for new
-		
-		/* Send updated data */
-		for (const connection of connections) {
-			const client: Socket = connection[0]
-			const gameData: GameData = connection[1][0]
-			const gameIDs: string[] = connection[1][1]
-
-			/* Send updated data */
-			await_updates.push((async () =>
-				this.server.to(client.id).emit('gamedata', gameData)
-			)())
-			
-			/* Handle end of a game */
+			/* Handle end of game */
 			var winningPlayer: string | null = null
 			var losingPlayer: string | null = null
 			switch (gameData.gameState) {
@@ -306,15 +308,33 @@ export class MyGateway implements OnModuleInit {
 					break;
 				default: continue;
 			}
+			console.log('name:',gameData.gameName)
+			games.delete(gameData.gameName)
+			PongService.updateWinLoss(winningPlayer, losingPlayer);
+			const serializedMap = [...games.entries()];
+			this.server.emit('gamelist', serializedMap)
+		}
+		
+		/* Await all game updates */
+		await Promise.all(await_updates)
+		await_updates = [] // Clearing for new
+		
+		/* Send updated data */
+		for (const connection of connections) {
+			const client: Socket = connection[0]
+			const gameData: GameData = connection[1][0]
+			if (gameData === undefined)
+				continue;
+			const gameIDs: string[] = connection[1][1]
 
-			/* Make game gets removed only once */
-			if (games.get(gameData.gameName)) {
-				games.delete(gameData.gameName)
-				PongService.updateWinLoss(winningPlayer, losingPlayer);
-				const serializedMap = [...games.entries()];
-				this.server.emit('gamelist', serializedMap)
-			}
-			connections.delete(client)
+			/* Send updated data */
+			await_updates.push((async () =>
+				this.server.to(client.id).emit('gamedata', gameData)
+			)())
+			
+			/* Handle end of a game */
+			if (gameData.gameState === 'p1_won' || gameData.gameState === 'p2_won' )
+				connections.delete(client)
 		}
 		
 		/* Simulate Lag */

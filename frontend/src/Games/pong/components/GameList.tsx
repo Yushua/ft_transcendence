@@ -51,7 +51,7 @@ export class GameList extends React.Component<any, any> {
 					<TableCell>{row.gameName}</TableCell>
 					<TableCell>{row.p1}</TableCell>
 					<TableCell>{row.p2}</TableCell>
-					<TableCell><Button onClick={() => this.spectate(row.gameName, this.props.socket)}>Spectate</Button></TableCell>
+					<TableCell><Button variant="contained" onClick={() => this.spectate(row.gameName, this.props.socket)}>Spectate</Button></TableCell>
 				  </TableRow>
 				))}
 			  </TableBody>

@@ -66,7 +66,6 @@ export const Pong = () => {
 					height: {$set: data.ball.height},
 				}
 			})
-			console.log('newData:', newData)
 			setGameData(newData)
 		}
 	
@@ -90,6 +89,10 @@ export const Pong = () => {
 		socket.on('pending', () => {
 			setPending(true)
 		})
+		socket.on('stop_pending', () => {
+			setPending(false)
+		})
+
 		socket.on('joined', (controls:string) => {
 			game = new Canvas('')
 			setInGame(true)
@@ -118,6 +121,7 @@ export const Pong = () => {
 		socket.on('spectating', () => {
 			game = new Canvas('')
 			setSpectating(true)
+			setShowGameList(false)
 		})
 		socket.on('left', (s_gameData:GameData) => {
 			setPending(false)
@@ -167,6 +171,7 @@ export const Pong = () => {
 	/* BUTTON HANDLERS */
 	const leaveGame = () => {
 		PracticeModeLoop.Stop()
+		g_controls = ''
 		socket.emit('leave', gameData.gameName)
 	}
 	function ShowGameList() {
@@ -197,25 +202,25 @@ export const Pong = () => {
 				<ul>
 					<li>
 						<JoinClassicButton socket={socket} userID={userID} userName={userName}/>
+					</li>
+					&nbsp;
+					<li>
 						<CreateGameButton socket={socket} userID={userID} userName={userName}/>
 					</li>
 					&nbsp;
-					<li><button onClick={() => ShowCustomGames()}>Join Custom Game</button></li>
+					<li><Button variant="outlined" onClick={() => ShowCustomGames()}>Join Custom Game</Button></li>
 					&nbsp;
-					<li><button onClick={() => StartPracticeGame()}>Practice Mode</button></li>
+					<li><Button variant="contained" onClick={() => StartPracticeGame()}>Practice Mode</Button></li>
 				</ul> : <></>}
 			{inGame ? <button onClick={() => leaveGame()}>Leave Game</button> :
 				<div>
+					&nbsp;
 					{spectating ?
-						<div>
-							<button onClick={() => ShowGameList()}>Game List</button>
-							<button onClick={() => leaveGame()}>Stop Spectating</button>
-						</div> :
-							<button onClick={() => ShowGameList()}>Game List</button>}
+							<Button variant="contained" onClick={() => leaveGame()}>Stop Spectating</Button> :
+							<Button variant="outlined" onClick={() => ShowGameList()}>Game List</Button>}
 				</div>}
-			{showCustomGames && !inGame? <CustomGameList customGames={customGames} socket={socket} userID={userID} userName={userName} /> : <></>}
-			{showGameList && !inGame? <GameList listmap={gameListMap} socket={socket} /> : <></>}
-
+			{showCustomGames && !inGame ? <CustomGameList customGames={customGames} socket={socket} userID={userID} userName={userName} /> : <></>}
+			{showGameList && !inGame ? <GameList listmap={gameListMap} socket={socket} /> : <></>}
 		</React.Fragment>
 	)
 }

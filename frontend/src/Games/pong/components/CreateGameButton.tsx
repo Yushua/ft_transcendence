@@ -35,9 +35,10 @@ export const CreateGameButton = (props:any) => {
 
 	return (
 		<div className='dropdown-menu'>
-			<button onClick={() => isCustomGame()}>Create Unranked Custom Game</button>
+			<Button variant="outlined" onClick={() => isCustomGame()}>Create Custom Game</Button>
 			{customGame ? 
 			<ul>
+				&nbsp;
 				<li className='dropdownItem'>Choose Ball Speed</li>
 					<Box sx={{ width: 250 }}>
 						<Typography id="non-linear-slider" gutterBottom>
