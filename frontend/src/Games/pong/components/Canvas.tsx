@@ -1,6 +1,7 @@
 import React from "react"
 import { Socket } from "socket.io-client"
 import { GameData } from "./GameData"
+import PracticeModeLoop from "../practice_mode/practice_mode"
 
 
 export class Canvas extends React.Component<any, any> {
@@ -33,10 +34,16 @@ export class Canvas extends React.Component<any, any> {
 			this.gameContext.fillRect(this.gameCanvas.width / 2 - 10, i + 10, 10, 20)
 		}
 		//draw player scores
-		const playerScoreString:string = gameData.p1_score.toString()
-		const player_2_ScoreString:string = gameData.p2_score.toString()
-		this.gameContext.fillText(playerScoreString, 375, 50)
-		this.gameContext.fillText(player_2_ScoreString, 1125, 50)
+		if (!PracticeModeLoop.IsRunning()) {
+			const playerScoreString:string = gameData.p1_score.toString()
+			const player_2_ScoreString:string = gameData.p2_score.toString()
+			this.gameContext.fillText(playerScoreString, 375, 50)
+			this.gameContext.fillText(player_2_ScoreString, 1125, 50)
+		}
+		else {
+			this.gameContext.fillText("Practice", 315, 50)
+			this.gameContext.fillText("Mode", 1100, 50)
+		}
 		//if game end
 		if (gameData.gameState === "p1_won" || gameData.gameState === "p2_won")
 		{

@@ -5,7 +5,8 @@ import { GameData } from '../components/GameData'
 import { PongService } from "../pong.service";
 
 export const targetFPS = 60
-export const targetResponseRate = 1000 / targetFPS
+export const targetResponseRateS = 1 / targetFPS
+export const targetResponseRateMS = 1000 / targetFPS
 
 let queuedclient:[Socket, string] = [undefined, '']
 let gamecreator:[Socket, string] = [undefined, '']
@@ -301,7 +302,7 @@ export class MyGateway implements OnModuleInit {
 		
 		/* Use fixed framerate to reserve resources */
 		if (delta < 20)
-			setTimeout(() => this._startGameLoop(.02), Math.max(0, targetResponseRate - delta))
+			setTimeout(() => this._startGameLoop(targetResponseRateS), Math.max(0, targetResponseRateMS - delta))
 		/* Use delta time to make games playable under heavy or irregular load */
 		else
 			this._startGameLoop(Math.min(delta / 1000, .10))

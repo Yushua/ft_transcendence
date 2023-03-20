@@ -10,12 +10,12 @@ import NameStorage from '../../Utils/Cache/NameStorage';
 import { JoinClassicButton } from './components/JoinClassicButton';
 import { CreateGameButton } from './components/CreateGameButton';
 import { Button } from '@mui/material'
+import PracticeModeLoop from './practice_mode/practice_mode';
 
 var game:Canvas
 var g_controls = ''
 var iniGameData = new GameData()
 var iniGameListMap = new Map<string, string[]>()
-
 
 export const Pong = () => {
 
@@ -122,9 +122,7 @@ export const Pong = () => {
 		})
 		window.addEventListener("mousemove", (event) => {
 			mousePosition = event.y
-		})
-		window.addEventListener("mousemove", (event) => {
-			mousePosition = event.y
+			PracticeModeLoop.SetMousePosition(mousePosition)
 		})
 
 		/*  SEND DATA TO SERVER */
@@ -136,8 +134,9 @@ export const Pong = () => {
 				if (keysPressed.get('ArrowDown'))
 					socket.emit('keyboard_movement', -1)
 			}
-			else if (g_controls === 'mouse')
+			else if (g_controls === 'mouse') {
 				socket.emit('mouse_movement', mousePosition)
+			}
 		}, 10)
 
 		return () => {
@@ -151,6 +150,7 @@ export const Pong = () => {
 
 	/* BUTTON HANDLERS */
 	const leaveGame = () => {
+		PracticeModeLoop.Stop()
 		socket.emit('leave', gameData.gameName)
 	}
 	function ShowGameList() {
@@ -159,6 +159,16 @@ export const Pong = () => {
 	}
 	function ShowCustomGameList() {
 		setShowGameList(!showGameList)
+	}
+	
+	function StartPracticeGame() {
+		game = new Canvas('')
+		setInGame(true)
+		setPending(false)
+		g_controls = "mouse"
+		
+		const gamaData = new GameData()
+		PracticeModeLoop.Start(gamaData, setGameData)
 	}
 
 	return (
@@ -174,6 +184,8 @@ export const Pong = () => {
 					</li>
 					&nbsp;
 					<li><button onClick={() => ShowCustomGameList()}>Join Custom Game</button></li>
+					&nbsp;
+					<li><button onClick={() => StartPracticeGame()}>Practice Mode</button></li>
 				</ul> : <></>}
 			{inGame ? <button onClick={() => leaveGame()}>Leave Game</button> :
 				<div>
