@@ -10,30 +10,29 @@ import NameStorage from '../../Utils/Cache/NameStorage';
 import { JoinClassicButton } from './components/JoinClassicButton';
 import { CreateGameButton } from './components/CreateGameButton';
 import { Button } from '@mui/material'
+import { CustomGameList, CustomGames } from './components/CustomGames';
 
 var game:Canvas
 var g_controls = ''
-var iniGameData = new GameData()
-var iniGameListMap = new Map<string, string[]>()
-
 
 export const Pong = () => {
 
-	// var iniGameData = new GameData()
-	// var iniGameListMap = new Map<string, string[]>()
-
+	var iniGameData = new GameData()
+	var iniGameListMap = new Map<string, string[]>()
+	var iniCustomGames = new Map<string, any[]>()
 	let userID = User.ID
 	let userName = NameStorage.User.Get(User.ID)
 
 	const socket = React.useContext(WebsocketContext)
 	const [pending, setPending] = React.useState(false)
 	const [inGame, setInGame] = React.useState(false)
+	const [spectating, setSpectating] = React.useState(false)
+	const [showGameList, setShowGameList] = React.useState(false)
+	const [showCustomGames, setShowCustomGames] = React.useState(false)
 	const [gameData, setGameData] = React.useState(iniGameData)
 	const [gameListMap, setGameListMap] = React.useState(iniGameListMap)
-	const [showGameList, setShowGameList] = React.useState(false)
-	const [spectating, setSpectating] = React.useState(false)
-	const [showCustomGameList, setCustomShowGameList] = React.useState(false)
-	
+	const [customGames, setCustomGames] = React.useState(iniCustomGames)
+
 	React.useEffect(() => {
 
 		var keysPressed: Map<string,boolean> = new Map<string,boolean>()
@@ -69,6 +68,12 @@ export const Pong = () => {
 			setGameData(newData)
 		}
 	
+		function updateCustomGames(customGameListMap:Map<string, any[]>)
+		{
+			let newCustomGames = new Map<string, any[]>()
+			newCustomGames = customGameListMap
+			setCustomGames(newCustomGames)
+		}
 		function updateGameListMap(gameListMap:Map<string, string[]>)
 		{
 			let newListMap = new Map<string, string[]>()
@@ -99,6 +104,17 @@ export const Pong = () => {
 			}
 			updateGameListMap(gamesMap)
 		})
+
+		// function createData(id: number, gameName: string, p1: string, controls:string, BallSpeed: number, PaddleSize:number)
+
+		socket.on('custom_gamelist', (serializedGamesMap:any) => {
+			let customGamesMap:Map<string, any[]> = new Map<string, any[]>()
+			for (var instance of serializedGamesMap) {
+				customGamesMap.set(instance[0], [instance[1][0].p1_name, instance[1][0].p1_controls, instance[1][0].ballSpeed, instance[1][0].paddleSize])
+			}
+			updateCustomGames(customGamesMap)
+		})
+
 		socket.on('spectating', () => {
 			game = new Canvas('')
 			setSpectating(true)
@@ -108,6 +124,7 @@ export const Pong = () => {
 			setInGame(false)
 			setSpectating(false)
 			setShowGameList(false)
+			setShowCustomGames(false)
 		})
 		socket.on('disconnect', () => {
 			socket.emit('user disconnected')
@@ -148,7 +165,6 @@ export const Pong = () => {
 		}
 	}, [socket])
 
-
 	/* BUTTON HANDLERS */
 	const leaveGame = () => {
 		socket.emit('leave', gameData.gameName)
@@ -157,8 +173,8 @@ export const Pong = () => {
 		socket.emit('refreshGameList')
 		setShowGameList(!showGameList)
 	}
-	function ShowCustomGameList() {
-		setShowGameList(!showGameList)
+	function ShowCustomGames() {
+		setShowCustomGames(!showCustomGames)
 	}
 
 	return (
@@ -173,7 +189,7 @@ export const Pong = () => {
 						<CreateGameButton socket={socket} userID={userID} userName={userName}/>
 					</li>
 					&nbsp;
-					<li><button onClick={() => ShowCustomGameList()}>Join Custom Game</button></li>
+					<li><button onClick={() => ShowCustomGames()}>Join Custom Game</button></li>
 				</ul> : <></>}
 			{inGame ? <button onClick={() => leaveGame()}>Leave Game</button> :
 				<div>
@@ -184,7 +200,9 @@ export const Pong = () => {
 						</div> :
 							<button onClick={() => ShowGameList()}>Game List</button>}
 				</div>}
+			{showCustomGames && !inGame? <CustomGameList customGames={customGames} socket={socket} userID={userID} userName={userName} /> : <></>}
 			{showGameList && !inGame? <GameList listmap={gameListMap} socket={socket} /> : <></>}
+
 		</React.Fragment>
 	)
 }

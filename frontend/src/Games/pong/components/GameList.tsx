@@ -59,5 +59,5 @@ export class GameList extends React.Component<any, any> {
 		  </React.Fragment>
 		)
 	  
-	}
+	}	
 }

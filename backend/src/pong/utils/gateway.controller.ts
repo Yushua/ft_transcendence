@@ -3,19 +3,11 @@ import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSo
 import { Server, Socket } from 'socket.io'
 import { GameData } from '../components/GameData'
 import { PongService } from "../pong.service";
+import  DefaultConfig from "../components/Config"
 
 export const targetFPS = 60
 export const targetResponseRate = 1000 / targetFPS
 
-let queuedclient:[Socket, string] = [undefined, '']
-let gamecreator:[Socket, string] = [undefined, '']
-let n_game_rooms:number = 0
-let game_name:string = 'game_0'
-let connections:Map<Socket, [GameData, string[]]> = new Map<Socket,[GameData,string[]]>()
-let customGameList:string[][] = new Array<string[]>()
-let games:Map<string, [GameData, string[]]> = new Map<string, [GameData, string[]]>()
-let p2Name:string
-let p2UserID:string
 
 const IDs = {
 	p1_socket_id: 0,
@@ -23,6 +15,14 @@ const IDs = {
 	p1_userID: 2,
 	p2_userID: 3
 }
+
+let player2:Socket = undefined
+let n_games:number = 0
+let game_name:string = 'game_0'
+let connections:Map<Socket, [GameData, string[]]> = new Map<Socket,[GameData,string[]]>()
+let customGames:Map<string, [GameData, string[]]> = new Map<string, [GameData, string[]]>()
+let games:Map<string, [GameData, string[]]> = new Map<string, [GameData, string[]]>()
+let Config = DefaultConfig
 
 @WebSocketGateway({
 	cors: {
@@ -47,67 +47,96 @@ export class MyGateway implements OnModuleInit {
 
 	@SubscribeMessage('LFG')
 	handleLFG(
-		@MessageBody() data: {controls: string, userID:string, userName:string},
-		@ConnectedSocket() client: Socket) {
-			if (queuedclient[0] === undefined || client === queuedclient[0])
+		@MessageBody() playerInfo: {controls: string, userID:string, userName:string},
+		@ConnectedSocket() player: Socket) {
+			if (player2 === undefined || player === player2)
 			{
-				queuedclient[0] = client
-				queuedclient[1] = data.controls
-				p2Name = data.userName
-				p2UserID = data.userID
-				client.emit('pending')	
+				player2 = player
+				Config.p2_controls = playerInfo.controls
+				Config.p2_name = playerInfo.userName
+				Config.p2_userID = playerInfo.userID
+				player.emit('pending')	
 			}
 			else
 			{
-				let gameInfo:string[] = new Array<string>
-				let gameIDs:string[] = new Array<string>
-				let dataIdTuple: [GameData, string[]]	
-				//create room with queue'd clientid and client.id
-				game_name = game_name.replace(n_game_rooms.toString(), (n_game_rooms+1).toString())
-				n_game_rooms++
-				client.emit('joined', data.controls)
-				queuedclient[0].emit('joined', queuedclient[1])
-				let client2 = queuedclient[0]
-				let controlsp2 = queuedclient[1]
-				queuedclient[0] = undefined
+				game_name = game_name.replace(n_games.toString(), (n_games+1).toString())
+				n_games++
+				Config.gameName = game_name
+				Config.p1_name = playerInfo.userName
+				Config.p1_controls = playerInfo.controls
+				Config.p1_userID = playerInfo.userID
+				player.emit('joined', Config.p1_controls)
+				player2.emit('joined', Config.p2_controls)
 
 				//create gameData with default settings which holds all game info client needs to render
-				let gamedata = new GameData(game_name, data.userName, p2Name, data.controls, controlsp2, 100, 100)
+				let gamedata = new GameData(Config)
 
 				//add this game with the client IDs to a gamelist and insert <client, [data, IDs]> in a map which
 				//can be used to access the right gamedata for movement events by clients, and based on ID order
 				//update the correct Paddle (first ID = p1 = left paddle, second ID = p2 = right paddle, extra IDs are spectators)
-				gameIDs.push(client.id)
-				gameIDs.push(client2.id)
-				gameIDs.push(data.userID)
-				gameIDs.push(p2UserID)
+				let gameInfo:string[] = new Array<string>
+				let gameIDs:string[] = new Array<string>
+				let dataIdTuple: [GameData, string[]]	
+				
+				gameIDs.push(player.id)
+				gameIDs.push(player2.id)
+				gameIDs.push(Config.p1_userID)
+				gameIDs.push(Config.p2_userID)
 				dataIdTuple = [gamedata, gameIDs]
 				games.set(game_name, dataIdTuple)
-				connections.set(client, dataIdTuple)
-				connections.set(client2, dataIdTuple)
-				const serializedMap = [...games.entries()];
-				this.server.emit('gamelist', serializedMap)
+				connections.set(player, dataIdTuple)
+				connections.set(player2, dataIdTuple)
+				player2 = undefined
 				gameIDs = []
 				gameInfo = []
+
+				const serializedMap = [...games.entries()];
+				this.server.emit('gamelist', serializedMap)
 			}
 		}
 
 	@SubscribeMessage('createGame')
 	handleCreateGame(
-	@MessageBody() data: {userID:string, userName:string, customSettings:any},
-	@ConnectedSocket() client: Socket) {
-		let gamedata = new GameData('custom', data.userName, 'placeholder', '', '', data.customSettings.ballSpeed, data.customSettings.paddleSize)
-		
-
-		if (gamecreator[0] === undefined || client === gamecreator[0])
-		{
-			gamecreator[0] = client
-			// gamecreator[1] = data.controls
-			p2Name = data.userName
-			p2UserID = data.userID
-			client.emit('pending')	
-		}
+	@MessageBody() gameInfo: {userID:string, userName:string, customSettings:any},
+	@ConnectedSocket() player: Socket) {
+		if (player2 === player)
+			player2 === undefined
+		let CustomConfig = DefaultConfig
+		CustomConfig.p1_controls = gameInfo.customSettings.controls
+		CustomConfig.p2_controls = gameInfo.customSettings.controls
+		CustomConfig.p1_name = gameInfo.userName
+		CustomConfig.p1_userID = gameInfo.userID
+		CustomConfig.ballSpeed = gameInfo.customSettings.ballSpeed
+		CustomConfig.paddleSize = gameInfo.customSettings.paddleSize
+		let gamedata = new GameData(CustomConfig)
+		let gameIDs:string[] = new Array<string>
+		gameIDs.push(player.id)
+		customGames.set(gameInfo.customSettings.gameName, [gamedata, gameIDs])
+		const serializedMap = [...customGames.entries()];
+		this.server.emit('custom_gamelist', serializedMap)
+		player.emit('game_created', gamedata)
 	}
+
+
+	// @SubscribeMessage('joinCustomGame')
+	// handleJoin(
+	// @MessageBody() playerInfo: {userID:string, userName:string, customSettings:any},
+	// @ConnectedSocket() player: Socket) {
+	// 	if (player2 === player)
+	// 		player2 === undefined
+	// 	let CustomConfig = DefaultConfig
+	// 	CustomConfig.p1_controls = gameInfo.customSettings.controls
+	// 	CustomConfig.p2_controls = gameInfo.customSettings.controls
+	// 	CustomConfig.p1_name = gameInfo.userName
+	// 	CustomConfig.p1_userID = gameInfo.userID
+	// 	CustomConfig.BallSpeed = gameInfo.customSettings.BallSpeed
+	// 	CustomConfig.paddleSize = gameInfo.customSettings.paddleSize
+	// 	let gamedata = new GameData(CustomConfig)
+	// 	customGames.push(gamedata)
+	// 	player.emit('game_created', gamedata)
+	// 	this.server.emit('custom_gamelist', customGames)
+	// }
+
 
 	//clients send movement events - using game map to fing the right game and its first or second
 	//ID to update either p1 or p2 of the gamedata

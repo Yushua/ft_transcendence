@@ -13,20 +13,24 @@ export class GameData {
 	p2_name: string
 	p1_controls:string
 	p2_controls:string
+	ballSpeed:number
+	paddleSize:number
 
-	constructor(gamename:string, p1_name:string, p2_name:string, p1_controls:string, p2_controls:string, speedpercent:number, paddleSizePercent:number)
+	constructor(Config:any)
 	{
-		this.gameName = gamename
-		this.p1_name = p1_name
-		this.p2_name = p2_name
+		this.gameName = Config.gameName
+		this.p1_name = Config.p1_name
+		this.p2_name = Config.p2_name
 		this.gameState = 'newgame'
 		this.p1_score = 0
 		this.p2_score = 0
-		this.p1_controls = p1_controls
-		this.p2_controls = p2_controls
-		this.p1 = new Paddle(12, 1, 1500, 750, 20, 20, paddleSizePercent)
-		this.p2 = new Paddle(12, 2, 1500, 750, 20, 20, paddleSizePercent)
-		this.ball = new Ball(10 * speedpercent / 100, 3, 1500, 750, 20, 20, 20)
+		this.p1_controls = Config.p1_controls
+		this.p2_controls = Config.p2_controls
+		this.ballSpeed = Config.ballSpeed
+		this.paddleSize = Config.paddleSize
+		this.p1 = new Paddle(12, 1, 1500, 750, 20, 20, Config.paddleSize)
+		this.p2 = new Paddle(12, 2, 1500, 750, 20, 20, Config.paddleSize)
+		this.ball = new Ball(10 * Config.BallSpeed / 100, 3, 1500, 750, 20, 20, 20)
 	}
 
 	update(deltaTime: number)
