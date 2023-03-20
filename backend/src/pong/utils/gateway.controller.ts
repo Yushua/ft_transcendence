@@ -6,7 +6,8 @@ import { PongService } from "../pong.service";
 import  DefaultConfig from "../components/Config"
 
 export const targetFPS = 60
-export const targetResponseRate = 1000 / targetFPS
+export const targetResponseRateS = 1 / targetFPS
+export const targetResponseRateMS = 1000 / targetFPS
 
 
 const IDs = {
@@ -212,6 +213,13 @@ export class MyGateway implements OnModuleInit {
 			this.server.emit('gamelist', serializedMap)
 		}
 
+	@SubscribeMessage('refreshCustomGames')
+	handleRefreshCustom(
+		@ConnectedSocket() client: Socket) {
+			const serializedMap = [...customGames.entries()];
+			this.server.emit('custom_gamelist', serializedMap)
+		}
+	
 	@SubscribeMessage('disconnect')
 	handleDisconnect(
 		@ConnectedSocket() client: Socket) {
@@ -278,7 +286,7 @@ export class MyGateway implements OnModuleInit {
 			const client: Socket = connection[0]
 			const gameData: GameData = connection[1][0]
 			const gameIDs: string[] = connection[1][1]
-			
+
 			/* Send updated data */
 			await_updates.push((async () =>
 				this.server.to(client.id).emit('gamedata', gameData)
@@ -330,7 +338,7 @@ export class MyGateway implements OnModuleInit {
 		
 		/* Use fixed framerate to reserve resources */
 		if (delta < 20)
-			setTimeout(() => this._startGameLoop(.02), Math.max(0, targetResponseRate - delta))
+			setTimeout(() => this._startGameLoop(targetResponseRateS), Math.max(0, targetResponseRateMS - delta))
 		/* Use delta time to make games playable under heavy or irregular load */
 		else
 			this._startGameLoop(Math.min(delta / 1000, .10))

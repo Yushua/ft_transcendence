@@ -30,7 +30,8 @@ export class GameData {
 		this.paddleSize = Config.paddleSize
 		this.p1 = new Paddle(12, 1, 1500, 750, 20, 20, Config.paddleSize)
 		this.p2 = new Paddle(12, 2, 1500, 750, 20, 20, Config.paddleSize)
-		this.ball = new Ball(10 * Config.BallSpeed / 100, 3, 1500, 750, 20, 20, 20)
+		this.ball = new Ball(10 * Config.ballSpeed / 100, 3, 1500, 750, 20, 20, 20)
+		console.log('ball:', this.ball.x, this.ball.y, this.ball.speed, this.ball.initialSpeed)
 	}
 
 	update(deltaTime: number)
