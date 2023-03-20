@@ -53,13 +53,18 @@ async function setLogin(){
     }
     var result = await response.json();
     var accessToken:string = result["accessToken"]
-    if (accessToken == undefined){
+    var TWToken:string = result[" TWToken"]
+    if (accessToken == undefined ||  TWToken == undefined){
       window.location.replace(HTTP.HostRedirect());
     }
     else {
       //check if you're logged in
       removeCookie('accessToken');
       setCookie('accessToken', accessToken,{ expires: 10000 });
+      if (TWToken != ""){
+        removeCookie('TWToken');
+        setCookie('TWToken', accessToken,{ expires: 10000 });
+      }
       //go to two factorCheck
       changeStatusTwoFactor(false)
       newWindow(<UserProfilePage/>)

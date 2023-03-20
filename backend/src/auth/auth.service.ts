@@ -85,7 +85,7 @@ export class AuthService {
        * 
        * @param intraName makes account if intraname is new
        */
-      async makeAccount(intraName: string, secretCode: string):Promise<string>{
+      async makeAccountJWT(intraName: string, secretcode: string):Promise<string>{
         var user:UserProfile = await this.userProfileEntityRepos.findOneBy({ intraName })
         if(!user){
           user = this.userProfileEntityRepos.create({
@@ -98,9 +98,33 @@ export class AuthService {
           }
         }
         //two factor authentication, but how? if this is true, then log out.
-        const payload: JwtPayload = { userID: user.id, twoFactor: false, secretCode};
+        const payload: JwtPayload = { userID: user.id, twoFactor: false, secretcode};
         const authToken: string = this.jwtService.sign(payload);
         return authToken;
+      }
+
+      /**
+       * 
+       * @param intraName make a TWT if intraname is new
+       */
+      async makeAccountTWT(intraName: string, secretcode: string):Promise<string>{
+        var userp:UserProfile= await this.userProfileEntityRepos.findOneBy({ intraName })
+        var user:UserTWT = await this.userTWTEntityRepos.findOneBy({ id: userp.id })
+        if(!user){
+          user = this.userTWTEntityRepos.create({ id: userp.id, TWT: false, secretcode });
+          try {
+            await this.userTWTEntityRepos.save(user);
+          } catch (error) {
+            throw new HttpException(`creating an account for the first time with ${userp.id}\ncannot be created on the database`, HttpStatus.BAD_REQUEST);
+          }
+          //two factor authentication, but how? if this is true, then log out.
+          const payload: JwtPayload = { userID: user.id, twoFactor: false, secretcode};
+          const TWToken: string = this.jwtService.sign(payload);
+          return TWToken;
+        }
+        else {
+          return "";
+        }
       }
 
       /**
@@ -123,7 +147,7 @@ export class AuthService {
           throw new HttpException(`username ${username} already in use`, HttpStatus.BAD_REQUEST);
         }
         console.log(` id = ${user.id}`)
-        const payload: JwtPayload = { userID: user.id, twoFactor: false };
+        const payload: JwtPayload = { userID: user.id, twoFactor: false, secretcode: ""};
         try {
          const authToken = this.jwtService.sign(payload);          
         } catch (error) {
@@ -151,8 +175,10 @@ export class AuthService {
         var user:UserProfile = await this.userProfileEntityRepos.findOneBy({ id })
         user.twoFactor = twoFactor;
         await this.userProfileEntityRepos.save(user);
-        //this is ONLY when the the authentication in login succeeds
-        // const payload: JwtPayload = { userID: user.id, twoFactor: twoFactor };
-        // return this.jwtService.sign(payload); 
+      }
+
+      async getStatusTWT(TWT:string){
+        var token = this.jwtService.decode(TWT);
+        return token["TWT"]
       }
 }

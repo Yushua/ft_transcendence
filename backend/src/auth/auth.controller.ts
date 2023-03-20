@@ -2,6 +2,8 @@ import { Controller, Get, Param,  HttpException, HttpStatus, UseGuards, Request,
 import { AuthGuard } from '@nestjs/passport';
 import { AuthGuardEncryption } from './auth.guard';
 import { AuthService } from './auth.service';
+import { randomBytes } from 'crypto';
+import { UserTWT } from './userTWT.entity';
 
 @Controller('auth')
 export class AuthController {
@@ -38,10 +40,12 @@ export class AuthController {
         }
         var OAuthToken:string = await this.AuthService.OauthSystemCodeToAccess(dataToPost)
         var intraName:string = await this.AuthService.startRequest(OAuthToken)
-        var accessToken:string = await this.AuthService.makeAccount(intraName)
-        //if account is now yet created, then you can't log in yet
+        const crypto = require('crypto');
+        var secretCode:string = crypto.randomBytes(Math.ceil(10 / 2)).toString('hex').slice(0, 10)
+        var accessToken:string = await this.AuthService.makeAccountJWT(intraName, secretCode)
+    
         return {
-            accessToken
+            accessToken, TWToken: await this.AuthService.makeAccountTWT(intraName, secretCode)
         }
     }
 
@@ -84,4 +88,10 @@ export class AuthController {
         return
     }
 
+    @UseGuards(AuthGuard())
+    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+    @Get('checkStatusTWT:TWT')
+    async getSatusTWT(@Param('TWT') TWT:string){
+        return {status: await this.AuthService.getStatusTWT(TWT)}
+    }
 }
