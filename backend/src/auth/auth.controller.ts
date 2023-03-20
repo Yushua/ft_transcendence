@@ -43,9 +43,9 @@ export class AuthController {
         const crypto = require('crypto');
         var secretCode:string = crypto.randomBytes(Math.ceil(10 / 2)).toString('hex').slice(0, 10)
         var accessToken:string = await this.AuthService.makeAccountJWT(intraName, secretCode)
-    
+        var TWToken:string = await this.AuthService.makeAccountTWT(intraName, secretCode)
         return {
-            accessToken, TWToken: await this.AuthService.makeAccountTWT(intraName, secretCode)
+            accessToken, TWToken: TWToken
         }
     }
 

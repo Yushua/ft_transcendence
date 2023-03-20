@@ -4,7 +4,6 @@ import { newWindow } from '../App';
 import '../App.css';
 import UserProfilePage from '../UserProfile/UserProfile';
 import HTTP from '../Utils/HTTP';
-import { changeStatusTwoFactor } from './TwoFactorAuthentication';
 
 async function checkAuthentication(){
   console.log(`auth token is in ${getCookie("accessToken")}`)
@@ -51,9 +50,16 @@ async function setLogin(){
     if (!response.ok) {
       throw new Error(`Error! status: ${response.status}`);
     }
+    console.log("succesfull")
     var result = await response.json();
     var accessToken:string = result["accessToken"]
-    var TWToken:string = result[" TWToken"]
+    var TWToken:string = result["TWToken"]
+    if (accessToken == undefined){
+      removeCookie('accessToken');
+    }
+    if (TWToken == undefined){
+      removeCookie('TWToken');
+    }
     if (accessToken == undefined ||  TWToken == undefined){
       window.location.replace(HTTP.HostRedirect());
     }
@@ -66,7 +72,7 @@ async function setLogin(){
         setCookie('TWToken', accessToken,{ expires: 10000 });
       }
       //go to two factorCheck
-      changeStatusTwoFactor(false)
+      
       newWindow(<UserProfilePage/>)
     }
   } catch (error) {

@@ -19,11 +19,7 @@ import { GatewayModule } from './pong/utils/gateway.module';
       autoLoadEntities: true,
       synchronize: true, //keeps it in sync
       }),
-    AuthModule,
-    ChatModule,
-    GatewayModule],
-  controllers: [
-    AppController
-  ]
+    AuthModule, ChatModule, GatewayModule],
+  controllers: [AppController]
 })
 export class AppModule {}

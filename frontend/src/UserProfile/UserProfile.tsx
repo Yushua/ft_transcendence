@@ -7,7 +7,6 @@ import ProfilePicture from './ProfilePicture';
 import HTTP from '../Utils/HTTP'
 import { newWindow } from '../App';
 import SetUsername from './SetUsername';
-import TwoFactorAuthentication from '../Login/TwoFactorAuthentication';
 import LogoutButtonComponent from './LogoutButton';
 
 async function asyncGetName():Promise<string> {
@@ -72,9 +71,9 @@ function UserProfilePage() {
       </div>
         <DropDownMenuAddFriendList/>
         <DropDownMenuRemoveFriendListId/>
-      <div>
+      {/* <div>
         <TwoFactorAuthentication/>
-      </div>
+      </div> */}
     </div>
     //logout when initialized
   );
