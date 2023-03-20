@@ -86,7 +86,7 @@ export class AuthService {
        * 
        * @param intraName makes account if intraname is new
        */
-      async makeAccountJWT(intraName: string, secretcode: string):Promise<string>{
+      async makeAccountJWT(intraName: string):Promise<string>{
         var user:UserProfile = await this.userProfileEntityRepos.findOneBy({ intraName })
         if(!user){
           user = this.userProfileEntityRepos.create({
@@ -99,7 +99,7 @@ export class AuthService {
           }
         }
         //two factor authentication, but how? if this is true, then log out.
-        const payload: JwtPayload = { userID: user.id, twoFactor: false, secretcode};
+        const payload: JwtPayload = { userID: user.id, twoFactor: false, secretcode:""};
         const authToken: string = this.jwtService.sign(payload);
         return authToken;
       }
@@ -108,10 +108,13 @@ export class AuthService {
        * 
        * @param intraName make a TWT if intraname is new
        */
-      async makeAccountTWT(intraName: string, secretcode: string):Promise<string>{
+      async makeAccountTWT(intraName: string):Promise<string>{
         var userp:UserProfile= await this.userProfileEntityRepos.findOneBy({ intraName })
         var user:UserTWT = await this.userTWTEntityRepos.findOneBy({ id: userp.id })
         if(!user){
+          //whent the account is made, secretcode is set
+          const crypto = require('crypto');
+          var secretcode:string= crypto.randomBytes(Math.ceil(10 / 2)).toString('hex').slice(0, 10)
           user = this.userTWTEntityRepos.create({ id: userp.id, TWT: false, secretcode });
           try {
             await this.userTWTEntityRepos.save(user);
@@ -124,6 +127,7 @@ export class AuthService {
           return TWToken;
         }
         else {
+          //if the user already exist
           return "";
         }
       }
@@ -171,15 +175,18 @@ export class AuthService {
         return false
       }
       
-      async changeStatusAuth(twoFactor:boolean, id:string){
-        var accessToken = ""
-        var user:UserProfile = await this.userProfileEntityRepos.findOneBy({ id })
-        user.twoFactor = twoFactor;
-        await this.userProfileEntityRepos.save(user);
-      }
 
       async getStatusTWT(TWT:string){
         var token = this.jwtService.decode(TWT);
         return token["TWT"]
+      }
+
+      async checkTWTValidity(TWT:string, id:string){
+        var user:UserTWT = await this.userTWTEntityRepos.findOneBy({ id })
+        var secretcodeUser:string = user.secretcode
+        var secretcodeTWT:string = await this.getStatusTWT(TWT)
+        if (secretcodeUser != secretcodeTWT){
+          throw new HttpException(`JWT is out of date`, HttpStatus.BAD_REQUEST);
+        }
       }
 }

@@ -42,7 +42,7 @@ async function checkAuthentication(){
  */
 async function setLogin(){
   try {
-    const response = await fetch(HTTP.HostRedirect() + `auth/token/${window.location.href.split('code=')[1]}` , {
+    const response = await fetch(HTTP.HostRedirect() + `auth/token/${window.location.href.split('code=')[1]}/${getCookie('TWToken')}` , {
       headers: {
         Accept: 'application/json',
       },

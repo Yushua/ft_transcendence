@@ -40,10 +40,8 @@ export class AuthController {
         }
         var OAuthToken:string = await this.AuthService.OauthSystemCodeToAccess(dataToPost)
         var intraName:string = await this.AuthService.startRequest(OAuthToken)
-        const crypto = require('crypto');
-        var secretCode:string = crypto.randomBytes(Math.ceil(10 / 2)).toString('hex').slice(0, 10)
-        var accessToken:string = await this.AuthService.makeAccountJWT(intraName, secretCode)
-        var TWToken:string = await this.AuthService.makeAccountTWT(intraName, secretCode)
+        var accessToken:string = await this.AuthService.makeAccountJWT(intraName)
+        var TWToken:string = await this.AuthService.makeAccountTWT(intraName)
         return {
             accessToken, TWToken: TWToken
         }
@@ -82,16 +80,12 @@ export class AuthController {
     }}
 
     @UseGuards(AuthGuard())
-    @Post('changeStatusAuth/:status')
-    async getNewAuthToken(@Param('status') status: boolean,  @Request() req: Request){  
-        await this.AuthService.changeStatusAuth(status, req["user"].id)
-        return
-    }
-
-    @UseGuards(AuthGuard())
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     @Get('checkStatusTWT:TWT')
-    async getSatusTWT(@Param('TWT') TWT:string){
+    async getSatusTWT(@Param('TWT') TWT:string, @Request() req: Request){
+        //check if the TWT is correct
+        await this.AuthService.checkTWTValidity(TWT, req["user"].id)
+        //get status of TWT
         return {status: await this.AuthService.getStatusTWT(TWT)}
     }
 }

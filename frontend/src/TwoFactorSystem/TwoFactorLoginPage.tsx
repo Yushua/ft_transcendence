@@ -7,9 +7,16 @@ import UserProfilePage from '../UserProfile/UserProfile';
 import HTTP from '../Utils/HTTP';
 
 async function asyncGetTWTStatus():Promise<boolean> {
-  const response = HTTP.Get(`auth/checkStatusTWT/${getCookie('TWToken')}`, null, {Accept: 'application/json'})
-  var result = await JSON.parse(response)
-  return await result["username"];
+  try {
+    const response = HTTP.Get(`auth/checkStatusTWT/${getCookie('TWToken')}`, null, {Accept: 'application/json'})
+    var result = await JSON.parse(response)
+    return await result["username"];
+  } catch (error) {
+    alert(`${error}, Token is out of date`)
+    removeCookie('TWToken');
+    newWindow(<UserProfilePage/>)
+  }
+  return false
 }
 
 async function tmp(){
@@ -29,8 +36,12 @@ function TwoFactorLoginPage(){
   //to check if your accessToken is already valid
   const [Display, setDisplay] = useState<boolean>(false);
   _setDisplay = setDisplay
-  if (Display === false){ tmp() }
+  if (Display == false){ tmp() }
   //if turned tue, then you need to get the input ready
+  if (Display == true){
+    alert("insert code now")
+    newWindow(<LoginPage/>)
+  }
   return (
     <div className="TwoFactorLoginPage">
     </div>
