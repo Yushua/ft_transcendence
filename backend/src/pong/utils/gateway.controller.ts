@@ -9,6 +9,7 @@ export const targetFPS = 60
 export const targetResponseRateS = 1 / targetFPS
 export const targetResponseRateMS = 1000 / targetFPS
 
+//todo: if both players leave, also stop the game and highest score wins/tie = nobody wins
 
 const IDs = {
 	p1_socket_id: 0,
