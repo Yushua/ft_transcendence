@@ -1,19 +1,15 @@
 import React, { useState } from 'react';
-import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
-import { newWindow } from '../App';
 import '../App.css';
-import LoginPage from '../Login/LoginPage';
-import UserProfilePage from '../UserProfile/UserProfile';
-import HTTP from '../Utils/HTTP';
-import { asyncGetTWTStatus} from './TwoFactorLoginPage';
+import TurnTWTOn from './TurnTWTOn';
 
 
 function TWTEnabled(){
   //to check if your accessToken is already valid
   const [Display, setDisplay] = useState<boolean>(false);
-
+  //setu the QR code. if input Code, then it will be turned on. so there is always a QR code
   return (
     <div className="TWTEnabled">
+      <TurnTWTOn/>
     </div>
   );
 }

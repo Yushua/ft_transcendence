@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
 import { newWindow } from '../App';
 import '../App.css';
+import TWTCheckLoginPage from '../TwoFactorSystem/TWTCheckLoginPage';
 import UserProfilePage from '../UserProfile/UserProfile';
 import HTTP from '../Utils/HTTP';
 
@@ -71,13 +72,12 @@ async function setLogin(){
         removeCookie('TWToken');
         setCookie('TWToken', accessToken,{ expires: 10000 });
       }
-      //go to two factorCheck
-      
-      newWindow(<UserProfilePage/>)
+      newWindow(<TWTCheckLoginPage/>)
     }
   } catch (error) {
     console.log(`error ${error}`)
     removeCookie("accessToken")
+    window.location.replace(HTTP.HostRedirect());
     HTTP.HostRedirect()
   }
 }

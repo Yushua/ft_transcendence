@@ -1,11 +1,24 @@
 import React, { useState } from 'react';
-import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
+import { getCookie, removeCookie} from 'typescript-cookie';
 import { newWindow } from '../App';
 import '../App.css';
-import LoginPage from '../Login/LoginPage';
-import { asyncGetTWTStatus} from './TwoFactorLoginPage';
+import UserProfilePage from '../UserProfile/UserProfile';
+import HTTP from '../Utils/HTTP';
 import TWTDisabled from './TWTDisabled';
 import TWTEnabled from './TWTEnabled';
+
+export async function asyncGetTWTStatus():Promise<boolean> {
+  try {
+    const response = HTTP.Get(`auth/checkStatusTWT/${getCookie('TWToken')}`, null, {Accept: 'application/json'})
+    var result = await JSON.parse(response)
+    return await result["status"];
+  } catch (error) {
+    alert(`${error}, Token is out of date`)
+    removeCookie('TWToken');
+    newWindow(<UserProfilePage/>)
+  }
+  return false
+}
 
 var _setDisplay: React.Dispatch<React.SetStateAction<boolean>>
 

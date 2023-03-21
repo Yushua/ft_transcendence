@@ -187,4 +187,12 @@ export class AuthService {
         const TWToken: string = this.jwtService.sign(payload);
         return TWToken
       }
+
+      async disableLoginCheck(TWT:string, intraName:string):Promise<boolean>{
+        var token = this.jwtService.decode(TWT);
+        var user:UserProfile = await this.userProfileEntityRepos.findOneBy({ intraName })
+        if (!user || (intraName == user.intraName))
+          return true
+        return false
+      }
 }

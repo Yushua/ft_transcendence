@@ -45,6 +45,29 @@ export class AuthController {
         }
     }
 
+    @Get('token/:code/:TWT')
+    async getAuthTokenTWTDisable(@Param('code') code: string, @Param('TWT') TWT: string) {
+        //get data from conf, if anything is NULL, because conf is not there, return error access
+        //because conf is not there
+        const dataToPost = {
+            grant_type: 'authorization_code',
+            client_id: 'u-s4t2ud-c73b865f02b3cf14638e1a50c5caa720828d13082db6ab753bdb24ca476e1a4c',
+            client_secret: `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`,
+            code: code,
+            redirect_uri: "http://localhost:4242/",
+            state: " super-secret",
+        }
+        var OAuthToken:string = await this.AuthService.OauthSystemCodeToAccess(dataToPost)
+        var intraName:string = await this.AuthService.startRequest(OAuthToken)
+        if (await this.AuthService.disableLoginCheck(TWT, intraName) == false){
+            throw new HttpException(`used a wrong login, Intraname does not compare to the user logged in`, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        var TWToken:string = await this.AuthService.updateTWT(TWT, false)
+        return {
+            TWToken: TWToken, status: true
+        }
+    }
+
     @Get('loginNew/:code/:username')
     async getNewAccount(@Param('code') code: string, @Param('username') username: string){
         console.log(`code ${code}`)

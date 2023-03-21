@@ -1,19 +1,22 @@
 import React, { useState } from 'react';
 import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
+import { newWindow } from '../App';
 import '../App.css';
+import UserProfilePage from '../UserProfile/UserProfile';
 import HTTP from '../Utils/HTTP';
 
 async function checkTWTCode(code:string){
-const response = HTTP.Get(`auth/checkTWT/${getCookie('TWToken')}/${code}`, null, {Accept: 'application/json'})
-  var result = await JSON.parse(response)
-  if (await result["status"] == true){
-    removeCookie('TWToken');
-    setCookie('TWToken', await result["TWT"],{ expires: 10000 });
-  }
-  else {
-    alert("wrong code input, try again")
-    _setInputValue("")
-  }
+    const response = HTTP.Get(`auth/checkTWT/${getCookie('TWToken')}/${code}`, null, {Accept: 'application/json'})
+    var result = await JSON.parse(response)
+    if (await result["status"] == true){
+        removeCookie('TWToken');
+        setCookie('TWToken', await result["TWT"],{ expires: 10000 });
+        newWindow(<UserProfilePage/>)
+    }
+    else {
+        alert("wrong code input, try again")
+        _setInputValue("")
+    }
 }
 async function handleSubmit(event:any){
   event.preventDefault();
