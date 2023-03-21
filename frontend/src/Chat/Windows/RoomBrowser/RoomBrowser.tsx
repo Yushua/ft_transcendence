@@ -2,7 +2,8 @@ import { useEffect, useState } from "react"
 import HTTP from "../../../Utils/HTTP"
 import ChatUser from "../../../Utils/Cache/ChatUser"
 import ChatRoom from "../../../Utils/Cache/ChatRoom"
-import { SetMainWindow } from "../MainChatWindow"
+import { SetMainChatWindow, asyncChangeRoom } from "../MainChatWindow"
+import OurHistory from "../../../Utils/History"
 
 function _tryJoiningRoom(roomID: string, hasPass: boolean) {
 	var password: string | null = ""
@@ -18,11 +19,9 @@ function _tryJoiningRoom(roomID: string, hasPass: boolean) {
 	
 	HTTP.asyncPatch(`chat/join/${roomID}/${password}`, null, null,
 		async ok => {
-			await Promise.all([
-				ChatUser.asyncUpdate(ChatUser.ID),
-				ChatRoom.asyncUpdate(roomID),
-			])
-			SetMainWindow("chat")},
+			await ChatUser.asyncUpdate(ChatUser.ID)
+			SetMainChatWindow("chat")
+			asyncChangeRoom(roomID)},
 		error => {alert("Failed to join room.")})
 }
 

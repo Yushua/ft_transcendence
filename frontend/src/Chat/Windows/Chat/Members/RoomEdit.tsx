@@ -4,6 +4,7 @@ import User from "../../../../Utils/Cache/User";
 import ChatRoom from "../../../../Utils/Cache/ChatRoom";
 import HTTP from "../../../../Utils/HTTP";
 import NameStorage from "../../../../Utils/Cache/NameStorage";
+import OurHistory from "../../../../Utils/History";
 
 export default function RoomEdit() {
 	
@@ -60,7 +61,8 @@ export default function RoomEdit() {
 						|| !window.confirm(`Are you REALLY sure? Room ${ChatRoom.Name} will be deleted FOR EVER.`))
 						return
 					HTTP.Delete(`chat/room/${ChatRoom.ID}`)
-					ChatRoom.Clear();
+					ChatRoom.Clear()
+					OurHistory.Add()
 				}}
 				>Delete Room</button>
 		</>

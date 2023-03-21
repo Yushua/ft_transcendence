@@ -10,10 +10,10 @@ import HTTP from "../../Utils/HTTP";
 import { EmptyCanvas } from "../../Games/pong/components/EmtpyCanvas";
 
 export async function asyncChangeRoom(roomID: string) {
-	await ChatRoom.asyncUpdate(roomID)
+	await ChatRoom.asyncUpdate(roomID, true)
 }
 
-export function SetMainWindow(window: string) {
+export function SetMainChatWindow(window: string) {
 	if (!!_setMainWindow)
 		_setMainWindow(window)
 }

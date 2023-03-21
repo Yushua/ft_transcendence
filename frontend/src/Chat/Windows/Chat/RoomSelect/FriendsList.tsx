@@ -49,6 +49,7 @@ export default function FriendsList() {
 	if (_firstRender) {
 		_firstRender = false
 		ChatRoom.UpdateEvent.Subscribe(asyncUpdateFriendsList)
+		ChatRoom.ClearEvent.Subscribe(asyncUpdateFriendsList)
 		ChatUser.UpdateEvent.Subscribe(asyncUpdateFriendsList)
 		ChatUser.ClearEvent.Subscribe(asyncUpdateFriendsList)
 	}

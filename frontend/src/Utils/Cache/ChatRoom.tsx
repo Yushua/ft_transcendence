@@ -3,22 +3,24 @@ import { RoomEvent } from "../../Chat/Events/RoomEventHandle";
 import ChatUser from "./ChatUser";
 import NameStorage from "./NameStorage";
 import ManualEventManager from "../../Events/ManualEventManager";
+import OurHistory from "../History";
+import { SetMainChatWindow } from "../../Chat/Windows/MainChatWindow";
+import { UpdateRoomSelectWindowButtons } from "../../Chat/Windows/Chat/RoomSelect/RoomSelectWindow";
 
 export default class ChatRoom {
 	static _chatRoom: any | null = null
-	static _chatRoomPass: string = ""
 	
+	static ClearEvent = new ManualEventManager()
 	static UpdateEvent = new ManualEventManager()
 	static ChangeEvent = new ManualEventManager()
-	static ClearEvent = new ManualEventManager()
 	
 	static Clear() {
-		this._chatRoomPass = ""
 		this._chatRoom = null
 		this.ClearEvent.Run()
 	}
 	
-	static async asyncUpdate(roomID: string) {
+	static async asyncUpdate(roomID: string, addToHistory: boolean = false) {
+		OurHistory.ClearEvent.Subscribe(() => ChatRoom.Clear())
 		if (roomID === "")
 			return
 		const room = await JSON.parse(HTTP.Get(`chat/room/${roomID}`)) ?? null
@@ -30,6 +32,13 @@ export default class ChatRoom {
 			this.UpdateEvent.Run()
 			if (this.ID !== oldID)
 				this.ChangeEvent.Run()
+			if (addToHistory) {
+				OurHistory.Add("ChatRoomChange", {roomID: this.ID}, async args => {
+					await this.asyncUpdate(args.get("roomID"))
+					SetMainChatWindow("chat")
+					UpdateRoomSelectWindowButtons()
+				})
+			}
 		}
 	}
 	

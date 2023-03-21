@@ -1,13 +1,13 @@
 import { ChatUserEvent } from "../../Chat/Events/ChatUserEventHandle";
 import HTTP from "../HTTP";
-import { SetMainWindow } from "../../Chat/Windows/MainChatWindow";
+import { SetMainChatWindow } from "../../Chat/Windows/MainChatWindow";
 import ManualEventManager from "../../Events/ManualEventManager";
 
 export default class ChatUser {
 	static _chatUser: any | null = null;
 	
 	static UpdateEvent = new ManualEventManager()
-	static ClearEvent = new ManualEventManager([ () => SetMainWindow("") ])
+	static ClearEvent = new ManualEventManager([ () => SetMainChatWindow("") ])
 	
 	static Clear() {
 		this._chatUser = null

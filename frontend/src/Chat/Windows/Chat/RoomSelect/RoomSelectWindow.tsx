@@ -3,10 +3,17 @@ import FriendsList from "./FriendsList"
 import RoomList from "./RoomList"
 import ChatRoom from "../../../../Utils/Cache/ChatRoom"
 
+export function UpdateRoomSelectWindowButtons() {
+	if (!!_setDisplay)
+		_setDisplay(ChatRoom.Direct ? "friend" : "room")
+}
+var _setDisplay: React.Dispatch<React.SetStateAction<string>> = null
+
 export default function RoomSelectWindow() {
 	
 	// If chat room is alredy open, upon return, open correct window
 	const [display, setDisplay] = useState<string>(ChatRoom.Direct ? "friend" : "room")
+	_setDisplay = setDisplay
 	
 	var window
 	switch (display) {

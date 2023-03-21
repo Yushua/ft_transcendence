@@ -1,14 +1,34 @@
-import React, { useState } from "react";
-import MainChatWindow from "../Chat/Windows/MainChatWindow";
+import React, { useEffect, useState } from "react";
+import MainChatWindow, { SetMainChatWindow } from "../Chat/Windows/MainChatWindow";
 import { Pong } from "../Games/pong/Pong";
 import LogoutButtonComponent from "../UserProfile/LogoutButton";
 import UserProfilePage from "../UserProfile/UserProfile";
+import OurHistory from "../Utils/History";
+
+export function GetCurrentWindow() {
+	return _currentWindow
+}
+var _currentWindow: string
+
+export function SetMainWindow(window: string, new_window = true) {
+	_currentWindow = window
+	if (!!_setWindow)
+		_setWindow(window)
+	if (new_window)
+		OurHistory.Add()
+}
+var _setWindow: React.Dispatch<React.SetStateAction<string>> | null = null
 
 export default function MainWindow() {
 	
-	const [window, setWindow] = useState<string>("")
+	const [currentWindow, setWindow] = useState<string>("")
+	_setWindow = setWindow
+	_currentWindow = currentWindow
+	
+	useEffect(OurHistory.Add, [])
+	
 	var display = <></>
-	switch (window) {
+	switch (currentWindow) {
 		case "profile": display = <UserProfilePage/>; break
 		case "chat": display = <MainChatWindow/>; break
 		case "pong": display = <Pong/>; break
@@ -20,16 +40,16 @@ export default function MainWindow() {
 			<div>
 				<LogoutButtonComponent />
 				<button
-					onClick={() => setWindow("profile")}
-					disabled={window === "profile"}
+					onClick={() => SetMainWindow("profile")}
+					disabled={currentWindow === "profile"}
 					>Profile</button>
 				<button
-					onClick={() => setWindow("chat")}
-					disabled={window === "chat"}
+					onClick={() => SetMainWindow("chat")}
+					disabled={currentWindow === "chat"}
 					>Chat</button>
 				<button
-					onClick={() => setWindow("pong")}
-					disabled={window === "pong"}
+					onClick={() => SetMainWindow("pong")}
+					disabled={currentWindow === "pong"}
 					>Play Pong</button>
 			</div>
 			{display}

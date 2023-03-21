@@ -35,6 +35,7 @@ export default function RoomList() {
 	if (_firstRender) {
 		_firstRender = false
 		ChatRoom.UpdateEvent.Subscribe(asyncUpdateRoomList)
+		ChatRoom.ClearEvent.Subscribe(asyncUpdateRoomList)
 		ChatUser.UpdateEvent.Subscribe(asyncUpdateRoomList)
 		ChatUser.ClearEvent.Subscribe(asyncUpdateRoomList)
 	}

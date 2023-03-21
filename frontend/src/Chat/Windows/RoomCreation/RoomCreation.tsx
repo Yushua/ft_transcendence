@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import HTTP from "../../../Utils/HTTP";
 import ChatUser from "../../../Utils/Cache/ChatUser";
 import ChatRoom from "../../../Utils/Cache/ChatRoom";
-import { SetMainWindow } from "../MainChatWindow";
+import { SetMainChatWindow, asyncChangeRoom } from "../MainChatWindow";
 import User from "../../../Utils/Cache/User";
 
 export default function RoomCreation() {
@@ -32,9 +32,8 @@ export default function RoomCreation() {
 						null,
 						async ok => {
 							await ChatUser.asyncUpdate(ChatUser.ID)
-							await ChatRoom.asyncUpdate(ok.responseText)
-							if (ChatRoom.ID !== "")
-								SetMainWindow("chat")
+							SetMainChatWindow("chat")
+							asyncChangeRoom(ok.responseText)
 						}, err => setDisanled(false)
 					)
 				}}

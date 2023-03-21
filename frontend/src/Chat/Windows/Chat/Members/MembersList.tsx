@@ -4,6 +4,7 @@ import ChatRoom from "../../../../Utils/Cache/ChatRoom";
 import NameStorage from "../../../../Utils/Cache/NameStorage";
 import User from "../../../../Utils/Cache/User";
 import HTTP from "../../../../Utils/HTTP";
+import OurHistory from "../../../../Utils/History";
 
 export async function asyncUpdateMemberList() {
 	if (!!_setMembers)
@@ -53,7 +54,10 @@ export default function MembersList() {
 					? <button style={{width: "50%", height: ".5cm"}}
 						onClick={() => ChangeMemberWindow("edit")}>Edit</button>
 					: <button style={{width: "50%", height: ".5cm"}}
-						onClick={() => HTTP.Delete(`chat/leave/${ChatRoom.ID}`)}>Leave</button>}
+						onClick={() => {
+							HTTP.Delete(`chat/leave/${ChatRoom.ID}`)
+							OurHistory.Add()
+						}}>Leave</button>}
 				<button style={{width: "50%", height: ".5cm"}}
 					onClick={() => ChangeMemberWindow("add")}>Add</button>
 			</div>
