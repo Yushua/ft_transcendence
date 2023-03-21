@@ -11,7 +11,6 @@ import { JoinClassicButton } from './components/JoinClassicButton';
 import { CreateGameButton } from './components/CreateGameButton';
 import { Button } from '@mui/material'
 import PracticeModeLoop from './practice_mode/practice_mode';
-import { CustomGameList, CustomGames } from './components/CustomGames';
 
 var game:Canvas
 var g_controls = ''
@@ -29,10 +28,11 @@ export const Pong = () => {
 	const [inGame, setInGame] = React.useState(false)
 	const [spectating, setSpectating] = React.useState(false)
 	const [showGameList, setShowGameList] = React.useState(false)
-	const [showCustomGames, setShowCustomGames] = React.useState(false)
 	const [gameData, setGameData] = React.useState(iniGameData)
-	const [gameListMap, setGameListMap] = React.useState(iniGameListMap)
+	const [activeGames, setActiveGames] = React.useState(iniGameListMap)
 	const [customGames, setCustomGames] = React.useState(iniCustomGames)
+	const [gameCreated, setGameCreated] = React.useState(false)
+	const [gameName, setGameName] = React.useState('')
 
 	React.useEffect(() => {
 
@@ -75,11 +75,11 @@ export const Pong = () => {
 			newCustomGames = customGameListMap
 			setCustomGames(newCustomGames)
 		}
-		function updateGameListMap(gameListMap:Map<string, string[]>)
+		function updateActiveGames(games:Map<string, string[]>)
 		{
-			let newListMap = new Map<string, string[]>()
-			newListMap = gameListMap
-			setGameListMap(newListMap)
+			let newActiveGames = new Map<string, string[]>()
+			newActiveGames = games
+			setActiveGames(newActiveGames)
 		}
 
 		/* INCOMING EVENTS ON SOCKET */
@@ -103,11 +103,11 @@ export const Pong = () => {
 			updateGameData(s_gameData)
 		})
 		socket.on('gamelist', (serializedGamesMap:any) => {
-			let gamesMap:Map<string, string[]> = new Map<string, string[]>()
+			let games:Map<string, string[]> = new Map<string, string[]>()
 			for (var instance of serializedGamesMap) {
-				gamesMap.set(instance[0], [instance[1][0].p1_name, instance[1][0].p2_name])
+				games.set(instance[0], [instance[1][0].p1_name, instance[1][0].p2_name])
 			}
-			updateGameListMap(gamesMap)
+			updateActiveGames(games)
 		})
 
 		socket.on('custom_gamelist', (serializedGamesMap:any) => {
@@ -116,6 +116,11 @@ export const Pong = () => {
 				customGamesMap.set(instance[0], [instance[1][0].p1_name, instance[1][0].p1_controls, instance[1][0].ballSpeed, instance[1][0].paddleSize])
 			}
 			updateCustomGames(customGamesMap)
+		})
+		socket.on('game_created', (gameName:string) => {
+			setShowGameList(false)
+			setGameCreated(true)
+			setGameName(gameName)
 		})
 
 		socket.on('spectating', () => {
@@ -128,7 +133,7 @@ export const Pong = () => {
 			setInGame(false)
 			setSpectating(false)
 			setShowGameList(false)
-			setShowCustomGames(false)
+			setGameCreated(false)
 		})
 		socket.on('disconnect', () => {
 			socket.emit('user disconnected')
@@ -161,10 +166,19 @@ export const Pong = () => {
 		}, 10)
 
 		return () => {
-			/* ATTEMPT RECONNECT */
-			socket.emit('reconnect')
 			console.log('unregistering events')
 			socket.off('connect')
+			socket.off('pending')
+			socket.off('stop_pending')
+			socket.off('joined')
+			socket.off('left')
+			socket.off('gamedata')
+			socket.off('gamelist')
+			socket.off('custom_gamelist')
+			socket.off('spectating')
+			socket.off('disconnect')
+			g_controls = ''	
+
 		}
 	}, [socket])
 
@@ -178,9 +192,10 @@ export const Pong = () => {
 		socket.emit('refreshGameList')
 		setShowGameList(!showGameList)
 	}
-	function ShowCustomGames() {
-		socket.emit('refreshCustomGames')
-		setShowCustomGames(!showCustomGames)
+
+	function deleteGame(gameName:string) {
+		socket.emit('deleteCreatedGame', gameName)
+		setGameCreated(false)
 	}
 	
 	function StartPracticeGame() {
@@ -188,7 +203,6 @@ export const Pong = () => {
 		setInGame(true)
 		setPending(false)
 		g_controls = "mouse"
-		
 		const gamaData = new GameData()
 		PracticeModeLoop.Start(gamaData, setGameData)
 	}
@@ -198,7 +212,7 @@ export const Pong = () => {
 			&nbsp;
 			{pending ? `Waiting for second player...` : <></>}
 			{inGame || spectating ? <Canvas instance={game} socket={socket} gameData={gameData}/> : <EmptyCanvas/>}
-			{!inGame && !spectating ?
+			{!inGame && !spectating && !gameCreated ?
 				<ul>
 					<li>
 						<JoinClassicButton socket={socket} userID={userID} userName={userName}/>
@@ -208,19 +222,25 @@ export const Pong = () => {
 						<CreateGameButton socket={socket} userID={userID} userName={userName}/>
 					</li>
 					&nbsp;
-					<li><Button variant="outlined" onClick={() => ShowCustomGames()}>Join Custom Game</Button></li>
-					&nbsp;
 					<li><Button variant="contained" onClick={() => StartPracticeGame()}>Practice Mode</Button></li>
 				</ul> : <></>}
-			{inGame ? <button onClick={() => leaveGame()}>Leave Game</button> :
+			{inGame ? 
+				<div>
+					<Button variant="contained" onClick={() => leaveGame()}>Leave Game</Button> 
+				</div> :
 				<div>
 					&nbsp;
 					{spectating ?
 							<Button variant="contained" onClick={() => leaveGame()}>Stop Spectating</Button> :
-							<Button variant="outlined" onClick={() => ShowGameList()}>Game List</Button>}
+							!gameCreated ?
+								<Button variant="outlined" onClick={() => ShowGameList()}>Game List</Button> : <></> }
 				</div>}
-			{showCustomGames && !inGame ? <CustomGameList customGames={customGames} socket={socket} userID={userID} userName={userName} /> : <></>}
-			{showGameList && !inGame ? <GameList listmap={gameListMap} socket={socket} /> : <></>}
+			{showGameList && !inGame && !gameCreated ? <GameList userID={userID} userName={userName} customGames={customGames} activeGames={activeGames} socket={socket} /> : <></>}
+			{gameCreated ?
+				<div>
+					<>Waiting for players...</>
+					<Button variant="contained" onClick={() => deleteGame(gameName)}>Delete Game</Button>
+				</div> : <></> }
 		</React.Fragment>
 	)
 }

@@ -7,10 +7,16 @@ import TableRow from '@mui/material/TableRow';
 import Button from '@mui/material/Button';
 import { Socket } from "socket.io-client";
 
-function createData(id: number, gameName: string, p1: string, p2: string)
+function createData_active(id: number, gameName: string, p1: string, p2: string)
 {
 	return { id, gameName, p1, p2 };
 }
+
+function createData_custom(id: number, gameName: string, p1: string, controls:string, BallSpeed: number, PaddleSize:number)
+{
+	return { id, gameName, p1, controls, BallSpeed, PaddleSize }
+}
+
 
 export class GameList extends React.Component<any, any> {
 
@@ -20,12 +26,21 @@ export class GameList extends React.Component<any, any> {
 			socket.emit('spectate', gameName)
 	}
 
-	setRows(listmap:Map<string, string[]>)
+	join(gameName:string, userID:string, userName:string, socket:Socket)
+	{
+		if (gameName !== undefined)
+			socket.emit('joinCustomGame', {gameName, userID, userName})
+	}
+
+	setRows(type:string, games:any)
 	{
 		const rows = []
 		let i = 0
-		for (var list of listmap) {
-			rows[i] = createData(i, list[0], list[1][0], list[1][1])
+		for (var game of games) {
+			if (type === 'active')
+				rows[i] = createData_active(i, game[0], game[1][0], game[1][1])
+			else
+				rows[i] = createData_custom(i, game[0], game[1][0], game[1][1], game[1][2], game[1][3])
 			i++
 		}
 		return rows
@@ -33,31 +48,54 @@ export class GameList extends React.Component<any, any> {
 
 	render()
 	{
-		const rows = this.setRows(this.props.listmap)
+		const rows_active = this.setRows('active', this.props.activeGames)
+		const rows_custom = this.setRows('custom', this.props.customGames)
+
 		return (
 			<React.Fragment>
-			<h3>Active Games</h3>
-			<Table size="small">
-			  <TableHead>
-				<TableRow>
-				  <TableCell>Game Name</TableCell>
-				  <TableCell>Player 1</TableCell>
-				  <TableCell>Player 2</TableCell>
-				</TableRow>
-			  </TableHead>
-			  <TableBody>
-				{rows.map((row) => (
-				  <TableRow key={row.id}>
-					<TableCell>{row.gameName}</TableCell>
-					<TableCell>{row.p1}</TableCell>
-					<TableCell>{row.p2}</TableCell>
-					<TableCell><Button variant="contained" onClick={() => this.spectate(row.gameName, this.props.socket)}>Spectate</Button></TableCell>
-				  </TableRow>
-				))}
-			  </TableBody>
-			</Table>
-		  </React.Fragment>
+				<h3>Active Games</h3>
+				<Table size="small">
+					<TableHead>
+						<TableRow>
+							<TableCell>Player 1</TableCell>
+					  		<TableCell>Player 2</TableCell>
+						</TableRow>
+					</TableHead>
+					<TableBody>
+					{rows_active.map((row) => (
+						<TableRow key={row.id}>
+							<TableCell>{row.p1}</TableCell>
+							<TableCell>{row.p2}</TableCell>
+							<TableCell><Button variant="contained" onClick={() => this.spectate(row.gameName, this.props.socket)}>Spectate</Button></TableCell>
+						</TableRow>
+					))}
+					</TableBody>
+				</Table>
+				<h3>Custom Games</h3>
+				<Table size="small">
+					<TableHead>
+						<TableRow>
+							<TableCell>Game Name</TableCell>
+							<TableCell>Creator</TableCell>
+							<TableCell>Controls</TableCell>
+							<TableCell>Ball Speed</TableCell>
+							<TableCell>Paddle Size</TableCell>
+						</TableRow>
+					</TableHead>
+					<TableBody>
+					{rows_custom.map((row) => (
+						<TableRow key={row.id}>
+							<TableCell>{row.gameName}</TableCell>
+							<TableCell>{row.p1}</TableCell>
+							<TableCell>{row.controls}</TableCell>
+							<TableCell>{row.BallSpeed}</TableCell>
+							<TableCell>{row.PaddleSize}</TableCell>
+							<TableCell><Button variant="contained" onClick={() => this.join(row.gameName, this.props.userID, this.props.userName, this.props.socket)}>Join Game</Button></TableCell>
+						</TableRow>
+					))}
+					</TableBody>
+				</Table>
+			</React.Fragment>
 		)
-	  
 	}	
 }
