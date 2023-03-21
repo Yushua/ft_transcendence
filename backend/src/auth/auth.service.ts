@@ -99,6 +99,7 @@ export class AuthService {
           }
         }
         //two factor authentication, but how? if this is true, then log out.
+        console.log("JWT payload")
         const payload: JwtPayload = { userID: user.id, twoFactor: false};
         const authToken: string = this.jwtService.sign(payload);
         return authToken;
@@ -106,30 +107,16 @@ export class AuthService {
 
       /**
        * 
-       * @param intraName make a TWT if intraname is new
+       * @param intraName make a TWT , intraaccount now is new
        */
       async makeAccountTWT(intraName: string):Promise<string>{
-        var userp:UserProfile= await this.userProfileEntityRepos.findOneBy({ intraName })
-        var user:UserTWT = await this.userTWTEntityRepos.findOneBy({ id: userp.id })
-        if(!user){
+        var user:UserProfile= await this.userProfileEntityRepos.findOneBy({ intraName })
           //whent the account is made, secretcode is set
           // const crypto = require('crypto');
           // var secretcode:string= crypto.randomBytes(Math.ceil(10 / 2)).toString('hex').slice(0, 10)
-          user = this.userTWTEntityRepos.create({ id: userp.id, TWT: false });
-          try {
-            await this.userTWTEntityRepos.save(user);
-          } catch (error) {
-            throw new HttpException(`creating an account for the first time with ${userp.id}\ncannot be created on the database`, HttpStatus.BAD_REQUEST);
-          }
-          //two factor authentication, but how? if this is true, then log out.
           const payload: JwtPayload = { userID: user.id, twoFactor: false}
           const TWToken: string = this.jwtService.sign(payload);
           return TWToken;
-        }
-        else {
-          //if the user already exist
-          return "";
-        }
       }
 
       /**
@@ -175,10 +162,9 @@ export class AuthService {
         return false
       }
       
-
       async getStatusTWT(TWT:string){
         var token = this.jwtService.decode(TWT);
-        return token["TWT"]
+        return token["twoFactor"]
       }
 
       async updateTWT(TWT:string, status:boolean):Promise<string>{

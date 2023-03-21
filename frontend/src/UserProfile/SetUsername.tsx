@@ -63,7 +63,7 @@ function SetUsername(){
       <LogoutButtonComponent/>
         <form onSubmit={(handleUsername)}>
           <div>
-            <label htmlFor="username">Username:</label>
+            <label htmlFor="username">Set you Username</label>
             <input id="username" type="text" />
           </div>
         </form>

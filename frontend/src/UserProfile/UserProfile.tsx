@@ -63,7 +63,7 @@ function UserProfilePage() {
       <div>
       <form onSubmit={handleUsernameChange}>
         <div>
-          <label htmlFor="username">Username:</label>
+          <label htmlFor="username">new username Input:</label>
           <input id="username" type="text" />
           <button type="submit">Submit</button>
         </div>

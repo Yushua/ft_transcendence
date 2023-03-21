@@ -18,7 +18,7 @@ export class UserProfile {
     profilePicture: string
 
     @Column({ default: false})
-    twoFactor: boolean
+    TWTStatus: boolean
 
     //check if the email unique "" default is not hampering more than one account
     @Column({

@@ -38,7 +38,7 @@ function TurnTWTOn(){
   return (
     <form onSubmit={handleSubmit}>
     <label>
-      Input:
+      enable Two Factor system
       <input type="text" value={inputValue} onChange={handleInputChange} />
     </label>
     <button type="submit">Submit</button>

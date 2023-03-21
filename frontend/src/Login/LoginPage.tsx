@@ -23,7 +23,8 @@ async function checkAuthentication(){
     console.log("i am out")
     var result = await response.json();
     if (result["result"] == true){
-      newWindow(<UserProfilePage/>)
+      //JWT accessToken token is valid
+      newWindow(<TWTCheckLoginPage/>)
       //or whats stored in the position
     }
     else {
@@ -43,9 +44,10 @@ async function checkAuthentication(){
  */
 async function setLogin(){
   try {
-    const response = await fetch(HTTP.HostRedirect() + `auth/token/${window.location.href.split('code=')[1]}/${getCookie('TWToken')}` , {
+    const response = await fetch(HTTP.HostRedirect() + `auth/loginUser/${window.location.href.split('code=')[1]}` , {
       headers: {
         Accept: 'application/json',
+        'Authorization': 'Bearer ' + getCookie("accessToken"),
       },
     })
     if (!response.ok) {
@@ -54,24 +56,15 @@ async function setLogin(){
     console.log("succesfull")
     var result = await response.json();
     var accessToken:string = result["accessToken"]
-    var TWToken:string = result["TWToken"]
     if (accessToken == undefined){
       removeCookie('accessToken');
     }
-    if (TWToken == undefined){
-      removeCookie('TWToken');
-    }
-    if (accessToken == undefined ||  TWToken == undefined){
+    if (accessToken == undefined){
       window.location.replace(HTTP.HostRedirect());
     }
     else {
-      //check if you're logged in
       removeCookie('accessToken');
       setCookie('accessToken', accessToken,{ expires: 10000 });
-      if (TWToken != ""){
-        removeCookie('TWToken');
-        setCookie('TWToken', accessToken,{ expires: 10000 });
-      }
       newWindow(<TWTCheckLoginPage/>)
     }
   } catch (error) {
@@ -87,7 +80,6 @@ const loginIntoOAuth = () => {
 }
 
 function LoginPage(){
-  //to check if your accessToken is already valid
   if (getCookie("accessToken") != undefined){
     //when you can login because you have an authenToken Cookie
     checkAuthentication()

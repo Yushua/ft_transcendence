@@ -10,6 +10,12 @@ export class AuthController {
     ) {}
 
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+    @Get('check')
+    async getAuthJWTT(){
+        return {
+            result: true}}
+    
+    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     @Get('checkTWT/:token/:code')
     async getAuthJWTToken(@Param('token') token: string, @Param('code') code: string){
         //chec if the token is correct. else....logout
@@ -24,7 +30,7 @@ export class AuthController {
      * @param code 
      * @returns authtoken JWT token
      */
-    @Get('token/:code')
+    @Get('loginUser/:code')
     async getAuthToken(@Param('code') code: string) {
         //get data from conf, if anything is NULL, because conf is not there, return error access
         //because conf is not there
@@ -39,9 +45,19 @@ export class AuthController {
         var OAuthToken:string = await this.AuthService.OauthSystemCodeToAccess(dataToPost)
         var intraName:string = await this.AuthService.startRequest(OAuthToken)
         var accessToken:string = await this.AuthService.makeAccountJWT(intraName)
-        var TWToken:string = await this.AuthService.makeAccountTWT(intraName)
         return {
-            accessToken, TWToken: TWToken
+            accessToken
+        }
+    }
+
+    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+    @Get('makeNewTWT')
+    async getNewTWT(@Param('code') code: string, @Request() req: Request) {
+        console.log("make TWT account")
+        var TWToken:string = await this.AuthService.makeAccountTWT(req["user"].intraName)
+        console.log(`token made {${TWToken}}`)
+        return {
+            TWToken
         }
     }
 
@@ -57,6 +73,7 @@ export class AuthController {
             redirect_uri: "http://localhost:4242/",
             state: " super-secret",
         }
+        console.log("in here")
         var OAuthToken:string = await this.AuthService.OauthSystemCodeToAccess(dataToPost)
         var intraName:string = await this.AuthService.startRequest(OAuthToken)
         if (await this.AuthService.disableLoginCheck(TWT, intraName) == false){
@@ -92,7 +109,6 @@ export class AuthController {
         return {accessToken}
     }
 
-    @UseGuards(AuthGuard())
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     @Get('ChangeUsername/:username')
     async setNewUsername(@Param('username') username: string,  @Request() req: Request){
@@ -100,10 +116,14 @@ export class AuthController {
         status: await this.AuthService.changeUsername(username, req["user"].intraName)
     }}
 
-    @UseGuards(AuthGuard())
+    @Get('checkStatusTWT/:TWT')
+    async getStatusTWT(@Param('TWT') TWT: string){
+        return {status:  await this.AuthService.getStatusTWT(TWT)}
+    }
+
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
-    @Get('checkStatusTWT:TWT')
-    async getSatusTWT(@Param('TWT') TWT:string, @Request() req: Request){
-        return {status: await this.AuthService.getStatusTWT(TWT)}
+    @Get('checkUserTWTStatus')
+    async getuserStatusTWT(@Request() req: Request){
+        return {status:  req["user"].TWTStatus}
     }
 }
