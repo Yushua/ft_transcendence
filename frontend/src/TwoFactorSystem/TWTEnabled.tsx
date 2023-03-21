@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import '../App.css';
+import TWTComponent from '../UserProfile/TWTComponent';
 import TurnTWTOn from './TurnTWTOn';
 
 
@@ -9,6 +10,7 @@ function TWTEnabled(){
   //setu the QR code. if input Code, then it will be turned on. so there is always a QR code
   return (
     <div className="TWTEnabled">
+      <TWTComponent/>
       <TurnTWTOn/>
     </div>
   );

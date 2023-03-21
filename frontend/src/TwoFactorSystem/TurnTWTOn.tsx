@@ -9,9 +9,9 @@ async function checkTWTCode(code:string){
     const response = HTTP.Get(`auth/checkTWT/${getCookie('TWToken')}/${code}`, null, {Accept: 'application/json'})
     var result = await JSON.parse(response)
     if (await result["status"] == true){
-        removeCookie('TWToken');
-        setCookie('TWToken', await result["TWT"],{ expires: 10000 });
-        newWindow(<UserProfilePage/>)
+      removeCookie('TWToken');
+      setCookie('TWToken', await result["TWT"],{ expires: 10000 });
+      newWindow(<UserProfilePage/>)
     }
     else {
         alert("wrong code input, try again")

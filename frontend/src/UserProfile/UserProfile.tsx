@@ -8,6 +8,7 @@ import HTTP from '../Utils/HTTP'
 import { newWindow } from '../App';
 import SetUsername from './SetUsername';
 import LogoutButtonComponent from './LogoutButton';
+import TWTComponent from './TWTComponent';
 
 async function asyncGetName():Promise<string> {
   const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
@@ -56,6 +57,7 @@ function UserProfilePage() {
   return (
     <div className="UserProfile">
       <LogoutButtonComponent/>
+      <TWTComponent/>
       <div>
         <ProfilePicture/>
         <label id="name" htmlFor="name">Welcome {username}</label>

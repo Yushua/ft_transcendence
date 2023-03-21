@@ -15,12 +15,12 @@ export class AuthController {
         return {
             result: true}}
     
-    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+    // @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     @Get('checkTWT/:token/:code')
     async getAuthJWTToken(@Param('token') token: string, @Param('code') code: string){
         //chec if the token is correct. else....logout
         return {
-            result:true,
+            status:true,
             TWT: await this.AuthService.updateTWT(token, true),
         }
     }

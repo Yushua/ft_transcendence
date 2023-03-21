@@ -44,15 +44,14 @@ async function setLoginTWT(){
  * @returns 
  */
 export async function asyncGetTWTStatus():Promise<boolean> {
-  console.log("LoginTOken new")
   try {
     const response = HTTP.Get(`auth/checkStatusTWT/${getCookie('TWToken')}`, null, {Accept: 'application/json'})
     var result = await JSON.parse(response)
     if (await result["status"] == true){
-      return false
+      return true
     }
     else
-      return true
+      return false
   } catch (error) {
     alert(`${error}, Token is out of date Loginpage`)
     removeCookie('TWToken');
@@ -62,7 +61,6 @@ export async function asyncGetTWTStatus():Promise<boolean> {
 }
 
 export async function asyncGetUserStatus():Promise<boolean> {
-  console.log("LoginTOken new")
   try {
     const response = HTTP.Get(`auth/checkUserTWTStatus`, null, {Accept: 'application/json'})
     var result = await JSON.parse(response)
@@ -82,17 +80,21 @@ export async function asyncGetUserStatus():Promise<boolean> {
 var _setDisplay: React.Dispatch<React.SetStateAction<boolean>>
 
 async function tmp(){
-  if (await asyncGetUserStatus() == false){
-    newWindow(<UserProfilePage/>)
-  }
-  console.log(`code TWT {${getCookie('TWToken')}}`)
   if (getCookie('TWToken') == null || getCookie('TWToken') == undefined){
     await setLoginTWT()
   }
+  console.log(`TWT cookie is there`)
+  if (await asyncGetUserStatus() == false){
+    console.log(`twt is off`)
+    newWindow(<UserProfilePage/>)
+  }
+  console.log(`twt is on`)
   if (await asyncGetTWTStatus()== true){
+    console.log(`already on`)
     _setDisplay(true)
   }
   else {
+    console.log(`already off`)
     newWindow(<UserProfilePage/>)
   }
 }
