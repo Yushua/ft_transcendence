@@ -10,7 +10,4 @@ export class UserTWT {
 
     @Column({ default: false})
     TWT: boolean
-
-    @Column({ default: ""})
-    secretcode: string
 }

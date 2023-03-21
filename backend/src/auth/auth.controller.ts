@@ -2,8 +2,6 @@ import { Controller, Get, Param,  HttpException, HttpStatus, UseGuards, Request,
 import { AuthGuard } from '@nestjs/passport';
 import { AuthGuardEncryption } from './auth.guard';
 import { AuthService } from './auth.service';
-import { randomBytes } from 'crypto';
-import { UserTWT } from './userTWT.entity';
 
 @Controller('auth')
 export class AuthController {
@@ -12,12 +10,12 @@ export class AuthController {
     ) {}
 
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
-    @Get('check')
-    async getAuthJWTToken(){
-        console.log("i am in")
-        var result:boolean = true;
+    @Get('checkTWT/:token/:code')
+    async getAuthJWTToken(@Param('token') token: string, @Param('code') code: string){
+        //chec if the token is correct. else....logout
         return {
-            result
+            result:true,
+            TWT: await this.AuthService.updateTWT(token, true),
         }
     }
 
@@ -83,9 +81,6 @@ export class AuthController {
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     @Get('checkStatusTWT:TWT')
     async getSatusTWT(@Param('TWT') TWT:string, @Request() req: Request){
-        //check if the TWT is correct
-        await this.AuthService.checkTWTValidity(TWT, req["user"].id)
-        //get status of TWT
         return {status: await this.AuthService.getStatusTWT(TWT)}
     }
 }

@@ -99,7 +99,7 @@ export class AuthService {
           }
         }
         //two factor authentication, but how? if this is true, then log out.
-        const payload: JwtPayload = { userID: user.id, twoFactor: false, secretcode:""};
+        const payload: JwtPayload = { userID: user.id, twoFactor: false};
         const authToken: string = this.jwtService.sign(payload);
         return authToken;
       }
@@ -113,16 +113,16 @@ export class AuthService {
         var user:UserTWT = await this.userTWTEntityRepos.findOneBy({ id: userp.id })
         if(!user){
           //whent the account is made, secretcode is set
-          const crypto = require('crypto');
-          var secretcode:string= crypto.randomBytes(Math.ceil(10 / 2)).toString('hex').slice(0, 10)
-          user = this.userTWTEntityRepos.create({ id: userp.id, TWT: false, secretcode });
+          // const crypto = require('crypto');
+          // var secretcode:string= crypto.randomBytes(Math.ceil(10 / 2)).toString('hex').slice(0, 10)
+          user = this.userTWTEntityRepos.create({ id: userp.id, TWT: false });
           try {
             await this.userTWTEntityRepos.save(user);
           } catch (error) {
             throw new HttpException(`creating an account for the first time with ${userp.id}\ncannot be created on the database`, HttpStatus.BAD_REQUEST);
           }
           //two factor authentication, but how? if this is true, then log out.
-          const payload: JwtPayload = { userID: user.id, twoFactor: false, secretcode};
+          const payload: JwtPayload = { userID: user.id, twoFactor: false}
           const TWToken: string = this.jwtService.sign(payload);
           return TWToken;
         }
@@ -152,7 +152,7 @@ export class AuthService {
           throw new HttpException(`username ${username} already in use`, HttpStatus.BAD_REQUEST);
         }
         console.log(` id = ${user.id}`)
-        const payload: JwtPayload = { userID: user.id, twoFactor: false, secretcode: ""};
+        const payload: JwtPayload = { userID: user.id, twoFactor: false};
         try {
          const authToken = this.jwtService.sign(payload);          
         } catch (error) {
@@ -181,12 +181,10 @@ export class AuthService {
         return token["TWT"]
       }
 
-      async checkTWTValidity(TWT:string, id:string){
-        var user:UserTWT = await this.userTWTEntityRepos.findOneBy({ id })
-        var secretcodeUser:string = user.secretcode
-        var secretcodeTWT:string = await this.getStatusTWT(TWT)
-        if (secretcodeUser != secretcodeTWT){
-          throw new HttpException(`JWT is out of date`, HttpStatus.BAD_REQUEST);
-        }
+      async updateTWT(TWT:string, status:boolean):Promise<string>{
+        var token = this.jwtService.decode(TWT);
+        const payload: JwtPayload = { userID: token["userID"], twoFactor: status};
+        const TWToken: string = this.jwtService.sign(payload);
+        return TWToken
       }
 }
