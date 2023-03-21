@@ -6,6 +6,8 @@ export const CreateGameButton = (props:any) => {
 	const [ballSpeed, setBallSpeed] = React.useState(100)
 	const [paddleSize, setPaddleSize] = React.useState(100)
 	const [controls, setControls] = React.useState('mouse')
+	const [gameName, setGameName] = React.useState('gameName')
+	const [isMouse, setIsMouse] = React.useState(true)
 
 	const handleBallChange = (event: Event, newValue: number | number[]) => {
 		if (typeof newValue === 'number') {
@@ -18,23 +20,29 @@ export const CreateGameButton = (props:any) => {
 		}
 	}
 
-	const createGame = (customSettings: any,) => {
+	const handleTextChange = (event:any) => {
+		setGameName(event.target.value);
+	}
+			
+	const createGame = (type:string, customSettings: any) => {
 		let userID = props.userID
 		let userName = props.userName
-		props.socket.emit('createGame', {userID, userName, customSettings})
+		props.socket.emit('createGame', {type, userID, userName, customSettings})
 	}
 	const isCustomGame = () => {
 		setCustomGame(!customGame)
 	}
 	const setMouse = () => {
+		setIsMouse(true)
 		setControls('mouse')
 	}
 	const setKeyboard = () => {
+		setIsMouse(false)
 		setControls('keyboard')
 	}
 
 	return (
-		<div className='dropdown-menu'>
+		<React.Fragment>
 			<Button variant="outlined" onClick={() => isCustomGame()}>Create Custom Game</Button>
 			{customGame ? 
 			<ul>
@@ -70,14 +78,36 @@ export const CreateGameButton = (props:any) => {
 						/>
 					</Box>
 				<li className='dropdownItem'>
-					<p>Controls: {controls} </p>
-					<Button variant="outlined" onClick={() => setMouse()}>Mouse</Button>
-					<Button variant="outlined" onClick={() => setKeyboard()}>Keyboard</Button>
+					{isMouse ?
+						<div>
+							<Button variant="contained" onClick={() => setMouse()}>Mouse</Button>
+							&nbsp;
+							<Button variant="outlined" onClick={() => setKeyboard()}>Keyboard</Button> 
+						</div> :
+						<div>
+							<Button variant="outlined" onClick={() => setMouse()}>Mouse</Button>
+							&nbsp;
+							<Button variant="contained" onClick={() => setKeyboard()}>Keyboard</Button>
+						</div>}
 				</li>
-				<p></p>
-				<li className='dropdownItem'><Button variant="contained" onClick={() => createGame({ballSpeed, paddleSize, controls})}>Create Game</Button></li>
+				&nbsp;
+				<li className='dropdownItem'>
+					<>Game Name:</>
+					&nbsp;
+					<input
+						type="text"
+						id="message"
+						name="message"
+						onChange={handleTextChange} />
+				</li>
+				&nbsp;
+				<li>
+					<Button variant="contained" onClick={() => createGame('public', {gameName, ballSpeed, paddleSize, controls})}>Create Public Game</Button>
+					&nbsp;
+					<Button variant="contained" onClick={() => createGame('private', {gameName, ballSpeed, paddleSize, controls})}>Create Private Game</Button>
+				</li>
 			</ul> : <></> }
-		</div>
+		</React.Fragment>
 	)
 }
 

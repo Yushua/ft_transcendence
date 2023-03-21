@@ -89,20 +89,21 @@ export class MyGateway implements OnModuleInit {
 				player2 = undefined
 				gameIDs = []
 
-				const serializedMap = [...games.entries()];
+				const serializedMap = [...games.entries()]
 				this.server.emit('gamelist', serializedMap)
 			}
 		}
 
 	@SubscribeMessage('createGame')
 	handleCreateGame(
-	@MessageBody() gameInfo: {userID:string, userName:string, customSettings:any},
+	@MessageBody() gameInfo: {type:string, userID:string, userName:string, customSettings:any},
 	@ConnectedSocket() player: Socket) {
-		if (player2 === player)
+		if (player2 === player) /* if creator was trying to join a classic game he stops doing so */
 		{
 			player2.emit('stop_pending')
 			player2 = undefined
 		}
+		/* create new game with custom config, add it to customgames so others can see and join it */
 		let CustomConfig = new Config()
 		CustomConfig.p1_controls = gameInfo.customSettings.controls
 		CustomConfig.p2_controls = gameInfo.customSettings.controls
@@ -110,13 +111,13 @@ export class MyGateway implements OnModuleInit {
 		CustomConfig.p1_userID = gameInfo.userID
 		CustomConfig.ballSpeed = gameInfo.customSettings.ballSpeed
 		CustomConfig.paddleSize = gameInfo.customSettings.paddleSize
-		CustomConfig.gameName = 'gameName'
+		CustomConfig.gameName = gameInfo.customSettings.gameName
 		let gameData = new GameData(CustomConfig)
-		customGames.set('gameName', [gameData, [player.id, gameInfo.userID]])
+		customGames.set(CustomConfig.gameName, [gameData, [player.id, gameInfo.userID]])
 		connections.set(player, [undefined, [player.id, gameInfo.userID]])
-		const serializedMap = [...customGames.entries()];
+		const serializedMap = [...customGames.entries()]
 		this.server.emit('custom_gamelist', serializedMap)
-		player.emit('game_created', gameData)
+		player.emit('game_created', CustomConfig.gameName)
 	}
 
 
@@ -221,15 +222,10 @@ export class MyGateway implements OnModuleInit {
 	@SubscribeMessage('refreshGameList')
 	handleRefresh(
 		@ConnectedSocket() client: Socket) {
-			const serializedMap = [...games.entries()];
+			const serializedMap = [...games.entries()]
+			const serializedMap2 = [...customGames.entries()];
 			this.server.emit('gamelist', serializedMap)
-		}
-
-	@SubscribeMessage('refreshCustomGames')
-	handleRefreshCustom(
-		@ConnectedSocket() client: Socket) {
-			const serializedMap = [...customGames.entries()];
-			this.server.emit('custom_gamelist', serializedMap)
+			this.server.emit('custom_gamelist', serializedMap2)
 		}
 	
 	@SubscribeMessage('disconnect')
@@ -240,6 +236,21 @@ export class MyGateway implements OnModuleInit {
 			if (connection !== undefined)
 				connections.delete(client)
 		}
+
+	@SubscribeMessage('deleteCreatedGame')
+	handleDelete(
+		@MessageBody() gameName:string,
+		@ConnectedSocket() creator: Socket) {
+		for (const connection of connections) {
+			if (connection[1][1][0] === creator.id)
+			{
+				connections.delete(creator)
+				customGames.delete(gameName)
+				const serializedMap = [...customGames.entries()]
+				this.server.emit('custom_gamelist', serializedMap)
+			}
+		}
+	}
 
 	//remove client from connections on leave. Also unset the ID in the games map so it cant
 	//reconnect automatically when switching from-to pong window
@@ -308,7 +319,6 @@ export class MyGateway implements OnModuleInit {
 					break;
 				default: continue;
 			}
-			console.log('name:',gameData.gameName)
 			games.delete(gameData.gameName)
 			PongService.updateWinLoss(winningPlayer, losingPlayer);
 			const serializedMap = [...games.entries()];
