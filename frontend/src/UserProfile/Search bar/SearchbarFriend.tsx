@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import HTTP from '../Utils/HTTP';
-import SeachBarButton from './BarSetup';
-import UserProfileComponent from './UserProfileComponent';
+import { newWindow } from '../../App';
+import HTTP from '../../Utils/HTTP';
 
 async function asyncReturnID(usernameFriend: string):Promise<string> {
   const response = HTTP.Get(`user-profile/returnID/${usernameFriend}`, null, {Accept: 'application/json'})
@@ -26,20 +25,26 @@ async function addFriendFunction(friendName: string){
   _setShowDropdown(false);
 }
 
-var _SelectedOption: string
+async function seeProfileOther(username: string){
+  // newWindow(<OtherUserProfile/>)
+  _setShowDropdown(false);
+}
+
+var _SelectedOption: string[]
 var _setShowDropdown:React.Dispatch<React.SetStateAction<boolean>>
 function SearchBarFriend() {
   const [showDropdown, setShowDropdown] = useState(false);
-  const [selectedOption, setSelectedOption] = useState("");
+  const [selectedOption, setSelectedOption] = useState<string[]>([]);
   _SelectedOption = selectedOption
   _setShowDropdown = setShowDropdown
-  const buttonLabels = ['flipy', 'yusha', 'hey', 'hey', 'hey', 'hey', 'hey', 'hey', 'hey', 'hey'];
-  const handleButtonClick = (option: string) => {
+  // const buttonLabels = ['flipy', 'yusha', 'hey', 'hey', 'hey', 'hey', 'hey', 'hey', 'hey', 'hey'];
+  const buttonLabels = [['flipy', 'online'], ['yusha', 'online'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline']];
+  const handleButtonClick = (option: string[]) => {
     setSelectedOption(option);
     setShowDropdown(true);
   };
 
-  const handleOptionClick = (option: string) => {
+  const handleOptionClick = (option: string[]) => {
     setSelectedOption(option);
     setShowDropdown(false);
   };
@@ -50,16 +55,15 @@ function SearchBarFriend() {
             key={index}
             style={{ margin: "5px", width: "100px", height: "50px" }}
             onClick={() => handleButtonClick(option)}
-          >
-            {option}
+          >{`name: ${option[0]}\nstatus: ${option[1]}`}
           </button>
         ))}
         {showDropdown && (
           <div style={{ position: "absolute", top: "60px", left: "0" }}>
             <ul>
               {/* <button onClick={() => addFriendFunction(selectedOption)}>Friendlist</button> */}
-              <button style={{ margin: "5px", width: "100px", height: "50px" }} onClick={() => addFriendFunction(_SelectedOption)}> add {_SelectedOption} friendlist </button>
-              <button style={{ margin: "5px", width: "100px", height: "50px" }} onClick={() => addFriendFunction(_SelectedOption)}> add {_SelectedOption} friendlist </button>
+              <button style={{ margin: "5px", width: "100px", height: "50px" }} onClick={() => addFriendFunction(_SelectedOption[0])}> add {_SelectedOption[0]} friendlist </button>
+              <button style={{ margin: "5px", width: "100px", height: "50px" }} onClick={() => addFriendFunction(_SelectedOption[0])}> add {_SelectedOption[0]} friendlist </button>
             </ul>
           </div>
         )}

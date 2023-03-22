@@ -18,17 +18,17 @@ export class AuthService {
        * @returns returns AccessToken
        */
       async OauthSystemCodeToAccess(data:Object):Promise<string>{
-        var accessToken:string;
+        var intraAccessToken:string;
         try {
             await axios.post(`https://api.intra.42.fr/oauth/token`, data).then((response) => {
-              accessToken = response.data['access_token'];
+              intraAccessToken = response.data['access_token'];
             })
           } catch (error) {
             console.log(error.response.data)
             console.log("Post")
             throw new HttpException('intraPull failed, problem with OAuth API. input Data out of date', HttpStatus.BAD_REQUEST);
         }
-        return accessToken
+        return intraAccessToken
       }
 
       /**

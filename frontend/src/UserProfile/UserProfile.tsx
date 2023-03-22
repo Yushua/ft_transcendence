@@ -1,16 +1,16 @@
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import './UserProfile.css';
 import '../App.css';
-import DropDownMenuAddFriendList from './DropDownMenuAddFriendList';
-import DropDownMenuRemoveFriendListId from './DropDownMenuRemoveFriendListId';
+import DropDownMenuAddFriendList from './old stuff/DropDownMenuAddFriendList';
+import DropDownMenuRemoveFriendListId from './old stuff/DropDownMenuRemoveFriendListId';
 import ProfilePicture from './ProfilePicture';
 import HTTP from '../Utils/HTTP'
 import { newWindow } from '../App';
 import SetUsername from './SetUsername';
-import LogoutButtonComponent from './LogoutButton';
-import TWTButtonComponent from './TWTButtonComponent';
-import SearchButtonComponent from './SearchButtonComponent';
-import FriendListSearchButtonComponent from './FriendListSearchButtonComponent';
+import LogoutButtonComponent from './ButtonComponents/LogoutButton';
+import TWTButtonComponent from './ButtonComponents/TWTButtonComponent';
+import SearchButtonComponent from './ButtonComponents/SearchButtonComponent';
+import FriendListSearchButtonComponent from './ButtonComponents/FriendListSearchButtonComponent';
 
 async function asyncGetName():Promise<string> {
   const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})

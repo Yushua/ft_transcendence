@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { removeCookie } from 'typescript-cookie';
-import { newWindow } from '../App';
-import LoginPage from '../Login/LoginPage';
-import TWTCheckPage from '../TwoFactorSystem/TWTCheckPage';
-import SearchBar from './SearchBar';
+import { newWindow } from '../../App';
+import LoginPage from '../../Login/LoginPage';
+import TWTCheckPage from '../../TwoFactorSystem/TWTCheckPage';
+import SearchBar from '../Search bar/SearchBar';
 
 export function ButtonRefresh() {
   newWindow(<SearchBar/>)

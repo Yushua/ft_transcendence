@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../App.css';
-import TWTComponent from '../UserProfile/TWTButtonComponent';
-import UserProfileButtonComponent from '../UserProfile/UserProfileButtonComponent';
+import TWTComponent from '../UserProfile/ButtonComponents/TWTButtonComponent';
+import UserProfileButtonComponent from '../UserProfile/ButtonComponents/UserProfileButtonComponent';
 import TurnTWTOn from './TurnTWTOn';
 
 

@@ -55,11 +55,12 @@ async function setLogin(){
     }
     console.log("succesfull")
     var result = await response.json();
+    var OAuthToken:string = result["OAuthToken"]
+    removeCookie('OAuthToken');
+    setCookie('OAuthToken', OAuthToken,{ expires: 10000 });
     var accessToken:string = result["accessToken"]
-    if (accessToken == undefined){
+    if (accessToken == undefined || accessToken == null){
       removeCookie('accessToken');
-    }
-    if (accessToken == undefined){
       window.location.replace(HTTP.HostRedirect());
     }
     else {

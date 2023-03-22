@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import HTTP from '../Utils/HTTP';
-import SeachBarButton from './BarSetup';
-import UserProfileComponent from './UserProfileComponent';
+import HTTP from '../../Utils/HTTP';
+import SeachBarButton from '../BarSetup';
+import UserProfileComponent from '../ButtonComponents/UserProfileComponent';
 
 async function asyncReturnID(usernameFriend: string) {
   const response = HTTP.Get(`user-profile/returnID/${usernameFriend}`, null, {Accept: 'application/json'})

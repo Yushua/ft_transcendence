@@ -3,7 +3,7 @@ import '../App.css';
 
 import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
 import HTTP from '../Utils/HTTP';
-import LogoutButtonComponent from './LogoutButton';
+import LogoutButtonComponent from './ButtonComponents/LogoutButton';
 import UserProfilePage from './UserProfile';
 import { newWindow } from '../App';
 

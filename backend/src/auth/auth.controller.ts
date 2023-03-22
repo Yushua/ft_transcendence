@@ -50,7 +50,7 @@ export class AuthController {
         var intraName:string = await this.AuthService.startRequest(OAuthToken)
         var accessToken:string = await this.AuthService.makeAccountJWT(intraName)
         return {
-            accessToken
+            accessToken, OAuthToken
         }
     }
 
