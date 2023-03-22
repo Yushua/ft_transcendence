@@ -27,7 +27,7 @@ async function setNewTWT(){
       window.location.replace(HTTP.HostRedirect());
     }
     else {
-      console.log("it is turned on")
+      console.log("it is turned off")
       removeCookie('TWToken');
       setCookie('TWToken', TWToken,{ expires: 10000 });
     }

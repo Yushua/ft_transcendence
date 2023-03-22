@@ -22,9 +22,10 @@ async function turningTWTOn(code:string){
     var result = await response.json();
     console.log(`turning TWT on if {${await result["status"]}} == true`)
     if (await result["status"] == true){
+      console.log("succesfully turned on")
       removeCookie('TWToken');
       setCookie('TWToken', await result["TWT"],{ expires: 10000 });
-      newWindow(<TWTCheckPage/>);
+      newWindow(<UserProfilePage/>);
     }
     else {
         alert("wrong code input, try again")

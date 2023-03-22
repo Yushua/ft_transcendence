@@ -75,6 +75,7 @@ export async function asyncGetTWTUserStatus():Promise<boolean> {
 var _setDisplay: React.Dispatch<React.SetStateAction<boolean>>
 
 async function tmp(){
+  
   if (await asyncGetTWTUserStatus()== true){
     _setDisplay(true)
   }
@@ -89,9 +90,10 @@ function TWTCheckPage(){
   _setDisplay = setDisplay
   if (Display == false){ tmp() }
   console.log(`display == ${Display}`)
+  //if off, then turn it on, if on, turn it off
   return (
     <div className="TWTCheckPage">
-      {Display ? <>{newWindow(<TWTEnabled/>)}</> :<>{newWindow(<TWTDisabled/>)}</> }
+      {Display ? <>{newWindow(<TWTDisabled/>)}</> : <>{newWindow(<TWTEnabled/>)}</>}
     </div>
   );
 }

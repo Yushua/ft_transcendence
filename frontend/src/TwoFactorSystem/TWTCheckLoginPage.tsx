@@ -78,7 +78,7 @@ async function tmp(){
   if (getCookie('TWToken') == null || getCookie('TWToken') == undefined){
     await setLoginTWT()
   }
-  console.log(`TWT cookie is there {${await asyncGetUserStatus()}}`)
+  console.log(`TWT user status == {${await asyncGetUserStatus()}}`)
   if (await asyncGetUserStatus() == true){
     if (await asyncGetTWTStatus()== true){
       console.log(`TWT is already on, go to userProfile`)
