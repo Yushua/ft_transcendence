@@ -23,7 +23,7 @@ async function checkAuthentication(){
     console.log("i am out")
     var result = await response.json();
     if (result["result"] == true){
-      //JWT accessToken token is valid
+      console.log("checking TWT token")
       newWindow(<TWTCheckLoginPage/>)
       //or whats stored in the position
     }
@@ -79,10 +79,15 @@ const loginIntoOAuth = () => {
   window.location.replace('https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-c73b865f02b3cf14638e1a50c5caa720828d13082db6ab753bdb24ca476e1a4c&redirect_uri=http%3A%2F%2Flocalhost%3A4242%2F&response_type=code');
 }
 
+async function checkRefresh(){
+  await checkAuthentication()
+}
+
 function LoginPage(){
-  if (getCookie("accessToken") != undefined){
+  if (getCookie("accessToken") != undefined &&  getCookie("accessToken") != null){
     //when you can login because you have an authenToken Cookie
-    checkAuthentication()
+    console.log("i am refreshing")
+    checkRefresh()
   }
   //to check to see if the login works
   if (window.location.href.split('code=')[1] != undefined){

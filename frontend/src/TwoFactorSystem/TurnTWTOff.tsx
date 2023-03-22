@@ -46,6 +46,7 @@ function TurnTWTOff(){
   }
   
   //setu the QR code. if input Code, then it will be turned on. so there is always a QR code
+  //one way is to completely logout
   return (
     <div>
       <button onClick={loginIntoOAuth}>Cancle Two Factor System</button>

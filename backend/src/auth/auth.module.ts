@@ -6,7 +6,6 @@ import { UserProfile } from 'src/user-profile/user.entity';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { JwtStrategy } from './JwtStrategy';
-import { UserTWT } from './userTWT.entity';
 
 @Module({
   imports: [
@@ -17,7 +16,7 @@ import { UserTWT } from './userTWT.entity';
         expiresIn: '3600s',
       },
     }),
-    TypeOrmModule.forFeature([UserProfile, UserTWT])],
+    TypeOrmModule.forFeature([UserProfile])],
   providers: [AuthService, JwtStrategy],
   controllers: [AuthController],
   exports: [JwtStrategy, PassportModule],

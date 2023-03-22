@@ -15,13 +15,17 @@ export class AuthController {
         return {
             result: true}}
     
-    // @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     @Get('checkTWT/:token/:code')
-    async getAuthJWTToken(@Param('token') token: string, @Param('code') code: string){
+    async getAuthJWTToken(@Param('token') token: string, @Param('code') code: string, @Request() req: Request){
         //chec if the token is correct. else....logout
+        var TWT:string =  await this.AuthService.updateTWT(token, true)
+        //update User
+        await this.AuthService.updateTWTUser(req["user"].id)
+        console.log("check succesfull")
         return {
             status:true,
-            TWT: await this.AuthService.updateTWT(token, true),
+            TWT: TWT
         }
     }
 
@@ -123,7 +127,7 @@ export class AuthController {
 
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     @Get('checkUserTWTStatus')
-    async getuserStatusTWT(@Request() req: Request){
+    async getUserStatusTWT(@Request() req: Request){
         return {status:  req["user"].TWTStatus}
     }
 }

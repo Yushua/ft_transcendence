@@ -5,14 +5,11 @@ import axios from 'axios';
 import { UserProfile } from 'src/user-profile/user.entity';
 import { Repository } from 'typeorm';
 import { JwtPayload } from './jwt-payload.interface';
-import { UserTWT } from './userTWT.entity';
 
 export class AuthService {
     constructor(
       @InjectRepository(UserProfile)
       private readonly userProfileEntityRepos: Repository<UserProfile>,
-      @InjectRepository(UserTWT)
-      private readonly userTWTEntityRepos: Repository<UserTWT>,
       private readonly jwtService: JwtService,
   ) {}
   
@@ -160,6 +157,12 @@ export class AuthService {
           return true
         }
         return false
+      }
+
+      async updateTWTUser(id: string){
+        var user:UserProfile = await this.userProfileEntityRepos.findOneBy({ id })
+        user.TWTStatus = true
+        await this.userProfileEntityRepos.save(user);
       }
       
       async getStatusTWT(TWT:string){

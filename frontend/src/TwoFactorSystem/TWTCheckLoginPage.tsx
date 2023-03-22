@@ -47,11 +47,8 @@ export async function asyncGetTWTStatus():Promise<boolean> {
   try {
     const response = HTTP.Get(`auth/checkStatusTWT/${getCookie('TWToken')}`, null, {Accept: 'application/json'})
     var result = await JSON.parse(response)
-    if (await result["status"] == true){
-      return true
-    }
-    else
-      return false
+    console.log("TWT token status " + result["status"])
+    return await result["status"]
   } catch (error) {
     alert(`${error}, Token is out of date Loginpage`)
     removeCookie('TWToken');
@@ -64,11 +61,8 @@ export async function asyncGetUserStatus():Promise<boolean> {
   try {
     const response = HTTP.Get(`auth/checkUserTWTStatus`, null, {Accept: 'application/json'})
     var result = await JSON.parse(response)
-    if (await result["status"] == false){
-      return false
-    }
-    else
-      return true
+      console.log(` user status twt {${await result["status"]}}`)
+      return await result["status"]
   } catch (error) {
     alert(`${error}, Token is out of date Loginpage`)
     removeCookie('TWToken');
@@ -88,7 +82,8 @@ async function tmp(){
     console.log(`twt is off`)
     newWindow(<UserProfilePage/>)
   }
-  console.log(`twt is on`)
+  //else it is true, so continue
+  console.log(`twt is on right now`)
   if (await asyncGetTWTStatus()== true){
     console.log(`already on`)
     _setDisplay(true)

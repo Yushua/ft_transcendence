@@ -9,7 +9,7 @@ import TWTEnabled from './TWTEnabled';
 
 async function setLoginTWT(){
   try {
-    const response = await fetch(HTTP.HostRedirect() + `auth/loginUserTWT` , {
+    const response = await fetch(HTTP.HostRedirect() + `auth/makeNewTWT` , {
       headers: {
         Accept: 'application/json',
         'Authorization': 'Bearer ' + getCookie("accessToken"),
@@ -28,9 +28,10 @@ async function setLoginTWT(){
       window.location.replace(HTTP.HostRedirect());
     }
     else {
+      console.log("it is turned on")
       removeCookie('TWToken');
       setCookie('TWToken', TWToken,{ expires: 10000 });
-      newWindow(<TWTCheckPage/>)
+      newWindow(<UserProfilePage/>)
     }
   } catch (error) {
     console.log(`error ${error}`)
@@ -73,6 +74,7 @@ function TWTCheckPage(){
   const [Display, setDisplay] = useState<boolean>(false);
   _setDisplay = setDisplay
   if (Display == false){ tmp() }
+  console.log(`display == ${Display}`)
   return (
     <div className="TWTCheckPage">
       {Display ? <>{newWindow(<TWTEnabled/>)}</> : <>{newWindow(<TWTDisabled/>)}</>}

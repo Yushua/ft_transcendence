@@ -4,23 +4,40 @@ import { newWindow } from '../App';
 import '../App.css';
 import UserProfilePage from '../UserProfile/UserProfile';
 import HTTP from '../Utils/HTTP';
+import TWTCheckPage from './TWTCheckPage';
 
-async function checkTWTCode(code:string){
-    const response = HTTP.Get(`auth/checkTWT/${getCookie('TWToken')}/${code}`, null, {Accept: 'application/json'})
-    var result = await JSON.parse(response)
+async function turningTWTOn(code:string){
+  try {
+    const response = await fetch(HTTP.HostRedirect() + `auth/checkTWT/${getCookie('TWToken')}/${code}` , {
+      headers: {
+        Accept: 'application/json',
+        'Authorization': 'Bearer ' + getCookie("accessToken"),
+        'Content-Type': 'application/json',
+      },
+      method: 'GET'
+    })
+    if (!response.ok) {
+      throw new Error(`Error! status: ${response.status}`);
+    }
+    var result = await response.json();
+    console.log(`turning TWT on if {${await result["status"]}} == true`)
     if (await result["status"] == true){
       removeCookie('TWToken');
       setCookie('TWToken', await result["TWT"],{ expires: 10000 });
-      newWindow(<UserProfilePage/>)
+      newWindow(<TWTCheckPage/>);
     }
     else {
         alert("wrong code input, try again")
         _setInputValue("")
     }
+  } catch (error) {
+    alert("wrong code input, try again")
+    _setInputValue("")
+  }
 }
 async function handleSubmit(event:any){
   event.preventDefault();
-  await checkTWTCode(_inputValue)
+  await turningTWTOn(_inputValue)
 };
 
 var _inputValue: string
