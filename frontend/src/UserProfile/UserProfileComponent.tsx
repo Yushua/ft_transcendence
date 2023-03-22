@@ -6,14 +6,13 @@ import TWTCheckPage from '../TwoFactorSystem/TWTCheckPage';
 import UserProfilePage from './UserProfile';
 
 export function ButtonRefresh() {
-  removeCookie('accessToken');
   newWindow(<UserProfilePage/>);
 }
 
-function UserProfileComponentt() {
+function UserProfileComponent() {
     return (
       <button onClick={() => {ButtonRefresh()}}>UserProfile</button>
     )
 }
 
-export default UserProfileComponentt;
+export default UserProfileComponent;

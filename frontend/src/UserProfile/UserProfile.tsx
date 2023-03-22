@@ -9,6 +9,8 @@ import { newWindow } from '../App';
 import SetUsername from './SetUsername';
 import LogoutButtonComponent from './LogoutButton';
 import TWTButtonComponent from './TWTButtonComponent';
+import SearchButtonComponent from './SearchButtonComponent';
+import FriendListSearchButtonComponent from './FriendListSearchButtonComponent';
 
 async function asyncGetName():Promise<string> {
   const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
@@ -54,10 +56,13 @@ function UserProfilePage() {
     console.log(`username change {${username}}`)
     newWindow(<SetUsername/>)
   }
+  //in the end, Friendlist will be displayed on the side
   return (
     <div className="UserProfile">
       <LogoutButtonComponent/>
       <TWTButtonComponent/>
+      <SearchButtonComponent/>
+      <FriendListSearchButtonComponent/>
       <div>
         <ProfilePicture/>
         <label id="name" htmlFor="name">Welcome {username}</label>
@@ -71,11 +76,6 @@ function UserProfilePage() {
         </div>
       </form>
       </div>
-        <DropDownMenuAddFriendList/>
-        <DropDownMenuRemoveFriendListId/>
-      {/* <div>
-        <TwoFactorAuthentication/>
-      </div> */}
     </div>
     //logout when initialized
   );

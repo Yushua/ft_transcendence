@@ -75,7 +75,6 @@ export async function asyncGetTWTUserStatus():Promise<boolean> {
 var _setDisplay: React.Dispatch<React.SetStateAction<boolean>>
 
 async function tmp(){
-  
   if (await asyncGetTWTUserStatus()== true){
     _setDisplay(true)
   }
