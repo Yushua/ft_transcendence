@@ -11,7 +11,7 @@ export function ButtonRefresh() {
 
 function FriendListSearchButtonComponent() {
     return (
-      <button onClick={() => {ButtonRefresh()}}>TwoFactor</button>
+      <button onClick={() => {ButtonRefresh()}}>Friendlist</button>
     )
 }
 
