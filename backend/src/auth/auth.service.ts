@@ -159,9 +159,9 @@ export class AuthService {
         return false
       }
 
-      async updateTWTUser(id: string){
+      async updateTWTUser(id: string, status:boolean){
         var user:UserProfile = await this.userProfileEntityRepos.findOneBy({ id })
-        user.TWTStatus = true
+        user.TWTStatus = status
         await this.userProfileEntityRepos.save(user);
       }
       

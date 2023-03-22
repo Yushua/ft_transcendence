@@ -21,7 +21,7 @@ export class AuthController {
         //chec if the token is correct. else....logout
         var TWT:string =  await this.AuthService.updateTWT(token, true)
         //update User
-        await this.AuthService.updateTWTUser(req["user"].id)
+        await this.AuthService.updateTWTUser(req["user"].id, true)
         console.log("check succesfull")
         return {
             status:true,
@@ -129,5 +129,11 @@ export class AuthController {
     @Get('checkUserTWTStatus')
     async getUserStatusTWT(@Request() req: Request){
         return {status:  req["user"].TWTStatus}
+    }
+
+    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+    @Get('ChangeUserTWTStatusFalse')
+    async ChangeUserStatusTWTFalse(@Request() req: Request){
+        await this.AuthService.updateTWTUser(req["user"].id, false)
     }
 }

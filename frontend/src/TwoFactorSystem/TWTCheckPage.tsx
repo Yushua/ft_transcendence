@@ -58,10 +58,24 @@ export async function asyncGetTWTStatus():Promise<boolean> {
   return false
 }
 
+export async function asyncGetTWTUserStatus():Promise<boolean> {
+  try {
+    const response = HTTP.Get(`auth/checkUserTWTStatus`, null, {Accept: 'application/json'})
+    var result = await JSON.parse(response)
+    console.log(`result of UserTWT ${await result["status"]}`)
+    return await result["status"];
+  } catch (error) {
+    alert(`${error}, Token is out of date CheckPage`)
+    removeCookie('TWToken');
+    newWindow(<UserProfilePage/>)
+  }
+  return false
+}
+
 var _setDisplay: React.Dispatch<React.SetStateAction<boolean>>
 
 async function tmp(){
-  if (await asyncGetTWTStatus()== true){
+  if (await asyncGetTWTUserStatus()== true){
     _setDisplay(true)
   }
   else {
@@ -77,7 +91,7 @@ function TWTCheckPage(){
   console.log(`display == ${Display}`)
   return (
     <div className="TWTCheckPage">
-      {Display ? <>{newWindow(<TWTEnabled/>)}</> : <>{newWindow(<TWTDisabled/>)}</>}
+      {Display ? <>{newWindow(<TWTEnabled/>)}</> :<>{newWindow(<TWTDisabled/>)}</> }
     </div>
   );
 }

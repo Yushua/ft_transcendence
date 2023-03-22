@@ -5,6 +5,7 @@ import '../App.css';
 import UserProfilePage from '../UserProfile/UserProfile';
 import HTTP from '../Utils/HTTP';
 import TurnTWTOn from './TurnTWTOn';
+import TurnTWTOnLoginPage from './TurnTWTOnLoginPage';
 
 async function setLoginTWT(){
   try {
@@ -77,21 +78,18 @@ async function tmp(){
   if (getCookie('TWToken') == null || getCookie('TWToken') == undefined){
     await setLoginTWT()
   }
-  console.log(`TWT cookie is there`)
-  if (await asyncGetUserStatus() == false){
-    console.log(`twt is off`)
-    newWindow(<UserProfilePage/>)
+  console.log(`TWT cookie is there {${await asyncGetUserStatus()}}`)
+  if (await asyncGetUserStatus() == true){
+    if (await asyncGetTWTStatus()== true){
+      console.log(`TWT is already on, go to userProfile`)
+      newWindow(<UserProfilePage/>)
+    }
+    else {
+      console.log(`already off`)
+      newWindow(<TurnTWTOnLoginPage/>)
+    }
   }
-  //else it is true, so continue
-  console.log(`twt is on right now`)
-  if (await asyncGetTWTStatus()== true){
-    console.log(`already on`)
-    _setDisplay(true)
-  }
-  else {
-    console.log(`already off`)
-    newWindow(<UserProfilePage/>)
-  }
+  newWindow(<UserProfilePage/>)
 }
 
 function TWTCheckLoginPage(){

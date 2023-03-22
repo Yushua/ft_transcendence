@@ -5,14 +5,13 @@ import LoginPage from '../Login/LoginPage';
 import TWTCheckPage from '../TwoFactorSystem/TWTCheckPage';
 
 export function ButtonRefresh() {
-  removeCookie('accessToken');
   newWindow(<TWTCheckPage/>);
 }
 
-function TWTComponent() {
+function TWTButtonComponent() {
     return (
       <button onClick={() => {ButtonRefresh()}}>TwoFactor</button>
     )
 }
 
-export default TWTComponent;
+export default TWTButtonComponent;
