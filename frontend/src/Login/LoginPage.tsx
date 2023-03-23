@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
 import { newWindow } from '../App';
 import '../App.css';
@@ -155,7 +155,9 @@ async function setupLoginTWT(){
 }
 
 function LoginPage(){
-  setupLoginPage()
+  useEffect(() => {
+    setupLoginPage()
+  }, []);
   return (
     <div className="Loginpage">
     </div>
