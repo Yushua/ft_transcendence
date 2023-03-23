@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
 import { newWindow } from '../App';
 import '../App.css';
@@ -43,8 +43,8 @@ async function setLogin():Promise<string>{
       throw new Error(`Error! status: ${response.status}`);
     }
     var result = await response.json();
-    var accessToken:string = result["accessToken"]
-    if (accessToken == undefined || accessToken == null){
+    var accessToken:string = await result["accessToken"]
+    if (accessToken === undefined || accessToken === null){
       removeCookie('accessToken');
       newWindow(<ErrorPage/>)
     }
@@ -75,8 +75,8 @@ async function setLoginTWT():Promise<string>{
       throw new Error(`Error! status: ${response.status}`);
     }
     var result = await response.json();
-    var TWToken:string = result["TWToken"]
-    if (TWToken == undefined){
+    var TWToken:string = await result["TWToken"]
+    if (TWToken === undefined || TWToken === null){
       removeCookie('TWToken');
       console.log("TWT is UNdefined in LOGINPAGE check")
       newWindow(<ErrorPage/>)
@@ -121,15 +121,16 @@ const loginIntoOAuth = () => {
  * if valid, validate TWT
  */
 async function setupLoginPage(){
-  if (getCookie("accessToken") != undefined && getCookie("accessToken") != null){
+  if (getCookie("accessToken") !== undefined && getCookie("accessToken") !== null){
     //token is already made
-    if (await RefreshAuthentication() == false){
+    if (await RefreshAuthentication() === false){
       alert("unable to access backend")
+      newWindow(<ErrorPage/>)
     }
     //token is validated
     setupLoginTWT()
   }
-  if (window.location.href.split('code=')[1] != undefined){
+  if (window.location.href.split('code=')[1] !== undefined){
     removeCookie('accessToken');
     setCookie('accessToken', await setLogin(),{ expires: 10000 });
     newWindow(<LoginPage/>)
@@ -141,13 +142,13 @@ async function setupLoginPage(){
 
 async function setupLoginTWT(){
   //if token is not ehre, make one
-  if (getCookie('TWToken') == null || getCookie('TWToken') == undefined){
+  if (getCookie('TWToken') === null || getCookie('TWToken') === undefined){
     alert("undefined TWT")
     removeCookie('TWToken');
     setCookie('TWToken', await setLoginTWT(),{ expires: 10000 });
   }
   var status:boolean = await asyncGetUserStatus()
-  if (status == false){
+  if (status === false){
     newWindow(<UserProfilePage/>)
   }
   else {
