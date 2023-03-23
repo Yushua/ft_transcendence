@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { timeStamp } from 'console';
 import { Repository } from 'typeorm';
@@ -23,19 +23,48 @@ export class ChatService {
 		@InjectRepository(ChatUser)
 			private readonly chatUserRepo: Repository<ChatUser>,
 		@InjectRepository(UserProfile)
-			private readonly userProfileRepo: Repository<UserProfile>,
+			private readonly userProfileRepo: Repository<UserProfile>, // Used only in DEBGU
 	) {}
 	
-	private async _getMsgID(roomID: string, index: number, room: ChatRoom | null = null): Promise<string> {
-		if (index < 0) {
-			if (!room)
-				room = await this.GetRoom(roomID)
+	//#region Utils
+	private async _modifyRoom(
+			roomID: string, 
+			func: (ChatUser: ChatRoom) => Promise<boolean>, 
+			room: ChatRoom | null = null)
+		: Promise<[ChatRoom, boolean]>
+	{
+		room ??= await this.chatRoomRepo.findOneBy({ID: roomID})
+		var changed = await func(room)
+		if (changed)
+			room = await this.chatRoomRepo.save(room)
+		return [room, changed]
+	}
+	
+	private async _modifyUser(
+			ID: string, 
+			func: (ChatUser: ChatUser) => Promise<boolean>, 
+			user: ChatUser | null = null)
+		: Promise<[ChatUser, boolean]>
+	{
+		user ??= await this.GetOrAddUser(ID)
+		const changed = await func(user)
+		if (changed)
+			user = await this.chatUserRepo.save(user)
+		return [user, changed]
+	}
+	
+	private _getMsgID(
+			roomID: string, 
+			index: number, 
+			room: ChatRoom)
+		: string
+	{
+		if (index < 0)
 			index = room.MessageGroupDepth + index + 1
-		}
 		return `${roomID}__${index}`
 	}
 	
-	private async _addMessageGroup(roomID: string): Promise<ChatMessageGroupManager> {
+	private async _addMessageGroup(roomID: string): Promise<ChatMessageGroupManager>{
 		return this.chatMessageRepo.save(this.chatMessageRepo.create({
 			ID:           roomID,
 			OwnerIDs:     [],
@@ -44,30 +73,105 @@ export class ChatService {
 		}))
 	}
 	
-	async EditRoom(roomID: string, roomDTO: ChatRoomDTO, userID: string): Promise<void> {
-		
+	private async _addMemberToRoom(
+		roomID: string,
+		userID: string,
+		password: string,
+		memberID: string = "")
+	: Promise<string>
+	{
+		const [_, changed] = await this._modifyRoom(roomID, async room => {
+			if (room.HasPassword)
+				if (!room.MemberIDs.includes(memberID) && !await bcrypt.compare(password, (await this.chatRoomPassRepo.findOneBy({ID: roomID})).Password))
+					throw new HttpException("", HttpStatus.UNAUTHORIZED)
+			if (room.BanIDs.includes(userID))
+				throw new HttpException("", HttpStatus.UNAUTHORIZED)
+			if (room.MemberIDs.includes(userID))
+				false
+			
+			room.MemberIDs.push(userID)
+			await this._modifyUser(userID, async user => {
+				user.ChatRoomsIn.push(roomID)
+				return true
+			})
+			return true
+		})
+		if (changed) {
+			this.Notify(`room-${roomID}`, "mem")
+			this.Notify(`user-${userID}`, "room")
+		}
+		return roomID
+	}
+	
+	private async _removeMember(
+			roomID: string, 
+			memberID: string, 
+			ban: boolean = false, 
+			adminID: string | null, 
+			selfID: string)
+		: Promise<boolean>
+	{
+		const [_, changed] = await this._modifyRoom(roomID, async room => {
+			if (!!adminID && !room.AdminIDs.includes(adminID))
+				throw new HttpException("", HttpStatus.UNAUTHORIZED)
+			if (room.OwnerID === memberID
+				|| (room.AdminIDs.includes(memberID) && memberID !== selfID))
+				throw new HttpException("", HttpStatus.UNAUTHORIZED)
+			
+			var index = room.MemberIDs.indexOf(memberID);
+			if (index === -1)
+				return false
+			room.MemberIDs.splice(index, 1)
+			
+			if (ban && !room.BanIDs.includes(memberID))
+				room.BanIDs.push(memberID)
+			
+			await this._modifyUser(memberID, async user => {
+				const index = user.ChatRoomsIn.indexOf(roomID);
+				if (index === -1)
+					return false
+				user.ChatRoomsIn.splice(index, 1)
+				return true
+			})
+			return true
+		})
+		if (changed) {
+			this.Notify(`room-${roomID}`, "mem")
+			this.Notify(`user-${memberID}`, "kick")
+		}
+		return changed
+	}
+	//#endregion
+	
+	//#region Owner Commands
+	async EditRoom(
+			roomID: string, 
+			roomDTO: ChatRoomDTO, 
+			ownerID: string)
+		: Promise<void>
+	{
 		const { OwnerID, Name, HasPassword, Password, RoomType } =  roomDTO
 		
-		if (OwnerID !== userID)
+		if (OwnerID !== ownerID)
 			throw new HttpException("", HttpStatus.UNAUTHORIZED)
 		
-		const [room, changed] = await this.ModifyRoom(roomID, async room => {
-			if (room.OwnerID !== userID)
+		const [room, changed] = await this._modifyRoom(roomID, async room => {
+			if (room.OwnerID !== ownerID)
 				throw new HttpException("", HttpStatus.UNAUTHORIZED)
+			
 			room.Name = Name
 			room.RoomType = +ChatRoomType[RoomType]
 			
 			if (HasPassword === 'f')
 				return true
 			room.HasPassword = Password !== ""
-			await this.chatRoomPassRepo.findOneBy({ID: roomID})
-				.then(async rPass => {
-					rPass.Password = room.HasPassword ? await bcrypt.hash(Password, 10) : "";
-					return this.chatRoomPassRepo.save(rPass)
-				})
+			
+			const rPass = await this.chatRoomPassRepo.findOneBy({ID: roomID})
+			rPass.Password = room.HasPassword ? await bcrypt.hash(Password, 10) : "";
+			await this.chatRoomPassRepo.save(rPass)
+			
 			return true
 		})
-		console.log(`${room.HasPassword}`)
 		if (!changed)
 			return
 		for (const userID of room.MemberIDs)
@@ -75,8 +179,86 @@ export class ChatService {
 		this.Notify(`room-${roomID}`, "room")
 	}
 	
-	async UnBan(roomID: string, userID: string, adminID: string): Promise<boolean> {
-		const [_, changed] = await this.ModifyRoom(roomID, async (room) => {
+	async MakeAdmin(
+			roomID: string, 
+			memberID: string, 
+			userID: string)
+		: Promise<boolean>
+	{
+		const [_, changed] = await this._modifyRoom(roomID, async room => {
+			if (!room.AdminIDs.includes(userID))
+				throw new HttpException("", HttpStatus.UNAUTHORIZED)
+			
+			if (room.AdminIDs.includes(memberID) || !room.MemberIDs.includes(memberID))
+				return false
+			
+			room.AdminIDs.push(memberID)
+			return true
+		})
+		if (changed)
+			this.Notify("room-" + roomID, "mem")
+		return changed
+	}
+	
+	async RemoveAdmin(
+			roomID: string, 
+			memberID: string, 
+			ownerID: string)
+		: Promise<boolean>
+	{
+		const [_, changed] = await this._modifyRoom(roomID, async room => {
+			if (room.OwnerID !== ownerID || room.OwnerID === memberID)
+				throw new HttpException("", HttpStatus.UNAUTHORIZED)
+			
+			var index = room.AdminIDs.indexOf(memberID);
+			if (index === -1)
+				return false
+			room.AdminIDs.splice(index, 1);
+			return true
+		})
+		if (changed)
+			this.Notify(`room-${roomID}`, "mem")
+		return changed
+	}
+	
+	async DeleteRoom(ownerID: string, roomID: string) {
+		const room = await this.GetRoom(roomID, ownerID);
+		if (ownerID !== room.OwnerID)
+			throw new HttpException("", HttpStatus.UNAUTHORIZED)
+		
+		for (const memberID of room.MemberIDs) {
+			this._modifyUser(memberID, async user => {
+				const index = user.ChatRoomsIn.indexOf(roomID);
+				if (index === -1)
+					return false
+				user.ChatRoomsIn.splice(index, 1)
+				return true
+			}).then(() => this.Notify(`user-${memberID}`, "kick"))
+		}
+		
+		for (let index = 1; index <= room.MessageGroupDepth; index++)
+			this.chatMessageRepo.delete({ID: this._getMsgID(roomID, index, room)})
+		
+		this.chatRoomPassRepo.delete({ID: roomID})
+		
+		await this.chatRoomRepo.remove(room);
+	}
+	//#endregion
+	
+	//#region Admin Commands
+	Kick = (roomID: string, memberID: string, adminID: string)
+		: Promise<boolean> => this._removeMember(roomID, memberID, false, adminID, "")
+	
+	Ban = (roomID: string, memberID: string, adminID: string)
+		: Promise<boolean> => this._removeMember(roomID, memberID, true, adminID, "")
+	
+	async UnBan(
+			roomID: string, 
+			userID: string, 
+			adminID: string)
+		: Promise<boolean>
+	{
+		const [_, changed] = await this._modifyRoom(roomID, async (room) => {
 			if (!room.AdminIDs.includes(adminID))
 				throw new HttpException("", HttpStatus.UNAUTHORIZED)
 
@@ -91,19 +273,27 @@ export class ChatService {
 		return changed
 	}
 	
-	async Mute(roomID: string, userID: string, time: number, adminID: string): Promise<boolean> {
+	async Mute(
+			roomID: string, 
+			userID: string, 
+			time: number, 
+			adminID: string)
+		: Promise<boolean>
+	{
 		if (!Number.isInteger(time))
 			throw new HttpException(`"${time}" is not an integer`, HttpStatus.BAD_REQUEST)
 		if (time > 7 * 1000 * 60 * 60 * 24)
 			throw new HttpException(`Can't mute someone for longer then a week!`, HttpStatus.BAD_REQUEST)
+		if (time < 0)
+			throw new HttpException(`Can't mute someone for negative time!`, HttpStatus.BAD_REQUEST)
 		
-		const [_, changed] = await this.ModifyRoom(roomID, async (room) => {
+		const [_, changed] = await this._modifyRoom(roomID, async (room) => {
 			if (!room.AdminIDs.includes(adminID))
 				throw new HttpException("", HttpStatus.UNAUTHORIZED)
 
 			if (room.OwnerID === userID
 				|| room.AdminIDs.includes(userID))
-				return false
+				throw new HttpException("", HttpStatus.UNAUTHORIZED)
 
 			const index = room.MuteIDs.indexOf(userID)
 			if (index !== -1)
@@ -118,7 +308,7 @@ export class ChatService {
 	}
 	
 	async UnMute(roomID: string, userID: string, adminID: string): Promise<boolean> {
-		const [_, changed] = await this.ModifyRoom(roomID, async (room) => {
+		const [_, changed] = await this._modifyRoom(roomID, async (room) => {
 			if (!room.AdminIDs.includes(adminID))
 				throw new HttpException("", HttpStatus.UNAUTHORIZED)
 
@@ -131,14 +321,86 @@ export class ChatService {
 		})
 		return changed
 	}
+	//#endregion
 	
-	async NewDirect(userID: string, memberID: string): Promise<string> {
-		if (userID === memberID)
-			return ""
+	//#region Member Commands
+	Leave = (roomID: string, selfID: string)
+		: Promise<boolean> => this._removeMember(roomID, selfID, false, null, selfID)
+	
+	AddFriend = (roomID: string, friendID: string, selfID: string)
+		: Promise<string> => this._addMemberToRoom(roomID, friendID, "", selfID)
+	
+	async GetRoom(roomID: string, userID: string): Promise<ChatRoom> {
+		const room = await this.chatRoomRepo.findOneBy({ ID: roomID })
+		if (!room.MemberIDs.includes(userID))
+			throw new HttpException("", HttpStatus.UNAUTHORIZED)
+		return room
+	}
+	
+	async GetMessages(
+			roomID: string, 
+			index: number, 
+			userID: string)
+		: Promise<ChatMessage[]>
+	{
+		if (!Number.isInteger(index))
+			throw `${index} is not an integer`;
 		
+		const room = await this.GetRoom(roomID, userID);
+		if (!room.MemberIDs.includes(userID))
+			throw new HttpException("", HttpStatus.UNAUTHORIZED)
+		
+		return (await this.chatMessageRepo.findOneBy({ ID: this._getMsgID(roomID, index, room) }))
+			?.ToMessages()
+			?? []
+	}
+	
+	async PostNewMessage(
+			roomID: string, 
+			msgDTO: ChatMessageDTO, 
+			userID: string)
+		: Promise<string>
+	{
+		const { OwnerID, Message } = msgDTO
+		if (OwnerID !== userID)
+			throw new HttpException("", HttpStatus.UNAUTHORIZED)
+		const msg = new ChatMessage(OwnerID, Message)
+		
+		/* Check for mute */
+		const room = await this.GetRoom(roomID, userID)
+		const index = room.MuteIDs.indexOf(OwnerID)
+		if (index !== -1) {
+			const date = room.MuteDates[index]
+			if (+date > Date.now())
+				return date
+			room.MuteIDs.splice(index, 1)
+			room.MuteDates.splice(index, 1)
+		}
+		
+		/* Add Message */
+		room.MessageCount += 1
+		var depth = room.MessageGroupDepth
+		var msgGroup = await this.chatMessageRepo.findOneBy({ ID: this._getMsgID(room.ID, depth, room) })
+		if (!msgGroup || !msgGroup.AddMessage(msg)) {
+			depth = (room.MessageGroupDepth += 1)
+			msgGroup = await this._addMessageGroup(this._getMsgID(room.ID, depth, room))
+			msgGroup.AddMessage(msg)
+		}
+		
+		await Promise.all([
+			this.chatRoomRepo.save(room),
+			this.chatMessageRepo.save(msgGroup),
+		])
+		this.Notify("room-" + roomID, ChatMessageDTO.toString())
+		return ""
+	}
+	//#endregion
+	
+	//#region Creation Commands
+	async NewDirect(userID: string, memberID: string): Promise<string>{
 		var user = await this.GetOrAddUser(userID)
 		if (user.FriedsWithDirect.includes(memberID))
-			return ""
+			throw new HttpException("Direct chat already exists!", HttpStatus.BAD_REQUEST)
 		
 		const room = await this.chatRoomRepo.save(this.chatRoomRepo.create({
 			OwnerID:"", Name:"", HasPassword: false, RoomType: +ChatRoomType.Private,
@@ -149,19 +411,30 @@ export class ChatService {
 		
 		user.DirectChatsIn.push(room.ID)
 		user.FriedsWithDirect.push(memberID)
-		
 		await Promise.all([
 			this.chatUserRepo.save(user),
-			this.ModifyUser(memberID, async user => {
+			this._modifyUser(memberID, async user => {
 				user.DirectChatsIn.push(room.ID)
 				user.FriedsWithDirect.push(userID)
 				return true
 			}),
 		])
-		
 		this.Notify(`user-${memberID}`, "room")
-		
 		return room.ID
+	}
+	//#endregion
+	
+	//#region Outside Room Commands
+	Join = (roomID: string, selfID: string, password: string)
+		: Promise<string> => this._addMemberToRoom(roomID, selfID, password)	
+	
+	async GetOrAddUser(userID: string): Promise<ChatUser> {
+		var user = await this.chatUserRepo.findOneBy({ ID: userID })
+		if (!!user)
+			return user
+		return await this.chatUserRepo.save(this.chatUserRepo.create({
+			ID: userID, ChatRoomsIn:[], DirectChatsIn:[], FriedsWithDirect:[], BlockedUserIDs:[]
+		}))
 	}
 	
 	async NewRoom(roomDTO: ChatRoomDTO, userID: string): Promise<string> {
@@ -182,7 +455,7 @@ export class ChatService {
 			this.chatRoomPassRepo.save(this.chatRoomPassRepo.create({
 				ID: room.ID, Password: await bcrypt.hash(Password, 10)
 			})),
-			this.ModifyUser(OwnerID, async user => {
+			this._modifyUser(OwnerID, async user => {
 				user.ChatRoomsIn.push(room.ID)
 				return true
 			}),
@@ -191,196 +464,30 @@ export class ChatService {
 		return room.ID
 	}
 	
-	async GetMessages(roomID: string, index: number, userID: string): Promise<ChatMessage[]> {
-		if (!Number.isInteger(index))
-			throw `${index} is not an integer`;
-		const room = await this.GetRoom(roomID);
-		if (!room.MemberIDs.includes(userID))
-			throw new HttpException("", HttpStatus.UNAUTHORIZED)
-		const msgGroupManager = await this.chatMessageRepo.findOneBy({ ID: await this._getMsgID(roomID, index, room) })
-		if (!msgGroupManager)
-			return []
-		return msgGroupManager.ToMessages()
-	}
-	
-	async PostNewMessage(roomID: string, msgDTO: ChatMessageDTO, userID: string): Promise<string> {
-		
-		const { OwnerID, Message } = msgDTO
-		if (OwnerID !== userID)
-			throw new HttpException("", HttpStatus.UNAUTHORIZED)
-		const msg = new ChatMessage(OwnerID, Message)
-		
-		const room = await this.GetRoom(roomID)
-		const index = room.MuteIDs.indexOf(OwnerID)
-		if (index !== -1) {
-			const date = room.MuteDates[index]
-			if (+date > Date.now())
-				return date
-			room.MuteIDs.splice(index, 1)
-			room.MuteDates.splice(index, 1)
-		}
-		
-		room.MessageCount += 1
-		
-		var depth = room.MessageGroupDepth
-		var msgGroup = await this.chatMessageRepo.findOneBy({ ID: await this._getMsgID(room.ID, depth) })
-		if (!msgGroup || !msgGroup.AddMessage(msg)) {
-			depth = (room.MessageGroupDepth += 1)
-			msgGroup = await this._addMessageGroup(await this._getMsgID(room.ID, depth))
-			msgGroup.AddMessage(msg)
-		}
-		await Promise.all([
-			this.chatRoomRepo.save(room),
-			this.chatMessageRepo.save(msgGroup),
-		])
-		
-		this.Notify("room-" + roomID, ChatMessageDTO.toString())
-		return ""
-	}
-	
-	async AddUserToRoom(roomID: string, userID: string, password: string, memberID: string = ""): Promise<string> {
-		const [room, changed] = await this.ModifyRoom(roomID, async room => {
-			if (room.HasPassword)
-				if (!room.AdminIDs.includes(memberID) && !await bcrypt.compare(password, (await this.chatRoomPassRepo.findOneBy({ID: roomID})).Password))
-					throw new HttpException("", HttpStatus.UNAUTHORIZED)
-			
-			if (room.BanIDs.includes(userID) || room.MemberIDs.includes(userID))
-				throw new HttpException("", HttpStatus.UNAUTHORIZED)
-			
-			room.MemberIDs.push(userID)
-			await this.ModifyUser(userID, async user => {
-				user.ChatRoomsIn.push(roomID)
-				return true
-			})
-			return true
-		})
-		this.Notify(`room-${roomID}`, "mem")
-		this.Notify(`user-${userID}`, "room")
-		return roomID
-	}
-	
 	async GetPublicRooms(): Promise<ChatRoomPreview[]> {
 		return this.chatRoomRepo.findBy({RoomType: +ChatRoomType.Public})
 			.then(rooms => rooms.map(
 				room => new ChatRoomPreview(room.ID, room.Name, room.HasPassword, room.BanIDs)))
 	}
+	//#endregion
 	
-	async GetRoom(roomID: string): Promise<ChatRoom>
-		{ return this.chatRoomRepo.findOneBy({ ID: roomID }) }
-	
-	async ModifyRoom(roomID: string, func: (ChatUser: ChatRoom) => Promise<boolean>, room: ChatRoom | null = null): Promise<[ChatRoom, boolean]> {
-		room ??= await this.GetRoom(roomID)
-		var changed = await func(room)
-		if (changed)
-			room = await this.chatRoomRepo.save(room)
-		return [room, changed]
+	//#region EventSystem
+	private Subjects = {}
+	SubscribeTo(ID: string): Observable<string> {
+		var sub: Subject<string> = this.Subjects[ID]
+		// console.log(`${!!sub?"[SUB]":"[NEW]"} ${ID.substring(0, 4)}`)
+		if (!sub)
+			sub = (this.Subjects[ID] = new Subject<string>())
+		return sub.pipe(map((data: string): string => data))
 	}
 	
-	async GetOrAddUser(userID: string): Promise<ChatUser> {
-		var user = await this.chatUserRepo.findOneBy({ ID: userID })
-		if (!!user)
-			return user
-		return await this.chatUserRepo.save(this.chatUserRepo.create({
-			ID: userID, ChatRoomsIn:[], DirectChatsIn:[], FriedsWithDirect:[], BlockedUserIDs:[]
-		}))
+	Notify(ID: string, msg: string) {
+		// console.log(`< < < ${ID.substring(0, 4)} ${msg}`)
+		var sub: Subject<string> = this.Subjects[ID]
+		if (!!sub)
+			sub.next(msg)
 	}
-	
-	async ModifyUser(ID: string, func: (ChatUser: ChatUser) => Promise<boolean>, user: ChatUser | null = null): Promise<[ChatUser, boolean]> {
-		user ??= await this.GetOrAddUser(ID)
-		const changed = await func(user)
-		if (changed)
-			user = await this.chatUserRepo.save(user)
-		return [user, changed]
-	}
-	
-	async MakeAdmin(roomID: string, memberID: string, userID: string): Promise<boolean> {
-		const [_, changed] = await this.ModifyRoom(roomID, async room => {
-			if (!room.AdminIDs.includes(userID))
-				throw new HttpException("", HttpStatus.UNAUTHORIZED)
-			if (!room.AdminIDs.includes(memberID) && room.MemberIDs.includes(memberID)) {
-				room.AdminIDs.push(memberID)
-				return true
-			}
-			return false
-		})
-		if (changed)
-			this.Notify("room-" + roomID, "mem")
-		return changed
-	}
-	
-	async RemoveAdmin(roomID: string, memberID: string, ownerID: string): Promise<boolean> {
-		const [_, changed] = await this.ModifyRoom(roomID, async room => {
-			if (room.OwnerID !== ownerID || room.OwnerID === memberID)
-				throw new HttpException("", HttpStatus.UNAUTHORIZED)
-			
-			var index = room.AdminIDs.indexOf(memberID);
-			if (index === -1)
-				return false
-			room.AdminIDs.splice(index, 1);
-			return true
-		})
-		if (changed)
-			this.Notify(`room-${roomID}`, "mem")
-		return changed
-	}
-	
-	async RemoveMember(roomID: string, memberID: string, ban: boolean = false, adminID: string | null, selfID: string): Promise<boolean> {
-		const [_, changed] = await this.ModifyRoom(roomID, async room => {
-			if (!!adminID && !room.AdminIDs.includes(adminID))
-				throw new HttpException("", HttpStatus.UNAUTHORIZED)
-			
-			if (room.OwnerID === memberID
-				|| (room.AdminIDs.includes(memberID) && memberID !== selfID))
-				throw new HttpException("", HttpStatus.UNAUTHORIZED)
-			
-			var index = room.MemberIDs.indexOf(memberID);
-			if (index === -1)
-				return false
-			room.MemberIDs.splice(index, 1)
-			if (ban && !room.BanIDs.includes(memberID))
-				room.BanIDs.push(memberID)
-			
-			await this.ModifyUser(memberID, async user => {
-				const index = user.ChatRoomsIn.indexOf(roomID);
-				if (index === -1)
-					return false
-				user.ChatRoomsIn.splice(index, 1)
-				return true
-			})
-			
-			return true
-		})
-		if (changed) {
-			this.Notify(`room-${roomID}`, "mem")
-			this.Notify(`user-${memberID}`, "kick")
-		}
-		return changed
-	}
-	
-	async DeleteRoom(ownerID: string, roomID: string) {
-		const room = await this.GetRoom(roomID);
-		if (ownerID !== room.OwnerID)
-			throw new HttpException("", HttpStatus.UNAUTHORIZED)
-		
-		for (const memberID of room.MemberIDs) {
-			this.ModifyUser(memberID, async user => {
-				const index = user.ChatRoomsIn.indexOf(roomID);
-				if (index === -1)
-					return false
-				user.ChatRoomsIn.splice(index, 1)
-				this.Notify(`user-${memberID}`, "kick")
-				return true
-			})
-		}
-		
-		for (let index = 1; index <= room.MessageGroupDepth; index++)
-			this._getMsgID(roomID, index, room)
-				.then(ID => this.chatMessageRepo.delete({ID}))
-		
-		this.chatRoomPassRepo.delete({ID: roomID})
-		
-		await this.chatRoomRepo.remove(room);
-	}
+	//#endregion
 	
 	//#region Debug
 	
@@ -407,26 +514,6 @@ export class ChatService {
 		await this.chatUserRepo.delete({})
 		await this.chatMessageRepo.delete({})
 		await this.chatRoomPassRepo.delete({})
-	}
-	
-	//#endregion
-
-	//#region EventSystem
-	
-	private Subjects = {}
-	SubscribeTo(ID: string): Observable<string> {
-		var sub: Subject<string> = this.Subjects[ID]
-		// console.log(`${!!sub?"[SUB]":"[NEW]"} ${ID.substring(0, 4)}`)
-		if (!sub)
-			sub = (this.Subjects[ID] = new Subject<string>())
-		return sub.pipe(map((data: string): string => data))
-	}
-	
-	Notify(ID: string, msg: string) {
-		// console.log(`< < < ${ID.substring(0, 4)} ${msg}`)
-		var sub: Subject<string> = this.Subjects[ID]
-		if (!!sub)
-			sub.next(msg)
 	}
 	
 	//#endregion
