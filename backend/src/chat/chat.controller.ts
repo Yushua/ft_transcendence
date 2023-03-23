@@ -21,36 +21,42 @@ export class ChatController {
 	
 	//#region Get
 	
-	@Get("user/:userID")
-	GetChatUser(
-		@Param("userID") userID: string)
-		: Promise<ChatUser>
-			{ return this.service.GetOrAddUser(userID) }
-	
-	@Get("user/:userID/:info")
-	async GetChatUserInfo(
-		@Param("userID") userID: string,
-		@Param("info") info: string)
-		: Promise<ChatUser>
-			{ return this.service.GetOrAddUser(userID).then(user => user[info]) }
-	
 	@Get("public")
 	async GetPublicRooms()
 		: Promise<ChatRoomPreview[]>
 			{ return this.service.GetPublicRooms() }
 	
+	@Get("user")
+	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+	GetChatUser(
+		@Request() req: Request)
+		: Promise<ChatUser>
+			{ return this.service.GetOrAddUser(req["user"].id) }
+	
+	@Get("user/:info")
+	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+	async GetChatUserInfo(
+		@Request() req: Request,
+		@Param("info") info: string)
+		: Promise<ChatUser>
+			{ return this.service.GetOrAddUser(req["user"].id).then(user => user[info]) }
+	
 	@Get("room/:roomID")
+	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
 	GetRoom(
+		@Request() req: Request,
 		@Param("roomID") roomID: string)
 		: Promise<ChatRoom>
-			{ return this.service.GetRoom(roomID) }
+			{ return this.service.GetRoom(roomID, req["user"].id) }
 	
 	@Get("room/:roomID/:info")
+	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
 	async GetRoomInfo(
+		@Request() req: Request,
 		@Param("roomID") roomID: string,
 		@Param("info") info: string)
 		: Promise<any>
-			{ return this.service.GetRoom(roomID).then(room => room[info]) }
+			{ return this.service.GetRoom(roomID, req["user"].id).then(room => room[info]) }
 	
 	@Get("msg/:roomID/:index")
 	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
@@ -119,16 +125,16 @@ export class ChatController {
 		@Param("roomID") roomID: string,
 		@Param("pass") pass: string)
 		: Promise<string>
-			{ return this.service.AddUserToRoom(roomID, req["user"].id, pass) }
+			{ return this.service.Join(roomID, req["user"].id, pass) }
 	
 	@Patch("room/:roomID/:userID")
 	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
-	async AddUser(
+	async AddFriendToRoom(
 		@Request() req: Request,
 		@Param("roomID") roomID: string,
 		@Param("userID") userID: string,)
 		: Promise<void>
-			{ this.service.AddUserToRoom(roomID, userID, "", req["user"].id) }
+			{ this.service.AddFriend(roomID, userID, req["user"].id) }
 	
 	@Patch("unban/:roomID/:userID")
 	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
@@ -168,7 +174,7 @@ export class ChatController {
 		@Request() req: Request,
 		@Param("roomID") roomID: string,)
 		: Promise<boolean>
-			{ return this.service.RemoveMember(roomID, req["user"].id, false, null, req["user"].id) }
+			{ return this.service.Leave(roomID, req["user"].id) }
 	
 	@Delete("member/:roomID/:memberID")
 	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
@@ -177,7 +183,7 @@ export class ChatController {
 		@Param("roomID") roomID: string,
 		@Param("memberID") memberID: string,)
 		: Promise<boolean>
-			{ return this.service.RemoveMember(roomID, memberID, false, req["user"].id, req["user"].id) }
+			{ return this.service.Kick(roomID, memberID, req["user"].id) }
 	
 	@Delete("ban/:roomID/:memberID")
 	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
@@ -186,7 +192,7 @@ export class ChatController {
 		@Param("roomID") roomID: string,
 		@Param("memberID") memberID: string,)
 		: Promise<boolean>
-			{ return this.service.RemoveMember(roomID, memberID, true, req["user"].id, req["user"].id)}
+			{ return this.service.Ban(roomID, memberID, req["user"].id) }
 	
 	@Delete("admin/:roomID/:memberID")
 	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
@@ -210,6 +216,7 @@ export class ChatController {
 	//#region Server Sent Notifications
 	
 	@Sse('event/:ID')
+	// @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
 	NotifyClientOfRoomUpdate(
 		@Param("ID") ID: string)
 		: Observable<string>
