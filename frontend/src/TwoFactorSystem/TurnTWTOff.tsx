@@ -1,7 +1,7 @@
 import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
 import { newWindow } from '../App';
 import '../App.css';
-import UserProfilePage from '../UserProfile/UserProfile';
+import MainWindow from '../MainWindow/MainWindow';
 import HTTP from '../Utils/HTTP';
 import TWTEnabled from './TWTEnabled';
 
@@ -60,7 +60,7 @@ async function ChangeUserStatusTWTFalse(){
 async function turnTWTFalse(){
   await setNewTWT()
   await ChangeUserStatusTWTFalse()
-  newWindow(<UserProfilePage/>)
+  newWindow(<MainWindow/>)
 }
 
 function TurnTWTOff(){

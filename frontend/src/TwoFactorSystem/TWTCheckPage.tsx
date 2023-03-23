@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { getCookie, removeCookie, setCookie} from 'typescript-cookie';
 import { newWindow } from '../App';
 import '../App.css';
-import UserProfilePage from '../UserProfile/UserProfile';
+import MainWindow from '../MainWindow/MainWindow';
 import HTTP from '../Utils/HTTP';
 import TWTDisabled from './TWTDisabled';
 import TWTEnabled from './TWTEnabled';
@@ -31,7 +31,7 @@ async function setLoginTWT(){
       console.log("it is turned on")
       removeCookie('TWToken');
       setCookie('TWToken', TWToken,{ expires: 10000 });
-      newWindow(<UserProfilePage/>)
+      newWindow(<MainWindow/>)
     }
   } catch (error) {
     console.log(`error ${error}`)
@@ -53,7 +53,7 @@ export async function asyncGetTWTStatus():Promise<boolean> {
   } catch (error) {
     alert(`${error}, Token is out of date CheckPage`)
     removeCookie('TWToken');
-    newWindow(<UserProfilePage/>)
+    newWindow(<MainWindow/>)
   }
   return false
 }
@@ -67,7 +67,7 @@ export async function asyncGetTWTUserStatus():Promise<boolean> {
   } catch (error) {
     alert(`${error}, Token is out of date CheckPage`)
     removeCookie('TWToken');
-    newWindow(<UserProfilePage/>)
+    newWindow(<MainWindow/>)
   }
   return false
 }

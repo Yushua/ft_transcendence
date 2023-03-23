@@ -3,11 +3,12 @@ import '../App.css';
 import { getCookie, removeCookie } from 'typescript-cookie';
 import HTTP from '../Utils/HTTP';
 import LogoutButtonComponent from './ButtonComponents/LogoutButton';
-import UserProfilePage from './UserProfile';
 import { newWindow } from '../App';
+import MainWindow from '../MainWindow/MainWindow';
+import LoginPage from '../Login/LoginPage';
 
 async function getAccessToken(username:string){
-  removeCookie('code');
+  alert(`username == ${username}`)
   try {
     const response = await fetch(HTTP.HostRedirect() + `auth/ChangeUsername/${username}` , {
       headers: {
@@ -22,7 +23,7 @@ async function getAccessToken(username:string){
     }
     var result = await response.json();
     var status:boolean = result["status"]
-    console.log(`status == ${status}`)
+    alert(`status == ${status}`)
     if (status == undefined){
       alert("JWT authorization failed, returned nothing")
       window.location.replace('http://localhost:4242/');
@@ -31,18 +32,13 @@ async function getAccessToken(username:string){
       alert(`error in SetUsername already in use ${username}`)
     }
     else if (status == true){
-      newWindow(<UserProfilePage/>)
+      newWindow(<LoginPage/>)
     }
   } catch (error) {
     console.log(`error ${error}`)
     alert(`error in SetUsername already in use${error} username ${username}`)
     window.location.replace('http://localhost:4242/');
   }
-}
-
-interface FormElements extends HTMLFormControlsCollection {
-  eMail: HTMLInputElement
-  username: HTMLInputElement
 }
 
 const handleUsername = (e: any) => {

@@ -18,7 +18,6 @@ async function asyncGetName():Promise<string> {
 
 export async function asyncChangeName(newUsername:string) {
   HTTP.Post(`user-profile/userchange/${newUsername}`, null, {Accept: 'application/json'})
-  _setDisplay(false)
 }
 
 interface FormElements extends HTMLFormControlsCollection {
@@ -33,28 +32,20 @@ export interface YourFormElement extends HTMLFormElement {
 async function handleUsernameChange(e: React.FormEvent<YourFormElement>){
   e.preventDefault();
   await asyncChangeName(e.currentTarget.elements.username.value);
-  _setDisplay(false)
+  _setNameDisplay(e.currentTarget.elements.username.value)
 }
 
-var _setDisplay: Dispatch<SetStateAction<boolean>>
 var _setNameDisplay: React.Dispatch<React.SetStateAction<string>>
 
 async function asyncToggleGetName(){
   _setNameDisplay(await asyncGetName())
-  _setDisplay(true)
 };
 
 function UserProfilePage() {
-  const [Display, setDisplay] = useState<boolean>(false);
   const [nameDisplay, setNameDisplay] = useState<string>("");
-  _setDisplay = setDisplay
   _setNameDisplay = setNameDisplay
-  if (Display === false){
+  if (nameDisplay == ""){
     asyncToggleGetName()
-  }
-  else if (Display == true && nameDisplay == ""){
-    console.log(`nameDisplay change {${nameDisplay}}`)
-    newWindow(<SetUsername/>)
   }
   //in the end, Friendlist will be displayed on the side
   return (

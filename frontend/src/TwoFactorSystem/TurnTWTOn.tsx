@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
 import { newWindow } from '../App';
 import '../App.css';
-import UserProfilePage from '../UserProfile/UserProfile';
+import MainWindow from '../MainWindow/MainWindow';
 import HTTP from '../Utils/HTTP';
 
 async function turningTWTOn(code:string){
@@ -24,7 +24,7 @@ async function turningTWTOn(code:string){
       console.log("succesfully turned on")
       removeCookie('TWToken');
       setCookie('TWToken', await result["TWT"],{ expires: 10000 });
-      newWindow(<UserProfilePage/>);
+      newWindow(<MainWindow/>);
     }
     else {
         alert("wrong code input, try again")

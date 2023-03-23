@@ -116,8 +116,8 @@ export class AuthController {
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     @Get('ChangeUsername/:username')
     async setNewUsername(@Param('username') username: string,  @Request() req: Request){
-    return {
-        status: await this.AuthService.changeUsername(username, req["user"].intraName)
+        return {
+            status: await this.AuthService.changeUsername(username, req["user"].intraName)
     }}
 
     @Get('checkStatusTWT/:TWT')

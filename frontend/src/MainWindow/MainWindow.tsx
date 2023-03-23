@@ -1,9 +1,18 @@
 import React, { useEffect, useState } from "react";
+import { newWindow } from "../App";
 import MainChatWindow, { SetMainChatWindow } from "../Chat/Windows/MainChatWindow";
 import { Pong } from "../Games/pong/Pong";
 import LogoutButtonComponent from "../UserProfile/ButtonComponents/LogoutButton";
+import SetUsername from "../UserProfile/SetUsername";
 import UserProfilePage from "../UserProfile/UserProfile";
 import OurHistory from "../Utils/History";
+import HTTP from "../Utils/HTTP";
+
+async function asyncGetName():Promise<string> {
+	const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
+	var result = await JSON.parse(response)
+	return await result["username"];
+  }
 
 export function GetCurrentWindow() {
 	return _currentWindow
@@ -19,9 +28,28 @@ export function SetMainWindow(window: string, new_window = true) {
 }
 var _setWindow: React.Dispatch<React.SetStateAction<string>> | null = null
 
+var _setNameDisplay: React.Dispatch<React.SetStateAction<string>>
+var _setDisplay: React.Dispatch<React.SetStateAction<boolean>>
+async function asyncToggleGetName(){
+	_setNameDisplay(await asyncGetName())
+	_setDisplay(true)
+  };
+
+
 export default function MainWindow() {
-	
 	const [currentWindow, setWindow] = useState<string>("")
+	const [nameDisplay, setNameDisplay] = useState<string>("");
+	const [Display, setDisplay] = useState<boolean>(false);
+	_setNameDisplay = setNameDisplay
+	_setDisplay = setDisplay
+	if (Display == false){
+		asyncToggleGetName()
+	}
+	if (nameDisplay == ""){
+		alert(`nameDisplay change {${nameDisplay}}`)
+		newWindow(<SetUsername/>)
+	  }
+
 	_setWindow = setWindow
 	_currentWindow = currentWindow
 	

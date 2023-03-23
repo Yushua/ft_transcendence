@@ -87,7 +87,7 @@ export class AuthService {
         var user:UserProfile = await this.userProfileEntityRepos.findOneBy({ intraName })
         if(!user){
           user = this.userProfileEntityRepos.create({
-            intraName
+            intraName, wins: 0, losses: 0,
           });
           try {
             await this.userProfileEntityRepos.save(user);
@@ -150,6 +150,7 @@ export class AuthService {
 
       async changeUsername(username:string, intraName:string):Promise<boolean>{
         var user:UserProfile = await this.userProfileEntityRepos.findOneBy({ username })
+        console.log(user)
         if (!user){
           var user:UserProfile = await this.userProfileEntityRepos.findOneBy({ intraName })
           user.username = username;

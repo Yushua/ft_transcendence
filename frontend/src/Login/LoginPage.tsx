@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
 import { newWindow } from '../App';
 import '../App.css';
+import MainWindow from '../MainWindow/MainWindow';
 import TurnTWTOnLoginPage from '../TwoFactorSystem/TurnTWTOnLoginPage';
 import TWTCheckLoginPage from '../TwoFactorSystem/TWTCheckLoginPage';
 import UserProfilePage from '../UserProfile/UserProfile';
@@ -166,12 +167,14 @@ async function setupLoginTWT(){
   }
   var status:boolean = await asyncGetUserStatus()
   if (status == false){
-    newWindow(<UserProfilePage/>)
+    alert("go to main window")
+    newWindow(<MainWindow/>)
   }
   else {
     const statusTWT:boolean = await asyncGetTWTStatus()
     if (statusTWT == true){
-      newWindow(<UserProfilePage/>)
+      alert("go to main window")
+      newWindow(<MainWindow/>)
     }
     else {
       newWindow(<TurnTWTOnLoginPage/>)
