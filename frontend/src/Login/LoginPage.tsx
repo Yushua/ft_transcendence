@@ -129,7 +129,6 @@ async function setupLoginPage(){
     //token is validated
     setupLoginTWT()
   }
-  //if not, that means you have to log in again
   if (window.location.href.split('code=')[1] != undefined){
     removeCookie('accessToken');
     setCookie('accessToken', await setLogin(),{ expires: 10000 });
@@ -151,7 +150,9 @@ async function setupLoginTWT(){
   if (status == false){
     newWindow(<UserProfilePage/>)
   }
-
+  else {
+    newWindow(<TWTCheckLoginPage/>)
+  }
 }
 
 function LoginPage(){
