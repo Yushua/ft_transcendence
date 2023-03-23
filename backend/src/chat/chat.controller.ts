@@ -216,7 +216,7 @@ export class ChatController {
 	//#region Server Sent Notifications
 	
 	@Sse('event/:ID')
-	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+	// @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
 	NotifyClientOfRoomUpdate(
 		@Param("ID") ID: string)
 		: Observable<string>
