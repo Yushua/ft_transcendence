@@ -3,12 +3,12 @@ import React from 'react'
 
 export const JoinClassicButton = (props:any) => {
 	const [classicGame, setClassicGame] = React.useState(false)
-	const [controls, setControls] = React.useState('mouse')
 
 	const findGame = (controls:string) => {
 		let userID = props.userID
 		let userName = props.userName
 		props.socket.emit('LFG', {controls, userID, userName})
+		setClassicGame(!classicGame)
 	}
 	const isClassicGame = () => {
 		setClassicGame(!classicGame)

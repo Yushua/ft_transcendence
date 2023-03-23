@@ -10,6 +10,8 @@ import { JoinClassicButton } from './components/JoinClassicButton';
 import { CreateGameButton } from './components/CreateGameButton';
 import { Button } from '@mui/material'
 import PracticeModeLoop from './practice_mode/practice_mode';
+import { SetMainWindow } from '../../MainWindow/MainWindow'
+
 
 var game:Canvas
 var g_controls = ''
@@ -39,6 +41,7 @@ localStorage[Enum.gameData] = iniGameData
 localStorage[Enum.activeGames] = iniGameListMap
 localStorage[Enum.customGames] = iniCustomGames
 localStorage[Enum.gameCreated] = false
+
 
 
 export const Pong = () => {
@@ -124,11 +127,15 @@ export const Pong = () => {
 		})
 		socket.on('pending', () => {
 			setPending(true)
+			localStorage[Enum.pending] = true
 		})
 		socket.on('stop_pending', () => {
 			setPending(false)
+			localStorage[Enum.pending] = false
 		})
 		socket.on('joined', (controls:string) => {
+
+			SetMainWindow("pong", true)
 			game = new Canvas('')
 			setInGame(true)
 			setPending(false)
@@ -191,8 +198,6 @@ export const Pong = () => {
 			socket.off('connect')
 			socket.off('pending')
 			socket.off('stop_pending')
-			socket.off('joined')
-			socket.off('left')
 			socket.off('gamedata')
 			socket.off('gamelist')
 			socket.off('custom_gamelist')
@@ -240,7 +245,7 @@ export const Pong = () => {
 		PracticeModeLoop.Stop()
 		socket.emit('leave', gameData.gameName)
 	}
-	
+
 	function ShowGameList() {
 		socket.emit('refreshGameList')
 		setShowGameList(!showGameList)
