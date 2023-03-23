@@ -1,8 +1,6 @@
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import './UserProfile.css';
 import '../App.css';
-import DropDownMenuAddFriendList from './old stuff/DropDownMenuAddFriendList';
-import DropDownMenuRemoveFriendListId from './old stuff/DropDownMenuRemoveFriendListId';
 import ProfilePicture from './ProfilePicture';
 import HTTP from '../Utils/HTTP'
 import { newWindow } from '../App';
@@ -38,22 +36,26 @@ async function handleUsernameChange(e: React.FormEvent<YourFormElement>){
   _setDisplay(false)
 }
 
-var username: string = "";
 var _setDisplay: Dispatch<SetStateAction<boolean>>
+var _setNameDisplay: React.Dispatch<React.SetStateAction<string>>
 
 async function asyncToggleGetName(){
-  username = await asyncGetName()
+  _setNameDisplay(await asyncGetName())
   _setDisplay(true)
 };
 
 function UserProfilePage() {
   const [Display, setDisplay] = useState<boolean>(false);
+  const [nameDisplay, setNameDisplay] = useState<string>("");
   _setDisplay = setDisplay
+  _setNameDisplay = setNameDisplay
   if (Display === false){
+    alert("getting the name")
     asyncToggleGetName()
   }
-  else if (Display == true && username == ""){
-    console.log(`username change {${username}}`)
+  else if (Display == true && nameDisplay == ""){
+    console.log(`nameDisplay change {${nameDisplay}}`)
+    alert("setname first Login")
     newWindow(<SetUsername/>)
   }
   //in the end, Friendlist will be displayed on the side
@@ -65,7 +67,7 @@ function UserProfilePage() {
       <FriendListSearchButtonComponent/>
       <div>
         <ProfilePicture/>
-        <label id="name" htmlFor="name">Welcome {username}</label>
+        <label id="name" htmlFor="name">Welcome {nameDisplay}</label>
       </div>
       <div>
       <form onSubmit={handleUsernameChange}>

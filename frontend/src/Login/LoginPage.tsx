@@ -6,8 +6,7 @@ import TWTCheckLoginPage from '../TwoFactorSystem/TWTCheckLoginPage';
 import UserProfilePage from '../UserProfile/UserProfile';
 import HTTP from '../Utils/HTTP';
 
-async function checkAuthentication(){
-  console.log(`auth token is in ${getCookie("accessToken")}`)
+async function RefreshAuthentication(){
   try {
     const response = await fetch(HTTP.HostRedirect() + `auth/check` , {
       headers: {
@@ -20,17 +19,8 @@ async function checkAuthentication(){
     if (!response.ok) {
       throw new Error(`Error! status: ${response.status}`);
     }
-    console.log("i am out")
-    var result = await response.json();
-    if (result["result"] == true){
-      console.log("checking TWT token")
-      newWindow(<TWTCheckLoginPage/>)
-      //or whats stored in the position
-    }
-    else {
-      removeCookie("accessToken")
-      newWindow(<LoginPage/>)
-    }
+    newWindow(<TWTCheckLoginPage/>)
+    //or whats stored in the position
   } catch (error) {
     alert(`authentication code invalid ${error}`)
     removeCookie("accessToken")
@@ -53,11 +43,7 @@ async function setLogin(){
     if (!response.ok) {
       throw new Error(`Error! status: ${response.status}`);
     }
-    console.log("succesfull")
     var result = await response.json();
-    var OAuthToken:string = result["OAuthToken"]
-    removeCookie('OAuthToken');
-    setCookie('OAuthToken', OAuthToken,{ expires: 10000 });
     var accessToken:string = result["accessToken"]
     if (accessToken == undefined || accessToken == null){
       removeCookie('accessToken');
@@ -69,10 +55,10 @@ async function setLogin(){
       newWindow(<TWTCheckLoginPage/>)
     }
   } catch (error) {
-    console.log(`error ${error}`)
-    removeCookie("accessToken")
-    window.location.replace(HTTP.HostRedirect());
-    HTTP.HostRedirect()
+    alert(`already logged in error ${error}`)
+    //logout
+    // removeCookie("accessToken")
+    // window.location.replace(HTTP.HostRedirect());
   }
 }
 
@@ -80,15 +66,13 @@ const loginIntoOAuth = () => {
   window.location.replace('https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-c73b865f02b3cf14638e1a50c5caa720828d13082db6ab753bdb24ca476e1a4c&redirect_uri=http%3A%2F%2Flocalhost%3A4242%2F&response_type=code');
 }
 
-async function checkRefresh(){
-  await checkAuthentication()
+async function setRefresh(){
+  await RefreshAuthentication()
 }
 
 function LoginPage(){
-  if (getCookie("accessToken") != undefined &&  getCookie("accessToken") != null){
-    //when you can login because you have an authenToken Cookie
-    console.log("i am refreshing")
-    checkRefresh()
+  if (getCookie("accessToken") != undefined && getCookie("accessToken") != null){
+    setRefresh()
   }
   //to check to see if the login works
   if (window.location.href.split('code=')[1] != undefined){

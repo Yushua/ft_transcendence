@@ -4,7 +4,6 @@ import { newWindow } from '../App';
 import '../App.css';
 import UserProfilePage from '../UserProfile/UserProfile';
 import HTTP from '../Utils/HTTP';
-import TWTCheckPage from './TWTCheckPage';
 
 async function turningTWTOn(code:string){
   try {

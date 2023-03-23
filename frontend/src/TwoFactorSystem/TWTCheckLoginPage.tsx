@@ -6,6 +6,7 @@ import UserProfilePage from '../UserProfile/UserProfile';
 import HTTP from '../Utils/HTTP';
 import TurnTWTOn from './TurnTWTOn';
 import TurnTWTOnLoginPage from './TurnTWTOnLoginPage';
+import { useNavigate } from "react-router-dom";
 
 async function setLoginTWT(){
   try {
@@ -63,6 +64,10 @@ export async function asyncGetUserStatus():Promise<boolean> {
     const response = HTTP.Get(`auth/checkUserTWTStatus`, null, {Accept: 'application/json'})
     var result = await JSON.parse(response)
       console.log(` user status twt {${await result["status"]}}`)
+      if (result["status"] == false){
+        alert("TWT is OFF refresh")
+        await newWindow(<UserProfilePage/>)
+      }
       return await result["status"]
   } catch (error) {
     alert(`${error}, Token is out of date Loginpage`)
@@ -75,31 +80,39 @@ export async function asyncGetUserStatus():Promise<boolean> {
 var _setDisplay: React.Dispatch<React.SetStateAction<boolean>>
 
 async function tmp(){
+  alert("i am refreshing in TWT")
   if (getCookie('TWToken') == null || getCookie('TWToken') == undefined){
+    alert("undefined TWT")
     await setLoginTWT()
   }
-  console.log(`TWT user status == {${await asyncGetUserStatus()}}`)
-  if (await asyncGetUserStatus() == true){
-    if (await asyncGetTWTStatus()== true){
-      console.log(`TWT is already on, go to userProfile`)
+  const statusUser:boolean = await asyncGetUserStatus()
+  if (statusUser == true){
+    alert("TWT is ONN refresh")
+    const statusTWT:boolean = await asyncGetTWTStatus()
+    if (statusTWT == true){
+      alert(`TWT is already on, go to userProfile`)
       newWindow(<UserProfilePage/>)
     }
     else {
-      console.log(`already off`)
-      newWindow(<TurnTWTOnLoginPage/>)
+      _setDisplay(true)
     }
   }
-  newWindow(<UserProfilePage/>)
 }
 
 function TWTCheckLoginPage(){
   //to check if your accessToken is already valid
+  alert("checking TWT token\n in it")
+  //remove code=
   const [Display, setDisplay] = useState<boolean>(false);
   _setDisplay = setDisplay
   if (Display == false){ tmp() }
+  else {
+    <TurnTWTOnLoginPage/>
+  }
+  alert(" it is on, and not yet enabled")
   return (
     <div className="TWTEnabled">
-      <TurnTWTOn/>
+      logging into your two factor
     </div>
   );
 }
