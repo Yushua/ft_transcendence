@@ -128,6 +128,7 @@ export class AuthController {
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     @Get('checkUserTWTStatus')
     async getUserStatusTWT(@Request() req: Request){
+        console.log(`twt status ${req["user"].TWTStatus}`)
         return {status:  req["user"].TWTStatus}
     }
 
