@@ -11,7 +11,7 @@ import { CreateGameButton } from './components/CreateGameButton';
 import { Button } from '@mui/material'
 import PracticeModeLoop from './practice_mode/practice_mode';
 import { SetMainWindow } from '../../MainWindow/MainWindow'
-
+import { JoinPrivateButton } from './components/PrivateGameButton';
 
 var game:Canvas
 var g_controls = ''
@@ -60,6 +60,7 @@ export const Pong = () => {
 	const [activeGames, setActiveGames] = React.useState(iniGameListMap)
 	const [customGames, setCustomGames] = React.useState(iniCustomGames)
 	const [gameCreated, setGameCreated] = React.useState(false)
+	const [gameID, setGameID] = React.useState('')
 
 	/* reset states to locally stored states if user comes back to window */
 	if (!firstCall)
@@ -118,7 +119,6 @@ export const Pong = () => {
 			newActiveGames = games
 			setActiveGames(newActiveGames)
 			localStorage[Enum.activeGames] = newActiveGames
-
 		}
 	
 		/* INCOMING EVENTS ON SOCKET */
@@ -162,9 +162,11 @@ export const Pong = () => {
 			}
 			updateCustomGames(customGamesMap)
 		})
-		socket.on('game_created', (gamename:string) => {
+		socket.on('game_created', (gamename:string, gameID:string) => {
 			setShowGameList(false)
 			setGameCreated(true)
+			if (gameID)
+				setGameID(gameID)
 			localStorage[Enum.showGameList] = false
 			localStorage[Enum.gameCreated] = true
 			gameName.current = gamename
@@ -195,14 +197,14 @@ export const Pong = () => {
 		/* cleanup function after user leaves window/disconnects */
 		return () => {
 			console.log('unregistering events')
-			socket.off('connect')
-			socket.off('pending')
-			socket.off('stop_pending')
-			socket.off('gamedata')
-			socket.off('gamelist')
-			socket.off('custom_gamelist')
-			socket.off('spectating')
-			socket.off('disconnect')
+			// socket.off('connect')
+			// socket.off('pending')
+			// socket.off('stop_pending')
+			// socket.off('gamedata')
+			// socket.off('gamelist')
+			// socket.off('custom_gamelist')
+			// socket.off('spectating')
+			// socket.off('disconnect')
 			PracticeModeLoop.Stop()
 			firstCall = false
 		}
@@ -243,6 +245,7 @@ export const Pong = () => {
 	/* BUTTON HANDLERS */
 	const leaveGame = () => {
 		PracticeModeLoop.Stop()
+		setGameID('')
 		socket.emit('leave', gameData.gameName)
 	}
 
@@ -255,9 +258,10 @@ export const Pong = () => {
 	function deleteGame(gameName:string) {
 		socket.emit('deleteCreatedGame', gameName)
 		setGameCreated(false)
+		setGameID('')
 		localStorage[Enum.gameCreated] = false
 	}
-	
+
 	function StartPracticeGame() {
 		game = new Canvas('')
 		setInGame(true)
@@ -277,13 +281,11 @@ export const Pong = () => {
 			{inGame || spectating ? <Canvas instance={game} socket={socket} gameData={gameData}/> : <EmptyCanvas/>}
 			{!inGame && !spectating && !gameCreated ?
 				<ul>
-					<li>
-						<JoinClassicButton socket={socket} userID={userID} userName={userName}/>
-					</li>
+					<li><JoinClassicButton socket={socket} userID={userID} userName={userName}/></li>
 					&nbsp;
-					<li>
-						<CreateGameButton socket={socket} userID={userID} userName={userName}/>
-					</li>
+					<li><JoinPrivateButton socket={socket} userID={userID} userName={userName}/></li>
+					&nbsp;
+					<li><CreateGameButton socket={socket} userID={userID} userName={userName}/></li>
 					&nbsp;
 					<li><Button variant="contained" onClick={() => StartPracticeGame()}>Practice Mode</Button></li>
 				</ul> : <></>}
@@ -301,7 +303,9 @@ export const Pong = () => {
 			{showGameList && !inGame && !gameCreated ? <GameList userID={userID} userName={userName} customGames={customGames} activeGames={activeGames} socket={socket} /> : <></>}
 			{gameCreated ?
 				<div>
-					<>Waiting for players...</>
+					<div>
+						{gameID !== '' ? <>Code to join game: {gameID}</> : <>Waiting for players...</>}
+					</div>
 					<Button variant="contained" onClick={() => deleteGame(gameName.current)}>Delete Game</Button>
 				</div> : <></> }
 		</React.Fragment>

@@ -1,5 +1,24 @@
 import { Button, Box, Slider, Typography } from '@mui/material'
 import React from 'react'
+// import { subtle } from "crypto";
+
+// const algorithm = { name: "AES-GCM", length: 256 };
+// const keyUsages = ["encrypt", "decrypt"] as const;
+// const cryptoKey = subtle.generateKey(algorithm, true, keyUsages);
+
+
+function makeGameID() {
+    let gameID = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < 13) {
+		gameID += characters.charAt(Math.floor(Math.random() * charactersLength));
+    	counter += 1;
+    }
+    return gameID;
+}
+
 
 export const CreateGameButton = (props:any) => {
 	const [customGame, setCustomGame] = React.useState(false)
@@ -27,7 +46,11 @@ export const CreateGameButton = (props:any) => {
 	const createGame = (type:string, customSettings: any) => {
 		let userID = props.userID
 		let userName = props.userName
-		props.socket.emit('createGame', {type, userID, userName, customSettings})
+		let gameID = undefined
+		if (type === 'private') {
+			gameID = makeGameID()
+		}
+		props.socket.emit('createGame', {type, gameID, userID, userName, customSettings})
 	}
 	const isCustomGame = () => {
 		setCustomGame(!customGame)
@@ -98,6 +121,7 @@ export const CreateGameButton = (props:any) => {
 						type="text"
 						id="message"
 						name="message"
+						maxLength={11}
 						onChange={handleTextChange} />
 				</li>
 				&nbsp;
