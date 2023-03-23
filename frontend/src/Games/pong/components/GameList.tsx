@@ -36,6 +36,7 @@ export class GameList extends React.Component<any, any> {
 	{
 		const rows = []
 		let i = 0
+		console.log('type:', type)
 		for (var game of games) {
 			if (type === 'active')
 				rows[i] = createData_active(i, game[0], game[1][0], game[1][1])
