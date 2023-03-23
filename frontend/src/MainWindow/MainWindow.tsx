@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import MainChatWindow, { SetMainChatWindow } from "../Chat/Windows/MainChatWindow";
 import { Pong } from "../Games/pong/Pong";
-import LogoutButtonComponent from "../UserProfile/LogoutButton";
+import LogoutButtonComponent from "../UserProfile/ButtonComponents/LogoutButton";
 import UserProfilePage from "../UserProfile/UserProfile";
 import OurHistory from "../Utils/History";
 

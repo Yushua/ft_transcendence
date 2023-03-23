@@ -1,16 +1,19 @@
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import './UserProfile.css';
 import '../App.css';
-import DropDownMenuAddFriendList from './DropDownMenuAddFriendList';
-import DropDownMenuRemoveFriendListId from './DropDownMenuRemoveFriendListId';
 import ProfilePicture from './ProfilePicture';
 import HTTP from '../Utils/HTTP'
+import { newWindow } from '../App';
+import SetUsername from './SetUsername';
+import LogoutButtonComponent from './ButtonComponents/LogoutButton';
+import TWTButtonComponent from './ButtonComponents/TWTButtonComponent';
+import SearchButtonComponent from './ButtonComponents/SearchButtonComponent';
+import FriendListSearchButtonComponent from './ButtonComponents/FriendListSearchButtonComponent';
 
-async function asyncGetName() {
-  console.log("I am here with get username")
+async function asyncGetName():Promise<string> {
   const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
   var result = await JSON.parse(response)
-  username = await result["username"];
+  return await result["username"];
 }
 
 export async function asyncChangeName(newUsername:string) {
@@ -20,8 +23,6 @@ export async function asyncChangeName(newUsername:string) {
 
 interface FormElements extends HTMLFormControlsCollection {
   username: HTMLInputElement
-  password: HTMLInputElement
-  eMail: HTMLInputElement
   newInput: HTMLInputElement
 }
 
@@ -35,46 +36,48 @@ async function handleUsernameChange(e: React.FormEvent<YourFormElement>){
   _setDisplay(false)
 }
 
-var username: string = "";
 var _setDisplay: Dispatch<SetStateAction<boolean>>
+var _setNameDisplay: React.Dispatch<React.SetStateAction<string>>
 
 async function asyncToggleGetName(){
-  await asyncGetName()
+  _setNameDisplay(await asyncGetName())
   _setDisplay(true)
 };
 
-export async function asyncSetDisplay(){
-  _setDisplay(true)
-}
-
 function UserProfilePage() {
   const [Display, setDisplay] = useState<boolean>(false);
+  const [nameDisplay, setNameDisplay] = useState<string>("");
   _setDisplay = setDisplay
+  _setNameDisplay = setNameDisplay
   if (Display === false){
     asyncToggleGetName()
   }
-
+  else if (Display == true && nameDisplay == ""){
+    console.log(`nameDisplay change {${nameDisplay}}`)
+    newWindow(<SetUsername/>)
+  }
+  //in the end, Friendlist will be displayed on the side
   return (
     <div className="UserProfile">
+      <LogoutButtonComponent/>
+      <TWTButtonComponent/>
+      <SearchButtonComponent/>
+      <FriendListSearchButtonComponent/>
       <div>
         <ProfilePicture/>
-        <label id="name" htmlFor="name">Welcome {username}</label>
+        <label id="name" htmlFor="name">Welcome {nameDisplay}</label>
       </div>
       <div>
       <form onSubmit={handleUsernameChange}>
         <div>
-          <label htmlFor="username">Username:</label>
+          <label htmlFor="username">new username Input:</label>
           <input id="username" type="text" />
           <button type="submit">Submit</button>
         </div>
       </form>
       </div>
-        <DropDownMenuAddFriendList
-        />
-        <DropDownMenuRemoveFriendListId
-        />
-      </div>
-
+    </div>
+    //logout when initialized
   );
 }
 

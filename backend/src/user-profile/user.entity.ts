@@ -1,7 +1,4 @@
-import { Exclude } from "class-transformer";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { UserStatus } from "./user-profile-status.model";
-import { FriendsProfile } from "./user.entity.friends";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class UserProfile {
@@ -11,22 +8,17 @@ export class UserProfile {
     @Column({
         unique: true
     })
+    intraName: string;
+
+    @Column({ default: ""})
     username: string;
 
     //string path towards the picture
     @Column({ default: ""})
     profilePicture: string
 
-    @Column()
-    password: string;
-
-    @Column({
-        unique: true
-    })
-    eMail: string;
-
-    @Column()
-    status: UserStatus;
+    @Column({ default: false})
+    TWTStatus: boolean
 
     @Column("text", { array: true , default: "{}"})
     friendList: string[];

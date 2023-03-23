@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserProfileModule } from './user-profile/user-profile.module';
-import { LoginModule } from './login/login.module';
 import { AuthModule } from './auth/auth.module';
 import { ChatModule } from './chat/chat.module';
 import { AppController } from './app.controller';
@@ -22,15 +21,12 @@ import { PongModule } from './pong/pong.module';
       autoLoadEntities: true,
       synchronize: true, //keeps it in sync
       }),
-    LoginModule,
     AuthModule,
     ChatModule,
     GatewayModule,
     PFPModule,
     PongModule,
   ],
-  controllers: [
-    AppController
-  ]
+  controllers: [AppController]
 })
 export class AppModule {}

@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import './App.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import LoginPage from './Login/Login';
+import LoginPage from './Login/LoginPage';
 
-export function newWindow(newWindow:JSX.Element) {
+export async function newWindow(newWindow:JSX.Element) {
   if (!!_setWindow)
     _setWindow(newWindow)
 }
 
 var _setWindow: React.Dispatch<React.SetStateAction<JSX.Element>> | null = null
 
-const App = () => {
+function App(){
 
   const [window, setWindow] = useState<JSX.Element>(<LoginPage />)
   _setWindow = setWindow

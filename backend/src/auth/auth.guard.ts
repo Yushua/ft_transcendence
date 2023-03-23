@@ -1,13 +1,10 @@
 import { CanActivate, ExecutionContext, Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Observable } from 'rxjs';
-import { JwtPayload } from './jwt-payload.interface';
-import { Headers } from '@nestjs/common';
 import { IncomingMessage } from 'http';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserProfile } from 'src/user-profile/user.entity';
-import { REQUEST } from '@nestjs/core';
 @Injectable()
 export class AuthGuardEncryption implements CanActivate {
 	
