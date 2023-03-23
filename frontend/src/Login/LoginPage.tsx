@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
 import { newWindow } from '../App';
 import '../App.css';
-import TurnTWTOnLoginPage from '../TwoFactorSystem/TurnTWTOnLoginPage';
 import TWTCheckLoginPage from '../TwoFactorSystem/TWTCheckLoginPage';
 import UserProfilePage from '../UserProfile/UserProfile';
 import HTTP from '../Utils/HTTP';
@@ -112,25 +111,6 @@ export async function asyncGetUserStatus():Promise<boolean> {
   return false
 }
 
-/**
- * check the TWT token status. if coming in ehre, first check if the User has TWT on
- * @returns 
- */
-export async function asyncGetTWTStatus():Promise<boolean> {
-  try {
-    const response = HTTP.Get(`auth/checkStatusTWT/${getCookie('TWToken')}`, null, {Accept: 'application/json'})
-    var result = await JSON.parse(response)
-    console.log("TWT token status " + result["status"])
-    return await result["status"]
-  } catch (error) {
-    alert(`${error}, Token is out of date Loginpage`)
-    removeCookie('TWToken');
-    newWindow(<TWTCheckLoginPage/>)
-    //react router
-  }
-  return false
-}
-
 const loginIntoOAuth = () => {
   window.location.replace('https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-c73b865f02b3cf14638e1a50c5caa720828d13082db6ab753bdb24ca476e1a4c&redirect_uri=http%3A%2F%2Flocalhost%3A4242%2F&response_type=code');
 }
@@ -141,57 +121,41 @@ const loginIntoOAuth = () => {
  * if valid, validate TWT
  */
 async function setupLoginPage(){
-  alert("JWT start")
   if (getCookie("accessToken") != undefined && getCookie("accessToken") != null){
     //token is already made
     if (await RefreshAuthentication() == false){
       alert("unable to access backend")
     }
-    alert("JWT Validated")
+    //token is validated
     setupLoginTWT()
   }
   //if not, that means you have to log in again
   if (window.location.href.split('code=')[1] != undefined){
-    alert("creatig accesstoken intra")
     removeCookie('accessToken');
     setCookie('accessToken', await setLogin(),{ expires: 10000 });
     newWindow(<LoginPage/>)
   }
   else {
-    alert("login into intra=")
     loginIntoOAuth()
   }
 }
 
 async function setupLoginTWT(){
   //if token is not ehre, make one
-  alert("TWT start")
   if (getCookie('TWToken') == null || getCookie('TWToken') == undefined){
+    alert("undefined TWT")
     removeCookie('TWToken');
     setCookie('TWToken', await setLoginTWT(),{ expires: 10000 });
-    alert("TWT created")
   }
   var status:boolean = await asyncGetUserStatus()
-  alert(`status user TWT == ${status}`)
   if (status == false){
     newWindow(<UserProfilePage/>)
   }
-  else {
-    const statusTWT:boolean = await asyncGetTWTStatus()
-    if (statusTWT == true){
-      newWindow(<UserProfilePage/>)
-    }
-    else {
-      newWindow(<TurnTWTOnLoginPage/>)
-    }
-  }
+
 }
 
 function LoginPage(){
-  // setupLoginPage()
-  useEffect(() => {
-    setupLoginPage()
-  }, []);
+  setupLoginPage()
   return (
     <div className="Loginpage">
     </div>
