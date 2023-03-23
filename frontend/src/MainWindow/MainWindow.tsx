@@ -28,11 +28,14 @@ export function SetMainWindow(window: string, new_window = true) {
 }
 var _setWindow: React.Dispatch<React.SetStateAction<string>> | null = null
 
-var _setNameDisplay: React.Dispatch<React.SetStateAction<string>>
-var _setDisplay: React.Dispatch<React.SetStateAction<boolean>>
+var _setNameDisplay: React.Dispatch<React.SetStateAction<string>> | null = null
+var _setDisplay: React.Dispatch<React.SetStateAction<boolean>> | null = null
 async function asyncToggleGetName(){
-	_setNameDisplay(await asyncGetName())
+	const a = await asyncGetName()
+	console.log(a)
+	_setNameDisplay(a)
 	_setDisplay(true)
+	newWindow(<MainWindow/>)
   };
 
 
@@ -45,7 +48,7 @@ export default function MainWindow() {
 	if (Display == false){
 		asyncToggleGetName()
 	}
-	if (nameDisplay == ""){
+	if (nameDisplay === ""){
 		alert(`nameDisplay change {${nameDisplay}}`)
 		newWindow(<SetUsername/>)
 	  }
