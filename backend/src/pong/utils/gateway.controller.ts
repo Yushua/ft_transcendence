@@ -97,7 +97,7 @@ export class MyGateway implements OnModuleInit {
 
 	@SubscribeMessage('createGame')
 	handleCreateGame(
-	@MessageBody() gameInfo: {type:string, userID:string, userName:string, customSettings:any},
+	@MessageBody() gameInfo: {type:string, gameID:string, userID:string, userName:string, customSettings:any},
 	@ConnectedSocket() player: Socket) {
 		if (player2 === player) /* if creator was trying to join a classic game he stops doing so */
 		{
@@ -114,22 +114,36 @@ export class MyGateway implements OnModuleInit {
 		CustomConfig.paddleSize = gameInfo.customSettings.paddleSize
 		CustomConfig.gameName = gameInfo.customSettings.gameName
 		let gameData = new GameData(CustomConfig)
-		customGames.set(CustomConfig.gameName, [gameData, [player.id, gameInfo.userID]])
 		connections.set(player, [undefined, [player.id, gameInfo.userID]])
-		const serializedMap = [...customGames.entries()]
-		this.server.emit('custom_gamelist', serializedMap)
-		player.emit('game_created', CustomConfig.gameName)
+		if (gameInfo.type === 'public')
+		{
+			customGames.set(CustomConfig.gameName, [gameData, [player.id, gameInfo.userID]])
+			const serializedMap = [...customGames.entries()]
+			this.server.emit('custom_gamelist', serializedMap)
+		}
+		else if (gameInfo.type === 'private')
+		{
+			gameData.gameName === undefined
+			customGames.set(gameInfo.gameID, [gameData, [player.id, gameInfo.userID]])
+		}
+		player.emit('game_created', CustomConfig.gameName, gameInfo.gameID)
 	}
 
 
 	@SubscribeMessage('joinCustomGame')
 	handleJoin(
-	@MessageBody() playerInfo: { gameName:string, userID:string, userName:string},
+	@MessageBody() playerInfo: { gameName:string, gameID:string, userID:string, userName:string},
 	@ConnectedSocket() player: Socket) {
-		let customGame = customGames.get(playerInfo.gameName)
+		let customGame:[GameData, string[]]
+		let key = playerInfo.gameName
+		if (!key)
+			key = playerInfo.gameID /* private games have ID as key, public ones gameName */
+		customGame = customGames.get(key)
+
+		/* game needs to exist and can't join the game you yourself created*/
 		if (customGame && customGame[1][IDs.p1_socket_id] !== player.id)
 		{
-			customGames.delete(playerInfo.gameName)
+			customGames.delete(key)
 			const serializedMap = [...customGames.entries()];
 			this.server.emit('custom_gamelist', serializedMap)
 			let gameData = customGame[0]
@@ -145,7 +159,7 @@ export class MyGateway implements OnModuleInit {
 			}
 			_IDs.push(player.id)
 			_IDs.push(playerInfo.userID)
-			games.set(playerInfo.gameName, [gameData, _IDs])
+			games.set(key, [gameData, _IDs])
 			connections.set(player, [gameData, _IDs])
 			connections.set(p2, [gameData, _IDs])
 			player.emit('joined', gameData.p1_controls)
@@ -297,7 +311,7 @@ export class MyGateway implements OnModuleInit {
 			const gameIDs:string[] = game[1][1]
 			
 			/* Make sure games don't get updated twice */
-			const gameName: string = gameData.gameName
+			const gameName: string = game[0]
 			if (!updated_games[gameName]) {
 				updated_games[gameName] = true
 				
@@ -320,7 +334,8 @@ export class MyGateway implements OnModuleInit {
 					break;
 				default: continue;
 			}
-			games.delete(gameData.gameName)
+			games.delete(gameName)
+			console.log('grats: ', winningPlayer, '\ntoo bad: ', losingPlayer)
 			PongService.updateWinLoss(winningPlayer, losingPlayer);
 			const serializedMap = [...games.entries()];
 			this.server.emit('gamelist', serializedMap)
