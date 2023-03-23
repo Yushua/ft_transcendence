@@ -4,7 +4,6 @@ import { newWindow } from '../App';
 import '../App.css';
 import UserProfilePage from '../UserProfile/UserProfile';
 import HTTP from '../Utils/HTTP';
-import TWTCheckPage from './TWTCheckPage';
 
 async function turningTWTOn(code:string){
   try {
@@ -21,7 +20,7 @@ async function turningTWTOn(code:string){
     }
     var result = await response.json();
     console.log(`turning TWT on if {${await result["status"]}} == true`)
-    if (await result["status"] == true){
+    if (await result["status"] === true){
       console.log("succesfully turned on")
       removeCookie('TWToken');
       setCookie('TWToken', await result["TWT"],{ expires: 10000 });

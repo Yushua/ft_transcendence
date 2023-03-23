@@ -20,10 +20,10 @@ async function setLoginTWT(){
     }
     var result = await response.json();
     var TWToken:string = result["TWToken"]
-    if (TWToken == undefined){
+    if (TWToken === undefined){
       removeCookie('TWToken');
     }
-    if (TWToken == undefined){
+    if (TWToken === undefined){
       console.log("TWT is UNdefined in LOGINPAGE check")
       window.location.replace(HTTP.HostRedirect());
     }
@@ -43,7 +43,7 @@ async function setLoginTWT(){
 }
 
 export async function asyncGetTWTStatus():Promise<boolean> {
-  if (getCookie('TWToken') == null || getCookie('TWToken') == undefined){
+  if (getCookie('TWToken') === null || getCookie('TWToken') === undefined){
     await setLoginTWT()
   }
   try {
@@ -75,7 +75,7 @@ export async function asyncGetTWTUserStatus():Promise<boolean> {
 var _setDisplay: React.Dispatch<React.SetStateAction<boolean>>
 
 async function tmp(){
-  if (await asyncGetTWTUserStatus()== true){
+  if (await asyncGetTWTUserStatus() === true){
     _setDisplay(true)
   }
   else {
@@ -87,7 +87,7 @@ function TWTCheckPage(){
   //to check if your accessToken is already valid
   const [Display, setDisplay] = useState<boolean>(false);
   _setDisplay = setDisplay
-  if (Display == false){ tmp() }
+  if (Display === false){ tmp() }
   console.log(`display == ${Display}`)
   //if off, then turn it on, if on, turn it off
   return (

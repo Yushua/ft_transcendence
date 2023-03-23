@@ -20,7 +20,7 @@ async function turningTWTOn(code:string):Promise<string>{
     }
     var result = await response.json();
     console.log(`turning TWT on if {${await result["status"]}} == true`)
-    if (await result["status"] == true){
+    if (await result["status"] === true){
       removeCookie('TWToken');
       return await result["TWT"]
     }
@@ -37,7 +37,7 @@ async function turningTWTOn(code:string):Promise<string>{
 async function handleSubmit(event:any){
   event.preventDefault();
   var input:string = await turningTWTOn(_inputValue)
-  if (input != ""){
+  if (input !== ""){
     setCookie('TWToken', input, { expires: 10000 });
   }
   alert("wrong code input, try again")

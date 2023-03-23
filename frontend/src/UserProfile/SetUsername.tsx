@@ -1,14 +1,12 @@
-import React, { useState } from 'react';
 import '../App.css';
 
-import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
+import { getCookie, removeCookie } from 'typescript-cookie';
 import HTTP from '../Utils/HTTP';
 import LogoutButtonComponent from './ButtonComponents/LogoutButton';
 import UserProfilePage from './UserProfile';
 import { newWindow } from '../App';
 
 async function getAccessToken(username:string){
-  var code:string | undefined = getCookie('code');
   removeCookie('code');
   try {
     const response = await fetch(HTTP.HostRedirect() + `auth/ChangeUsername/${username}` , {
@@ -45,10 +43,6 @@ async function getAccessToken(username:string){
 interface FormElements extends HTMLFormControlsCollection {
   eMail: HTMLInputElement
   username: HTMLInputElement
-}
-
-interface YourFormElement extends HTMLFormElement {
- readonly elements: FormElements
 }
 
 const handleUsername = (e: any) => {

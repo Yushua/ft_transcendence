@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
 import { newWindow } from '../App';
 import '../App.css';
@@ -19,10 +18,10 @@ async function setNewTWT(){
     }
     var result = await response.json();
     var TWToken:string = result["TWToken"]
-    if (TWToken == undefined){
+    if (TWToken === undefined){
       removeCookie('TWToken');
     }
-    if (TWToken == undefined){
+    if (TWToken === undefined){
       console.log("TWT is UNdefined in LOGINPAGE check")
       window.location.replace(HTTP.HostRedirect());
     }
