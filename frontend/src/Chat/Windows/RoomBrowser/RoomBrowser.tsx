@@ -4,6 +4,7 @@ import ChatUser from "../../../Utils/Cache/ChatUser"
 import ChatRoom from "../../../Utils/Cache/ChatRoom"
 import { SetMainChatWindow, asyncChangeRoom } from "../MainChatWindow"
 import OurHistory from "../../../Utils/History"
+import { Button } from "@mui/material"
 
 function _tryJoiningRoom(roomID: string, hasPass: boolean) {
 	var password: string | null = ""
@@ -36,12 +37,12 @@ function _updateRooms() {
 			const rooms = (await JSON.parse(mgs.responseText))
 				.filter((room: any) => !ChatUser.ChatRoomsIn.includes(room.ID))
 				.map((room: any) => (
-				<button
+				<Button variant="outlined"
 					key={room.ID}
 					disabled={room.BanIDs.includes(ChatUser.ID)}
-					style={{width: "100%"}}
+					sx={{height: ".5cm", width: "100%"}}
 					onClick={() => _tryJoiningRoom(room.ID, room.HasPassword)}
-					>{room.BanIDs.includes(ChatUser.ID) ? "[ Banned ] " : ""}{room.HasPassword ? "[ Has Password ] " : ""}{room.Name}</button>
+					>{room.BanIDs.includes(ChatUser.ID) ? "[ Banned ] " : ""}{room.HasPassword ? "[ Has Password ] " : ""}{room.Name}</Button>
 			))
 			if (rooms.length === 0)
 				SetRoom( [<div key={"n"}>No rooms to join.</div>] )
@@ -71,11 +72,14 @@ export default function RoomBrowser() {
 	
 	return (
 		<div style={{display: "table-cell", width: "100%"}}>
-			<button
-				style={{height: ".5cm", fontSize: ".35cm"}}
+			<br />
+			<Button
+				variant="text"
+				sx={{height: ".5cm", fontSize: ".35cm"}}
 				onClick={_ => _updateRooms()}
-				>Refresh</button>
-			<div style={{overflowY: "scroll", overflowX: "hidden", width: "100%", fontSize: ".45cm", height: "5cm"}}>
+				>Refresh</Button>
+			{/* <div style={{overflowY: "scroll", overflowX: "hidden", width: "100%", fontSize: ".45cm", height: "5cm"}}> */}
+			<div style={{width: "100%", fontSize: ".45cm"}}>
 				{rooms}
 			</div>
 		</div>

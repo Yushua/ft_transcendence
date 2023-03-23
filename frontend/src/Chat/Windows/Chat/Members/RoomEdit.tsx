@@ -5,6 +5,7 @@ import ChatRoom from "../../../../Utils/Cache/ChatRoom";
 import HTTP from "../../../../Utils/HTTP";
 import NameStorage from "../../../../Utils/Cache/NameStorage";
 import OurHistory from "../../../../Utils/History";
+import { Button, Checkbox } from "@mui/material";
 
 export default function RoomEdit() {
 	
@@ -17,19 +18,22 @@ export default function RoomEdit() {
 	return (
 		<>
 			<div style={{width: "100%", display: "table"}}>
-				<button
+				<Button variant="contained"
 					style={{height: ".5cm", boxSizing: "border-box"}}
 					onClick={() => ChangeMemberWindow("members")}
-					>Back</button> Edit Room
+					>Back</Button> Edit Room
 			</div>
 			
-			Room name: <input id="_RoomName" style={{width: "100%", boxSizing: "border-box"}} type="text" value={name} onChange={data => setName(data.target.value)} disabled={dis}/><br />
+			New Room Name <input id="_RoomName" style={{width: "100%", boxSizing: "border-box"}} type="text" value={name} onChange={data => setName(data.target.value)} disabled={dis}/><br />
 			
 			New Password?
-				<input id="_NewPassword" type="checkbox" checked={newPass} onChange={event => setNewPass(event.target.checked)} />
+				<Checkbox checked={newPass} onChange={event => setNewPass(event.target.checked)} sx={{width: ".5cm", height: ".5cm", transform: "scale(.75)"}}/>
 				<input id="_RoomPassword" style={{width: "100%", boxSizing: "border-box"}} type="password" value={pass} onChange={data => setPass(data.target.value)} disabled={!newPass || dis}/><br />
-			Private: <input id="_RoomType" type="checkbox" checked={priv} onChange={data => setPriv(data.target.checked)} disabled={dis}/><br />
-			<button
+			<Button variant={priv ? "contained" : "outlined"}
+					style={{height: ".5cm"}}
+					onClick={() => setPriv(!priv)}
+					>{priv ? "Private" : "Public"}</Button><br />
+			<Button variant="contained"
 				disabled={dis}
 				onClick={() => {
 					if (User.ID === "")
@@ -50,10 +54,10 @@ export default function RoomEdit() {
 						err => setDis(false)
 					)
 				}}
-				>Update</button>
+				>Update</Button>
 			<br />
 			<br />
-			<button
+			<Button variant="contained"
 				disabled={dis}
 				onClick={() => {
 					if (User.ID === ""
@@ -64,7 +68,8 @@ export default function RoomEdit() {
 					ChatRoom.Clear()
 					OurHistory.Add()
 				}}
-				>Delete Room</button>
+				color="error"
+				>Delete Room</Button>
 		</>
 	)
 }

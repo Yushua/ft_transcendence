@@ -8,6 +8,7 @@ import RoomBrowser from "./RoomBrowser/RoomBrowser";
 import User from "../../Utils/Cache/User";
 import HTTP from "../../Utils/HTTP";
 import { EmptyCanvas } from "../../Games/pong/components/EmtpyCanvas";
+import { Button } from "@mui/material";
 
 export async function asyncChangeRoom(roomID: string) {
 	await ChatRoom.asyncUpdate(roomID, true)
@@ -47,32 +48,33 @@ export default function MainChatWindow() {
 	<center>
 		<div style={{width: "80%"}}>
 			<div>
-				<button
+				<Button variant={MainWindow === "chat" ? "contained" : "outlined"}
 					onClick={() => setMainWindow("chat")}
-					disabled={MainWindow === "chat"}
-					>Chat</button>
-				<button
+					>Chat</Button>
+				<Button variant={MainWindow === "rooms" ? "contained" : "outlined"}
 					onClick={() => setMainWindow("rooms")}
-					disabled={MainWindow === "rooms"}
-					>Rooms to Join</button>
-				<button
+					>Rooms to Join</Button>
+				<Button variant={MainWindow === "newroom" ? "contained" : "outlined"}
 					onClick={() => setMainWindow("newroom")}
-					disabled={MainWindow === "newroom"}
-					>New Room</button>
+					>New Room</Button>
 			</div>
 			
 			{/* MetaDiv */}
-			<div style={{border: "solid", width: "100%", height: "5.5cm", overflow: "hidden", lineHeight: ".5cm"}}>
+			<div
+				style={{
+					// border: "solid",
+					width: "100%", height: "5.5cm", lineHeight: ".5cm"}}
+			>
 				{/* ContentTable */}
 				<div style={{display: "table", width: "100%", height: "100%"}}>
 					{window}
 				</div>
 			</div>
 		</div>
-		<button onClick={() => {
+		{/* <button onClick={() => {
 			HTTP.Delete("chat/all")
 			ChatRoom.Clear()
-		}}>DEBUG: Delete all chat data</button>
+		}}>DEBUG: Delete all chat data</button> */}
 		<EmptyCanvas/>
 	</center>
 	)

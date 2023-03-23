@@ -1,6 +1,5 @@
 import ManualEventManager from "../Events/ManualEventManager"
 import { GetCurrentWindow, SetMainWindow } from "../MainWindow/MainWindow"
-import ChatRoom from "./Cache/ChatRoom"
 
 var funcs = {}
 
@@ -11,13 +10,14 @@ export default class OurHistory {
 	
 	static Add(entryName: string = "MainWindow", args: any = null, func: (args: URLSearchParams) => void | null = null) {
 		OurHistory.WindowChangeEvent.Run()
+		
 		funcs[entryName] = func
 		
 		var params = `?window=${GetCurrentWindow()}`
 		if (!!args)
 			for (const [name, value] of Object.entries(args))
 				params += `&${name}=${value}`
-				
+		
 		window.history.pushState({
 			func: entryName,
 		}, "", params)

@@ -5,6 +5,7 @@ import User from "../../../../Utils/Cache/User";
 import HTTP from "../../../../Utils/HTTP";
 import NameStorage from "../../../../Utils/Cache/NameStorage";
 import { asyncChangeRoom } from "../../MainChatWindow";
+import { Button } from "@mui/material";
 
 export async function asyncUpdateFriendsList() {
 	if (!!_setFriends)
@@ -12,20 +13,14 @@ export async function asyncUpdateFriendsList() {
 }
 
 function GenerateFriedListJSX(): JSX.Element[] {
-	return User.Friends.map(friendID => {
-		if (ChatRoom.IsRoomOfFriend(friendID))
-			return (<div key={friendID}><button
-				id={friendID}
-				style={{height: ".5cm", width: "100%", textAlign: "left", fontSize: ".35cm"}}
-				disabled
-				>{NameStorage.User.Get(friendID)}</button></div>)
-		else
-			return (<div key={friendID}><button
-				id={friendID}
-				style={{height: ".5cm", width: "100%", textAlign: "left", fontSize: ".35cm"}}
-				onClick={_ => _changeToFriendRoom(friendID)}
-				>{NameStorage.User.Get(friendID)}</button></div>)
-	})
+	return User.Friends.map(friendID => <div key={friendID}>
+		<Button 
+			variant={ChatRoom.IsRoomOfFriend(friendID) ? "contained" : "text"}
+			id={friendID}
+			style={{height: ".5cm", width: "100%", textAlign: "left", fontSize: ".35cm"}}
+			onClick={_ => _changeToFriendRoom(friendID)}
+		>{NameStorage.User.Get(friendID)}</Button></div>
+	)
 }
 
 async function _changeToFriendRoom(friendID: string) {
@@ -55,7 +50,7 @@ export default function FriendsList() {
 	}
 	
 	return (
-		<div style={{overflowY: "scroll", overflowX: "hidden", width: "3.5cm", fontSize: ".45cm", height: "5cm"}}>
+		<div style={{overflowY: "scroll", overflowX: "hidden", width: "5cm", fontSize: ".45cm", height: "5cm"}}>
 			{friends}
 		</div>
 	)
