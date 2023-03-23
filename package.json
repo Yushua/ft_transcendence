@@ -3,6 +3,7 @@
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@mui/material": "^5.11.14",
+    "@mui/x-data-grid": "^6.0.3",
     "@nestjs/cli": "^9.2.0",
     "@nestjs/common": "^9.3.10",
     "@nestjs/config": "^2.3.1",

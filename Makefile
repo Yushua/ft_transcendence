@@ -41,4 +41,6 @@ react:
 	npm i typescript @types/node @types/react @types/react-dom @types/jest
 	npm i react-scripts
 	npm i @mui/material @emotion/react @emotion/styled
+	npm i @mui/x-data-grid
 	npm i immutability-helper
+
