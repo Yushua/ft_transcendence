@@ -9,11 +9,11 @@ export class Config {
 	paddleSize:number
 	ballSpeed:number
 	constructor() {
-		this.gameName = ''
+		this.gameName = 'gameName'
 		this.p1_name = ''
 		this.p2_name = ''
-		this.p1_controls = ''
-		this.p2_controls = ''
+		this.p1_controls = 'mouse'
+		this.p2_controls = 'mouse'
 		this.p1_userID = ''
 		this.p2_userID = ''
 		this.ballSpeed = 100
