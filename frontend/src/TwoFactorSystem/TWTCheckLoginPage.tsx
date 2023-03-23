@@ -1,119 +1,71 @@
 import React, { useState } from 'react';
-import { getCookie, removeCookie, setCookie} from 'typescript-cookie';
+import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
 import { newWindow } from '../App';
 import '../App.css';
-import UserProfilePage from '../UserProfile/UserProfile';
 import HTTP from '../Utils/HTTP';
-import TurnTWTOn from './TurnTWTOn';
 import TurnTWTOnLoginPage from './TurnTWTOnLoginPage';
-import { useNavigate } from "react-router-dom";
 
-async function setLoginTWT(){
+async function turningTWTOn(code:string):Promise<string>{
   try {
-    const response = await fetch(HTTP.HostRedirect() + `auth/makeNewTWT` , {
+    const response = await fetch(HTTP.HostRedirect() + `auth/checkTWT/${getCookie('TWToken')}/${code}` , {
       headers: {
         Accept: 'application/json',
         'Authorization': 'Bearer ' + getCookie("accessToken"),
+        'Content-Type': 'application/json',
       },
+      method: 'GET'
     })
     if (!response.ok) {
       throw new Error(`Error! status: ${response.status}`);
     }
     var result = await response.json();
-    var TWToken:string = result["TWToken"]
-    console.log(`newcode == {${TWToken}}`)
-    if (TWToken == undefined){
+    console.log(`turning TWT on if {${await result["status"]}} == true`)
+    if (await result["status"] == true){
       removeCookie('TWToken');
-      console.log("TWT is UNdefined in LOGINPAGE check")
-      window.location.replace(HTTP.HostRedirect());
+      return await result["TWT"]
     }
     else {
-      removeCookie('TWToken');
-      setCookie('TWToken', TWToken,{ expires: 10000 });
-      return 
+        alert("wrong code input, try again")
+        _setInputValue("")
     }
   } catch (error) {
-    console.log(`error ${error}`)
-    removeCookie("accessToken")
-    //logout of the system
-    window.location.replace(HTTP.HostRedirect());
-    HTTP.HostRedirect()
+    alert("wrong code input, try again")
+    _setInputValue("")
   }
+  return ""
 }
-
-/**
- * check the TWT token status. if coming in ehre, first check if the User has TWT on
- * @returns 
- */
-export async function asyncGetTWTStatus():Promise<boolean> {
-  try {
-    const response = HTTP.Get(`auth/checkStatusTWT/${getCookie('TWToken')}`, null, {Accept: 'application/json'})
-    var result = await JSON.parse(response)
-    console.log("TWT token status " + result["status"])
-    return await result["status"]
-  } catch (error) {
-    alert(`${error}, Token is out of date Loginpage`)
-    removeCookie('TWToken');
-    newWindow(<TWTCheckLoginPage/>)
+async function handleSubmit(event:any){
+  event.preventDefault();
+  var input:string = await turningTWTOn(_inputValue)
+  if (input != ""){
+    setCookie('TWToken', input, { expires: 10000 });
   }
-  return false
-}
+  alert("wrong code input, try again")
+  _setInputValue("")
+};
 
-export async function asyncGetUserStatus():Promise<boolean> {
-  try {
-    const response = HTTP.Get(`auth/checkUserTWTStatus`, null, {Accept: 'application/json'})
-    var result = await JSON.parse(response)
-      console.log(` user status twt {${await result["status"]}}`)
-      if (result["status"] == false){
-        alert("TWT is OFF refresh")
-        await newWindow(<UserProfilePage/>)
-      }
-      return await result["status"]
-  } catch (error) {
-    alert(`${error}, Token is out of date Loginpage`)
-    removeCookie('TWToken');
-    newWindow(<TWTCheckLoginPage/>)
-  }
-  return false
-}
-
-var _setDisplay: React.Dispatch<React.SetStateAction<boolean>>
-
-async function tmp(){
-  alert("i am refreshing in TWT")
-  if (getCookie('TWToken') == null || getCookie('TWToken') == undefined){
-    alert("undefined TWT")
-    await setLoginTWT()
-  }
-  const statusUser:boolean = await asyncGetUserStatus()
-  if (statusUser == true){
-    alert("TWT is ONN refresh")
-    const statusTWT:boolean = await asyncGetTWTStatus()
-    if (statusTWT == true){
-      alert(`TWT is already on, go to userProfile`)
-      newWindow(<UserProfilePage/>)
-    }
-    else {
-      _setDisplay(true)
-    }
-  }
-}
+var _inputValue: string
+var _setInputValue: React.Dispatch<React.SetStateAction<string>>
 
 function TWTCheckLoginPage(){
-  //to check if your accessToken is already valid
   alert("checking TWT token\n in it")
-  //remove code=
-  const [Display, setDisplay] = useState<boolean>(false);
-  _setDisplay = setDisplay
-  if (Display == false){ tmp() }
-  else {
-    <TurnTWTOnLoginPage/>
-  }
-  alert(" it is on, and not yet enabled")
+  const [inputValue, setInputValue] = useState("");
+  _inputValue = inputValue
+  _setInputValue = setInputValue
+  const handleInputChange = (event:any) => {
+    setInputValue(event.target.value);
+  };
+
+  alert("Fill in TWT")
+  newWindow(<TurnTWTOnLoginPage/>)
   return (
-    <div className="TWTEnabled">
-      logging into your two factor
-    </div>
+    <form onSubmit={handleSubmit}>
+    <label>
+      enable two Factor Authentication to login
+      <input type="text" value={inputValue} onChange={handleInputChange} />
+    </label>
+    <button type="submit">Submit</button>
+  </form>
   );
 }
 
