@@ -160,14 +160,11 @@ async function setupLoginPage(){
 
 async function setupLoginTWT(){
   //if token is not ehre, make one
-  alert("TWT start")
   if (getCookie('TWToken') == null || getCookie('TWToken') == undefined){
     removeCookie('TWToken');
     setCookie('TWToken', await setLoginTWT(),{ expires: 10000 });
-    alert("TWT created")
   }
   var status:boolean = await asyncGetUserStatus()
-  alert(`status user TWT == ${status}`)
   if (status == false){
     newWindow(<UserProfilePage/>)
   }

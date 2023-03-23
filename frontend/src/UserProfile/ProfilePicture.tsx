@@ -16,7 +16,6 @@ async function handleProfilePicture (e: React.MouseEvent<HTMLButtonElement>){
    */
 var link:string = ""; 
 function ProfilePicture() {
-  alert("i am in userProfile")
   const [profilePicture, setProfilePicture] = useState<boolean>(false);
   // const [Storepicture, setStorePicture] = useState<string>("");
   if (profilePicture === false){

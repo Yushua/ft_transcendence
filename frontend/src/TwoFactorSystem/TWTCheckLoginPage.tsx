@@ -49,7 +49,6 @@ var _inputValue: string
 var _setInputValue: React.Dispatch<React.SetStateAction<string>>
 
 function TWTCheckLoginPage(){
-  alert("checking TWT token\n in it")
   const [inputValue, setInputValue] = useState("");
   _inputValue = inputValue
   _setInputValue = setInputValue
@@ -57,7 +56,6 @@ function TWTCheckLoginPage(){
     setInputValue(event.target.value);
   };
 
-  alert("Fill in TWT")
   newWindow(<LoginPage/>)
   return (
     <form onSubmit={handleSubmit}>
