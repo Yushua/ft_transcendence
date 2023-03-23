@@ -50,12 +50,10 @@ function UserProfilePage() {
   _setDisplay = setDisplay
   _setNameDisplay = setNameDisplay
   if (Display === false){
-    alert("getting the name")
     asyncToggleGetName()
   }
   else if (Display == true && nameDisplay == ""){
     console.log(`nameDisplay change {${nameDisplay}}`)
-    alert("setname first Login")
     newWindow(<SetUsername/>)
   }
   //in the end, Friendlist will be displayed on the side

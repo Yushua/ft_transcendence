@@ -45,10 +45,6 @@ function SearchBarFriend() {
     setShowDropdown(true);
   };
 
-  const handleOptionClick = (option: string[]) => {
-    setSelectedOption(option);
-    setShowDropdown(false);
-  };
   return (
     <div>
       <div>
