@@ -10,13 +10,14 @@ import { JoinClassicButton } from './components/JoinClassicButton';
 import { CreateGameButton } from './components/CreateGameButton';
 import { Button } from '@mui/material'
 import PracticeModeLoop from './practice_mode/practice_mode';
+import { SetMainWindow } from '../../MainWindow/MainWindow'
+
 
 var game:Canvas
 var g_controls = ''
 var iniGameData = new GameData()
 var iniGameListMap = new Map<string, string[]>()
 var iniCustomGames = new Map<string, any[]>()
-var localStorage = new Array<any>()
 var firstCall:boolean = true
 
 const Enum = {
@@ -29,6 +30,19 @@ const Enum = {
 	customGames: 6,
 	gameCreated: 7,
 }
+
+/* Store states for when user switches windows and comes back  */
+var localStorage = new Array<any>()
+localStorage[Enum.pending] = false
+localStorage[Enum.inGame] = false
+localStorage[Enum.spectating] = false
+localStorage[Enum.showGameList] = false
+localStorage[Enum.gameData] = iniGameData
+localStorage[Enum.activeGames] = iniGameListMap
+localStorage[Enum.customGames] = iniCustomGames
+localStorage[Enum.gameCreated] = false
+
+
 
 export const Pong = () => {
 
@@ -47,10 +61,9 @@ export const Pong = () => {
 	const [customGames, setCustomGames] = React.useState(iniCustomGames)
 	const [gameCreated, setGameCreated] = React.useState(false)
 
+	/* reset states to locally stored states if user comes back to window */
 	if (!firstCall)
 	{
-		// console.log('stored:', localStorage)
-		// console.log('current:', pending, inGame, spectating, showGameList, gameData, activeGames, customGames, gameCreated )
 		setPending(localStorage[Enum.pending])
 		setInGame(localStorage[Enum.inGame])
 		setSpectating(localStorage[Enum.spectating])
@@ -61,17 +74,8 @@ export const Pong = () => {
 		setGameCreated(localStorage[Enum.gameCreated])
 		firstCall = true
 	}
-	else
-	{
-		localStorage[Enum.pending] = pending
-		localStorage[Enum.inGame] = inGame
-		localStorage[Enum.spectating] = spectating
-		localStorage[Enum.showGameList] = showGameList
-		localStorage[Enum.gameData] = gameData
-		localStorage[Enum.activeGames] = activeGames
-		localStorage[Enum.customGames] = customGames
-		localStorage[Enum.gameCreated] = gameCreated
-	}
+
+	/*  */
 	React.useEffect(() => {
 		/* FUNCTIONS TO UPDATE DATA USED TO RENDER CANVAS */
 		function updateGameData(data:GameData)
@@ -123,12 +127,15 @@ export const Pong = () => {
 		})
 		socket.on('pending', () => {
 			setPending(true)
+			localStorage[Enum.pending] = true
 		})
 		socket.on('stop_pending', () => {
 			setPending(false)
+			localStorage[Enum.pending] = false
 		})
-
 		socket.on('joined', (controls:string) => {
+
+			SetMainWindow("pong", true)
 			game = new Canvas('')
 			setInGame(true)
 			setPending(false)
@@ -185,21 +192,18 @@ export const Pong = () => {
 		socket.on('disconnect', () => {
 			socket.emit('user disconnected')
 		})
+		/* cleanup function after user leaves window/disconnects */
 		return () => {
 			console.log('unregistering events')
 			socket.off('connect')
 			socket.off('pending')
 			socket.off('stop_pending')
-			socket.off('joined')
-			socket.off('left')
 			socket.off('gamedata')
 			socket.off('gamelist')
 			socket.off('custom_gamelist')
 			socket.off('spectating')
 			socket.off('disconnect')
-			// g_controls = ''
 			PracticeModeLoop.Stop()
-			// console.log('stored:', localStorage)
 			firstCall = false
 		}
 	},[socket])
@@ -241,6 +245,7 @@ export const Pong = () => {
 		PracticeModeLoop.Stop()
 		socket.emit('leave', gameData.gameName)
 	}
+
 	function ShowGameList() {
 		socket.emit('refreshGameList')
 		setShowGameList(!showGameList)
