@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
 import { newWindow } from '../App';
 import '../App.css';
+import LoginPage from '../Login/LoginPage';
 import HTTP from '../Utils/HTTP';
 import TurnTWTOnLoginPage from './TurnTWTOnLoginPage';
 
@@ -57,7 +58,7 @@ function TWTCheckLoginPage(){
   };
 
   alert("Fill in TWT")
-  newWindow(<TurnTWTOnLoginPage/>)
+  newWindow(<LoginPage/>)
   return (
     <form onSubmit={handleSubmit}>
     <label>

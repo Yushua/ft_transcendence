@@ -123,19 +123,21 @@ const loginIntoOAuth = () => {
 async function setupLoginPage(){
   if (getCookie("accessToken") !== undefined && getCookie("accessToken") !== null){
     //token is already made
-    if (await RefreshAuthentication() === false){
+    if ((await RefreshAuthentication()) === false){
       alert("unable to access backend")
       newWindow(<ErrorPage/>)
     }
     //token is validated
     setupLoginTWT()
   }
-  if (window.location.href.split('code=')[1] !== undefined){
+  else if (window.location.href.split('code=')[1] !== undefined){
+    alert("making the account")
     removeCookie('accessToken');
     setCookie('accessToken', await setLogin(),{ expires: 10000 });
     newWindow(<LoginPage/>)
   }
   else {
+    alert("loggin in")
     loginIntoOAuth()
   }
 }
