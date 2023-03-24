@@ -50,6 +50,10 @@ function UserProfilePage() {
   //in the end, Friendlist will be displayed on the side
   return (
     <div className="UserProfile">
+      <LogoutButtonComponent/>
+      <TWTButtonComponent/>
+      <SearchButtonComponent/>
+      <FriendListSearchButtonComponent/>
       <div>
         <ProfilePicture/>
         <label id="name" htmlFor="name">Welcome {nameDisplay}</label>

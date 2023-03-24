@@ -32,7 +32,7 @@ async function getAccessToken(username:string){
       alert(`error in SetUsername already in use ${username}`)
     }
     else if (status == true){
-      newWindow(<MainWindow/>)
+      newWindow(<LoginPage/>)
     }
   } catch (error) {
     console.log(`error ${error}`)
