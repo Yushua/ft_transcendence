@@ -45,7 +45,7 @@ export default function MembersWindow() {
 	}
 	
 	return (
-		<div style={{display: "table-cell", width: "5cm"}}>
+		<div style={{display: "table-cell", width: "3.5cm"}}>
 			{window}
 		</div>
 	)

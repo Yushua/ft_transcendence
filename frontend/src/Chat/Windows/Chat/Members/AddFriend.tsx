@@ -4,7 +4,6 @@ import ChatRoom from "../../../../Utils/Cache/ChatRoom";
 import NameStorage from "../../../../Utils/Cache/NameStorage";
 import User from "../../../../Utils/Cache/User";
 import HTTP from "../../../../Utils/HTTP";
-import { Button } from "@mui/material";
 
 export async function asyncUpdateAddFriendList() {
 	if (!!_setFriends)
@@ -17,25 +16,15 @@ function GenerateAddFriendJSX(): JSX.Element[] {
 		.map(friendID => 
 			ChatRoom.BanIDs.includes(friendID)
 			?
-			<div key={friendID}>
-				<img
-					src={HTTP.HostRedirect() + NameStorage.UserPFP.Get(friendID)}
-					style={{width: ".5cm", height: ".5cm", borderRadius: "50%"}}
-				/>
-				<Button variant="outlined"
-					style={{height: ".5cm", width: "80%", textAlign: "left", fontSize: ".35cm"}}
-					disabled
-					>{"[ Banned ]"}</Button></div>
+			<div key={friendID}><button
+				style={{height: ".5cm", width: "100%", textAlign: "left", fontSize: ".35cm"}}
+				disabled
+				>{"Banned: "}{NameStorage.User.Get(friendID)}</button></div>
 			:
-			<div key={friendID}>
-				<img
-					src={HTTP.HostRedirect() + NameStorage.UserPFP.Get(friendID)}
-					style={{width: ".5cm", height: ".5cm", borderRadius: "50%"}}
-				/>
-				<Button variant="outlined"
-					style={{height: ".5cm", width: "80%", textAlign: "left", fontSize: ".35cm"}}
-					onClick={async () => { await HTTP.asyncPatch(`chat/room/${ChatRoom.ID}/${friendID}`) }}
-					>{NameStorage.User.Get(friendID)}</Button></div>
+			<div key={friendID}><button
+				style={{height: ".5cm", width: "100%", textAlign: "left", fontSize: ".35cm"}}
+				onClick={async () => { await HTTP.asyncPatch(`chat/room/${ChatRoom.ID}/${friendID}`) }}
+				>{NameStorage.User.Get(friendID)}</button></div>
 		)
 }
 
@@ -52,13 +41,13 @@ export default function AddFriend() {
 	return (
 	<>
 		<div style={{width: "100%", display: "table"}}>
-			<Button variant="contained"
+			<button
 				style={{height: ".5cm", boxSizing: "border-box"}}
 				onClick={() => ChangeMemberWindow("members")}
-				>Back</Button> Add Friend
+				>Back</button> Add Friend
 		</div>
 		
-		<div style={{overflowY: "scroll", overflowX: "hidden", width: "5cm", fontSize: ".45cm", height: "5cm"}}>
+		<div style={{overflowY: "scroll", overflowX: "hidden", width: "3.5cm", fontSize: ".45cm", height: "5cm"}}>
 			{friends}
 		</div>
 	</>

@@ -21,10 +21,10 @@ var _currentWindow: string
 
 export function SetMainWindow(window: string, new_window = true) {
 	_currentWindow = window
-	if (new_window)
-		OurHistory.Add()
 	if (!!_setWindow)
 		_setWindow(window)
+	if (new_window)
+		OurHistory.Add()
 }
 var _setWindow: React.Dispatch<React.SetStateAction<string>> | null = null
 

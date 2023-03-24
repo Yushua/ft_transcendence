@@ -20,6 +20,7 @@ export default class ChatRoom {
 	}
 	
 	static async asyncUpdate(roomID: string, addToHistory: boolean = false) {
+		OurHistory.ClearEvent.Subscribe(() => ChatRoom.Clear())
 		if (roomID === "")
 			return
 		const room = await JSON.parse(HTTP.Get(`chat/room/${roomID}`)) ?? null
