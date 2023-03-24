@@ -4,7 +4,7 @@ export default class NameStorage {
 	static StorageMetaClass = class {
 		constructor(private _urlFunc: (id: string) => string, private defExpirationTime: number = 10000 * 60) {}
 		
-		private _nameMap = new Map<string, [string, number]>
+		private _nameMap = new Map<string, [string, number]>()
 		
 		Get(ID: string,
 			forceUpdate: boolean = false,

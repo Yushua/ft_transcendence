@@ -5,6 +5,7 @@ import ChatRoom from "../../../../Utils/Cache/ChatRoom";
 import ChatUser from "../../../../Utils/Cache/ChatUser";
 import HTTP from "../../../../Utils/HTTP";
 import User from "../../../../Utils/Cache/User";
+import { Button } from "@mui/material";
 
 export function setMemberProfileID(userID: string) {
 	_memberProfileID = userID
@@ -58,72 +59,74 @@ export default function MemberProfile() {
 	return (
 		<>
 			<div style={{width: "100%", display: "table"}}>
-				{ ChatRoom.Direct ? <></> :
-					<button
+				{ ChatRoom.Direct ? <>ProfileView</> :
+					<><Button variant="contained"
 						style={{height: ".5cm", boxSizing: "border-box"}}
 						onClick={() => ChangeMemberWindow("members")}
-						>Back</button>
+						>Back</Button> ProfileView</>
 				}
-				ProfileView
 			</div>
 			
-			<div style={{overflowY: "scroll", overflowX: "hidden", width: "3.5cm", fontSize: ".45cm", height: "5cm"}}>
+			<div style={{overflowY: "scroll", overflowX: "hidden", width: "5cm", fontSize: ".45cm", height: "5cm"}}>
 				{/* Username */}
-				
-				<img src={HTTP.HostRedirect() + NameStorage.UserPFP.Get(_memberProfileID)} alt="" style={{width: "2cm", height: "2cm"}}/>
+				<br />
+				<img
+					src={HTTP.HostRedirect() + NameStorage.UserPFP.Get(_memberProfileID)} alt=""
+					style={{width: "2cm", height: "2cm", borderRadius: "50%"}}	
+				/>
 				
 				<div style={{width: "100%", display: "table"}}>
-					<div style={{textAlign: "left"}}>{NameStorage.User.Get(_memberProfileID)}</div>
+					<div>{NameStorage.User.Get(_memberProfileID)}</div>
 				</div>
 				
 				<div style={{width: "100%", display: "table"}}>
-					<button
+					<Button variant="contained"
 						style={{width: "100%", height: ".5cm", boxSizing: "border-box"}}
 						onClick={() => {}}
-						>View Profile</button>
+						>View Profile</Button>
 				</div>
 				<div style={{width: "100%", display: "table"}}>
-					<button
+					<Button variant="contained"
 						style={{width: "100%", height: ".5cm", boxSizing: "border-box"}}
 						onClick={() => {}}
-						>Block</button>
+						>Block</Button>
 				</div>
 				
 				{/* Admin Options */}
 				{ (ChatRoom.AdminIDs.includes(User.ID) && !ChatRoom.AdminIDs.includes(_memberProfileID)) ?
 					<>
 						<div style={{width: "100%", display: "table"}}>
-							<div style={{textAlign: "left"}}>Admin options:</div>
+							<div>Admin Options</div>
 						</div>
 						
 						<div style={{width: "100%", display: "table"}}>
-							<button
+							<Button variant="contained"
 								style={{width: "33%", height: ".5cm", boxSizing: "border-box"}}
 								onClick={Mute}
-								>Mute</button>
-							<button
+								>Mute</Button>
+							<Button variant="contained"
 								style={{width: "33%", height: ".5cm", boxSizing: "border-box"}}
 								onClick={() => {
 									if (window.confirm(`Kick ${NameStorage.User.Get(_memberProfileID)}?`))
 										HTTP.asyncDelete(`chat/member/${ChatRoom.ID}/${_memberProfileID}`)
 								}}
-								>Kick</button>
-							<button
+								>Kick</Button>
+							<Button variant="contained"
 								style={{width: "33%", height: ".5cm", boxSizing: "border-box"}}
 								onClick={() => {
 									if (window.confirm(`Ban ${NameStorage.User.Get(_memberProfileID)}?`))
 										HTTP.asyncDelete(`chat/ban/${ChatRoom.ID}/${_memberProfileID}`)
 								}}
-								>Ban</button>
+								>Ban</Button>
 						</div>
 						<div style={{width: "100%", display: "table"}}>
-							<button
+							<Button variant="contained"
 								style={{width: "100%", height: ".5cm", boxSizing: "border-box"}}
 								onClick={() => {
 									if (window.confirm(`Make ${NameStorage.User.Get(_memberProfileID)} admin?`))
 										HTTP.asyncPatch(`chat/admin/${ChatRoom.ID}/${_memberProfileID}`)
 								}}
-								>Make Admin</button>
+								>Make Admin</Button>
 						</div>
 					</>
 					:
@@ -136,17 +139,17 @@ export default function MemberProfile() {
 					&& ChatRoom.AdminIDs.includes(_memberProfileID)) ?
 					<>
 						<div style={{width: "100%", display: "table"}}>
-							<div style={{textAlign: "left"}}>Owner options:</div>
+							<div>Owner Options</div>
 						</div>
 						
 						<div style={{width: "100%", display: "table"}}>
-							<button
+							<Button variant="contained"
 								style={{width: "100%", height: ".5cm", boxSizing: "border-box"}}
 								onClick={() => {
 									if (window.confirm(`Remove admin role from ${NameStorage.User.Get(_memberProfileID)}?`))
 										HTTP.asyncDelete(`chat/admin/${ChatRoom.ID}/${_memberProfileID}`)
 								}}
-								>Remove Admin</button>
+								>Remove Admin</Button>
 						</div>
 					</>
 					:

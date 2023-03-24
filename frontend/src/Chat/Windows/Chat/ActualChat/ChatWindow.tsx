@@ -3,6 +3,7 @@ import HTTP from "../../../../Utils/HTTP";
 import ChatRoom from "../../../../Utils/Cache/ChatRoom";
 import NameStorage from "../../../../Utils/Cache/NameStorage";
 import User from "../../../../Utils/Cache/User";
+import { Avatar, CardHeader } from "@mui/material";
 
 var roomCache: Map<string, JSX.Element[]> = new Map<string, JSX.Element[]>()
 var _chatLog: JSX.Element[] = []
@@ -49,8 +50,14 @@ export async function asyncUpdateChatLog() {
 				count++
 				newChatLog.unshift(
 					<div key={count + _msgCount} style={{textAlign: "left"}}>
-						<img src={HTTP.HostRedirect() + NameStorage.UserPFP.Get(msgs[i].OwnerID)} alt="" style={{width: ".5cm", height: ".5cm"}}/>
-						{`${NameStorage.User.Get(msgs[i].OwnerID)}: ${msgs[i].Message}`}
+						{
+							<img
+								src={HTTP.HostRedirect() + NameStorage.UserPFP.Get(msgs[i].OwnerID)}
+								style={{width: ".5cm", height: ".5cm", borderRadius: "50%"}}
+							/>
+						}
+						<b>{`${NameStorage.User.Get(msgs[i].OwnerID)}`}</b>
+						{`: ${msgs[i].Message}`}
 					</div>
 				)
 			}
@@ -82,7 +89,10 @@ export default function ChatWindow() {
 		ChatRoom.UpdateEvent.Subscribe(asyncUpdateChatLog)
 	}
 	
-	useEffect(() => {asyncUpdateChatLog()}, [])
+	useEffect(() => {
+		asyncUpdateChatLog()
+		return () => ChatRoom.Clear()
+	}, [])
 	
 	if (ChatRoom.ID === "" || chatLog.length === 0)
 		return <div style={{display: "table-cell"}}></div>
@@ -90,7 +100,7 @@ export default function ChatWindow() {
 	scrollDown(100)
 	
 	return (
-		<div style={{display: "table-cell"}}>
+		<div style={{display: "table-cell", color: "black"}}>
 			
 			<div id="ChatLog" style={{overflowY: "scroll", fontSize: ".45cm", height: "5cm"}}>
 				{chatLog}

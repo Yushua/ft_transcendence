@@ -2,6 +2,7 @@ import { useState } from "react"
 import FriendsList from "./FriendsList"
 import RoomList from "./RoomList"
 import ChatRoom from "../../../../Utils/Cache/ChatRoom"
+import { Button, Tab, Tabs } from "@mui/material"
 
 export function UpdateRoomSelectWindowButtons() {
 	if (!!_setDisplay)
@@ -24,18 +25,18 @@ export default function RoomSelectWindow() {
 	}
 	
 	return (
-		<div style={{display: "table-cell", width: "3.5cm"}}>
+		<div style={{display: "table-cell", width: "5cm"}}>
 			<div style={{display: "table", width: "100%"}}>
-				<button
+				<Button
 					style={{width: "50%", height: ".5cm"}}
 					onClick={() => setDisplay("friend")}
-					disabled={display === "friend"}
-					>Friends</button>
-				<button
+					variant={display==="friend" ? "outlined" : "text"}
+					>Friends</Button>
+				<Button
 					style={{width: "50%", height: ".5cm"}}
 					onClick={() => setDisplay("room")}
-					disabled={display === "room"}
-					>Rooms</button>
+					variant={display==="room" ? "outlined" : "text"}
+					>Rooms</Button>
 			</div>
 			{window}
 		</div>
