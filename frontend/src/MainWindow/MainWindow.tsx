@@ -5,13 +5,16 @@ import { Pong } from "../Games/pong/Pong";
 import LogoutButtonComponent from "../UserProfile/ButtonComponents/LogoutButton";
 import SetUsername from "../UserProfile/SetUsername";
 import UserProfilePage from "../UserProfile/UserProfile";
+import User from "../Utils/Cache/User";
 import OurHistory from "../Utils/History";
 import HTTP from "../Utils/HTTP";
 
 async function asyncGetName():Promise<string> {
 	const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
-	var result = await JSON.parse(response)
-	return await result["username"];
+	var user = await JSON.parse(response)
+	User._ManualUpdate(user["user"])
+	alert(`user == [${user["username"]}]`)
+	return await user["username"];
   }
 
 export function GetCurrentWindow() {
@@ -42,12 +45,17 @@ export default function MainWindow() {
 	const [Display, setDisplay] = useState<boolean>(false);
 	_setNameDisplay = setNameDisplay
 	_setDisplay = setDisplay
-	if (Display == false){
-		asyncToggleGetName()
-	}
-	if (nameDisplay == ""){
-		alert(`nameDisplay change {${nameDisplay}}`)
-		newWindow(<SetUsername/>)
+	useEffect(() => {
+		if (Display == false){
+			alert("getting the name")
+			asyncToggleGetName()
+		}
+	  }, []); // empty dependency array means it will only run once
+	  if (Display == true){
+		  if (nameDisplay == ""){
+			  alert(`nameDisplay change {${nameDisplay}}`)
+			  newWindow(<SetUsername/>)
+			}
 	  }
 
 	_setWindow = setWindow

@@ -18,6 +18,10 @@ export default class User {
 		if (userID === "")
 			return
 		const user = await JSON.parse(HTTP.Get(`user-profile/user/${userID}`))
+		this._ManualUpdate(user)
+	}
+
+	static async _ManualUpdate(user: any) {
 		if (!!user) {
 			console.log(user.id)
 			console.log(user.friendList)

@@ -19,8 +19,8 @@ export class UserProfileController {
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     @Get('/user')
     getUserByIdRequest(
-        @Request() req: Request): Promise<UserProfile> {
-        return this.userServices.findUserBy(req["user"].id);
+        @Request() req: Request) {
+        return {user: req["user"], username: req["user"].username};
     }
 
     /**
