@@ -53,7 +53,7 @@ export async function asyncUpdateChatLog() {
 						{
 							<img
 								src={HTTP.HostRedirect() + NameStorage.UserPFP.Get(msgs[i].OwnerID)}
-								style={{width: ".5cm", height: ".5cm", borderRadius: "50%"}}
+								style={{width: ".4cm", height: ".4cm", borderRadius: "50%"}}
 							/>
 						}
 						<b>{`${NameStorage.User.Get(msgs[i].OwnerID)}`}</b>
@@ -100,9 +100,9 @@ export default function ChatWindow() {
 	scrollDown(100)
 	
 	return (
-		<div style={{display: "table-cell", color: "black"}}>
+		<div style={{display: "table-cell", color: "black", maxHeight: "5.5cm", height: "5.5cm"}}>
 			
-			<div id="ChatLog" style={{overflowY: "scroll", fontSize: ".45cm", height: "5cm"}}>
+			<div id="ChatLog" style={{overflowY: "scroll", fontSize: ".45cm", maxHeight: "5cm", height: "5cm"}}>
 				{chatLog}
 			</div>
 			

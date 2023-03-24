@@ -68,7 +68,7 @@ export default function MainChatWindow() {
 					width: "100%", height: "5.6cm", lineHeight: ".5cm"}}
 			>
 				{/* ContentTable */}
-				<div style={{display: "table", width: "100%", height: "100%"}}>
+				<div style={{display: "table", width: "100%", height: "100%", color: "black"}}>
 					{window}
 				</div>
 			</div>
