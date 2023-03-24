@@ -167,13 +167,11 @@ async function setupLoginTWT(){
   }
   var status:boolean = await asyncGetUserStatus()
   if (status == false){
-    alert("go to main window")
     newWindow(<MainWindow/>)
   }
   else {
     const statusTWT:boolean = await asyncGetTWTStatus()
     if (statusTWT == true){
-      alert("go to main window")
       newWindow(<MainWindow/>)
     }
     else {

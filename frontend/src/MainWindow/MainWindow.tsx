@@ -13,7 +13,6 @@ async function asyncGetName():Promise<string> {
 	const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
 	var user = await JSON.parse(response)
 	User._ManualUpdate(user["user"])
-	alert(`user == [${user["username"]}]`)
 	return await user["username"];
   }
 
@@ -47,13 +46,11 @@ export default function MainWindow() {
 	_setDisplay = setDisplay
 	useEffect(() => {
 		if (Display == false){
-			alert("getting the name")
 			asyncToggleGetName()
 		}
 	  }, []); // empty dependency array means it will only run once
 	  if (Display == true){
 		  if (nameDisplay == ""){
-			  alert(`nameDisplay change {${nameDisplay}}`)
 			  newWindow(<SetUsername/>)
 			}
 	  }

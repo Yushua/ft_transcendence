@@ -8,7 +8,6 @@ import MainWindow from '../MainWindow/MainWindow';
 import LoginPage from '../Login/LoginPage';
 
 async function getAccessToken(username:string){
-  alert(`username == ${username}`)
   try {
     const response = await fetch(HTTP.HostRedirect() + `auth/ChangeUsername/${username}` , {
       headers: {
@@ -23,7 +22,6 @@ async function getAccessToken(username:string){
     }
     var result = await response.json();
     var status:boolean = result["status"]
-    alert(`status == ${status}`)
     if (status == undefined){
       alert("JWT authorization failed, returned nothing")
       window.location.replace('http://localhost:4242/');
