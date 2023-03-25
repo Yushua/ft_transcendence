@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import './UserProfile.css';
 import '../App.css';
-import UserProfileButtonComponent from '../ButtonComponents/UserProfileButtonComponent';
+import MainWindowButtonComponent from '../ButtonComponents/MainWindowButtonComponent';
 
 
 // const OtherUserProfile: React.FC<string>(username: string) => {
@@ -10,7 +10,7 @@ import UserProfileButtonComponent from '../ButtonComponents/UserProfileButtonCom
 //   }
 //   return (
 //     <div className="UserProfile">
-//       <UserProfileButtonComponent/>
+    //   <MainWindowButtonComponent/>
 //     </div>
 //   );
 // }

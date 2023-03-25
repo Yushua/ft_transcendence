@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import { newWindow } from "../App";
 import MainChatWindow, { SetMainChatWindow } from "../Chat/Windows/MainChatWindow";
 import { Pong } from "../Games/pong/Pong";
+import TWTCheckPage from "../TwoFactorSystem/TWTCheckPage";
 import LogoutButtonComponent from "../UserProfile/ButtonComponents/LogoutButton";
+import SearchBar from "../UserProfile/Search bar/SearchBar";
 import SetUsername from "../UserProfile/SetUsername";
 import UserProfilePage from "../UserProfile/UserProfile";
 import User from "../Utils/Cache/User";
@@ -32,6 +34,7 @@ var _setWindow: React.Dispatch<React.SetStateAction<string>> | null = null
 
 var _setNameDisplay: React.Dispatch<React.SetStateAction<string>>
 var _setDisplay: React.Dispatch<React.SetStateAction<boolean>>
+var _setTWTDisplay: React.Dispatch<React.SetStateAction<string>>
 async function asyncToggleGetName(){
 	_setNameDisplay(await asyncGetName())
 	_setDisplay(true)
@@ -48,12 +51,12 @@ export default function MainWindow() {
 		if (Display == false){
 			asyncToggleGetName()
 		}
-	  }, []); // empty dependency array means it will only run once
-	  if (Display == true){
-		  if (nameDisplay == ""){
-			  newWindow(<SetUsername/>)
-			}
-	  }
+	}, []); // empty dependency array means it will only run once
+	if (Display == true){
+		if (nameDisplay == ""){
+			newWindow(<SetUsername/>)
+		}
+	}
 
 	_setWindow = setWindow
 	_currentWindow = currentWindow
@@ -65,6 +68,8 @@ export default function MainWindow() {
 		case "profile": display = <UserProfilePage/>; break
 		case "chat": display = <MainChatWindow/>; break
 		case "pong": display = <Pong/>; break
+		case "Search": display = <SearchBar/>; break
+		case "TWTDisplay": display = <TWTCheckPage/>; break
 		default: break
 	}
 	
@@ -84,6 +89,14 @@ export default function MainWindow() {
 					onClick={() => SetMainWindow("pong")}
 					disabled={currentWindow === "pong"}
 					>Play Pong</button>
+				<button
+					onClick={() => SetMainWindow("Search")}
+					disabled={currentWindow === "Search"}
+					>Search</button>
+				<button
+					onClick={() => SetMainWindow("TWTDisplay")}
+					disabled={currentWindow === "TWTDisplay"}
+					>TwoFactor</button>
 			</div>
 			{display}
 		</div>

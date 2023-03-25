@@ -1,5 +1,5 @@
 import '../App.css';
-import UserProfileButtonComponent from '../UserProfile/ButtonComponents/UserProfileButtonComponent';
+import MainWindowButtonComponent from '../UserProfile/ButtonComponents/MainWindowButtonComponent';
 import TurnTWTOn from './TurnTWTOn';
 
 
@@ -9,7 +9,7 @@ function TWTEnabled(){
   //setu the QR code. if input Code, then it will be turned on. so there is always a QR code
   return (
     <div className="TWTEnabled">
-      <UserProfileButtonComponent/>
+      <MainWindowButtonComponent/>
       <TurnTWTOn/>
     </div>
   );

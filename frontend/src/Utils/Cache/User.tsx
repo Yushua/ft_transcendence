@@ -31,11 +31,13 @@ export default class User {
 		}
 	}
 	
-	static get ID():       string   { return this._user?.id ?? "" }
-	static get Name():     string   { return this._user?.username ?? "" }
-	static get Password(): string   { return this._user?.password ?? "" }
-	static get Email():    string   { return this._user?.eMail ?? "" }
-	static get IconURL():  string   { return this._user?.profilePicture ?? "" }
-	static get Friends():  string[] { return this._user?.friendList ?? [] }
-	static get ProfilePicture():  string { return this._user?.profilePicture ?? "" }
+	static get ID():       string   		{ return this._user?.id ?? "" }
+	static get Name():     string   		{ return this._user?.username ?? "" }
+	static get Password(): string   		{ return this._user?.password ?? "" }
+	static get IconURL():  	string   		{ return this._user?.profilePicture ?? "" }
+	static get ProfilePicture():  string 	{ return this._user?.profilePicture ?? "" }
+	static get TWTStatus():  boolean 		{ return this._user?.TWTStatus ?? false }
+	static get Friends():  string[] 		{ return this._user?.friendList ?? [] }
+	static get wins():  number 				{ return this._user?.wins ?? -1 }
+	static get losses():  number 			{ return this._user?.losses ?? -1 }
 }

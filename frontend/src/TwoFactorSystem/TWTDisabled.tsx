@@ -1,12 +1,12 @@
 import '../App.css';
-import UserProfileButtonComponent from '../UserProfile/ButtonComponents/UserProfileButtonComponent';
+import MainWindowButtonComponent from '../UserProfile/ButtonComponents/MainWindowButtonComponent';
 import TurnTWTOff from './TurnTWTOff';
 
 function TWTDisabled(){
   
   return (
     <div className="TWTDisabled">
-      <UserProfileButtonComponent/>
+      <MainWindowButtonComponent/>
       <TurnTWTOff/>
     </div>
   );
