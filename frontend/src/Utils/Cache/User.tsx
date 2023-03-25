@@ -33,6 +33,7 @@ export default class User {
 	
 	static get ID():       string   		{ return this._user?.id ?? "" }
 	static get Name():     string   		{ return this._user?.username ?? "" }
+	static get intraname():string   		{ return this._user?.intraName ?? "" }
 	static get Password(): string   		{ return this._user?.password ?? "" }
 	static get IconURL():  	string   		{ return this._user?.profilePicture ?? "" }
 	static get ProfilePicture():  string 	{ return this._user?.profilePicture ?? "" }

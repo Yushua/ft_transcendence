@@ -1,9 +1,7 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { useState } from 'react';
 import './UserProfile.css';
 import '../App.css';
-import ProfilePicture from './ProfilePicture';
 import HTTP from '../Utils/HTTP'
-import FriendListSearchButtonComponent from '../ButtonComponents/FriendListSearchButtonComponent';
 import EXPBarComponent from '../ButtonComponents/EXPBarComponent';
 import SearchBarFriend from '../Search bar/SearchbarFriend copy';
 import User from '../Utils/Cache/User';

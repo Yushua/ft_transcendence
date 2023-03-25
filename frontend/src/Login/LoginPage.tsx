@@ -1,11 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
 import { newWindow } from '../App';
 import '../App.css';
 import MainWindow from '../MainWindow/MainWindow';
 import TurnTWTOnLoginPage from '../TwoFactorSystem/TurnTWTOnLoginPage';
 import TWTCheckLoginPage from '../TwoFactorSystem/TWTCheckLoginPage';
-import UserProfilePage from '../UserProfile/UserProfile';
 import HTTP from '../Utils/HTTP';
 import ErrorPage from './ErrorPage';
 
@@ -46,6 +45,7 @@ async function setLogin():Promise<string>{
     }
     var result = await response.json();
     var accessToken:string = await result["accessToken"]
+    _intraName = await result["intraname"]
     if (accessToken === undefined || accessToken === null){
       removeCookie('accessToken');
       newWindow(<ErrorPage/>)
@@ -79,7 +79,7 @@ async function setLoginTWT():Promise<string>{
     var result = await response.json();
     var TWToken:string = await result["TWToken"]
     if (TWToken === undefined || TWToken === null){
-      removeCookie('TWToken');
+      removeCookie(`TWToken${_intraName}`);
       console.log("TWT is UNdefined in LOGINPAGE check")
       newWindow(<ErrorPage/>)
     }
@@ -107,7 +107,7 @@ export async function asyncGetUserStatus():Promise<boolean> {
     return await result["status"]
   } catch (error) {
     alert(`${error}, Token is out of date Loginpage`)
-    removeCookie('TWToken');
+    removeCookie(`TWToken${_intraName}`);
     newWindow(<ErrorPage/>)
   }
   return false
@@ -119,14 +119,14 @@ export async function asyncGetUserStatus():Promise<boolean> {
  */
 export async function asyncGetTWTStatus():Promise<boolean> {
   try {
-    const response = HTTP.Get(`auth/checkStatusTWT/${getCookie('TWToken')}`, null, {Accept: 'application/json'})
+    const response = HTTP.Get(`auth/checkStatusTWT/${getCookie(`TWToken${_intraName}`)}`, null, {Accept: 'application/json'})
     var result = await JSON.parse(response)
     console.log("TWT token status " + result["status"])
     return await result["status"]
   } catch (error) {
     alert(`${error}, Token is out of date Loginpage`)
-    removeCookie('TWToken');
-    newWindow(<TWTCheckLoginPage/>)
+    removeCookie(`TWToken${_intraName}`);
+    newWindow(<TWTCheckLoginPage />)
     //react router
   }
   return false
@@ -161,9 +161,9 @@ async function setupLoginPage(){
 
 async function setupLoginTWT(){
   //if token is not ehre, make one
-  if (getCookie('TWToken') == null || getCookie('TWToken') == undefined){
-    removeCookie('TWToken');
-    setCookie('TWToken', await setLoginTWT(),{ expires: 10000 });
+  if (getCookie(`TWToken${_intraName}`) == null || getCookie(`TWToken${_intraName}`) == undefined){
+    removeCookie(`TWToken${_intraName}`);
+    setCookie(`TWToken${_intraName}`, await setLoginTWT(),{ expires: 10000 });
   }
   var status:boolean = await asyncGetUserStatus()
   if (status == false){
@@ -180,8 +180,13 @@ async function setupLoginTWT(){
   }
 }
 
+var _setintraName: React.Dispatch<React.SetStateAction<string>>
+var _intraName: string
 function LoginPage(){
   // setupLoginPage()
+  const [intraName, setintraName] = useState<string>('');
+  _intraName = intraName
+  _setintraName = setintraName
   useEffect(() => {
     setupLoginPage()
   }, []);

@@ -2,6 +2,7 @@ import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
 import { newWindow } from '../App';
 import '../App.css';
 import MainWindow from '../MainWindow/MainWindow';
+import User from '../Utils/Cache/User';
 import HTTP from '../Utils/HTTP';
 import TWTEnabled from './TWTEnabled';
 
@@ -19,7 +20,7 @@ async function setNewTWT(){
     var result = await response.json();
     var TWToken:string = result["TWToken"]
     if (TWToken === undefined){
-      removeCookie('TWToken');
+      removeCookie(`TWToken${User.intraname}`);
     }
     if (TWToken === undefined){
       console.log("TWT is UNdefined in LOGINPAGE check")
@@ -27,8 +28,8 @@ async function setNewTWT(){
     }
     else {
       console.log("it is turned off")
-      removeCookie('TWToken');
-      setCookie('TWToken', TWToken,{ expires: 10000 });
+      removeCookie(`TWToken${User.intraname}`);
+      setCookie(`TWToken${User.intraname}`, TWToken,{ expires: 10000 });
     }
   } catch (error) {
     alert("something gone wrong while changing your TWT cookie")

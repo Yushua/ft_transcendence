@@ -4,10 +4,11 @@ import { newWindow } from '../App';
 import '../App.css';
 import MainWindow from '../MainWindow/MainWindow';
 import HTTP from '../Utils/HTTP';
+import User from '../Utils/Cache/User';
 
 async function turningTWTOn(code:string){
   try {
-    const response = await fetch(HTTP.HostRedirect() + `auth/checkTWT/${getCookie('TWToken')}/${code}` , {
+    const response = await fetch(HTTP.HostRedirect() + `auth/checkTWT/${getCookie(`TWToken${User.intraname}`)}/${code}` , {
       headers: {
         Accept: 'application/json',
         'Authorization': 'Bearer ' + getCookie("accessToken"),
@@ -22,8 +23,8 @@ async function turningTWTOn(code:string){
     console.log(`turning TWT on if {${await result["status"]}} == true`)
     if (await result["status"] === true){
       console.log("succesfully turned on")
-      removeCookie('TWToken');
-      setCookie('TWToken', await result["TWT"],{ expires: 10000 });
+      removeCookie(`TWToken${User.intraname}`);
+      setCookie(`TWToken${User.intraname}`, await result["TWT"],{ expires: 10000 });
       newWindow(<MainWindow/>);
     }
     else {

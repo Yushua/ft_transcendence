@@ -1,9 +1,4 @@
-import { useState } from 'react';
 import '../App.css';
-import TWTCheckPage from '../TwoFactorSystem/TWTCheckPage';
-import TWTDisabled from '../TwoFactorSystem/TWTDisabled';
-import TWTEnabled from '../TwoFactorSystem/TWTEnabled';
-import User from '../Utils/Cache/User';
 import HTTP from '../Utils/HTTP';
 import ProfilePicture from './ProfilePicture';
 
