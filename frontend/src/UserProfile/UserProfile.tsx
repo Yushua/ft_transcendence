@@ -4,6 +4,7 @@ import '../App.css';
 import ProfilePicture from './ProfilePicture';
 import HTTP from '../Utils/HTTP'
 import FriendListSearchButtonComponent from '../ButtonComponents/FriendListSearchButtonComponent';
+import EXPBarComponent from '../ButtonComponents/EXPBarComponent';
 
 async function asyncGetName():Promise<string> {
   const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
@@ -47,8 +48,11 @@ function UserProfilePage() {
     <div className="UserProfile">
       <FriendListSearchButtonComponent/>
       <div>
-        <ProfilePicture/>
-        <label id="name" htmlFor="name">Welcome {nameDisplay}</label>
+          <ProfilePicture/>
+        <div>
+          <label id="name" htmlFor="name">Welcome {nameDisplay}</label>
+          <EXPBarComponent/>
+        </div>
       </div>
       <div>
       <form onSubmit={handleUsernameChange}>
