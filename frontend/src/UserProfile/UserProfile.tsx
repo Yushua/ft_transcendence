@@ -5,6 +5,8 @@ import ProfilePicture from './ProfilePicture';
 import HTTP from '../Utils/HTTP'
 import FriendListSearchButtonComponent from '../ButtonComponents/FriendListSearchButtonComponent';
 import EXPBarComponent from '../ButtonComponents/EXPBarComponent';
+import SearchBarFriend from '../Search bar/SearchbarFriend copy';
+import User from '../Utils/Cache/User';
 
 async function asyncGetName():Promise<string> {
   const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
@@ -25,12 +27,6 @@ export interface YourFormElement extends HTMLFormElement {
   readonly elements: FormElements
  }
 
-async function handleUsernameChange(e: React.FormEvent<YourFormElement>){
-  e.preventDefault();
-  await asyncChangeName(e.currentTarget.elements.username.value);
-  _setNameDisplay(e.currentTarget.elements.username.value)
-}
-
 var _setNameDisplay: React.Dispatch<React.SetStateAction<string>>
 
 async function asyncToggleGetName(){
@@ -39,6 +35,7 @@ async function asyncToggleGetName(){
 
 function UserProfilePage() {
   const [nameDisplay, setNameDisplay] = useState<string>("");
+  const [TotalExp, setExp] = useState<number>((User.wins*10));
   _setNameDisplay = setNameDisplay
   if (nameDisplay == ""){
     asyncToggleGetName()
@@ -46,23 +43,13 @@ function UserProfilePage() {
   //in the end, Friendlist will be displayed on the side
   return (
     <div className="UserProfile">
-      <FriendListSearchButtonComponent/>
       <div>
-          <ProfilePicture/>
-        <div>
-          <label id="name" htmlFor="name">Welcome {nameDisplay}</label>
-          <EXPBarComponent/>
-        </div>
+        <img src={User.ProfilePicture} alt="" style={{width: "2cm", height: "2cm"}}/>
+        <div> <label id="name" htmlFor="name">Welcome {nameDisplay}</label> </div>
+        <div> <label id="maxExp" htmlFor="maxExp">maxEXp - {TotalExp}</label> </div>
+        <div> <EXPBarComponent/> </div>
       </div>
-      <div>
-      <form onSubmit={handleUsernameChange}>
-        <div>
-          <label htmlFor="username">new username Input:</label>
-          <input id="username" type="text" />
-          <button type="submit">Submit</button>
-        </div>
-      </form>
-      </div>
+      <SearchBarFriend/>
     </div>
     //logout when initialized
   );
