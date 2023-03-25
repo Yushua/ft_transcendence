@@ -31,10 +31,10 @@ export class UserProfileController {
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     @Get('/user/:id')
     getUserById( 
-        @Param('id') id: string): Promise<UserProfile> {
+        @Param('id') id: string){
         if (id == "undefined")
             return;
-        return this.userServices.findUserBy(id);
+        return { user: this.userServices.findUserBy(id) }
     }
 
     /**

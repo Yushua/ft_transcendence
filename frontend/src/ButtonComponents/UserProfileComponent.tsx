@@ -1,7 +1,5 @@
-import React, { useState } from 'react';
-import { removeCookie } from 'typescript-cookie';
-import { newWindow } from '../../App';
-import UserProfilePage from '../UserProfile';
+import { newWindow } from "../App";
+import UserProfilePage from "../UserProfile/UserProfile";
 
 export function ButtonRefresh() {
   newWindow(<UserProfilePage/>);

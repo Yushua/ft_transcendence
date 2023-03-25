@@ -3,12 +3,7 @@ import './UserProfile.css';
 import '../App.css';
 import ProfilePicture from './ProfilePicture';
 import HTTP from '../Utils/HTTP'
-import { newWindow } from '../App';
-import SetUsername from './SetUsername';
-import LogoutButtonComponent from './ButtonComponents/LogoutButton';
-import TWTButtonComponent from './ButtonComponents/TWTButtonComponent';
-import SearchButtonComponent from './ButtonComponents/SearchButtonComponent';
-import FriendListSearchButtonComponent from './ButtonComponents/FriendListSearchButtonComponent';
+import FriendListSearchButtonComponent from '../ButtonComponents/FriendListSearchButtonComponent';
 
 async function asyncGetName():Promise<string> {
   const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
@@ -50,9 +45,6 @@ function UserProfilePage() {
   //in the end, Friendlist will be displayed on the side
   return (
     <div className="UserProfile">
-      <LogoutButtonComponent/>
-      <TWTButtonComponent/>
-      <SearchButtonComponent/>
       <FriendListSearchButtonComponent/>
       <div>
         <ProfilePicture/>

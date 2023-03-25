@@ -3,13 +3,13 @@ import { newWindow } from "../App";
 import MainChatWindow, { SetMainChatWindow } from "../Chat/Windows/MainChatWindow";
 import { Pong } from "../Games/pong/Pong";
 import TWTCheckPage from "../TwoFactorSystem/TWTCheckPage";
-import LogoutButtonComponent from "../UserProfile/ButtonComponents/LogoutButton";
-import SearchBar from "../UserProfile/Search bar/SearchBar";
+import SearchBar from "../Search bar/SearchBar";
 import SetUsername from "../UserProfile/SetUsername";
 import UserProfilePage from "../UserProfile/UserProfile";
 import User from "../Utils/Cache/User";
 import OurHistory from "../Utils/History";
 import HTTP from "../Utils/HTTP";
+import LogoutButtonComponent from "../ButtonComponents/LogoutButton";
 
 async function asyncGetName():Promise<string> {
 	const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
@@ -76,7 +76,7 @@ export default function MainWindow() {
 	return (
 		<div>
 			<div>
-				<LogoutButtonComponent />
+				<LogoutButtonComponent/>
 				<button
 					onClick={() => SetMainWindow("profile")}
 					disabled={currentWindow === "profile"}

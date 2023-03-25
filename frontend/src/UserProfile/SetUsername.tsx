@@ -2,10 +2,10 @@ import '../App.css';
 
 import { getCookie, removeCookie } from 'typescript-cookie';
 import HTTP from '../Utils/HTTP';
-import LogoutButtonComponent from './ButtonComponents/LogoutButton';
+
 import { newWindow } from '../App';
-import MainWindow from '../MainWindow/MainWindow';
 import LoginPage from '../Login/LoginPage';
+import LogoutButtonComponent from '../ButtonComponents/LogoutButton';
 
 async function getAccessToken(username:string){
   try {

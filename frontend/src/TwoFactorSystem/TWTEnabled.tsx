@@ -1,5 +1,6 @@
 import '../App.css';
-import MainWindowButtonComponent from '../UserProfile/ButtonComponents/MainWindowButtonComponent';
+import MainWindowButtonComponent from '../ButtonComponents/MainWindowButtonComponent';
+
 import TurnTWTOn from './TurnTWTOn';
 
 

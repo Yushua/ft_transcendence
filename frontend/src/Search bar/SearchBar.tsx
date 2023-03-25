@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import SeachBarButton from '../BarSetup';
 import UserProfileComponent from '../ButtonComponents/UserProfileComponent';
+import SeachBarButton from '../UserProfile/BarSetup';
+
 
 function SearchBar() {
   const buttonLabels = ['flipy', 'yusha', 'hey', 'hey', 'hey', 'hey', 'hey', 'hey', 'hey', 'hey'];

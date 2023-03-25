@@ -1,5 +1,5 @@
-import { newWindow } from '../../App';
-import MainWindow from '../../MainWindow/MainWindow';
+import { newWindow } from "../App";
+import MainWindow from "../MainWindow/MainWindow";
 
 export function ButtonRefresh() {
   newWindow(<MainWindow/>);
