@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
+import { getCookie, removeCookie, setCookie, getCookies } from 'typescript-cookie';
 import { newWindow } from '../App';
 import '../App.css';
 import MainWindow from '../MainWindow/MainWindow';
@@ -117,15 +117,16 @@ export async function asyncGetUserStatus():Promise<boolean> {
  * check the TWT token status. if coming in ehre, first check if the User has TWT on
  * @returns 
  */
-export async function asyncGetTWTStatus():Promise<boolean> {
+export async function asyncGetTWTStatus(TWT: string):Promise<boolean> {
   try {
-    const response = HTTP.Get(`auth/checkStatusTWT/${getCookie(`TWToken${_intraName}`)}`, null, {Accept: 'application/json'})
+    const response = HTTP.Get(`auth/checkStatusTWT/${TWT}`, null, {Accept: 'application/json'})
     var result = await JSON.parse(response)
     console.log("TWT token status " + result["status"])
     return await result["status"]
   } catch (error) {
     alert(`${error}, Token is out of date Loginpage`)
     removeCookie(`TWToken${_intraName}`);
+    setCookie(`TWToken${_intraName}`, await setLoginTWT(),{ expires: 10000 });
     newWindow(<TWTCheckLoginPage />)
     //react router
   }
@@ -161,17 +162,21 @@ async function setupLoginPage(){
 
 async function setupLoginTWT(){
   //if token is not ehre, make one
+
   if (getCookie(`TWToken${_intraName}`) == null || getCookie(`TWToken${_intraName}`) == undefined){
+    alert("make new TWT token")
     removeCookie(`TWToken${_intraName}`);
     setCookie(`TWToken${_intraName}`, await setLoginTWT(),{ expires: 10000 });
   }
   var status:boolean = await asyncGetUserStatus()
-  if (status == false){
+  if (status === false){
     newWindow(<MainWindow/>)
   }
   else {
-    const statusTWT:boolean = await asyncGetTWTStatus()
-    if (statusTWT == true){
+    //check here sees false in the cookie. it seems something is set wrong here
+    const statusTWT:boolean = await asyncGetTWTStatus(getCookie(`TWToken${_intraName}`))
+    // alert (`status of TWT to know if to go to TWT ${statusTWT}${_intraName}`)
+    if (statusTWT === true){
       newWindow(<MainWindow/>)
     }
     else {

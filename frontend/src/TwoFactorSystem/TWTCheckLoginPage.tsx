@@ -5,10 +5,10 @@ import '../App.css';
 import LoginPage from '../Login/LoginPage';
 import HTTP from '../Utils/HTTP';
 
-async function turningTWTOn(code:string):Promise<string>{
-  alert(`intraname ${_intraName}`)
+async function turningTWTOn(code:string){
+  alert(`turning it on`)
   try {
-    const response = await fetch(HTTP.HostRedirect() + `auth/checkTWT/${getCookie(`TWToken${_intraName}`)}/${code}` , {
+    const response = await fetch(HTTP.HostRedirect() + `auth/checkTWTOn/${getCookie(`TWToken${_intraName}`)}/${code}` , {
       headers: {
         Accept: 'application/json',
         'Authorization': 'Bearer ' + getCookie("accessToken"),
@@ -20,10 +20,10 @@ async function turningTWTOn(code:string):Promise<string>{
       throw new Error(`Error! status: ${response.status}`);
     }
     var result = await response.json();
-    console.log(`turning TWT on if {${await result["status"]}} == true`)
     if (await result["status"] === true){
       removeCookie(`TWToken${_intraName}`);
-      return await result["TWT"]
+      alert("setting the cookie on")
+      setCookie(`TWToken${_intraName}`, await result["TWT"], { expires: 10000 });
     }
     else {
         alert("wrong code input, try again")
@@ -33,15 +33,10 @@ async function turningTWTOn(code:string):Promise<string>{
     alert("wrong code input, try again")
     _setInputValue("")
   }
-  return ""
 }
 async function handleSubmit(event:any){
   event.preventDefault();
-  alert(`intraname ${_intraName}`)
-  var input:string = await turningTWTOn(_inputValue)
-  if (input !== ""){
-    setCookie(`TWToken${_intraName}`, input, { expires: 10000 });
-  }
+  await turningTWTOn(_inputValue)
   alert("wrong code input, try again")
   _setInputValue("")
 };
@@ -60,6 +55,7 @@ var _setIntraName: React.Dispatch<React.SetStateAction<string>>
 
 //get the username in here
 function TWTCheckLoginPage(){
+  alert("in check TWT")
   const [inputValue, setInputValue] = useState("");
   _inputValue = inputValue
   _setInputValue = setInputValue
@@ -83,7 +79,7 @@ function TWTCheckLoginPage(){
       enable two Factor Authentication to login
       <input type="text" value={inputValue} onChange={handleInputChange} />
     </label>
-    <button type="submit">Submit</button>
+    <button type="submit">Submit Code</button>
   </form>
   );
 }

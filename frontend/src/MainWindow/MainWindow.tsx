@@ -49,12 +49,12 @@ export default function MainWindow() {
 	_setNameDisplay = setNameDisplay
 	_setDisplay = setDisplay
 	useEffect(() => {
-		if (Display == false){
+		if (Display === false){
 			asyncToggleGetName()
 		}
 	}, []); // empty dependency array means it will only run once
-	if (Display == true){
-		if (nameDisplay == ""){
+	if (Display === true){
+		if (nameDisplay === ""){
 			newWindow(<SetUsername/>)
 		}
 	}

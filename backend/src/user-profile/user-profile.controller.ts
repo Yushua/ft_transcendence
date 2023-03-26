@@ -20,7 +20,7 @@ export class UserProfileController {
     @Get('/user')
     getUserByIdRequest(
         @Request() req: Request) {
-        return {user: req["user"], username: req["user"].username, intraname: req["user"].intraname};
+        return {user: req["user"], username: req["user"].username, intraname: req["user"].intraName};
     }
 
     /**

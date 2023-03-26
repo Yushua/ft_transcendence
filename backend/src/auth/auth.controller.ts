@@ -29,6 +29,18 @@ export class AuthController {
         }
     }
 
+    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+    @Get('checkTWTOn/:token/:code')
+    async getAuthJWTTokenOn(@Param('token') token: string, @Param('code') code: string, @Request() req: Request){
+        await this.AuthService.updateTWTUser(req["user"].id, true)
+        var TWT:string = await this.AuthService.updateTWT(req["user"].id, true)
+        console.log(`status = ${await this.AuthService.getStatusTWT(TWT)}`)
+        return {
+            status:true,
+            TWT: TWT
+        }
+    }
+
     /**
      * setup for the login
      * @param code 

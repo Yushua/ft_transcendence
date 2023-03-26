@@ -22,14 +22,14 @@ async function getAccessToken(username:string){
     }
     var result = await response.json();
     var status:boolean = result["status"]
-    if (status == undefined){
+    if (status === undefined){
       alert("JWT authorization failed, returned nothing")
       window.location.replace('http://localhost:4242/');
     }
-    if (status == false){
+    if (status === false){
       alert(`error in SetUsername already in use ${username}`)
     }
-    else if (status == true){
+    else if (status === true){
       newWindow(<LoginPage/>)
     }
   } catch (error) {

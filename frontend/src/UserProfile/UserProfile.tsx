@@ -35,7 +35,7 @@ function UserProfilePage() {
   const [nameDisplay, setNameDisplay] = useState<string>("");
   const [TotalExp, setExp] = useState<number>((User.wins*10));
   _setNameDisplay = setNameDisplay
-  if (nameDisplay == ""){
+  if (nameDisplay === ""){
     asyncToggleGetName()
   }
   //in the end, Friendlist will be displayed on the side

@@ -171,9 +171,8 @@ export class AuthService {
         return token["twoFactor"]
       }
 
-      async updateTWT(TWT:string, status:boolean):Promise<string>{
-        var token = this.jwtService.decode(TWT);
-        const payload: JwtPayload = { userID: token["userID"], twoFactor: status};
+      async updateTWT(userID:string, status:boolean):Promise<string>{
+        const payload: JwtPayload = { userID, twoFactor: status};
         const TWToken: string = this.jwtService.sign(payload);
         return TWToken
       }

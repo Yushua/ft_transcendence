@@ -20,6 +20,7 @@ async function setNewTWT(){
     var result = await response.json();
     var TWToken:string = result["TWToken"]
     if (TWToken === undefined){
+      alert("remove TWT setNewTWT")
       removeCookie(`TWToken${User.intraname}`);
     }
     if (TWToken === undefined){
@@ -27,7 +28,7 @@ async function setNewTWT(){
       window.location.replace(HTTP.HostRedirect());
     }
     else {
-      console.log("it is turned off")
+      alert("it is turned off")
       removeCookie(`TWToken${User.intraname}`);
       setCookie(`TWToken${User.intraname}`, TWToken,{ expires: 10000 });
     }
@@ -54,10 +55,6 @@ async function ChangeUserStatusTWTFalse(){
   }
 }
 
-// const loginIntoOAuth = () => {
-//   window.location.replace('https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-c73b865f02b3cf14638e1a50c5caa720828d13082db6ab753bdb24ca476e1a4c&redirect_uri=http%3A%2F%2Flocalhost%3A4242%2F&response_type=code');
-// }
-
 async function turnTWTFalse(){
   await setNewTWT()
   await ChangeUserStatusTWTFalse()
@@ -65,9 +62,6 @@ async function turnTWTFalse(){
 }
 
 function TurnTWTOff(){
-  // if (window.location.href.split('code=')[1] != undefined){
-  //   checkLoginF()
-  // }
   return (
     <div>
       <button onClick={turnTWTFalse}>Cancle Two Factor System</button>
