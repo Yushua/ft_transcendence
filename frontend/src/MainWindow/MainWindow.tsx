@@ -12,7 +12,7 @@ import HTTP from "../Utils/HTTP";
 import LogoutButtonComponent from "../ButtonComponents/LogoutButton";
 import SettingsUser from "../UserProfile/SettingsUser";
 
-async function asyncGetName():Promise<string> {
+export async function asyncGetNameExport():Promise<string> {
 	const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
 	var user = await JSON.parse(response)
 	User._ManualUpdate(user["user"])
@@ -37,7 +37,7 @@ var _setNameDisplay: React.Dispatch<React.SetStateAction<string>>
 var _setDisplay: React.Dispatch<React.SetStateAction<boolean>>
 var _setTWTDisplay: React.Dispatch<React.SetStateAction<string>>
 async function asyncToggleGetName(){
-	_setNameDisplay(await asyncGetName())
+	_setNameDisplay(await asyncGetNameExport())
 	_setDisplay(true)
   };
 

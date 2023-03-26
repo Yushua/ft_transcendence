@@ -8,6 +8,7 @@ import User from '../Utils/Cache/User';
 import TWTEnabled from './TWTEnabled';
 
 async function setNewTWT(){
+  alert("seton")
   try {
     const response = await fetch(HTTP.HostRedirect() + `auth/makeNewTWT` , {
       headers: {
@@ -20,18 +21,9 @@ async function setNewTWT(){
     }
     var result = await response.json();
     var TWToken:string = result["TWToken"]
-    if (TWToken === undefined){
-      removeCookie(`TWToken${User.intraname}`);
-    }
-    if (TWToken === undefined){
-      console.log("TWT is UNdefined in LOGINPAGE check")
-      window.location.replace(HTTP.HostRedirect());
-    }
-    else {
-      console.log("it is turned off")
-      removeCookie(`TWToken${User.intraname}`);
-      setCookie(`TWToken${User.intraname}`, TWToken,{ expires: 10000 });
-    }
+    console.log("it is turned off")
+    removeCookie(`TWToken${User.intraname}`);
+    setCookie(`TWToken${User.intraname}`, TWToken,{ expires: 10000 });
   } catch (error) {
     alert("something gone wrong while changing your TWT cookie")
     newWindow(<TWTEnabled/>)

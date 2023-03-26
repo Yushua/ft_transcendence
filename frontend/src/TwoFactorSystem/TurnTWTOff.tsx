@@ -7,6 +7,7 @@ import HTTP from '../Utils/HTTP';
 import TWTEnabled from './TWTEnabled';
 
 async function setNewTWT(){
+  alert("setoff")
   try {
     const response = await fetch(HTTP.HostRedirect() + `auth/makeNewTWT` , {
       headers: {

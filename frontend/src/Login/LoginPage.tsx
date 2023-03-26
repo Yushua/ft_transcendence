@@ -8,6 +8,12 @@ import TWTCheckLoginPage from '../TwoFactorSystem/TWTCheckLoginPage';
 import HTTP from '../Utils/HTTP';
 import ErrorPage from './ErrorPage';
 
+async function asyncGetintraName():Promise<string> {
+  const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
+  var result = await JSON.parse(response)
+  return await result["intraname"];
+}
+
 async function RefreshAuthentication():Promise<boolean>{
   try {
     const response = await fetch(HTTP.HostRedirect() + `auth/check` , {
@@ -79,8 +85,6 @@ async function setLoginTWT():Promise<string>{
     var result = await response.json();
     var TWToken:string = await result["TWToken"]
     if (TWToken === undefined || TWToken === null){
-      removeCookie(`TWToken${_intraName}`);
-      console.log("TWT is UNdefined in LOGINPAGE check")
       newWindow(<ErrorPage/>)
     }
     else {
@@ -108,7 +112,7 @@ export async function asyncGetUserStatus():Promise<boolean> {
   } catch (error) {
     alert(`${error}, Token is out of date Loginpage`)
     removeCookie(`TWToken${_intraName}`);
-    newWindow(<ErrorPage/>)
+    newWindow(<LoginPage/>)
   }
   return false
 }
@@ -119,9 +123,8 @@ export async function asyncGetUserStatus():Promise<boolean> {
  */
 export async function asyncGetTWTStatus(TWT: string):Promise<boolean> {
   try {
-    const response = HTTP.Get(`auth/checkStatusTWT/${TWT}`, null, {Accept: 'application/json'})
+    const response = HTTP.Get(`auth/checkStatusTWT/${getCookie(`TWToken${_intraName}`)}`, null, {Accept: 'application/json'})
     var result = await JSON.parse(response)
-    console.log("TWT token status " + result["status"])
     return await result["status"]
   } catch (error) {
     alert(`${error}, Token is out of date Loginpage`)
@@ -145,9 +148,11 @@ const loginIntoOAuth = () => {
 async function setupLoginPage(){
   if (getCookie("accessToken") != undefined && getCookie("accessToken") != null){
     //token is already made
+    _setintraName(await asyncGetintraName())
     if ((await RefreshAuthentication()) === false){
       newWindow(<ErrorPage/>)
     }
+    //if there already is one, set intraname
     setupLoginTWT()
   }
   else if (window.location.href.split('code=')[1] != undefined){
@@ -164,7 +169,6 @@ async function setupLoginTWT(){
   //if token is not ehre, make one
 
   if (getCookie(`TWToken${_intraName}`) == null || getCookie(`TWToken${_intraName}`) == undefined){
-    alert("make new TWT token")
     removeCookie(`TWToken${_intraName}`);
     setCookie(`TWToken${_intraName}`, await setLoginTWT(),{ expires: 10000 });
   }
@@ -187,6 +191,7 @@ async function setupLoginTWT(){
 
 var _setintraName: React.Dispatch<React.SetStateAction<string>>
 var _intraName: string
+
 function LoginPage(){
   // setupLoginPage()
   const [intraName, setintraName] = useState<string>('');

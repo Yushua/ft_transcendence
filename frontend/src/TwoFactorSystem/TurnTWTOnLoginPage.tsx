@@ -5,11 +5,11 @@ import '../App.css';
 import MainWindow from '../MainWindow/MainWindow';
 import HTTP from '../Utils/HTTP';
 
-export async function asyncGetTWTStatus(TWT:string):Promise<boolean> {
+export async function asyncGetTWTStatusTWT(TWT:string):Promise<boolean> {
   try {
-    const response = HTTP.Get(`auth/checkStatusTWT/${TWT}`, null, {Accept: 'application/json'})
+    const response = HTTP.Get(`auth/checkStatusTWT/${getCookie(`TWToken${_intraName}`)}`, null, {Accept: 'application/json'})
     var result = await JSON.parse(response)
-    console.log("TWT token status " + result["status"])
+    console.log("TWT token status in TWT check " + result["status"])
     return await result["status"]
   } catch (error) {
     alert(`${error}, Token is out of date Loginpage`)
@@ -52,7 +52,7 @@ async function turningTWTOn(code:string){
 async function handleSubmit(event:any){
   event.preventDefault();
   var status:boolean =  await turningTWTOn(_inputValue)
-  alert(`status TWT ${await asyncGetTWTStatus(getCookie(`TWToken${_intraName}`))} intraname ${_intraName}`)
+  alert(`status TWT ${await asyncGetTWTStatusTWT(getCookie(`TWToken${_intraName}`))} intraname ${_intraName}`)
   if (status == true){
     newWindow(<MainWindow/>);
   }

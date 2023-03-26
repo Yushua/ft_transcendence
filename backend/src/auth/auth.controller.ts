@@ -71,7 +71,6 @@ export class AuthController {
     async getNewTWT(@Param('code') code: string, @Request() req: Request) {
         console.log("make TWT account")
         var TWToken:string = await this.AuthService.makeAccountTWT(req["user"].intraName)
-        console.log(`token made {${TWToken}}`)
         return {
             TWToken
         }
