@@ -35,7 +35,6 @@ var _setWindow: React.Dispatch<React.SetStateAction<string>> | null = null
 
 var _setNameDisplay: React.Dispatch<React.SetStateAction<string>>
 var _setDisplay: React.Dispatch<React.SetStateAction<boolean>>
-var _setTWTDisplay: React.Dispatch<React.SetStateAction<string>>
 async function asyncToggleGetName(){
 	_setNameDisplay(await asyncGetNameExport())
 	_setDisplay(true)

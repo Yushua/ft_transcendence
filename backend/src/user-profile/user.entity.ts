@@ -31,4 +31,7 @@ export class UserProfile {
 
     @Column({ default: 0})
     losses: number;
+
+    @Column("text", { array: true , default: []})
+    achievements: string[][];
 }
