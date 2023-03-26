@@ -1,5 +1,5 @@
 import { newWindow } from "../App";
-import SearchBarFriend from "../Search bar/SearchbarFriend copy";
+import SearchBarFriend from "../Search bar/SearchbarFriend";
 
 export function ButtonRefresh() {
   newWindow(<SearchBarFriend/>)

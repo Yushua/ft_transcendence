@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { newWindow } from '../App';
 import UserProfileComponent from '../ButtonComponents/UserProfileComponent';
 import HTTP from '../Utils/HTTP';
@@ -23,53 +23,50 @@ export async function asyncGetFriendListById(){
 
 async function addFriendFunction(friendName: string){
   await addFriendToList(await asyncReturnID(friendName))
-  _setShowDropdown(false);
+  _setDisplay(false);
 }
 
 async function seeProfileOther(username: string){
-  // newWindow(<OtherUserProfile/>)
-  _setShowDropdown(false);
+  //call function
+  _setDisplay(false);
 }
 
-var _SelectedOption: string[]
-var _setShowDropdown:React.Dispatch<React.SetStateAction<boolean>>
-function SearchBarFriend() {
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<string[]>([]);
-  _SelectedOption = selectedOption
-  _setShowDropdown = setShowDropdown
-  // const buttonLabels = ['flipy', 'yusha', 'hey', 'hey', 'hey', 'hey', 'hey', 'hey', 'hey', 'hey'];
-  const buttonLabels = [['flipy', 'online'], ['yusha', 'online'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline']];
-  const handleButtonClick = (option: string[]) => {
-    setSelectedOption(option);
-    setShowDropdown(true);
-  };
+async function RemoveFriend(username: string){
+  //call function
+  console.log()
+  _setDisplay(false);
+  _setNameDisplay([['flipy', 'online'], ['yusha', 'online'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline']])
+}
 
+async function getListFriendList(){
+  _setDisplay(true);
+}
+
+var _setNameDisplay:React.Dispatch<React.SetStateAction<string[][]>>
+var _setDisplay: React.Dispatch<React.SetStateAction<boolean>>
+function SearchBarFriend() {
+  const [ListDisplay, setNameDisplay] = useState<string[][]>([]);
+  const [Display, setDisplay] = useState<boolean>(false);
+  _setNameDisplay = setNameDisplay
+  _setDisplay = setDisplay
+  useEffect(() => {
+		if (Display === false){
+			getListFriendList()
+      _setNameDisplay([['flipy', 'online'], ['yusha', 'online'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline']])
+		}
+	}, []); // empty dependency array means it will only run once
   return (
     <div>
-      <div>
-      <UserProfileComponent/>
+        {ListDisplay.map((item, index) => (
+          <div key={index} style={{ border: "1px solid black", padding: "3px" }}>
+            <img src={"./profile-pictures/blem.jpg"} alt="" style={{border: "3px solid black", width: "50px", height: "50px", alignItems: "center"}}/>
+            <p style={{alignItems: "center"}}>{`name ${item[0]}`}</p>
+            <p style={{alignItems: "center"}}>{`status ${item[1]}`}</p>
+            <button style={{ width: "100px", height: "50px", alignItems: "center" }} onClick={() => seeProfileOther(item[0])} >{`lookup`}</button>
+            <button style={{ width: "100px", height: "50px", alignItems: "center" }} onClick={() => RemoveFriend(item[0])} >remove</button>
+          </div>
+        ))}
       </div>
-    <div style={{ display: "flex", flexWrap: "wrap", maxHeight: "200px" }}>
-          {buttonLabels.map((option, index) => (
-            <button
-              key={index}
-              style={{ margin: "5px", width: "100px", height: "50px" }}
-              onClick={() => handleButtonClick(option)}
-            >{`name: ${option[0]}\nstatus: ${option[1]}`}
-            </button>
-          ))}
-          {showDropdown && (
-            <div style={{ position: "absolute", top: "60px", left: "0" }}>
-              <ul>
-                {/* <button onClick={() => addFriendFunction(selectedOption)}>Friendlist</button> */}
-                <button style={{ margin: "5px", width: "100px", height: "50px" }} onClick={() => addFriendFunction(_SelectedOption[0])}> add {_SelectedOption[0]} friendlist </button>
-                <button style={{ margin: "5px", width: "100px", height: "50px" }} onClick={() => addFriendFunction(_SelectedOption[0])}> add {_SelectedOption[0]} friendlist </button>
-              </ul>
-            </div>
-          )}
-        </div>
-    </div>
   )
 }
 

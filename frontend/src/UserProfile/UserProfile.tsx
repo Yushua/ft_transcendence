@@ -3,8 +3,8 @@ import './UserProfile.css';
 import '../App.css';
 import HTTP from '../Utils/HTTP'
 import EXPBarComponent from '../ButtonComponents/EXPBarComponent';
-import SearchBarFriend from '../Search bar/SearchbarFriend copy';
 import User from '../Utils/Cache/User';
+import SearchBarFriend from '../Search bar/SearchbarFriend';
 
 async function asyncGetName():Promise<string> {
   const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
@@ -39,6 +39,7 @@ function UserProfilePage() {
     asyncToggleGetName()
   }
   //in the end, Friendlist will be displayed on the side
+  console.log(User.ProfilePicture)
   return (
     <div className="UserProfile">
       <div>
@@ -46,8 +47,14 @@ function UserProfilePage() {
         <div> <label id="name" htmlFor="name">Welcome {nameDisplay}</label> </div>
         <div> <label id="maxExp" htmlFor="maxExp">maxEXp - {TotalExp}</label> </div>
         <div> <EXPBarComponent/> </div>
-      </div>
-      <SearchBarFriend/>
+      </div >
+       <div style={{width: "145px", height: "300px", border: "2px solid black", overflow: "auto"}}>
+        <div style={{display: 'flex'}}>
+          <SearchBarFriend/>
+
+        </div>
+
+       </div>
     </div>
     //logout when initialized
   );

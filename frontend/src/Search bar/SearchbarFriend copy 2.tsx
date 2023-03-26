@@ -48,24 +48,19 @@ function SearchBarFriend() {
 
   return (
     <div>
-    <div style={{ display: "flex", flexWrap: "wrap", maxHeight: "200px" }}>
+      <div style={{ display: "flex", flexWrap: "wrap", maxHeight: "200px" }}>
           {buttonLabels.map((option, index) => (
             <button
               key={index}
-              style={{ width: "100px", height: "50px" }}
-              onClick={() => handleButtonClick(option)}
-            >{`name: ${option[0]}\nstatus: ${option[1]}`}
+              style={{ width: "130px", height: "100px"}}
+              // onClick={() => handleButtonClick(option)}
+            >{`name: ${option[0]} - ${option[1]}`}
+            <div style={{display: "flex", alignItems: "center" }}>
+              <button style={{ width: "50px", height: "50px", flex: "1", alignItems: "center" }} onClick={() => addFriendFunction(_SelectedOption[0])}> remove  </button>
+              <button style={{ width: "50px", height: "50px", flex: "1", alignItems: "center" }} onClick={() => addFriendFunction(_SelectedOption[0])}> check </button>
+            </div>
             </button>
           ))}
-          {showDropdown && (
-            <div style={{ position: "absolute", top: "60px", left: "0" }}>
-              <ul>
-                {/* <button onClick={() => addFriendFunction(selectedOption)}>Friendlist</button> */}
-                <button style={{ width: "100px", height: "50px" }} onClick={() => addFriendFunction(_SelectedOption[0])}> add {_SelectedOption[0]} friendlist </button>
-                <button style={{ width: "100px", height: "50px" }} onClick={() => addFriendFunction(_SelectedOption[0])}> add {_SelectedOption[0]} friendlist </button>
-              </ul>
-            </div>
-          )}
         </div>
     </div>
   )
