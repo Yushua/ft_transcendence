@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthGuardEncryption } from 'src/auth/auth.guard';
 import { UserProfileService } from './user-profile.service';
@@ -81,11 +81,30 @@ export class UserProfileController {
     async GetFriendList( @Request() req: Request) {
         return { friendlist: await this.userServices.GetFriendList(req["user"].id) }
     }
-
     
-    //add user
-    //remove user
-    
+    /**
+     * 
+     * @param id 
+     * @returns returns based on [["pfp", "username", "status"]]
+     */
+    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+    @Get('GetAchievementList')
+    async GetAchievementList( @Request() req: Request) {
+        return { AchievementList: await this.userServices.GetAchievementList(req["user"].id) }
+    }
+    /**
+     * 
+     * @param id 
+     * @returns returns based on [["pfp", "username", "status"]]
+     */
+    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+    @Post('PostAchievementList')
+    async postAchievementList( @Request() req: Request,
+    @Body("name") name: string,
+    @Body("message") message: string,
+    @Body("picture") picture: string ) {
+        return { AchievementList: await this.userServices.postAchievementList(req["user"].id, name, message, picture)}
+    }
 
     @Get("/username/:id")
     async ReturnNameById(

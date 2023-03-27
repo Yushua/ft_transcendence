@@ -7,6 +7,12 @@ import { newWindow } from '../App';
 import LoginPage from '../Login/LoginPage';
 import LogoutButtonComponent from '../ButtonComponents/LogoutButton';
 
+async function GetAchievement(name: string, message:string, picture:string){
+  const response = HTTP.Post(`user-profile/user`, {name: name, message:message, picture:picture}, {Accept: 'application/json'})
+  var result = await JSON.parse(response)
+  return await result["username"];
+}
+
 async function getAccessToken(username:string){
   try {
     const response = await fetch(HTTP.HostRedirect() + `auth/ChangeUsername/${username}` , {
@@ -30,6 +36,7 @@ async function getAccessToken(username:string){
       alert(`error in SetUsername already in use ${username}`)
     }
     else if (status === true){
+      await this.GetAchievement("setusername", "you set your username", "./blem.jpg")
       newWindow(<LoginPage/>)
     }
   } catch (error) {

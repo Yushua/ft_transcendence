@@ -20,7 +20,7 @@ export async function asyncGetSearchList():Promise<string[][]>{
 
 
 async function getListSearchList(value:string){
-  if (value.length > 5){
+  if (value.length >= 5){
     _setNameDisplay(await this.asyncGetSearchList())
   }
   else {
@@ -46,7 +46,7 @@ function SearchBar() {
   const [SearchTerm, setSearchTerm] = useState("");
   _setNameDisplay = setNameDisplay
   _setNameSearchList = setNameSearchList
-  
+
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
     setSearchTerm(event.target.value)
     getListSearchList(event.target.value)

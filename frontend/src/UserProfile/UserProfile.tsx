@@ -5,6 +5,7 @@ import HTTP from '../Utils/HTTP'
 import EXPBarComponent from '../ButtonComponents/EXPBarComponent';
 import User from '../Utils/Cache/User';
 import SearchBarFriend from '../Search bar/SearchbarFriend';
+import AchievementsComponent from '../ButtonComponents/AchievementsComponent';
 
 async function asyncGetName():Promise<string> {
   const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
@@ -51,9 +52,8 @@ function UserProfilePage() {
        <div style={{width: "145px", height: "300px", border: "2px solid black", overflow: "auto"}}>
         <div style={{display: 'flex'}}>
           <SearchBarFriend/>
-
         </div>
-
+          <AchievementsComponent/>
        </div>
     </div>
     //logout when initialized
