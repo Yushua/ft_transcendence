@@ -44,11 +44,11 @@ export class GameList extends React.Component<any, any> {
 		const rows = []
 		let i = 0
 
-		/* public games have max len of 11 chars, private ones have ID that is longer */
+		/* public games have max len of 12 chars, private ones have ID that is longer */
 		for (var game of games) {
-			if (type === 'active' && game[0].length < 12)
+			if (type === 'active' && game[0].length < 13)
 				rows[i] = createData_active(i, game[0], game[1][0], game[1][1])
-			else if (type === 'custom' && game[0].length < 12)
+			else if (type === 'custom' && game[0].length < 13)
 				rows[i] = createData_custom(i, game[0], game[1][0], game[1][1], game[1][2], game[1][3])
 			i++
 		}
@@ -60,11 +60,11 @@ export class GameList extends React.Component<any, any> {
 		const rows = []
 		let i = 0
 
-		/* public games have max len of 11 chars, private ones have ID that is longer */
+		/* public games have max len of 12 chars, private ones have ID that is longer */
 		for (var game of games) {
-			if (type === 'active' && game[0].length < 12)
+			if (type === 'active' && game[0].length < 13)
 				rows[i] = createData_active(i, game[0], game[1][0], game[1][1])
-			else if (type === 'custom' && game[0].length < 12)
+			else if (type === 'custom' && game[0].length < 13)
 				rows[i] = createData_custom(i, game[0], game[1][0], game[1][1], game[1][2], game[1][3])
 			i++
 		}
@@ -83,6 +83,7 @@ export class GameList extends React.Component<any, any> {
 	render()
 	{
 		const rows_active = this.setRows('active', this.props.activeGames)
+		console.log('active rows:', rows_active)
 		const rows_custom = this.setRows('custom', this.props.customGames)
 		const rows = this.setRows2('custom', this.props.customGames)
 		const columns = this.setColumns()
@@ -91,55 +92,57 @@ export class GameList extends React.Component<any, any> {
 				&nbsp;
 				<TableContainer
         			component={Paper}
-        			style={{ border: "1px solid rgba(0,0,0,0.2)", padding: 40 }}>
-				<h3>Active Games</h3>
-				<Table size="small">
-					<TableHead style={{ width: 30 }}>
-						<TableRow>
-							<TableCell style={{ width: 1 }}>Player 1</TableCell>
-					  		<TableCell style={{ width: 1 }}>Player 2</TableCell>
-						</TableRow>
-					</TableHead>
-					<TableBody>
-					{rows_active.map((row) => (
-						<TableRow key={row.id}>
-							<TableCell style={{ width: 30 }}>{row.p1}</TableCell>
-							<TableCell style={{ width: 30 }}>{row.p2}</TableCell>
-							<TableCell><Button variant="contained" onClick={() => this.spectate(row.gameName, this.props.socket)}>Spectate</Button></TableCell>
-						</TableRow>
-					))}
-					</TableBody>
-				</Table>
-				<h3>Custom Games</h3>
-				<Table size="small"
-					padding="checkbox">
-					<TableHead>
-						<TableRow>
-							<TableCell>Game Name</TableCell>
-							<TableCell>Creator</TableCell>
-							<TableCell>Controls</TableCell>
-							<TableCell>Ball Speed</TableCell>
-							<TableCell>Paddle Size</TableCell>
-						</TableRow>
-					</TableHead>
-					<TableBody>
-					{rows_custom.map((row) => (
-						<TableRow key={row.id}>
-							<TableCell style={{ width: 30 }}>{row.gameName}</TableCell>
-							<TableCell style={{ width: 30 }}>{row.p1}</TableCell>
-							<TableCell style={{ width: 30 }}>{row.controls}</TableCell>
-							<TableCell style={{ width: 30 }}>{row.BallSpeed}</TableCell>
-							<TableCell style={{ width: 30 }}>{row.PaddleSize}</TableCell>
-
-							{/* <TableCell>{row.p1}</TableCell>
-							<TableCell>{row.controls}</TableCell>
-							<TableCell>{row.BallSpeed}</TableCell>
-							<TableCell>{row.PaddleSize}</TableCell> */}
-							<TableCell><Button variant="contained" onClick={() => this.join(row.gameName, this.props.userID, this.props.userName, this.props.socket)}>Join Game</Button></TableCell>
-						</TableRow>
-					))}
-					</TableBody>
-				</Table>
+        			style={{ border: "1px solid rgba(0,0,1,0.2)", padding: 40 }}>
+				{rows_active.length === 0 ? <h3 style={{color: "#3355FF"}}>No Active Games</h3> : 
+				<div>
+					<h3 style={{color: "#3355FF"}}>Active Games</h3>
+					<Table size="small">
+						<TableHead>
+							<TableRow>
+								<TableCell style={{width: 120, color: "#3368FF"}}>Game Name</TableCell>
+								<TableCell style={{width: 70, color: "#3368FF"}}>Player 1</TableCell>
+								<TableCell style={{width: 70, color: "#3368FF"}}>Player 2</TableCell>
+							</TableRow>
+						</TableHead>
+						<TableBody>
+						{rows_active.map((row) => (
+							<TableRow key={row.id}>
+								<TableCell style={{width: 85, color: "#FF3333"}}>{row.gameName}</TableCell>
+								<TableCell style={{width: 50, color: "#FF3333"}}>{row.p1}</TableCell>
+								<TableCell style={{width: 50, color: "#FF3333"}}>{row.p2}</TableCell>
+								<TableCell><Button variant="contained" onClick={() => this.spectate(row.gameName, this.props.socket)}>Spectate</Button></TableCell>
+							</TableRow>
+						))}
+						</TableBody>
+					</Table>
+				</div> }
+				{rows_custom.length === 0 ? <h3 style={{color: "#3355FF"}}>No Custom Games</h3> : 
+				<div>
+					<h3 style={{color: "#3355FF"}}>Custom Games</h3>
+					<Table size="small">
+						<TableHead>
+							<TableRow>
+								<TableCell style={{color: "#3368FF"}}>Game Name</TableCell>
+								<TableCell style={{color: "#3368FF"}}>Creator</TableCell>
+								<TableCell style={{color: "#3368FF"}}>Controls</TableCell>
+								<TableCell style={{width: 70, color: "#3368FF"}}>Ball Speed</TableCell>
+								<TableCell style={{width: 80, color: "#3368FF"}}>Paddle Size</TableCell>
+							</TableRow>
+						</TableHead>
+						<TableBody>
+						{rows_custom.map((row) => (
+							<TableRow key={row.id}>
+								<TableCell style={{width: 120, color: "#FF3333"}}>{row.gameName}</TableCell>
+								<TableCell style={{width: 50, color: "#FF3333"}}>{row.p1}</TableCell>
+								<TableCell style={{width: 50, color: "#FF3333"}}>{row.controls}</TableCell>
+								<TableCell style={{width: 50, color: "#FF3333"}}>{row.BallSpeed}</TableCell>
+								<TableCell style={{width: 50, color: "#FF3333"}}>{row.PaddleSize}</TableCell>
+								<TableCell><Button variant="contained" onClick={() => this.join(row.gameName, this.props.userID, this.props.userName, this.props.socket)}>Join Game</Button></TableCell>
+							</TableRow>
+						))}
+						</TableBody>
+					</Table>
+				</div>}
 				</TableContainer>
 			</React.Fragment>
 		)

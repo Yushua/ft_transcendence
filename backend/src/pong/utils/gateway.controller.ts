@@ -20,7 +20,7 @@ const IDs = {
 
 let player2:Socket = undefined
 let n_games:number = 0
-let game_name:string = 'game_0'
+let game_name:string = 'Classic: 0'
 let connections:Map<string, [GameData, string[]]> = new Map<string,[GameData,string[]]>() /* key: socket_id -- value: [gamedata, IDs]*/
 let customGames:Map<string, [GameData, string[]]> = new Map<string, [GameData, string[]]>() /* key: private ? gameID : gameName -- value: [gamedata, IDs]*/
 let games:Map<string, [GameData, string[]]> = new Map<string, [GameData, string[]]>() /* key: gameName -- value: [gamedata, IDs]*/
@@ -71,7 +71,7 @@ export class MyGateway implements OnModuleInit {
 				player2.emit('joined', gameConfig.p2_controls)
 
 				//create gameData with default settings which holds all game info client needs to render
-				let gamedata = new GameData(gameConfig)
+				let gamedata = new GameData(gameConfig, true)
 
 				//add this game with the client IDs to a gamelist and insert <client, [data, IDs]> in a map which
 				//can be used to access the right gamedata for movement events by clients, and based on ID order
@@ -84,7 +84,8 @@ export class MyGateway implements OnModuleInit {
 				gameIDs.push(player2.id)
 				gameIDs.push(gameConfig.p2_userID)
 				dataIdTuple = [gamedata, gameIDs]
-				games.set(game_name, dataIdTuple)
+				games.set(gameConfig.gameName, dataIdTuple)
+				console.log('added:', gameConfig.gameName)
 				connections.set(player.id, dataIdTuple)
 				connections.set(player2.id, dataIdTuple)
 				player2 = undefined
@@ -113,8 +114,7 @@ export class MyGateway implements OnModuleInit {
 		CustomConfig.ballSpeed = gameInfo.customSettings.ballSpeed
 		CustomConfig.paddleSize = gameInfo.customSettings.paddleSize
 		CustomConfig.gameName = gameInfo.customSettings.gameName
-		let gameData = new GameData(CustomConfig)
-		connections.set(player.id, [undefined, [player.id, gameInfo.userID]])
+		let gameData = new GameData(CustomConfig, false)
 		if (gameInfo.type === 'public')
 		{
 			customGames.set(CustomConfig.gameName, [gameData, [player.id, gameInfo.userID]])
@@ -129,11 +129,10 @@ export class MyGateway implements OnModuleInit {
 		player.emit('game_created', CustomConfig.gameName, gameInfo.gameID)
 	}
 
-
 	@SubscribeMessage('joinCustomGame')
 	handleJoin(
 	@MessageBody() playerInfo: { gameName:string, gameID:string, userID:string, userName:string},
-	@ConnectedSocket() player: Socket) {
+	@ConnectedSocket() player2: Socket) {
 		let customGame:[GameData, string[]]
 		let key = playerInfo.gameName
 		if (!key)
@@ -141,7 +140,7 @@ export class MyGateway implements OnModuleInit {
 		customGame = customGames.get(key)
 
 		/* game needs to exist and can't join the game you yourself created*/
-		if (customGame && customGame[1][IDs.p1_socket_id] !== player.id)
+		if (customGame && customGame[1][IDs.p1_socket_id] !== player2.id)
 		{
 			customGames.delete(key)
 			const serializedMap = [...customGames.entries()];
@@ -149,21 +148,14 @@ export class MyGateway implements OnModuleInit {
 			let gameData = customGame[0]
 			gameData.p2_name = playerInfo.userName
 			let _IDs = customGame[1]
-			let p2:string = undefined
-			for (const connection of connections) {
-				if (connection[1][1][0] === _IDs[IDs.p1_socket_id])
-				{
-					p2 = connection[0]
-					break;
-				}
-			}
-			_IDs.push(player.id)
+			let player1_id:string = _IDs[0]
+			_IDs.push(player2.id)
 			_IDs.push(playerInfo.userID)
 			games.set(key, [gameData, _IDs])
-			connections.set(player.id, [gameData, _IDs])
-			connections.set(p2, [gameData, _IDs])
-			player.emit('joined', gameData.p1_controls)
-			this.server.to(p2).emit('joined', gameData.p2_controls)
+			connections.set(player2.id, [gameData, _IDs])
+			connections.set(player1_id, [gameData, _IDs])
+			player2.emit('joined', gameData.p1_controls)
+			this.server.to(player1_id).emit('joined', gameData.p2_controls)
 
 			// p2.emit('joined', gameData.p2_controls)
 		}
@@ -212,7 +204,7 @@ export class MyGateway implements OnModuleInit {
 			gameConfig.p1_userID = gameInfo.p1UserID
 			gameConfig.p2_userID = gameInfo.p2UserID
 
-			let gamedata = new GameData(gameConfig)
+			let gamedata = new GameData(gameConfig, false)
 			games.set(gamedata.gameName, [gamedata, [gameInfo.p1SocketID, gameInfo.p1UserID, gameInfo.p2SocketID, gameInfo.p2UserID]])
 			connections.set(gameInfo.p1SocketID, [gamedata, [gameInfo.p1SocketID, gameInfo.p1UserID, gameInfo.p2SocketID, gameInfo.p2UserID]])
 			connections.set(gameInfo.p2SocketID, [gamedata, [gameInfo.p1SocketID, gameInfo.p1UserID, gameInfo.p2SocketID, gameInfo.p2UserID]])
@@ -287,31 +279,13 @@ export class MyGateway implements OnModuleInit {
 		}
 	}
 
-	//remove client from connections on leave. Also unset the ID in the games map so it cant
-	//reconnect automatically when switching from-to pong window
+	//remove client from connections on leave
 	@SubscribeMessage('leave')
 	handleLeaver(
-		@MessageBody() gameName: string,
 		@ConnectedSocket() client: Socket) {
 			let connection = connections.get(client.id)
 			if (connection !== undefined)
-			{
 				connections.delete(client.id)
-				let game = games.get(gameName)
-				if (game !== undefined)
-				{
-					if (client.id === game[1][IDs.p1_socket_id])
-					{
-						game[1][IDs.p1_socket_id] = ''
-						games.set(gameName, game)
-					}
-					else if (client.id === game[1][IDs.p2_socket_id])
-					{
-						game[1][IDs.p2_socket_id] = ''
-						games.set(gameName, game)
-					}
-				}
-			}
 			this.server.to(client.id).emit('left')
 		}
 	
@@ -368,8 +342,6 @@ export class MyGateway implements OnModuleInit {
 		for (const connection of connections) {
 			const clientID: string = connection[0]
 			const gameData: GameData = connection[1][0]
-			if (gameData === undefined)
-				continue;
 
 			/* Send updated data */
 			await_updates.push((async () =>

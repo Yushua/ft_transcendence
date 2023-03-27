@@ -134,7 +134,6 @@ export const Pong = () => {
 			localStorage[Enum.pending] = false
 		})
 		socket.on('joined', (controls:string) => {
-			console.log('hoi')
 			SetMainWindow("pong", true)
 			game = new Canvas('')
 			setInGame(true)

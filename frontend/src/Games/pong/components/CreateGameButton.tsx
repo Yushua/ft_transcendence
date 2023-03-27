@@ -12,7 +12,7 @@ function makeGameID() {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const charactersLength = characters.length;
     let counter = 0;
-    while (counter < 13) {
+    while (counter < 15) {
 		gameID += characters.charAt(Math.floor(Math.random() * charactersLength));
     	counter += 1;
     }
@@ -121,7 +121,7 @@ export const CreateGameButton = (props:any) => {
 						type="text"
 						id="message"
 						name="message"
-						maxLength={11}
+						maxLength={12}
 						onChange={handleTextChange} />
 				</li>
 				&nbsp;

@@ -15,8 +15,9 @@ export class GameData {
 	p2_controls:string
 	ballSpeed:number
 	paddleSize:number
+	isClassic:boolean
 
-	constructor(Config:any)
+	constructor(Config:any, isClassic:boolean)
 	{
 		this.gameName = Config.gameName
 		this.p1_name = Config.p1_name
@@ -31,6 +32,7 @@ export class GameData {
 		this.p1 = new Paddle(12, 1, 1500, 750, 20, 20, Config.paddleSize)
 		this.p2 = new Paddle(12, 2, 1500, 750, 20, 20, Config.paddleSize)
 		this.ball = new Ball(10 * Config.ballSpeed / 100, 3, 1500, 750, 20, 20, 20)
+		this.isClassic = isClassic
 	}
 
 	update(deltaTime: number)
