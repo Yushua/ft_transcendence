@@ -6,6 +6,7 @@ export class GameData {
 	p2: Paddle
 	ball: Ball
 	gameName:string
+	isClassic:boolean
 
 	constructor()
 	{

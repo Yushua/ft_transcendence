@@ -12,6 +12,8 @@ import { Button } from '@mui/material'
 import PracticeModeLoop from './practice_mode/practice_mode';
 import { SetMainWindow } from '../../MainWindow/MainWindow'
 import { JoinPrivateButton } from './components/PrivateGameButton';
+import './Pong.css'
+
 
 var game:Canvas
 var g_controls = ''
@@ -84,6 +86,7 @@ export const Pong = () => {
 			const newData = new GameData()
 			newData.gameState = data.gameState
 			newData.gameName = data.gameName
+			newData.isClassic = data.isClassic
 			newData.p1_score = data.p1_score
 			newData.p2_score = data.p2_score
 
@@ -148,9 +151,9 @@ export const Pong = () => {
 			updateGameData(s_gameData)
 		})
 		socket.on('gamelist', (serializedGamesMap:any) => {
-			let games:Map<string, string[]> = new Map<string, string[]>()
+			let games:Map<string, any[]> = new Map<string, any[]>()
 			for (var instance of serializedGamesMap) {
-				games.set(instance[0], [instance[1][0].p1_name, instance[1][0].p2_name])
+				games.set(instance[0], [instance[1][0].p1_name, instance[1][0].p2_name, instance[1][0].isClassic])
 			}
 			updateActiveGames(games)
 		})
@@ -196,14 +199,6 @@ export const Pong = () => {
 		/* cleanup function after user leaves window/disconnects */
 		return () => {
 			console.log('unregistering events')
-			// socket.off('connect')
-			// socket.off('pending')
-			// socket.off('stop_pending')
-			// socket.off('gamedata')
-			// socket.off('gamelist')
-			// socket.off('custom_gamelist')
-			// socket.off('spectating')
-			// socket.off('disconnect')
 			PracticeModeLoop.Stop()
 			firstCall = false
 		}
@@ -277,7 +272,9 @@ export const Pong = () => {
 		<React.Fragment>
 			&nbsp;
 			{pending ? `Waiting for second player...` : <></>}
-			{inGame || spectating ? <Canvas instance={game} socket={socket} gameData={gameData}/> : <EmptyCanvas/>}
+			{inGame || spectating ?
+					<Canvas instance={game} socket={socket} gameData={gameData}/> :
+					<EmptyCanvas/>}
 			{!inGame && !spectating && !gameCreated ?
 				<ul>
 					<li><JoinClassicButton socket={socket} userID={userID} userName={userName}/></li>

@@ -1,5 +1,6 @@
 import { Button, Box, Slider, Typography } from '@mui/material'
 import React from 'react'
+
 // import { subtle } from "crypto";
 
 // const algorithm = { name: "AES-GCM", length: 256 };
@@ -27,6 +28,12 @@ export const CreateGameButton = (props:any) => {
 	const [controls, setControls] = React.useState('mouse')
 	const [gameName, setGameName] = React.useState('gameName')
 	const [isMouse, setIsMouse] = React.useState(true)
+	const [gameNameTaken, setGameNameTaken] = React.useState(false)
+
+	props.socket.on('gamename taken', () => {
+		console.log('allo')
+		setGameNameTaken(true)
+	})
 
 	const handleBallChange = (event: Event, newValue: number | number[]) => {
 		if (typeof newValue === 'number') {
@@ -70,9 +77,9 @@ export const CreateGameButton = (props:any) => {
 			{customGame ? 
 			<ul>
 				&nbsp;
-				<li className='dropdownItem'>Choose Ball Speed</li>
+				<li className='dropdownItem' style={{ color: "#3368FF"}}>Choose Ball Speed</li>
 					<Box sx={{ width: 250 }}>
-						<Typography id="non-linear-slider" gutterBottom>
+						<Typography id="non-linear-slider" gutterBottom style={{ color: "#3368FF"}}>
 							{ballSpeed}%
 						</Typography>
 						<Slider
@@ -85,9 +92,9 @@ export const CreateGameButton = (props:any) => {
 							aria-labelledby="non-linear-slider"
 						/>
 					</Box>
-				<li className='dropdownItem'>Choose Paddle Size</li>
+				<li className='dropdownItem' style={{ color: "#3368FF"}}>Choose Paddle Size</li>
 					<Box sx={{ width: 250 }}>
-						<Typography id="non-linear-slider" gutterBottom>
+						<Typography id="non-linear-slider" gutterBottom style={{ color: "#3368FF"}}>
 							{paddleSize}%
 						</Typography>
 						<Slider
@@ -114,7 +121,7 @@ export const CreateGameButton = (props:any) => {
 						</div>}
 				</li>
 				&nbsp;
-				<li className='dropdownItem'>
+				<li className='dropdownItem' style={{ color: "#3368FF"}}>
 					<>Game Name:</>
 					&nbsp;
 					<input
@@ -123,6 +130,14 @@ export const CreateGameButton = (props:any) => {
 						name="message"
 						maxLength={12}
 						onChange={handleTextChange} />
+					{gameNameTaken ?
+						<div style={{color: "#FF3333", display: 'inline-block'}}>
+							<h4>
+								&nbsp;
+								This name already exists... choose another
+							</h4>
+						</div> :
+						<></> }
 				</li>
 				&nbsp;
 				<li>

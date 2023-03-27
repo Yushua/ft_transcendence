@@ -110,6 +110,15 @@ export class MyGateway implements OnModuleInit {
 			player2.emit('stop_pending')
 			player2 = undefined
 		}
+		/* check if game already exists with chosen name */
+		for (var game of customGames) {
+			if (game[0] === gameInfo.customSettings.gameName)
+			{
+				player.emit('gamename taken')
+				return
+			}
+		}
+
 		/* create new game with custom config, add it to customgames so others can see and join it */
 		let CustomConfig = new Config()
 		CustomConfig.p1_controls = gameInfo.customSettings.controls
@@ -209,7 +218,7 @@ export class MyGateway implements OnModuleInit {
 			gameConfig.p1_userID = gameInfo.p1UserID
 			gameConfig.p2_userID = gameInfo.p2UserID
 
-			let gamedata = new GameData(gameConfig, false)
+			let gamedata = new GameData(gameConfig, true)
 			games.set(gamedata.gameName, [gamedata, [gameInfo.p1SocketID, gameInfo.p1UserID, gameInfo.p2SocketID, gameInfo.p2UserID]])
 			connections.set(gameInfo.p1SocketID, [gamedata, [gameInfo.p1SocketID, gameInfo.p1UserID, gameInfo.p2SocketID, gameInfo.p2UserID]])
 			connections.set(gameInfo.p2SocketID, [gamedata, [gameInfo.p1SocketID, gameInfo.p1UserID, gameInfo.p2SocketID, gameInfo.p2UserID]])

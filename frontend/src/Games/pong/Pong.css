@@ -1,0 +1,11 @@
+.darkblue {
+	color: #3355FF;
+}
+
+.center {
+	text-align: center;
+}
+
+.position-middle-canvas {
+	transform: translateX(710px);
+}
