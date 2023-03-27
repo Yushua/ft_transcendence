@@ -42,14 +42,14 @@ var _setShowDropdown:React.Dispatch<React.SetStateAction<boolean>>
 function SearchBar() {
   const [ListSearchList, setNameSearchList] = useState<string[][]>([]);
   const [ListDisplay, setNameDisplay] = useState<string[][]>([]);
-  const [SearchTerm, setSearchTerm] = useState('');
+  const [SearchTerm, setSearchTerm] = useState("");
   _setNameDisplay = setNameDisplay
   _setNameSearchList = setNameSearchList
   useEffect(() => {
 	}, []); // empty dependency array means it will only run once
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
-    // event.preventDefault();
-    getListSearchList(event.target.value);
+    setSearchTerm(event.target.value)
+    getListSearchList(event.target.value)
   }
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedOption, setSelectedOption] = useState<string[]>([]);

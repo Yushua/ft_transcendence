@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { newWindow } from '../App';
-import UserProfileComponent from '../ButtonComponents/UserProfileComponent';
 import HTTP from '../Utils/HTTP';
 
 async function asyncReturnID(usernameFriend: string):Promise<string> {
@@ -15,10 +13,10 @@ async function addFriendToList(_friendID: string) {
 }
 
 var list_:string[];
-export async function asyncGetFriendListById(){
-  const response = HTTP.Get(`user-profile/userAddListusername`, null, {Accept: 'application/json'})
+export async function asyncGetFriendList():Promise<string[][]>{
+  const response = HTTP.Get(`user-profile/GetFriendList`, null, {Accept: 'application/json'})
   var result = await JSON.parse(response)
-  list_ = result
+  return await result["friendlist"]
 }
 
 async function addFriendFunction(friendName: string){
@@ -34,12 +32,15 @@ async function seeProfileOther(username: string){
 async function RemoveFriend(username: string){
   //call function
   console.log()
-  _setDisplay(false);
-  _setNameDisplay([['flipy', 'online'], ['yusha', 'online'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline']])
+  _setNameDisplay(await this.asyncGetFriendList())
 }
 
+/**
+ * sets the display to [["pfp", "username", "status", "id"]]
+ */
 async function getListFriendList(){
   _setDisplay(true);
+  _setNameDisplay(await this.asyncGetFriendList())
 }
 
 var _setNameDisplay:React.Dispatch<React.SetStateAction<string[][]>>
@@ -52,18 +53,17 @@ function SearchBarFriend() {
   useEffect(() => {
 		if (Display === false){
 			getListFriendList()
-      _setNameDisplay([['flipy', 'online'], ['yusha', 'online'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline']])
 		}
 	}, []); // empty dependency array means it will only run once
   return (
     <div>
         {ListDisplay.map((item, index) => (
           <div key={index} style={{ border: "1px solid black", padding: "3px" }}>
-            <img src={"./profile-pictures/blem.jpg"} alt="" style={{border: "3px solid black", width: "50px", height: "50px", alignItems: "center"}}/>
-            <p style={{alignItems: "center"}}>{`name ${item[0]}`}</p>
-            <p style={{alignItems: "center"}}>{`status ${item[1]}`}</p>
-            <button style={{ width: "100px", height: "50px", alignItems: "center" }} onClick={() => seeProfileOther(item[0])} >{`lookup`}</button>
-            <button style={{ width: "100px", height: "50px", alignItems: "center" }} onClick={() => RemoveFriend(item[0])} >remove</button>
+            <img src={item[0]} alt="" style={{border: "3px solid black", width: "50px", height: "50px", alignItems: "center"}}/>
+            <p style={{alignItems: "center"}}>{`name ${item[1]}`}</p>
+            <p style={{alignItems: "center"}}>{`status ${item[2]}`}</p>
+            <button style={{ width: "100px", height: "50px", alignItems: "center" }} onClick={() => seeProfileOther(item[1])} >{`lookup`}</button>
+            <button style={{ width: "100px", height: "50px", alignItems: "center" }} onClick={() => RemoveFriend(item[3])} >remove</button>
           </div>
         ))}
       </div>

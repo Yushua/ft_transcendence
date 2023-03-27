@@ -24,6 +24,7 @@ export class UserProfileService {
           user.friendList.push(friendID);
           await this.userEntity.save(user);
       }
+
       async removeFriendFromID(userID: string, friendID: string):Promise<void>{
         const user = await this.findUserBy(userID);
         user.friendList.forEach( (item, index) => {
@@ -210,8 +211,27 @@ export class UserProfileService {
        * @param id 
        * @returns get the users friendslist returns an array of the suers friendlist
        */
-      async getUsersListFriendById(id:string):Promise<string[]> {
+      async getUsersFriendlist(id:string):Promise<string[]> {
         const found = await this.userEntity.findOneBy({id});
         return(found.friendList);
+      }
+
+      /**
+       * returns based on [["pfp", "username"]]
+       */
+      async SearchList():Promise<string[][]>{
+        
+        const users:UserProfile[] = await this.userEntity.find()
+        return users.map(user => [user.profilePicture, user.username, user.id]);
+
+      }
+
+      /**
+       * returns based on [["pfp", "username", "status"]]
+       */
+      async GetFriendList(id:string):Promise<string[][]> {
+        const userprofile:UserProfile = await this.userEntity.findOneBy({id});
+        const users: UserProfile[] = await this.userEntity.createQueryBuilder('user').where('user.username IN (:...names)', { names: userprofile.friendList }).getMany();
+        return users.map(user => [user.profilePicture, user.username, user.id]);
       }
 }

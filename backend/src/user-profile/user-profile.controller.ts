@@ -58,74 +58,34 @@ export class UserProfileController {
         return this.userServices.ReturnUsername(id);
     }
 
+    /* search list templates*/
 
     /**
      * 
      * @param id 
-     * @returns get all users in  list minus this user, using ID
+     * @returns returns all the users [["pfp", "username"]]
      */
-        @Get('/userList/:id')
-        getUserFriendlistID(
-            @Param('id') id: string): Promise<string[]> {
-            return this.userServices.UsersFriendlistID(id);
-        }
-
-    /**
-     * 
-     * @param id 
-     * @returns get all users in a list minus this user, using ID
-     */
-    @Get('/userList/:id')
-    getUserFriendlistusername(
-        @Param('id') id: string): Promise<string[]> {
-        return this.userServices.UsersFriendlistUsername(id);
+    @UseGuards(AuthGuard('jwt'))
+    @Get('SearchList')
+    async getSearchList() {
+        return { searchlist: await this.userServices.SearchList() }
     }
 
      /**
      * 
      * @param id 
-     * @returns get users all people the user can add, using ID.
+     * @returns returns based on [["pfp", "username", "status"]]
      */
-        @Get('/userAddList/:id')
-        getUserAddListById(
-            @Param('id') id: string): Promise<string[]> {
-            return this.userServices.getAllUsersAddList(id);
-        }
-         /**
-     * 
-     * @param id 
-     * @returns get users all people the user can add, using ID. 
-     * return array of usernames
-     */
-         @Get('/userAddListusername')
-         @UseGuards(AuthGuard())
-         getUserAddListByIdUsername(
-            @Request() req: Request): Promise<string[]> {
-             return this.userServices.getAllUsersAddListUsername(req["user"].id);
-         }
+     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+    @Get('GetFriendList')
+    async GetFriendList( @Request() req: Request) {
+        return { friendlist: await this.userServices.GetFriendList(req["user"].id) }
+    }
+
     
-    /**
-     * 
-     * @param id 
-     * @returns get users friendlist with usernames
-     */
-        @Get('/userFriendListID')
-        @UseGuards(AuthGuard())
-        getUseFriendListIDById(
-            @Request() req: Request): Promise<string[]> {
-            return this.userServices.UsersFriendlistID(req["user"].id);
-        }
+    //add user
+    //remove user
     
-    /**
-     * 
-     * @param id 
-     * @returns get users friendlist with usernames
-     */
-        @Get('/userFriendListUsername/:id')
-        getUseFriendListUsernameById(
-            @Param('id') id: string): Promise<string[]> {
-            return this.userServices.UsersFriendlistUsername(id);
-        }
 
     @Get("/username/:id")
     async ReturnNameById(
@@ -148,7 +108,7 @@ export class UserProfileController {
      * @param username 
      * @returns add id based on the jwt authentication
      */
-    @Patch('/friendlist/add/:idFriend')
+    @Patch('friendlist/add/:idFriend')
     @UseGuards(AuthGuard())
     addFriend(
         @Request() req: Request,
