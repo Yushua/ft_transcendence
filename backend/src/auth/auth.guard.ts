@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, Inject, Injectable } from '@nestjs/common';
+import { CanActivate, ConfigurableModuleBuilder, ExecutionContext, Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Observable } from 'rxjs';
 import { IncomingMessage } from 'http';
@@ -22,12 +22,18 @@ export class AuthGuardEncryption implements CanActivate {
 		return this.validateRequest(request);
 	}
 	
+	async GetUser(key: string): Promise<UserProfile> {
+		var token = this.jwtService.decode(key.substring(key.indexOf(' ') + 1));
+		return this.autEntityRepos.findOneBy({id: token["userID"]})
+	}
+	
 	async validateRequest(inMsg: IncomingMessage): Promise<boolean> {
 		
 		try {
-			var token = this.jwtService.decode(inMsg.headers["authorization"].substring(7));
-			
-			var user = await this.autEntityRepos.findOneBy({id: token["userID"]})
+			var authHeader = inMsg.headers["authorization"];
+			if (!authHeader)
+				throw "wat?"
+			var user = await this.GetUser(authHeader)
 		} catch (error) {
 			return false
 		}

@@ -1,9 +1,11 @@
-import { OnModuleInit } from "@nestjs/common";
+import { OnModuleInit, UseGuards } from "@nestjs/common";
 import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Server, Socket } from 'socket.io'
 import { GameData } from '../components/GameData'
 import { PongService } from "../pong.service";
 import  Config from "../components/Config"
+import { AuthGuardEncryption } from "src/auth/auth.guard";
+import OurSession from "src/session/OurSession";
 
 export const targetFPS = 60
 export const targetResponseRateS = 1 / targetFPS
@@ -34,7 +36,7 @@ let gameConfig = new Config()
 
 export class MyGateway implements OnModuleInit {
 	
-	public constructor() {
+	public constructor(private _guard: AuthGuardEncryption) {
 		this._runGameLoop(1)
 	}
 	
@@ -42,8 +44,9 @@ export class MyGateway implements OnModuleInit {
 	server:Server
 
 	onModuleInit() {
-		this.server.on('connection', (socket) => {
-			console.log(socket.id, ' connected (websocket server)')
+		this.server.on('connection', async (socket) => {
+			const user = await this._guard.GetUser(socket.handshake.headers["authorization"])
+			OurSession.SocketConnecting(user, socket.id)
 		})
 	}
 
@@ -69,6 +72,8 @@ export class MyGateway implements OnModuleInit {
 				gameConfig.p1_userID = playerInfo.userID
 				player.emit('joined', gameConfig.p1_controls)
 				player2.emit('joined', gameConfig.p2_controls)
+				OurSession.GameJoining(player.id)
+				OurSession.GameJoining(player2.id)
 
 				//create gameData with default settings which holds all game info client needs to render
 				let gamedata = new GameData(gameConfig, true)
@@ -156,8 +161,8 @@ export class MyGateway implements OnModuleInit {
 			connections.set(player1_id, [gameData, _IDs])
 			player2.emit('joined', gameData.p1_controls)
 			this.server.to(player1_id).emit('joined', gameData.p2_controls)
-
-			// p2.emit('joined', gameData.p2_controls)
+			OurSession.GameJoining(player1_id)
+			OurSession.GameJoining(player2.id)
 		}
 	}
 
@@ -236,12 +241,14 @@ export class MyGateway implements OnModuleInit {
 				{
 					connections.set(client.id, game[1])
 					client.emit('joined', game[1][0].p1_controls)
+					OurSession.GameJoining(client.id)
 					break; 
 				}
 				if (client.id === clients[IDs.p2_socket_id])
 				{
 					connections.set(client.id, game[1])
 					client.emit('joined', game[1][0].p2_controls)
+					OurSession.GameJoining(client.id)
 					break;
 				}
 			}
@@ -262,6 +269,7 @@ export class MyGateway implements OnModuleInit {
 			let connection = connections.get(client.id)
 			if (connection !== undefined)
 				connections.delete(client.id)
+			OurSession.SocketDisconnecting(client.id)
 		}
 
 	@SubscribeMessage('deleteCreatedGame')
@@ -287,6 +295,7 @@ export class MyGateway implements OnModuleInit {
 			if (connection !== undefined)
 				connections.delete(client.id)
 			this.server.to(client.id).emit('left')
+			OurSession.GameLeaving(client.id)
 		}
 	
 	private _startGameLoop = (deltaTime: number) => this._runGameLoop(deltaTime)
