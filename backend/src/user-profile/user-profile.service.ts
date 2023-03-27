@@ -97,11 +97,13 @@ export class UserProfileService {
         return found;
       }
 
-      async addFriend(id:string, idfriend: string):Promise<UserProfile> {
-        const found = await this.userEntity.findOneBy({id});
-        found.friendList.push(idfriend);
+      //turn the username of the friend into an id, and then add it to the currect user
+      async addFriend(userid:string, usernameFriend: string) {
+        const found = await this.userEntity.findOneBy({id: userid});
+        const foundFriend = await this.userEntity.findOneBy({username: usernameFriend});
+        found.friendList.push(foundFriend.id);
         await this.userEntity.save(found);
-        return found;
+        console.log(found)
       }
 
         /** */

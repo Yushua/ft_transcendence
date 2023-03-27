@@ -98,8 +98,7 @@ export class UserProfileController {
     @Post('/userchange/:username')
     @UseGuards(AuthGuard())
     changeUsername(
-        @Param('username') username: string,
-        @Request() req: Request): Promise<UserProfile> {
+        @Param('username') username: string, @Request() req: Request): Promise<UserProfile> {
         return this.userServices.changeUsername(username, req["user"].id);
     }
 
@@ -108,33 +107,21 @@ export class UserProfileController {
      * @param username 
      * @returns add id based on the jwt authentication
      */
-    @Patch('friendlist/add/:idFriend')
+    @Patch('friendlist/add/:usernameFriend')
     @UseGuards(AuthGuard())
     addFriend(
-        @Request() req: Request,
-        @Param('idFriend') idFriend: string,
-        )
-        : Promise<UserProfile> {
-        return this.userServices.addFriend(req["user"].id, idFriend);
+        @Request() req: Request, @Param('usernameFriend') usernameFriend: string,
+        ){
+        return this.userServices.addFriend(req["user"].id, usernameFriend);
     }
 
-    @Patch('/friendlist/remove/:idFriend')
+    @Patch('friendlist/remove/:idFriend')
     @UseGuards(AuthGuard())
     removeFriend(
         @Request() req: Request,
         @Param('idFriend') idfriend: string,
-        )
-        : Promise<UserProfile> {
-        return this.userServices.removeFriend(req["user"].id, idfriend);
+        ) {
+        this.userServices.removeFriend(req["user"].id, idfriend);
     }
 
-
-    /*
-        front app application will test
-        this week;
-    */
-    /*
-    when a game is created, look into the suer if the suer has the stats there
-    if yes, the  continue, if not, then create one
-    */
 }

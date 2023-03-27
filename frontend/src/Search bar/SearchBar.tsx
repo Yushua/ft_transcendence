@@ -5,36 +5,37 @@ import SeachBarButton from '../UserProfile/BarSetup';
 import OtherUserProfile from '../UserProfile/ProfilePages/OtherUserProfile';
 import HTTP from '../Utils/HTTP';
 
-async function getListSearchListFunction(username: string){
-  //call function
-  console.log()
-  _setDisplay(false);
-  _setNameDisplay([['flipy', 'online'], ['yusha', 'online'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline'], ['hey', 'offline']])
-}
 
 //add the ID to the list
-async function addFriendToList(friendName: string) {
-  HTTP.Patch(`user-profile/friendlist/add/${friendName}`, null, {Accept: 'application/json'})
+async function asyncaddFriendToList(_friendUsername: string) {
+  HTTP.Patch(`user-profile/friendlist/add/${_friendUsername}`, null, {Accept: 'application/json'})
 }
+
+export async function asyncGetSearchList():Promise<string[][]>{
+  const response = HTTP.Get(`user-profile/SearchList`, null, {Accept: 'application/json'})
+  var result = await JSON.parse(response)
+  return await result["searchlist"]
+}
+
+
 
 async function getListSearchList(value:string){
   if (value.length > 5){
-    _setNameDisplay([["./profile-pictures/blem.jpg", "flipy"], ["./profile-pictures/blem.jpg", "flipy"], ["./profile-pictures/blem.jpg", "flipy"]])
-    _setNameSearchList([["./profile-pictures/blem.jpg", "flipy"], ["./profile-pictures/blem.jpg", "flipy"], ["./profile-pictures/blem.jpg", "flipy"]])
+    _setNameDisplay(await this.asyncGetSearchList())
   }
   else {
-    _setNameDisplay([["./profile-pictures/blem.jpg", "flipy"], ["./profile-pictures/blem.jpg", "flipy"], ["./profile-pictures/blem.jpg", "flipy"]])
+    _setNameDisplay([])
   }
 }
 
 async function addFriendFunction(friendName: string){
-  await addFriendToList(friendName)
+  await asyncaddFriendToList(friendName)
+  //refresh the list
   _setShowDropdown(false);
 }
 
 var _setNameDisplay:React.Dispatch<React.SetStateAction<string[][]>>
 var _setNameSearchList:React.Dispatch<React.SetStateAction<string[][]>>
-var _setDisplay: React.Dispatch<React.SetStateAction<boolean>>
 
 var _SelectedOption: string[]
 var _setShowDropdown:React.Dispatch<React.SetStateAction<boolean>>
@@ -45,36 +46,34 @@ function SearchBar() {
   const [SearchTerm, setSearchTerm] = useState("");
   _setNameDisplay = setNameDisplay
   _setNameSearchList = setNameSearchList
-  useEffect(() => {
-	}, []); // empty dependency array means it will only run once
+  
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
     setSearchTerm(event.target.value)
     getListSearchList(event.target.value)
   }
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<string[]>([]);
-
   const handleButtonClick = (e: any) => {
     e.preventDefault();
-    // newWindow(<OtherUserProfile option />)
-    //se the other users page with the name input, the username is all you need
+    //go to the page
   };
 
     return (
       <div>
         <div>
          <UserProfileComponent/>
-        </div>
-          <input type="text" value={SearchTerm} onChange={handleInputChange} />
-        <div style={{ display: "flex", flexWrap: "wrap", maxHeight: "200px" }}>
-          {ListSearchList.map((option, index) => (
-            <button
-              key={index}
-              style={{ width: "100px", height: "50px" }}
-              onClick={() => handleButtonClick(option)}
-            >{`name: ${option[0]}\nstatus: ${option[1]}`}
-            </button>
-          ))}
+          </div>
+            <input type="text" value={SearchTerm} onChange={handleInputChange} />
+            <div style={{width: `${145*5}px`, height: `${200*5}px`, border: "2px solid black", overflow: "auto"}}>
+              <div style={{display: 'flex'}}>
+              {ListSearchList.map((option, index) => (
+                <button
+                  key={index}
+                  style={{ width: "100px", height: "50px" }}
+                  onClick={() => handleButtonClick(option)}
+                >{`name: ${option[0]}\nstatus: ${option[1]}`}
+                </button>
+              ))}
+
+          </div>
         </div>
       </div>
     )
