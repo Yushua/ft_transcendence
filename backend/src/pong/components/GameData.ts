@@ -121,7 +121,7 @@ export class Paddle extends Entity
 	}
 	update_mouse(position:number)
 	{
-		this.y = position - (this.height / 2) - 80
+		this.y = position - (this.height / 2)
 		if (this.y > this.gameCanvasHeight - 10 - this.height)
 			this.y = this.gameCanvasHeight - 10 - this.height
 		if (this.y < 10)

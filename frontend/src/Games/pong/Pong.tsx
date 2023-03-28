@@ -217,7 +217,11 @@ export const Pong = () => {
 			keysPressed.set(event.key, false)
 		})
 		window.addEventListener("mousemove", (event) => {
-			mousePosition = event.y
+			const canvas = Canvas.CurrentGameCanvas
+			const scale = Canvas.InternalSize.width / canvas.offsetWidth
+			
+			mousePosition = (event.y - canvas.offsetTop) * scale
+			
 			PracticeModeLoop.SetMousePosition(mousePosition)
 		})
 

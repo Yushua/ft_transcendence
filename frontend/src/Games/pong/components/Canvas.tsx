@@ -3,21 +3,25 @@ import { Socket } from "socket.io-client"
 import { GameData } from "./GameData"
 import PracticeModeLoop from "../practice_mode/practice_mode"
 
-
 export class Canvas extends React.Component<any, any> {
 
-	private	gameCanvas
-	private	gameContext
+	private	gameCanvas: HTMLCanvasElement
+	private	gameContext: CanvasRenderingContext2D
+	
+	static CurrentGameCanvas: HTMLCanvasElement | null = null
+	static readonly InternalSize = {width: 1500, height: 750}
 	// private socket:Socket
 
 	constructor(props:any)
 	{
 		super(props)
 		this.gameCanvas = document.getElementById("game-canvas") as HTMLCanvasElement
-		this.gameCanvas.width = 1500
-		this.gameCanvas.height = 750
+		this.gameCanvas.width = Canvas.InternalSize.width
+		this.gameCanvas.height = Canvas.InternalSize.height
 		this.gameContext = this.gameCanvas.getContext("2d") as CanvasRenderingContext2D
 		this.gameContext.font = "30px Orbitron"
+		
+		Canvas.CurrentGameCanvas = this.gameCanvas
 	}
 	draw(gameData: GameData)
 	{
