@@ -4,7 +4,11 @@ import HTTP from '../../Utils/HTTP'
 import { getCookie } from "typescript-cookie"
 
 export function ConenctSocket() {
-	socket= io(HTTP.HostRedirect(), {
+	try {
+		socket.disconnect();
+	} catch (error) { /* Ignore error */ }
+	
+	socket = io(HTTP.HostRedirect(), {
 		extraHeaders: {
 			Authorization: `Bearer ${getCookie("accessToken")}`
 		}
