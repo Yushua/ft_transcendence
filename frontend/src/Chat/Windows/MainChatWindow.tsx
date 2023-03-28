@@ -8,7 +8,7 @@ import RoomBrowser from "./RoomBrowser/RoomBrowser";
 import User from "../../Utils/Cache/User";
 import HTTP from "../../Utils/HTTP";
 import { EmptyCanvas } from "../../Games/pong/components/EmtpyCanvas";
-import { Button } from "@mui/material";
+import { Button, Tab, Tabs } from "@mui/material";
 
 export async function asyncChangeRoom(roomID: string) {
 	await ChatRoom.asyncUpdate(roomID, true)
@@ -47,15 +47,11 @@ export default function MainChatWindow() {
 	return (
 	<>
 		<div>
-			<Button variant={MainWindow === "chat" ? "contained" : "outlined"}
-				onClick={() => setMainWindow("chat")}
-				>Chat</Button>
-			<Button variant={MainWindow === "rooms" ? "contained" : "outlined"}
-				onClick={() => setMainWindow("rooms")}
-				>Rooms to Join</Button>
-			<Button variant={MainWindow === "newroom" ? "contained" : "outlined"}
-				onClick={() => setMainWindow("newroom")}
-				>New Room</Button>
+			<Tabs value={MainWindow} centered>
+				<Tab label="Chat" value="chat" onClick={() => setMainWindow("chat")}/>
+				<Tab label="Rooms to Join" value="rooms" onClick={() => setMainWindow("rooms")}/>
+				<Tab label="New Room" value="newroom" onClick={() => setMainWindow("newroom")}/>
+			</Tabs>
 		</div>
 		
 		{/* MetaDiv */}
