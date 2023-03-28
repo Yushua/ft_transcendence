@@ -7,38 +7,30 @@ import MainWindow from '../MainWindow/MainWindow';
 import HTTP from '../Utils/HTTP';
 import User from '../Utils/Cache/User';
 
-async function turningTWTOn(code:string){
-  try {
-    const response = await fetch(HTTP.HostRedirect() + `auth/checkTWT/${getCookie(`TWToken${User.intraname}`)}/${code}` , {
-      headers: {
-        Accept: 'application/json',
-        'Authorization': 'Bearer ' + getCookie("accessToken"),
-        'Content-Type': 'application/json',
-      },
-      method: 'GET'
-    })
-    if (!response.ok) {
-      throw new Error(`Error! status: ${response.status}`);
-    }
-    var result = await response.json();
-    if (await result["status"] === true){
-      console.log("succesfully turned on")
-      removeCookie(`TWToken${User.intraname}`);
-      setCookie(`TWToken${User.intraname}`, await result["TWT"],{ expires: 10000 });
+async function CheckTWTSetup(code:string, secret:string){
+  console.log(` input {${code}}`)
+  const response = HTTP.Get(`auth/checkTWTCodeUpdate/${secret}/${code}`, null, {Accept: 'application/json'})
+  var result = await JSON.parse(response)
+  if (await result["status"] == true){
+    removeCookie(`TWToken${User.intraname}`);
+    setCookie(`TWToken${User.intraname}`, await result["TWT"],{ expires: 10000 });
       newWindow(<MainWindow/>);
-    }
-    else {
-        alert("wrong code input, try again")
-        _setInputValue("")
-    }
-  } catch (error) {
+  }
+  else {
     alert("wrong code input, try again")
     _setInputValue("")
   }
 }
+
 async function handleSubmit(event:any){
   event.preventDefault();
-  await turningTWTOn(_inputValue)
+  if (_inputValue.length < 2){
+    alert("input is too small")
+    _setInputValue("")
+  }
+  else {
+    await CheckTWTSetup(_inputValue, "d")
+  }
 };
 
 var _inputValue: string
@@ -57,7 +49,7 @@ function TWTEnabled(){
       <div>
         <form onSubmit={handleSubmit}>
           <label>
-            enable Two Factor system
+            please fill in the code to enable Two Factor Authorization
             <input type="text" value={inputValue} onChange={handleInputChange} />
           </label>
           <button type="submit">Submit</button>

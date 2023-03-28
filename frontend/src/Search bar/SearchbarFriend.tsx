@@ -1,59 +1,65 @@
 import React, { useEffect, useState } from 'react';
+import { newWindow } from '../App';
+import UserProfileComponent from '../ButtonComponents/UserProfileComponent';
 import HTTP from '../Utils/HTTP';
 
-export async function asyncGetFriendList():Promise<string[][]>{
+async function asyncGetFriendListById():Promise<string[][]>{
   const response = HTTP.Get(`user-profile/GetFriendList`, null, {Accept: 'application/json'})
   var result = await JSON.parse(response)
   return await result["friendlist"]
 }
 
-export async function asyncRemoveFriend(friendID: string){
-  const response = HTTP.Get(`user-profile/friendlist/remove/${friendID}`, null, {Accept: 'application/json'})
-  var result = await JSON.parse(response)
-}
-
 async function seeProfileOther(username: string){
-  //call function
-  _setDisplay(false);
+  // newWindow(<OtherUserProfile/>)
+  _setShowDropdown(false);
 }
 
-async function RemoveFriend(friendID: string){
-  await this.asyncRemoveFriend(friendID)
-  _setDisplay(false);
+async function getFriendList(){
+  _setFriendList(await asyncGetFriendListById())
 }
 
-/**
- * sets the display to [["pfp", "username", "status", "id"]]
- */
-async function getListFriendList(){
-  _setDisplay(true);
-  _setNameDisplay(await this.asyncGetFriendList())
-}
-
-var _setNameDisplay:React.Dispatch<React.SetStateAction<string[][]>>
-var _setDisplay: React.Dispatch<React.SetStateAction<boolean>>
+var _SelectedOption: string[]
+var _setShowDropdown:React.Dispatch<React.SetStateAction<boolean>>
+var _setFriendList:React.Dispatch<React.SetStateAction<string[][]>>
 function SearchBarFriend() {
-  const [ListDisplay, setNameDisplay] = useState<string[][]>([]);
-  const [Display, setDisplay] = useState<boolean>(false);
-  _setNameDisplay = setNameDisplay
-  _setDisplay = setDisplay
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [selectedOption, setSelectedOption] = useState<string[]>([]);
+  const [FriendList, setFriendList] = useState<string[][]>([]);
+  _SelectedOption = selectedOption
+  _setShowDropdown = setShowDropdown
+  _setFriendList = setFriendList
+  const handleButtonClick = (option: string[]) => {
+    setSelectedOption(option);
+    setShowDropdown(true);
+  };
   useEffect(() => {
-		if (Display === false){
-			getListFriendList()
-		}
+		getFriendList()
 	}, []); // empty dependency array means it will only run once
+
+
   return (
     <div>
-        {ListDisplay.map((item, index) => (
-          <div key={index} style={{ border: "1px solid black", padding: "3px" }}>
-            <img src={item[0]} alt="" style={{border: "3px solid black", width: "50px", height: "50px", alignItems: "center"}}/>
-            <p style={{alignItems: "center"}}>{`name ${item[1]}`}</p>
-            <p style={{alignItems: "center"}}>{`status ${item[2]}`}</p>
-            <button style={{ width: "100px", height: "50px", alignItems: "center" }} onClick={() => seeProfileOther(item[1])} >{`lookup`}</button>
-            <button style={{ width: "100px", height: "50px", alignItems: "center" }} onClick={() => RemoveFriend(item[3])} >remove</button>
-          </div>
-        ))}
+      <div>
+      <UserProfileComponent/>
       </div>
+    <div style={{ display: "flex", flexWrap: "wrap", maxHeight: "200px" }}>
+          {FriendList.map((option, index) => (
+            <button
+              key={index}
+              style={{ margin: "5px", width: "100px", height: "50px" }}
+              onClick={() => handleButtonClick(option)}
+            >{`name: ${option[0]}\nstatus: ${option[1]}`}
+            </button>
+          ))}
+          {showDropdown && (
+            <div style={{ position: "absolute", top: "60px", left: "0" }}>
+              <ul>
+                <button style={{ margin: "5px", width: "100px", height: "50px" }} onClick={() => seeProfileOther(_SelectedOption[0])}> add {_SelectedOption[0]} Lookup </button>
+              </ul>
+            </div>
+          )}
+        </div>
+    </div>
   )
 }
 

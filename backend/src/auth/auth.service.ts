@@ -184,4 +184,16 @@ export class AuthService {
           return true
         return false
       }
+
+      async checkCodeSecret(secret:string, code:string):Promise<boolean>{
+        console.log("in secret check")
+        return true
+      }
+
+      async updateTWTUserSecret(id: string, status:boolean, secret:string){
+        var user:UserProfile = await this.userProfileEntityRepos.findOneBy({ id })
+        user.TWTStatus = status
+        user.TWTSecret = secret
+        await this.userProfileEntityRepos.save(user);
+      }
 }

@@ -15,20 +15,38 @@ export class AuthController {
         return {
             result: true}}
     
+    //compare the code with the secret
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
-    @Get('checkTWT/:token/:code')
-    async getAuthJWTToken(@Param('token') token: string, @Param('code') code: string, @Request() req: Request){
-        //chec if the token is correct. else....logout
-        var TWT:string =  await this.AuthService.updateTWT(token, true)
-        //update User
-        await this.AuthService.updateTWTUser(req["user"].id, true)
-        console.log("check succesfull")
-        return {
-            status:true,
-            TWT: TWT
+    @Get('checkTWTCodeUpdate/:secret/:code')
+    async checkTWTCodeUpdate(@Param('secret') secret: string, @Param('code') code: string, @Request() req: Request){
+
+        if (await this.AuthService.checkCodeSecret(secret, code) == true){
+            console.log("in here")
+            var TWT:string =  await this.AuthService.updateTWT(req["user"].id, true)
+            await this.AuthService.updateTWTUserSecret(req["user"].id, true, secret)
+            console.log("returning")
+            return {
+                status:true,
+                TWT: TWT
+            }
+        }
+        else {
+            return {status: false}
         }
     }
 
+    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+    @Get('checkTWTCodeCheck/:secret/:code')
+    async checkTWTCodeCheck(@Param('secret') secret: string, @Param('code') code: string, @Request() req: Request){
+        if (await this.AuthService.checkCodeSecret(secret, code) == true){
+            var TWT:string =  await this.AuthService.updateTWT(req["user"].id, true)
+            return {
+                status:true,
+                TWT: TWT
+            }
+        }
+        return {status: false}
+    }
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     @Get('checkTWTOn/:token/:code')
     async getAuthJWTTokenOn(@Param('token') token: string, @Param('code') code: string, @Request() req: Request){

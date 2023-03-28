@@ -20,6 +20,9 @@ export class UserProfile {
     @Column({ default: false})
     TWTStatus: boolean
 
+    @Column({ default: ""})
+    TWTSecret: string
+
     @Column("text", { array: true , default: "{}"})
     friendList: string[];
 

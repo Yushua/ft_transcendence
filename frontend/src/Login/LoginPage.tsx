@@ -131,7 +131,6 @@ export async function asyncGetTWTStatus(TWT: string):Promise<boolean> {
     removeCookie(`TWToken${_intraName}`);
     setCookie(`TWToken${_intraName}`, await setLoginTWT(),{ expires: 10000 });
     newWindow(<TWTCheckLoginPage />)
-    //react router
   }
   return false
 }
