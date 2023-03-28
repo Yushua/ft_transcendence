@@ -9,9 +9,9 @@ import TableContainer from "@mui/material/TableContainer";
 import { Socket } from "socket.io-client";
 import Paper from "@mui/material/Paper";
 
-function createData_active(id: number, gameName: string, p1: string, p2: string)
+function createData_active(id: number, gameName: string, displayName:string, p1: string, p2: string)
 {
-	return { id, gameName, p1, p2 };
+	return { id, gameName, displayName, p1, p2 };
 }
 
 function createData_custom(id: number, gameName: string, p1: string, controls:string, BallSpeed: number, PaddleSize:number)
@@ -24,8 +24,9 @@ export class GameList extends React.Component<any, any> {
 
 	spectate(gameName:string, socket:Socket)
 	{
-		if (gameName !== undefined)
+		if (gameName !== undefined) {
 			socket.emit('spectate', gameName)
+		}
 	}
 
 	join(gameName:string, userID:string, userName:string, socket:Socket)
@@ -40,13 +41,16 @@ export class GameList extends React.Component<any, any> {
 		let i = 0
 
 		/* public games have max len of 12 chars, private ones have ID that is longer */
+		/* game is map with key = gamename and value = string of data: p1_name, p2_name (+custom stuff if set) */
+		/* for active games, third value of value ([1][2]) is bool that is true if game is a classic game */
 		for (var game of games) {
 			if (type === 'active' && game[0].length < 13)
 			{
-				if (game[1][2])
-					rows[i] = createData_active(i, 'Classic', game[1][0], game[1][1])
+				if (game[1][2]) {
+					rows[i] = createData_active(i, game[0], 'Classic', game[1][0], game[1][1])
+				}
 				else
-					rows[i] = createData_active(i, game[0], game[1][0], game[1][1])
+					rows[i] = createData_active(i, game[0], game[0], game[1][0], game[1][1])
 			}
 			else if (type === 'custom' && game[0].length < 13)
 				rows[i] = createData_custom(i, game[0], game[1][0], game[1][1], game[1][2], game[1][3])
@@ -88,7 +92,7 @@ export class GameList extends React.Component<any, any> {
 						<TableBody>
 						{rows_active.map((row) => (
 							<TableRow key={row.id}>
-								<TableCell style={{width: 85, color: "#FF3333"}}>{row.gameName}</TableCell>
+								<TableCell style={{width: 85, color: "#FF3333"}}>{row.displayName}</TableCell>
 								<TableCell style={{width: 50, color: "#FF3333"}}>{row.p1}</TableCell>
 								<TableCell style={{width: 50, color: "#FF3333"}}>{row.p2}</TableCell>
 								<TableCell><Button variant="contained" onClick={() => this.spectate(row.gameName, this.props.socket)}>Spectate</Button></TableCell>

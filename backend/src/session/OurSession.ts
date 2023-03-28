@@ -1,5 +1,3 @@
-import { stat } from "fs"
-import { Socket } from "socket.io"
 import { UserProfile } from "src/user-profile/user.entity"
 
 export default class OurSession {

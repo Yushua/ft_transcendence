@@ -47,6 +47,20 @@ export class MyGateway implements OnModuleInit {
 		this.server.on('connection', async (socket) => {
 			const user = await this._guard.GetUser(socket.handshake.headers["authorization"])
 			OurSession.SocketConnecting(user, socket.id)
+			//check if in game
+			const state = OurSession.GetUserState(user.id)
+			if (state === 'inGame')
+			{
+				for (var game of games) {
+					const _IDs = game[1][1]
+					if (user.id === _IDs[IDs.p1_userID]) {
+						socket.emit('joined', game[1][0].p1_controls)
+					}
+					else if (user.id === _IDs[IDs.p2_userID]) {
+						socket.emit('joined', game[1][0].p2_controls)
+					}
+				}
+			}
 		})
 	}
 
@@ -128,6 +142,7 @@ export class MyGateway implements OnModuleInit {
 		CustomConfig.ballSpeed = gameInfo.customSettings.ballSpeed
 		CustomConfig.paddleSize = gameInfo.customSettings.paddleSize
 		CustomConfig.gameName = gameInfo.customSettings.gameName
+		CustomConfig.acceleration = gameInfo.customSettings.acceleration
 		let gameData = new GameData(CustomConfig, false)
 		if (gameInfo.type === 'public')
 		{
@@ -233,6 +248,8 @@ export class MyGateway implements OnModuleInit {
 		@MessageBody() gameName: string,
 		@ConnectedSocket() client: Socket) {
 			let game = games.get(gameName)
+			console.log('name:', gameName)
+			console.log('game:', game)
 			if (game !== undefined)
 			{
 				connections.set(client.id, game)
@@ -274,7 +291,6 @@ export class MyGateway implements OnModuleInit {
 	@SubscribeMessage('disconnect')
 	handleDisconnect(
 		@ConnectedSocket() client: Socket) {
-			console.log('client:', client.id, ' disconnected')
 			let connection = connections.get(client.id)
 			if (connection !== undefined)
 				connections.delete(client.id)

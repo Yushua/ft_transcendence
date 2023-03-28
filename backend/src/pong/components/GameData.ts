@@ -16,6 +16,7 @@ export class GameData {
 	ballSpeed:number
 	paddleSize:number
 	isClassic:boolean
+	acceleration:number
 
 	constructor(Config:any, isClassic:boolean)
 	{
@@ -29,9 +30,10 @@ export class GameData {
 		this.p2_controls = Config.p2_controls
 		this.ballSpeed = Config.ballSpeed
 		this.paddleSize = Config.paddleSize
-		this.p1 = new Paddle(12, 1, 1500, 750, 20, 20, Config.paddleSize)
-		this.p2 = new Paddle(12, 2, 1500, 750, 20, 20, Config.paddleSize)
-		this.ball = new Ball(10 * Config.ballSpeed / 100, 3, 1500, 750, 20, 20, 20)
+		this.acceleration = Config.acceleration
+		this.p1 = new Paddle(12, 1, 1500, 750, 20, 20, Config.paddleSize, this.acceleration)
+		this.p2 = new Paddle(12, 2, 1500, 750, 20, 20, Config.paddleSize, this.acceleration)
+		this.ball = new Ball(10 * Config.ballSpeed / 100, 3, 1500, 750, 20, 20, 20, this.acceleration)
 		this.isClassic = isClassic
 	}
 
@@ -63,7 +65,7 @@ class Entity
 	yVec:number
 	speed:number
 	initialSpeed:number
-	acceleration = .5
+	acceleration:number
 	gameCanvasWidth:number
 	gameCanvasHeight:number
 	wallOffset:number
@@ -78,12 +80,14 @@ class Entity
 		wallOffset:number,
 		width:number,
 		height:number,
+		acceleration:number
 		)
 	{
 		this.initialSpeed = speed
 		this.gameCanvasWidth = gameCanvasWidth
 		this.gameCanvasHeight = gameCanvasHeight
 		this.wallOffset = wallOffset
+		this.acceleration = acceleration
 		this.speed = this.initialSpeed
 		this.width = width
 		this.height = height
@@ -141,6 +145,7 @@ export class Ball extends Entity
 		wallOffset:number,
 		width:number,
 		height:number,
+		acceleration:number
 		)
 	{
 	super (
@@ -150,7 +155,8 @@ export class Ball extends Entity
 		gameCanvasHeight,
 		wallOffset,
 		width,
-		height,	
+		height,
+		acceleration
 	)
 		this.yVec = Math.random() < .5 ? 1 : -1
 		this.xVec = Math.random() < .5 ? 1 : -1

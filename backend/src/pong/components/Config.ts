@@ -8,6 +8,8 @@ export class Config {
 	p2_userID:string
 	paddleSize:number
 	ballSpeed:number
+	acceleration:number
+
 	constructor() {
 		this.gameName = 'gameName'
 		this.p1_name = ''
@@ -18,6 +20,7 @@ export class Config {
 		this.p2_userID = ''
 		this.ballSpeed = 100
 		this.paddleSize = 100
+		this.acceleration = 0.5
 	}
 }
 

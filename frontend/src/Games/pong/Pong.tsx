@@ -218,11 +218,12 @@ export const Pong = () => {
 		})
 		window.addEventListener("mousemove", (event) => {
 			const canvas = Canvas.CurrentGameCanvas
-			const scale = Canvas.InternalSize.height / canvas.offsetHeight
-			
-			mousePosition = (event.y - canvas.offsetTop) * scale
-			
-			PracticeModeLoop.SetMousePosition(mousePosition)
+			let scale:number
+			if (canvas) {
+				scale = Canvas.InternalSize.height / canvas.offsetHeight
+				mousePosition = (event.y - canvas.offsetTop) * scale
+				PracticeModeLoop.SetMousePosition(mousePosition)
+			}
 		})
 
 		/* EMIT */

@@ -1,5 +1,4 @@
 import React from "react"
-import { Socket } from "socket.io-client"
 import { GameData } from "./GameData"
 import PracticeModeLoop from "../practice_mode/practice_mode"
 
@@ -20,7 +19,7 @@ export class Canvas extends React.Component<any, any> {
 		this.gameCanvas.height = Canvas.InternalSize.height
 		this.gameContext = this.gameCanvas.getContext("2d") as CanvasRenderingContext2D
 		this.gameContext.font = "30px Orbitron"
-		
+
 		Canvas.CurrentGameCanvas = this.gameCanvas
 	}
 	draw(gameData: GameData)
