@@ -11,6 +11,7 @@ import OurHistory from "../Utils/History";
 import HTTP from "../Utils/HTTP";
 import LogoutButtonComponent from "../ButtonComponents/LogoutButton";
 import SettingsUser from "../UserProfile/SettingsUser";
+import TestPage from "../UserProfile/TestPage";
 
 export async function asyncGetNameExport():Promise<string> {
 	const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
@@ -71,6 +72,7 @@ export default function MainWindow() {
 		case "Search": display = <SearchBar/>; break
 		case "TWTDisplay": display = <TWTCheckPage/>; break
 		case "Settings": display = <SettingsUser/>; break
+		case "TestPage": display = <TestPage/>; break
 		default: break
 	}
 	
@@ -102,6 +104,10 @@ export default function MainWindow() {
 					onClick={() => SetMainWindow("Settings")}
 					disabled={currentWindow === "Settings"}
 					>Settings</button>
+				<button
+					onClick={() => SetMainWindow("TestPage")}
+					disabled={currentWindow === "TestPage"}
+					>TestPage</button>
 			</div>
 			{display}
 		</div>

@@ -16,3 +16,45 @@
   z-index: 1;
   text-align: center;
 }
+
+@media (max-width: 768px) {
+  /* adjust CSS for smaller screens */
+}
+
+
+.button-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly; /* evenly space the buttons on the screen */
+  align-items: center; /* center the buttons vertically */
+  height: 80%; /* set the height of the button container to be 80% of the height of the screen */
+}
+
+.buttonStyle {
+  display: 'flex';
+  justify-content: 'center';
+  align-Items: 'center';
+  width: '100vw';
+  height: '100vh';
+}
+
+.profilePicture {
+  display: 'flex';
+  justify-content: 'center';
+  align-Items: 'center';
+  width: '100vw';
+  height: '100vh';
+}
+
+.button {
+  border: '1% solid #000';
+  flex: 1;
+  margin: '10px';
+};
+
+.pageborder {
+  justify-content: 'center';
+  border: '2% solid #000';
+  width: '100vw';
+  height: '100vh';
+}
