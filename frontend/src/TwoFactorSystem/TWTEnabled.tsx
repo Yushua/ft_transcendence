@@ -7,7 +7,7 @@ import MainWindow from '../MainWindow/MainWindow';
 import HTTP from '../Utils/HTTP';
 import User from '../Utils/Cache/User';
 import QRCode from 'qrcode.react';
-import { authenticator } from 'otplib';
+// import { authenticator } from 'otplib';
 
 async function CheckTWTSetup(code:string, secret:string){
   console.log(` input {${code}}`)
@@ -55,7 +55,7 @@ function TWTEnabled(){
     <div className="TWTEnabled">
       <MainWindowButtonComponent/>
       <div>
-        <QRCode size={256} value={authenticator.keyuri('user@example.com', 'myApp', otpSecret)} />
+        <QRCode size={256} value={otpSecret} />
         <form onSubmit={handleSubmit}>
           <label>
             please fill in the code to enable Two Factor Authorization
