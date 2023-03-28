@@ -43,34 +43,32 @@ export default function MainChatWindow() {
 			break;
 	
 	}
-	
+
 	return (
-	<center>
-		<div style={{width: "80%"}}>
-			<div>
-				<Button variant={MainWindow === "chat" ? "contained" : "outlined"}
-					onClick={() => setMainWindow("chat")}
-					>Chat</Button>
-				<Button variant={MainWindow === "rooms" ? "contained" : "outlined"}
-					onClick={() => setMainWindow("rooms")}
-					>Rooms to Join</Button>
-				<Button variant={MainWindow === "newroom" ? "contained" : "outlined"}
-					onClick={() => setMainWindow("newroom")}
-					>New Room</Button>
-			</div>
-			
-			{/* MetaDiv */}
-			<div
-				style={{
-					border: (MainWindow === "chat" ? "solid" : "none"),
-					color: "#3676cc",
-					borderColor: "#3676cc", borderRadius: ".1cm",
-					width: "100%", height: "5.6cm", lineHeight: ".5cm"}}
-			>
-				{/* ContentTable */}
-				<div style={{display: "table", width: "100%", height: "100%", color: "black"}}>
-					{window}
-				</div>
+	<>
+		<div>
+			<Button variant={MainWindow === "chat" ? "contained" : "outlined"}
+				onClick={() => setMainWindow("chat")}
+				>Chat</Button>
+			<Button variant={MainWindow === "rooms" ? "contained" : "outlined"}
+				onClick={() => setMainWindow("rooms")}
+				>Rooms to Join</Button>
+			<Button variant={MainWindow === "newroom" ? "contained" : "outlined"}
+				onClick={() => setMainWindow("newroom")}
+				>New Room</Button>
+		</div>
+		
+		{/* MetaDiv */}
+		<div
+			style={{
+				border: (MainWindow === "chat" ? "solid" : "none"),
+				color: "#3676cc",
+				borderColor: "#3676cc", borderRadius: ".1cm",
+				width: "100%", height: "5.6cm", lineHeight: ".5cm"}}
+		>
+			{/* ContentTable */}
+			<div style={{display: "table", width: "100%", height: "100%", color: "black"}}>
+				{window}
 			</div>
 		</div>
 		{/* <button onClick={() => {
@@ -78,6 +76,6 @@ export default function MainChatWindow() {
 			ChatRoom.Clear()
 		}}>DEBUG: Delete all chat data</button> */}
 		<EmptyCanvas/>
-	</center>
+	</>
 	)
 }
