@@ -15,15 +15,14 @@ export const JoinClassicButton = (props:any) => {
 	}
 
 	return (
-		<div className='dropdown-menu'>
+		<div>
 			<Button variant="outlined" onClick={() => isClassicGame()}>Join Classic Game</Button>
 			{classicGame ? 
-			<ul>
-				&nbsp;
-				<li className='dropdownItem'><Button variant="contained" onClick={() => findGame('mouse')}>Mouse</Button></li>
-				&nbsp;
-				<li className='dropdownItem'><Button variant="contained" onClick={() => findGame('keyboard')}>Keyboard</Button></li>
-			</ul> : <></> }
+				<div>
+					<p></p>
+					<Button variant="contained" onClick={() => findGame('mouse')}>Mouse</Button>
+					<Button variant="contained" onClick={() => findGame('keyboard')}>Keyboard</Button>
+				</div>: <></> }
 		</div>
 	)
 }

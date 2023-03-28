@@ -78,29 +78,33 @@ export class GameList extends React.Component<any, any> {
 				<TableContainer
         			component={Paper}
         			style={{ border: "1px solid rgba(0,0,1,0.2)", padding: 40 }}>
-				{rows_active.length === 0 ? <h3 style={{color: "#3355FF"}}>No Active Games</h3> : 
-				<div>
-					<h3 style={{color: "#3355FF"}}>Active Games</h3>
-					<Table size="small">
-						<TableHead>
-							<TableRow>
-								<TableCell style={{width: 120, color: "#3368FF"}}>Game Name</TableCell>
-								<TableCell style={{width: 70, color: "#3368FF"}}>Player 1</TableCell>
-								<TableCell style={{width: 70, color: "#3368FF"}}>Player 2</TableCell>
-							</TableRow>
-						</TableHead>
-						<TableBody>
-						{rows_active.map((row) => (
-							<TableRow key={row.id}>
-								<TableCell style={{width: 85, color: "#FF3333"}}>{row.displayName}</TableCell>
-								<TableCell style={{width: 50, color: "#FF3333"}}>{row.p1}</TableCell>
-								<TableCell style={{width: 50, color: "#FF3333"}}>{row.p2}</TableCell>
-								<TableCell><Button variant="contained" onClick={() => this.spectate(row.gameName, this.props.socket)}>Spectate</Button></TableCell>
-							</TableRow>
-						))}
-						</TableBody>
-					</Table>
-				</div> }
+					{rows_active.length === 0 ? <h3 style={{color: "#3355FF"}}>No Active Games</h3> : 
+					<div>
+						<h3 style={{color: "#3355FF"}}>Active Games</h3>
+						<Table size="small">
+							<TableHead>
+								<TableRow>
+									<TableCell style={{width: 120, color: "#3368FF"}}>Game Name</TableCell>
+									<TableCell style={{width: 70, color: "#3368FF"}}>Player 1</TableCell>
+									<TableCell style={{width: 70, color: "#3368FF"}}>Player 2</TableCell>
+								</TableRow>
+							</TableHead>
+							<TableBody>
+							{rows_active.map((row) => (
+								<TableRow key={row.id}>
+									<TableCell style={{width: 85, color: "#FF3333"}}>{row.displayName}</TableCell>
+									<TableCell style={{width: 50, color: "#FF3333"}}>{row.p1}</TableCell>
+									<TableCell style={{width: 50, color: "#FF3333"}}>{row.p2}</TableCell>
+									<TableCell><Button variant="contained" onClick={() => this.spectate(row.gameName, this.props.socket)}>Spectate</Button></TableCell>
+								</TableRow>
+							))}
+							</TableBody>
+						</Table>
+					</div> }
+				</TableContainer>
+				<TableContainer
+        			component={Paper}
+        			style={{ border: "1px solid rgba(0,0,1,0.2)", padding: 40 }}>
 				{rows_custom.length === 0 ? <h3 style={{color: "#3355FF"}}>No Custom Games</h3> : 
 				<div>
 					<h3 style={{color: "#3355FF"}}>Custom Games</h3>

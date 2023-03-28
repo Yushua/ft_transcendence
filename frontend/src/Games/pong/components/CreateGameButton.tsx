@@ -77,54 +77,55 @@ export const CreateGameButton = (props:any) => {
 		<React.Fragment>
 			<Button variant="outlined" onClick={() => isCustomGame()}>Create Custom Game</Button>
 			{customGame ? 
-			<ul>
-				&nbsp;
-				<li className='dropdownItem' style={{ color: "#3368FF"}}>Choose Ball Speed</li>
-				<Box sx={{ width: 250 }}>
-					<Typography id="non-linear-slider" gutterBottom style={{ color: "#3368FF"}}>
-						{ballSpeed}%
-					</Typography>
-					<Slider
-						value={ballSpeed}
-						min={100}
-						step={1}
-						max={200}
-						onChange={handleBallChange}
-						valueLabelDisplay="auto"
-						aria-labelledby="non-linear-slider"
-					/>
-				</Box>
-				<li className='dropdownItem' style={{ color: "#3368FF"}}>Choose Paddle Size</li>
-				<Box sx={{ width: 250 }}>
-					<Typography id="non-linear-slider" gutterBottom style={{ color: "#3368FF"}}>
-						{paddleSize}%
-					</Typography>
-					<Slider
-						value={paddleSize}
-						min={5}
-						step={1}
-						max={500}
-						onChange={handlePaddleChange}
-						valueLabelDisplay="auto"
-						aria-labelledby="non-linear-slider"
-					/>
-				</Box>
-				<li className='dropdownItem' style={{ color: "#3368FF"}}>Choose Ball Acceleration</li>
-				<Box sx={{ width: 250 }}>
-					<Typography id="non-linear-slider" gutterBottom style={{ color: "#3368FF"}}>
-						{acceleration}x
-					</Typography>
-					<Slider
-						value={acceleration}
-						min={0}
-						step={0.5}
-						max={10}
-						onChange={handleAccelerationChange}
-						valueLabelDisplay="auto"
-						aria-labelledby="non-linear-slider"
-					/>
-				</Box>
-				<li className='dropdownItem'>
+			<div>
+				<h4 style={{ color: "#3368FF"}}>Choose Ball Speed
+					<Box sx={{ width: 250 }}>
+						<Typography id="non-linear-slider" gutterBottom style={{ color: "#3368FF"}}>
+							{ballSpeed}%
+						</Typography>
+						<Slider
+							value={ballSpeed}
+							min={100}
+							step={1}
+							max={200}
+							onChange={handleBallChange}
+							valueLabelDisplay="auto"
+							aria-labelledby="non-linear-slider"
+						/>
+					</Box>
+				</h4>
+				<h4 style={{ color: "#3368FF"}}>Choose Paddle Size
+					<Box sx={{ width: 250 }}>
+						<Typography id="non-linear-slider" gutterBottom style={{ color: "#3368FF"}}>
+							{paddleSize}%
+						</Typography>
+						<Slider
+							value={paddleSize}
+							min={5}
+							step={1}
+							max={500}
+							onChange={handlePaddleChange}
+							valueLabelDisplay="auto"
+							aria-labelledby="non-linear-slider"
+						/>
+					</Box>
+				</h4>
+				<h4 style={{ color: "#3368FF"}}>Choose Ball Acceleration
+					<Box sx={{ width: 250 }}>
+						<Typography id="non-linear-slider" gutterBottom style={{ color: "#3368FF"}}>
+							{acceleration}x
+						</Typography>
+						<Slider
+							value={acceleration}
+							min={0}
+							step={0.5}
+							max={10}
+							onChange={handleAccelerationChange}
+							valueLabelDisplay="auto"
+							aria-labelledby="non-linear-slider"
+						/>
+					</Box>
+				</h4>
 					{isMouse ?
 						<div>
 							<Button variant="contained" onClick={() => setMouse()}>Mouse</Button>
@@ -135,54 +136,49 @@ export const CreateGameButton = (props:any) => {
 							<Button variant="outlined" onClick={() => setMouse()}>Mouse</Button>
 							&nbsp;
 							<Button variant="contained" onClick={() => setKeyboard()}>Keyboard</Button>
-						</div>}
-				</li>
+						</div> }
+				<h4 style={{ color: "#3368FF"}}>Game Name</h4>
 				&nbsp;
-				<li className='dropdownItem' style={{ color: "#3368FF"}}>
-					<>Game Name:</>
-					&nbsp;
-					<input
-						type="text"
-						id="message"
-						name="message"
-						maxLength={12}
-						onChange={handleTextChange} />
-					{gameNameTaken ?
-						<div style={{color: "#FF3333", display: 'inline-block'}}>
-							<h4>
-								&nbsp;
-								This name already exists... choose another
-							</h4>
-						</div> :
-						<></> }
-				</li>
+				<input
+					type="text"
+					id="message"
+					name="message"
+					maxLength={12}
+					onChange={handleTextChange} />
+				<p></p>
+				{gameNameTaken ?
+					<div style={{color: "#FF3333", display: 'inline-block'}}>
+						<h4>
+							&nbsp;
+							This name already exists... choose another
+						</h4>
+					</div> :
+					<></> }
 				&nbsp;
-				<li>
-					<Button
-						variant="contained"
-						onClick={() => createGame('public', {
-							gameName,
-							ballSpeed,
-							paddleSize,
-							controls,
-							acceleration
-						})}>
-						Create Public Game
-					</Button>
-					&nbsp;
-					<Button
-						variant="contained"
-						onClick={() => createGame('private', {
-							gameName,
-							ballSpeed,
-							paddleSize,
-							controls,
-							acceleration
-						})}>
-						Create Private Game
-					</Button>
-				</li>
-			</ul> : <></> }
+				<Button
+					variant="contained"
+					onClick={() => createGame('public', {
+						gameName,
+						ballSpeed,
+						paddleSize,
+						controls,
+						acceleration
+					})}>
+					Create Public Game
+				</Button>
+				&nbsp;
+				<Button
+					variant="contained"
+					onClick={() => createGame('private', {
+						gameName,
+						ballSpeed,
+						paddleSize,
+						controls,
+						acceleration
+					})}>
+					Create Private Game
+				</Button>
+			</div> : <></> }
 		</React.Fragment>
 	)
 }

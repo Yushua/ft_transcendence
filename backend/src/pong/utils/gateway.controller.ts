@@ -248,8 +248,6 @@ export class MyGateway implements OnModuleInit {
 		@MessageBody() gameName: string,
 		@ConnectedSocket() client: Socket) {
 			let game = games.get(gameName)
-			console.log('name:', gameName)
-			console.log('game:', game)
 			if (game !== undefined)
 			{
 				connections.set(client.id, game)
