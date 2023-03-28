@@ -7,6 +7,7 @@ import { AppController } from './app.controller';
 import { GatewayModule } from './pong/utils/gateway.module';
 import { PFPModule } from './profile-pictures/pfp.module';
 import { PongModule } from './pong/pong.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { PongModule } from './pong/pong.module';
     GatewayModule,
     PFPModule,
     PongModule,
+    ConfigModule.forRoot(),
   ],
   controllers: [AppController]
 })

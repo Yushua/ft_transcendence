@@ -108,9 +108,6 @@ export class AuthService {
        */
       async makeAccountTWT(intraName: string):Promise<string>{
         var user:UserProfile= await this.userProfileEntityRepos.findOneBy({ intraName })
-          //whent the account is made, secretcode is set
-          // const crypto = require('crypto');
-          // var secretcode:string= crypto.randomBytes(Math.ceil(10 / 2)).toString('hex').slice(0, 10)
           const payload: JwtPayload = { userID: user.id, twoFactor: false}
           const TWToken: string = this.jwtService.sign(payload);
           return TWToken;

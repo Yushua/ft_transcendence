@@ -70,11 +70,11 @@ export class AuthController {
         //because conf is not there
         const dataToPost = {
             grant_type: 'authorization_code',
-            client_id: 'u-s4t2ud-c73b865f02b3cf14638e1a50c5caa720828d13082db6ab753bdb24ca476e1a4c',
-            client_secret: `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`,
+            client_id: process.env.client_id,
+            client_secret: process.env.client_secret,
             code: code,
-            redirect_uri: "http://localhost:4242/",
-            state: " super-secret",
+            redirect_uri: process.env.redirect_url,
+            state: process.env.state,
         }
         var OAuthToken:string = await this.AuthService.OauthSystemCodeToAccess(dataToPost)
         var intraName:string = await this.AuthService.startRequest(OAuthToken)
@@ -104,11 +104,11 @@ export class AuthController {
         //because conf is not there
         const dataToPost = {
             grant_type: 'authorization_code',
-            client_id: 'u-s4t2ud-c73b865f02b3cf14638e1a50c5caa720828d13082db6ab753bdb24ca476e1a4c',
-            client_secret: `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`,
+            client_id: process.env.client_id,
+            client_secret: process.env.client_secret,
             code: code,
-            redirect_uri: "http://localhost:4242/",
-            state: " super-secret",
+            redirect_uri: process.env.redirect_url,
+            state: process.env.state,
         }
         console.log("in here")
         var OAuthToken:string = await this.AuthService.OauthSystemCodeToAccess(dataToPost)
@@ -127,11 +127,11 @@ export class AuthController {
         console.log(`code ${code}`)
         const dataToPost = {
             grant_type: 'authorization_code',
-            client_id: 'u-s4t2ud-c73b865f02b3cf14638e1a50c5caa720828d13082db6ab753bdb24ca476e1a4c',
-            client_secret: `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`,
+            client_id: process.env.client_id,
+            client_secret: process.env.client_secret,
             code: code,
-            redirect_uri: "http://localhost:4242/",
-            state: " super-secret",
+            redirect_uri: process.env.redirect_url,
+            state: process.env.state,
         }
         var OAuthToken:string = await this.AuthService.OauthSystemCodeToAccess(dataToPost)
         var intraName:string = await this.AuthService.startRequest(OAuthToken)
