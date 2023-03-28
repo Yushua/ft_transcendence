@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ChatWindow from "./Chat/ActualChat/ChatWindow";
 import MembersWindow from "./Chat/Members/MembersWindow";
 import RoomSelectWindow from "./Chat/RoomSelect/RoomSelectWindow";
@@ -6,9 +6,8 @@ import RoomCreation from "./RoomCreation/RoomCreation";
 import ChatRoom from "../../Utils/Cache/ChatRoom";
 import RoomBrowser from "./RoomBrowser/RoomBrowser";
 import User from "../../Utils/Cache/User";
-import HTTP from "../../Utils/HTTP";
 import { EmptyCanvas } from "../../Games/pong/components/EmtpyCanvas";
-import { Button, Tab, Tabs } from "@mui/material";
+import { Tab, Tabs } from "@mui/material";
 
 export async function asyncChangeRoom(roomID: string) {
 	await ChatRoom.asyncUpdate(roomID, true)
@@ -24,6 +23,8 @@ export default function MainChatWindow() {
 	
 	const [MainWindow, setMainWindow] = useState<string>("chat")
 	_setMainWindow = setMainWindow
+	
+	useEffect(() => () => ChatRoom.Clear(), [])
 	
 	if (User.ID === "")
 		return <></>

@@ -91,7 +91,6 @@ export default function ChatWindow() {
 	
 	useEffect(() => {
 		asyncUpdateChatLog()
-		return () => ChatRoom.Clear()
 	}, [])
 	
 	if (ChatRoom.ID === "" || chatLog.length === 0)
