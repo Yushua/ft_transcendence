@@ -74,31 +74,33 @@ export default function MainWindow() {
 	}
 	
 	return (
-		<div>
-			<div>
-				<LogoutButtonComponent />
-				<button
-					onClick={() => SetMainWindow("profile")}
-					disabled={currentWindow === "profile"}
-					>Profile</button>
-				<button
-					onClick={() => SetMainWindow("chat")}
-					disabled={currentWindow === "chat"}
-					>Chat</button>
-				<button
-					onClick={() => SetMainWindow("pong")}
-					disabled={currentWindow === "pong"}
-					>Play Pong</button>
-				<button
-					onClick={() => SetMainWindow("Search")}
-					disabled={currentWindow === "Search"}
-					>Search</button>
-				<button
-					onClick={() => SetMainWindow("TWTDisplay")}
-					disabled={currentWindow === "TWTDisplay"}
-					>TwoFactor</button>
+		<center>
+			<div className={"MainWidnow"} style={{width: `${Math.trunc(window.screen.width * .5)}px`}}>
+				<div>
+					<LogoutButtonComponent />
+					<button
+						onClick={() => SetMainWindow("profile")}
+						disabled={currentWindow === "profile"}
+						>Profile</button>
+					<button
+						onClick={() => SetMainWindow("chat")}
+						disabled={currentWindow === "chat"}
+						>Chat</button>
+					<button
+						onClick={() => SetMainWindow("pong")}
+						disabled={currentWindow === "pong"}
+						>Play Pong</button>
+					<button
+						onClick={() => SetMainWindow("Search")}
+						disabled={currentWindow === "Search"}
+						>Search</button>
+					<button
+						onClick={() => SetMainWindow("TWTDisplay")}
+						disabled={currentWindow === "TWTDisplay"}
+						>TwoFactor</button>
+				</div>
+				{display}
 			</div>
-			{display}
-		</div>
+		</center>
 	)
 }

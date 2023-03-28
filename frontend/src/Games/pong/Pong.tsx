@@ -274,41 +274,44 @@ export const Pong = () => {
 
 	//JSX 
 	return (
-		<React.Fragment>
-			&nbsp;
-			{pending ? `Waiting for second player...` : <></>}
-			{inGame || spectating ?
-					<Canvas instance={game} socket={socket} gameData={gameData}/> :
-					<EmptyCanvas/>}
-			{!inGame && !spectating && !gameCreated ?
-				<ul>
-					<li><JoinClassicButton socket={socket} userID={userID} userName={userName}/></li>
-					&nbsp;
-					<li><JoinPrivateButton socket={socket} userID={userID} userName={userName}/></li>
-					&nbsp;
-					<li><CreateGameButton socket={socket} userID={userID} userName={userName}/></li>
-					&nbsp;
-					<li><Button variant="contained" onClick={() => StartPracticeGame()}>Practice Mode</Button></li>
-				</ul> : <></>}
-			{inGame ? 
-				<div>
-					<Button variant="contained" onClick={() => leaveGame()}>Leave Game</Button> 
-				</div> :
-				<div>
-					&nbsp;
-					{spectating ?
-							<Button variant="contained" onClick={() => leaveGame()}>Stop Spectating</Button> :
-							!gameCreated ?
-								<Button variant="outlined" onClick={() => ShowGameList()}>Game List</Button> : <></> }
-				</div>}
-			{showGameList && !inGame && !gameCreated ? <GameList userID={userID} userName={userName} customGames={customGames} activeGames={activeGames} socket={socket} /> : <></>}
-			{gameCreated ?
-				<div>
+		<>
+			<React.Fragment>
+				&nbsp;
+				{pending ? `Waiting for second player...` : <></>}
+				{inGame || spectating ?
+						<Canvas instance={game} socket={socket} gameData={gameData}/> :
+						<EmptyCanvas/>}
+				{!inGame && !spectating && !gameCreated ?
+					<ul>
+						<li><JoinClassicButton socket={socket} userID={userID} userName={userName}/></li>
+						&nbsp;
+						<li><JoinPrivateButton socket={socket} userID={userID} userName={userName}/></li>
+						&nbsp;
+						<li><CreateGameButton socket={socket} userID={userID} userName={userName}/></li>
+						&nbsp;
+						<li><Button variant="contained" onClick={() => StartPracticeGame()}>Practice Mode</Button></li>
+					</ul> : <></>}
+				{inGame ? 
 					<div>
-						{gameID !== '' ? <>Code to join game: {gameID}</> : <>Waiting for players...</>}
-					</div>
-					<Button variant="contained" onClick={() => deleteGame(gameName.current)}>Delete Game</Button>
-				</div> : <></> }
-		</React.Fragment>
+						<Button variant="contained" onClick={() => leaveGame()}>Leave Game</Button> 
+					</div> :
+					<div>
+						&nbsp;
+						{spectating ?
+								<Button variant="contained" onClick={() => leaveGame()}>Stop Spectating</Button> :
+								!gameCreated ?
+									<Button variant="outlined" onClick={() => ShowGameList()}>Game List</Button> : <></> }
+					</div>}
+				{showGameList && !inGame && !gameCreated ? <GameList userID={userID} userName={userName} customGames={customGames} activeGames={activeGames} socket={socket} /> : <></>}
+				{gameCreated ?
+					<div>
+						<div>
+							{gameID !== '' ? <>Code to join game: {gameID}</> : <>Waiting for players...</>}
+						</div>
+						<Button variant="contained" onClick={() => deleteGame(gameName.current)}>Delete Game</Button>
+					</div> : <></> }
+			</React.Fragment>
+			<canvas id="game-canvas" style={{width: "100%"}}></canvas>
+		</>
 	)
 }
