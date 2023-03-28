@@ -218,7 +218,7 @@ export const Pong = () => {
 		})
 		window.addEventListener("mousemove", (event) => {
 			const canvas = Canvas.CurrentGameCanvas
-			const scale = Canvas.InternalSize.width / canvas.offsetWidth
+			const scale = Canvas.InternalSize.height / canvas.offsetHeight
 			
 			mousePosition = (event.y - canvas.offsetTop) * scale
 			
