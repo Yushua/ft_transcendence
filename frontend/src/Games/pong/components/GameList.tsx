@@ -8,6 +8,7 @@ import Button from '@mui/material/Button';
 import TableContainer from "@mui/material/TableContainer";
 import { Socket } from "socket.io-client";
 import Paper from "@mui/material/Paper";
+import "../../../App.css"
 
 function createData_active(id: number, gameName: string, displayName:string, p1: string, p2: string)
 {
@@ -121,7 +122,7 @@ export class GameList extends React.Component<any, any> {
 						<TableBody>
 						{rows_custom.map((row) => (
 							<TableRow key={row.id}>
-								<TableCell style={{width: 120, color: "#FF3333"}}>{row.gameName}</TableCell>
+								<TableCell className="test">{row.gameName}</TableCell>
 								<TableCell style={{width: 50, color: "#FF3333"}}>{row.p1}</TableCell>
 								<TableCell style={{width: 50, color: "#FF3333"}}>{row.controls}</TableCell>
 								<TableCell style={{width: 50, color: "#FF3333"}}>{row.BallSpeed}</TableCell>

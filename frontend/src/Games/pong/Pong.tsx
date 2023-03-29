@@ -16,7 +16,7 @@ import { EmptyCanvas } from './components/EmtpyCanvas';
 
 //if spectating -> show player names ? 
 
-var game:Canvas
+var game:Canvas = new Canvas('')
 var g_controls = ''
 var iniGameData = new GameData()
 var iniGameListMap = new Map<string, string[]>()
@@ -45,9 +45,8 @@ localStorage[Enum.activeGames] = iniGameListMap
 localStorage[Enum.customGames] = iniCustomGames
 localStorage[Enum.gameCreated] = false
 
-
-
 export const Pong = () => {
+
 
 	let userID = User.ID
 	let userName = NameStorage.User.Get(User.ID)
@@ -68,6 +67,7 @@ export const Pong = () => {
 	/* reset states to locally stored states if user comes back to window */
 	if (!firstCall)
 	{
+		console.log('localstorage', localStorage)	
 		setPending(localStorage[Enum.pending])
 		setInGame(localStorage[Enum.inGame])
 		setSpectating(localStorage[Enum.spectating])
@@ -129,6 +129,7 @@ export const Pong = () => {
 		socket.on('connect', () => {
 			console.log('connected with gateway!', socket.id)
 		})
+		  
 		socket.on('pending', () => {
 			setPending(true)
 			localStorage[Enum.pending] = true
@@ -138,8 +139,8 @@ export const Pong = () => {
 			localStorage[Enum.pending] = false
 		})
 		socket.on('joined', (controls:string) => {
-			SetMainWindow("pong", true)
-			game = new Canvas('')
+			SetMainWindow("pong")
+			// game = new Canvas('')
 			setInGame(true)
 			setPending(false)
 			setGameCreated(false)
@@ -171,11 +172,11 @@ export const Pong = () => {
 			if (gameID)
 				setGameID(gameID)
 			localStorage[Enum.showGameList] = false
-			localStorage[Enum.gameCreated] = true
+			localStorage[Enum.gameCreated] = true	
 			gameName.current = gamename
 		})
 		socket.on('spectating', () => {
-			game = new Canvas('')
+			// game = new Canvas('')
 			setSpectating(true)
 			setShowGameList(false)
 			localStorage[Enum.spectating] = true
@@ -262,7 +263,7 @@ export const Pong = () => {
 	}
 
 	function StartPracticeGame() {
-		game = new Canvas('')
+		// game = new Canvas('')
 		setInGame(true)
 		setPending(false)
 		localStorage[Enum.inGame] = true
@@ -272,14 +273,20 @@ export const Pong = () => {
 		PracticeModeLoop.Start(gamaData, setGameData)
 	}
 
+	const Child1 = React.forwardRef((props, ref) => {
+		return <canvas id="game-canvas" style={{width: "100%"}}></canvas> 
+	});
+	
+	const child1 = React.useRef(null);
 	//JSX 
 	return (
+
 		<React.Fragment>
 			&nbsp;
 			{pending ? `Waiting for second player...` : <></>}
 			{inGame || spectating ?
-					<Canvas instance={game} socket={socket} gameData={gameData}/> :
-					<EmptyCanvas></EmptyCanvas>}
+					<Canvas canvas={Child1} instance={game} socket={socket} gameData={gameData}/> :
+					<EmptyCanvas/> }
 			{!inGame && !spectating && !gameCreated ?
 			<div>
 				<div><JoinClassicButton socket={socket} userID={userID} userName={userName}/></div>
@@ -306,7 +313,7 @@ export const Pong = () => {
 					</div>
 					<Button variant="contained" onClick={() => deleteGame(gameName.current)}>Delete Game</Button>
 				</div> : <></> }
-			<canvas id="game-canvas" style={{width: "100%"}}></canvas>
+				<canvas id="game-canvas" style={{width: "100%"}}></canvas> 
 		</React.Fragment>
 	)
 }

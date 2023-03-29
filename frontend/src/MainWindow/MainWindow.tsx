@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { Socket } from "socket.io-client";
 import { newWindow } from "../App";
 import MainChatWindow, { SetMainChatWindow } from "../Chat/Windows/MainChatWindow";
+import { WebsocketContext } from "../Games/contexts/WebsocketContext";
 import { Pong } from "../Games/pong/Pong";
 import TWTCheckPage from "../TwoFactorSystem/TWTCheckPage";
 import LogoutButtonComponent from "../UserProfile/ButtonComponents/LogoutButton";
@@ -30,6 +32,12 @@ export function SetMainWindow(window: string, new_window = true) {
 	if (new_window)
 		OurHistory.Add()
 }
+
+function SetPongWindow(socket:Socket) {
+	socket.emit('refresh')
+	SetMainWindow('pong')
+}
+
 var _setWindow: React.Dispatch<React.SetStateAction<string>> | null = null
 
 var _setNameDisplay: React.Dispatch<React.SetStateAction<string>>
@@ -42,6 +50,7 @@ async function asyncToggleGetName(){
 
 
 export default function MainWindow() {
+	const socket = React.useContext(WebsocketContext)
 	const [currentWindow, setWindow] = useState<string>("")
 	const [nameDisplay, setNameDisplay] = useState<string>("");
 	const [Display, setDisplay] = useState<boolean>(false);
@@ -87,7 +96,8 @@ export default function MainWindow() {
 						disabled={currentWindow === "chat"}
 						>Chat</button>
 					<button
-						onClick={() => SetMainWindow("pong")}
+						// onClick={() => SetMainWindow("pong")}
+						onClick={() => SetPongWindow(socket)}
 						disabled={currentWindow === "pong"}
 						>Play Pong</button>
 					<button

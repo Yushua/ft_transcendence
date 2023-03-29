@@ -27,7 +27,6 @@ export const CreateGameButton = (props:any) => {
 	const [gameNameTaken, setGameNameTaken] = React.useState(false)
 
 	props.socket.on('gamename taken', () => {
-		console.log('allo')
 		setGameNameTaken(true)
 	})
 

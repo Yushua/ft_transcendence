@@ -3,7 +3,7 @@ import { io, Socket } from 'socket.io-client'
 import HTTP from '../../Utils/HTTP'
 import { getCookie } from "typescript-cookie"
 
-export function ConenctSocket() {
+export function ConnectSocket() {
 	try {
 		socket.disconnect();
 	} catch (error) { /* Ignore error */ }

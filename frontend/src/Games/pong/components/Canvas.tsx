@@ -14,7 +14,7 @@ export class Canvas extends React.Component<any, any> {
 	constructor(props:any)
 	{
 		super(props)
-		this.gameCanvas = document.getElementById("game-canvas") as HTMLCanvasElement
+		this.gameCanvas = document.createElement('canvas') //document.getElementById("game-canvas") as HTMLCanvasElement
 		this.gameCanvas.width = Canvas.InternalSize.width
 		this.gameCanvas.height = Canvas.InternalSize.height
 		this.gameContext = this.gameCanvas.getContext("2d") as CanvasRenderingContext2D
