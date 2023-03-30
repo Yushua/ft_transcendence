@@ -82,7 +82,7 @@ export default function MainWindow() {
 		case "TWTDisplay": display = <TWTCheckPage/>; break
 		default: break
 	}
-	
+
 	const _buttonDistance = "2%"
 	return (
 		<center>

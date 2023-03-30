@@ -1,6 +1,8 @@
 import React from "react"
 import { GameData } from "./GameData"
 import PracticeModeLoop from "../practice_mode/practice_mode"
+import { Button } from "@mui/material"
+import { Socket } from "socket.io-client"
 
 export class Canvas extends React.Component<any, any> {
 
@@ -65,6 +67,6 @@ export class Canvas extends React.Component<any, any> {
 		if (this.props.gameData.p1_score === undefined)
 			return ( <h3>loading...</h3>)
 		this.props.instance.draw(this.props.gameData)
-		return (<></>)
+		return
 	}
 }

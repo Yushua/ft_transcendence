@@ -99,7 +99,13 @@ export class MyGateway implements OnModuleInit {
 				this.server.emit('gamelist', serializedMap)
 			}
 		}
-
+	@SubscribeMessage('stop_LFG')
+	handleStopLFG(
+		@ConnectedSocket() player: Socket) {
+			player.emit('stop_pending')
+			player2 = undefined
+		}
+	
 	@SubscribeMessage('createGame')
 	handleCreateGame(
 	@MessageBody() gameInfo: {type:string, gameID:string, userID:string, userName:string, customSettings:any},
