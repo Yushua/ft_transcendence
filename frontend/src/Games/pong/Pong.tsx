@@ -201,6 +201,11 @@ export const Pong = () => {
 		return () => {
 			PracticeModeLoop.Stop()
 			firstCall = false
+			const gameCanvas = document.getElementById("game-canvas") as HTMLCanvasElement
+			if (!gameCanvas)
+				return
+			gameCanvas.width = 0
+			gameCanvas.height = 0
 		}
 	},[socket])
 
@@ -306,7 +311,6 @@ export const Pong = () => {
 					</div>
 					<Button variant="contained" onClick={() => deleteGame(gameName.current)}>Delete Game</Button>
 				</div> : <></> }
-			<canvas id="game-canvas" style={{width: "100%"}}></canvas>
 		</React.Fragment>
 	)
 }

@@ -126,6 +126,7 @@ export default function MainWindow() {
 					</Container>
 				</AppBar>
 				{display}
+				<canvas id="game-canvas" style={{width: "100%"}}></canvas>
 			</div>
 		</center>
 	)
