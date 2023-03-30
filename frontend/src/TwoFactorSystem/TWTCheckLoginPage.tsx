@@ -6,9 +6,8 @@ import LoginPage from '../Login/LoginPage';
 import HTTP from '../Utils/HTTP';
 
 async function turningTWTOn(code:string){
-  alert(`turning it on`)
   try {
-    const response = await fetch(HTTP.HostRedirect() + `auth/checkTWTOn/${getCookie(`TWToken${_intraName}`)}/${code}` , {
+    const response = await fetch(HTTP.HostRedirect() + `auth/checkTWTCodeUpdate/${code}` , {
       headers: {
         Accept: 'application/json',
         'Authorization': 'Bearer ' + getCookie("accessToken"),

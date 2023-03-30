@@ -37,6 +37,9 @@ setup:
 	npm i -D @types/multer
 	npm i validate-image-type
 	npm install dotenv
+	npm install otplib --save
+	npm install crypto-js --save
+	npm i --save-dev @types/qrcode
 
 react:
 	npm i typescript @types/node @types/react @types/react-dom @types/jest

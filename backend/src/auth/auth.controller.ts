@@ -1,50 +1,63 @@
-import { Controller, Get, Param,  HttpException, HttpStatus, UseGuards, Request, Post } from '@nestjs/common';
+import { Controller, Get, Param,  HttpException, HttpStatus, UseGuards, Request, Post, Res } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthGuardEncryption } from './auth.guard';
 import { AuthService } from './auth.service';
+import { randomBytes } from 'crypto';
+import { authenticator } from '@otplib/preset-default';
+import * as qrcode from 'qrcode'
+import { UserProfile } from 'src/user-profile/user.entity';
 
 @Controller('auth')
 export class AuthController {
     constructor(
         private AuthService: AuthService,
     ) {}
+    
+    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+    @Get('getQRCode')
+    async getQRCode(@Request() req: Request, @Res() response){
+        var user = req["user"].username;
+        const service = 'transendence';
+        var secret: string = await this.AuthService.changeQRSecret(req["user"].id)
+        const otpauth = authenticator.keyuri(user, service, secret);
+        qrcode.toDataURL(otpauth, (err, imageUrl) => {
+            if (err) {
+              console.log('Error with QR');
+              return;
+            }
+            response.status(200).send({QRCode: imageUrl})
+          });
+    }
+
+    /**
+     * Check QR code, if initialised, return a TWT with True
+     * @returns 
+     */
+    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+    @Get('checkTWTCodeUpdate/:code')
+    async checkTWTCodeUpdate(@Param('code') code: string, @Request() req: Request){
+        console.log(`checking code ${code}`)
+        if (await this.AuthService.checkCodeSecret(code, req["user"].QRSecret) == true){
+            var TWT:string =  await this.AuthService.updateTWT(req["user"].id, true)
+            await this.AuthService.updateTWTUser(req["user"].id, true)
+            return {
+                status:true,
+                TWT: TWT,
+                user: await this.AuthService.getUser(req["user"].id),
+            }
+        }
+        else {
+            console.log("failed")
+            return {status: false}
+        }
+    }
 
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     @Get('check')
     async getAuthJWTT(){
         return {
             result: true}}
-    
-    //compare the code with the secret
-    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
-    @Get('checkTWTCodeUpdate/:secret/:code')
-    async checkTWTCodeUpdate(@Param('secret') secret: string, @Param('code') code: string, @Request() req: Request){
 
-        if (await this.AuthService.checkCodeSecret(secret, code) == true){
-            var TWT:string =  await this.AuthService.updateTWT(req["user"].id, true)
-            await this.AuthService.updateTWTUserSecret(req["user"].id, true, secret)
-            return {
-                status:true,
-                TWT: TWT
-            }
-        }
-        else {
-            return {status: false}
-        }
-    }
-
-    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
-    @Get('checkTWTCodeCheck/:secret/:code')
-    async checkTWTCodeCheck(@Param('secret') secret: string, @Param('code') code: string, @Request() req: Request){
-        if (await this.AuthService.checkCodeSecret(secret, code) == true){
-            var TWT:string =  await this.AuthService.updateTWT(req["user"].id, true)
-            return {
-                status:true,
-                TWT: TWT
-            }
-        }
-        return {status: false}
-    }
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     @Get('checkTWTOn/:token/:code')
     async getAuthJWTTokenOn(@Param('token') token: string, @Param('code') code: string, @Request() req: Request){

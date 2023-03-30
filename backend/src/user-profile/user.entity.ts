@@ -21,7 +21,7 @@ export class UserProfile {
     TWTStatus: boolean
 
     @Column({ default: ""})
-    TWTSecret: string
+    QRSecret: string
 
     @Column("text", { array: true , default: "{}"})
     friendList: string[];
