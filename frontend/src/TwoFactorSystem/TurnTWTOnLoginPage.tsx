@@ -35,7 +35,7 @@ async function turningTWTOn(code:string){
     if (await result["status"] === true){
       alert("making new TWT")
       removeCookie(`TWToken${_intraName}`);
-      setCookie(`TWToken${_intraName}`, await result["TWT"],{ expires: 10000 });
+      setCookie(`TWToken${_intraName}`, await result["TWT"],{ expires: 100000 });
       return true
     }
     else {

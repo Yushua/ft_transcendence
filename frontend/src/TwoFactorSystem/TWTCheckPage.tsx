@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
-import { getCookie, removeCookie, setCookie} from 'typescript-cookie';
 import { newWindow } from '../App';
 import '../App.css';
-import MainWindow from '../MainWindow/MainWindow';
-import HTTP from '../Utils/HTTP';
 import TWTDisabled from './TWTDisabled';
 import TWTEnabled from './TWTEnabled';
 import User from '../Utils/Cache/User';

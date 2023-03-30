@@ -15,7 +15,7 @@ async function CheckTWTSetup(code:string, secret:string){
   var result = await JSON.parse(response)
   if (await result["status"] == true){
     removeCookie(`TWToken${User.intraname}`);
-    setCookie(`TWToken${User.intraname}`, await result["TWT"],{ expires: 10000 });
+    setCookie(`TWToken${User.intraname}`, await result["TWT"],{ expires: 100000 });
       newWindow(<MainWindow/>);
   }
   else {

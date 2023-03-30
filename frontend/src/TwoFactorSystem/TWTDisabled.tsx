@@ -23,7 +23,7 @@ async function setNewTWT(){
     var TWToken:string = result["TWToken"]
     console.log("it is turned off")
     removeCookie(`TWToken${User.intraname}`);
-    setCookie(`TWToken${User.intraname}`, TWToken,{ expires: 10000 });
+    setCookie(`TWToken${User.intraname}`, TWToken,{ expires: 100000 });
   } catch (error) {
     alert("something gone wrong while changing your TWT cookie")
     newWindow(<TWTEnabled/>)

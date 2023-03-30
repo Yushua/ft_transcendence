@@ -23,7 +23,7 @@ async function turningTWTOn(code:string){
     if (await result["status"] === true){
       removeCookie(`TWToken${_intraName}`);
       alert("setting the cookie on")
-      setCookie(`TWToken${_intraName}`, await result["TWT"], { expires: 10000 });
+      setCookie(`TWToken${_intraName}`, await result["TWT"], { expires: 100000 });
     }
     else {
         alert("wrong code input, try again")

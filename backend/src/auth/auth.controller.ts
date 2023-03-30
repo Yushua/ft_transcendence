@@ -21,10 +21,8 @@ export class AuthController {
     async checkTWTCodeUpdate(@Param('secret') secret: string, @Param('code') code: string, @Request() req: Request){
 
         if (await this.AuthService.checkCodeSecret(secret, code) == true){
-            console.log("in here")
             var TWT:string =  await this.AuthService.updateTWT(req["user"].id, true)
             await this.AuthService.updateTWTUserSecret(req["user"].id, true, secret)
-            console.log("returning")
             return {
                 status:true,
                 TWT: TWT
@@ -66,19 +64,18 @@ export class AuthController {
      */
     @Get('loginUser/:code')
     async getAuthToken(@Param('code') code: string) {
-        //get data from conf, if anything is NULL, because conf is not there, return error access
-        //because conf is not there
         const dataToPost = {
             grant_type: 'authorization_code',
             client_id: process.env.client_id,
             client_secret: process.env.client_secret,
             code: code,
-            redirect_uri: process.env.redirect_url,
+            redirect_uri: process.env.redirect_uri,
             state: process.env.state,
         }
         var OAuthToken:string = await this.AuthService.OauthSystemCodeToAccess(dataToPost)
         var intraName:string = await this.AuthService.startRequest(OAuthToken)
         var accessToken:string = await this.AuthService.makeAccountJWT(intraName)
+
         await this.AuthService.makeAccountJWT(`${intraName}1`)
         await this.AuthService.makeAccountJWT(`${intraName}2`)
         await this.AuthService.makeAccountJWT(`${intraName}3`)
@@ -107,7 +104,7 @@ export class AuthController {
             client_id: process.env.client_id,
             client_secret: process.env.client_secret,
             code: code,
-            redirect_uri: process.env.redirect_url,
+            redirect_uri: process.env.redirect_uri,
             state: process.env.state,
         }
         console.log("in here")
@@ -130,7 +127,7 @@ export class AuthController {
             client_id: process.env.client_id,
             client_secret: process.env.client_secret,
             code: code,
-            redirect_uri: process.env.redirect_url,
+            redirect_uri: process.env.redirect_uri,
             state: process.env.state,
         }
         var OAuthToken:string = await this.AuthService.OauthSystemCodeToAccess(dataToPost)
