@@ -1,9 +1,7 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import HTTP from "../../../Utils/HTTP"
 import ChatUser from "../../../Utils/Cache/ChatUser"
-import ChatRoom from "../../../Utils/Cache/ChatRoom"
-import { SetMainChatWindow, asyncChangeRoom } from "../MainChatWindow"
-import OurHistory from "../../../Utils/History"
+import { ChatLineHeight, SetMainChatWindow, asyncChangeRoom } from "../MainChatWindow"
 import { Button } from "@mui/material"
 
 function _tryJoiningRoom(roomID: string, hasPass: boolean) {
@@ -40,7 +38,7 @@ function _updateRooms() {
 				<Button variant="outlined"
 					key={room.ID}
 					disabled={room.BanIDs.includes(ChatUser.ID)}
-					sx={{height: ".5cm", width: "100%"}}
+					sx={{height: `${ChatLineHeight}px`, width: "100%"}}
 					onClick={() => _tryJoiningRoom(room.ID, room.HasPassword)}
 					>{room.BanIDs.includes(ChatUser.ID) ? "[ Banned ] " : ""}{room.HasPassword ? "[ Has Password ] " : ""}{room.Name}</Button>
 			))
@@ -75,11 +73,10 @@ export default function RoomBrowser() {
 			<br />
 			<Button
 				variant="text"
-				sx={{height: ".5cm", fontSize: ".35cm"}}
+				sx={{height: `${ChatLineHeight}px`}}
 				onClick={_ => _updateRooms()}
 				>Refresh</Button>
-			{/* <div style={{overflowY: "scroll", overflowX: "hidden", width: "100%", fontSize: ".45cm", height: "5cm"}}> */}
-			<div style={{width: "100%", fontSize: ".45cm"}}>
+			<div style={{width: "100%"}}>
 				{rooms}
 			</div>
 		</div>
