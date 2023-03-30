@@ -13,6 +13,8 @@ import HTTP from "../Utils/HTTP";
 import { AppBar, Box, Button, Container, IconButton, Toolbar, Tooltip } from "@mui/material";
 import ProfilePicture from "../UserProfile/ProfilePicture";
 import NameStorage from "../Utils/Cache/NameStorage";
+import { WebsocketContext } from "../Games/contexts/WebsocketContext";
+
 
 async function asyncGetName():Promise<string> {
 	const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
@@ -25,6 +27,8 @@ export function GetCurrentWindow() {
 	return _currentWindow
 }
 var _currentWindow: string
+
+
 
 export function SetMainWindow(window: string, new_window = true) {
 	_currentWindow = window
@@ -47,6 +51,7 @@ async function asyncToggleGetName(){
 export const Width: number = Math.trunc(window.screen.width * .5)
 
 export default function MainWindow() {
+	const socket = React.useContext(WebsocketContext)
 	const [currentWindow, setWindow] = useState<string>("")
 	const [nameDisplay, setNameDisplay] = useState<string>("");
 	const [Display, setDisplay] = useState<boolean>(false);
@@ -72,7 +77,7 @@ export default function MainWindow() {
 	switch (currentWindow) {
 		case "profile": display = <UserProfilePage/>; break
 		case "chat": display = <MainChatWindow/>; break
-		case "pong": display = <Pong/>; break
+		case "pong": display = <Pong/>; socket.emit('refresh'); break
 		case "Search": display = <SearchBar/>; break
 		case "TWTDisplay": display = <TWTCheckPage/>; break
 		default: break

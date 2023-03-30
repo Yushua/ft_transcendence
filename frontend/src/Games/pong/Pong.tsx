@@ -15,8 +15,8 @@ import './Pong.css'
 import { EmptyCanvas } from './components/EmtpyCanvas';
 
 //if spectating -> show player names ? 
+//endless game ?
 
-var game:Canvas
 var g_controls = ''
 var iniGameData = new GameData()
 var iniGameListMap = new Map<string, string[]>()
@@ -49,9 +49,10 @@ localStorage[Enum.gameCreated] = false
 
 export const Pong = () => {
 
+	let canvas:Canvas = new Canvas('')
 	let userID = User.ID
 	let userName = NameStorage.User.Get(User.ID)
-
+	
 	const socket = React.useContext(WebsocketContext)
 	const gameName = React.useRef('')
 
@@ -129,6 +130,10 @@ export const Pong = () => {
 		socket.on('connect', () => {
 			console.log('connected with gateway!', socket.id)
 		})
+		socket.on('connecta', () => {
+			console.log('connected with gateway!', socket.id)
+		})
+
 		socket.on('pending', () => {
 			setPending(true)
 			localStorage[Enum.pending] = true
@@ -139,7 +144,6 @@ export const Pong = () => {
 		})
 		socket.on('joined', (controls:string) => {
 			SetMainWindow("pong", true)
-			game = new Canvas('')
 			setInGame(true)
 			setPending(false)
 			setGameCreated(false)
@@ -175,7 +179,6 @@ export const Pong = () => {
 			gameName.current = gamename
 		})
 		socket.on('spectating', () => {
-			game = new Canvas('')
 			setSpectating(true)
 			setShowGameList(false)
 			localStorage[Enum.spectating] = true
@@ -200,12 +203,12 @@ export const Pong = () => {
 		/* cleanup function after user leaves window/disconnects */
 		return () => {
 			PracticeModeLoop.Stop()
-			firstCall = false
 			const gameCanvas = document.getElementById("game-canvas") as HTMLCanvasElement
 			if (!gameCanvas)
 				return
 			gameCanvas.width = 0
 			gameCanvas.height = 0
+			firstCall = false
 		}
 	},[socket])
 
@@ -267,7 +270,6 @@ export const Pong = () => {
 	}
 
 	function StartPracticeGame() {
-		game = new Canvas('')
 		setInGame(true)
 		setPending(false)
 		localStorage[Enum.inGame] = true
@@ -283,7 +285,7 @@ export const Pong = () => {
 			&nbsp;
 			{pending ? `Waiting for second player...` : <></>}
 			{inGame || spectating ?
-					<Canvas instance={game} socket={socket} gameData={gameData}/> :
+					<Canvas instance={canvas} socket={socket} gameData={gameData}/> :
 					<EmptyCanvas></EmptyCanvas>}
 			{!inGame && !spectating && !gameCreated ?
 			<div>
