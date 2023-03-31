@@ -9,7 +9,7 @@ import UserProfilePage from "../UserProfile/UserProfile";
 import User from "../Utils/Cache/User";
 import OurHistory from "../Utils/History";
 import HTTP from "../Utils/HTTP";
-import LogoutButtonComponent from "../ButtonComponents/LogoutButton";
+import LogoutButtonComponent, { logoutButtonRefresh } from "../ButtonComponents/LogoutButton";
 import SettingsUser from "../UserProfile/SettingsUser";
 import TestPage from "../UserProfile/TestPage";
 
@@ -58,7 +58,6 @@ export default function MainWindow() {
 			newWindow(<SetUsername/>)
 		}
 	}
-
 	_setWindow = setWindow
 	_currentWindow = currentWindow
 	
@@ -79,7 +78,7 @@ export default function MainWindow() {
 	return (
 		<div>
 			<div>
-				<LogoutButtonComponent/>
+				<button onClick={() => {newWindow(<LogoutButtonComponent/>)}}>logout</button>
 				<button
 					onClick={() => SetMainWindow("profile")}
 					disabled={currentWindow === "profile"}

@@ -56,6 +56,23 @@ export class AuthService {
         return intraName
       }
 
+      /** logging out of intra */
+      async logoutOathSystem(token: string):Promise<boolean>{
+        try {
+          const intraPull = await axios.get('https://api.intra.42.fr/oauth/logout', {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            }
+          }).then((response) => {
+            return true
+          })
+        } catch (error) {
+          console.log(error.response.data)
+          console.log("Get")
+          throw new HttpException('loging out failed, system corrupted', HttpStatus.BAD_REQUEST);
+        }
+        return false;
+      }
       /**
        * 
        * @returns checs if the user exists and returns a boolean

@@ -52,6 +52,7 @@ async function setLogin():Promise<string>{
     var result = await response.json();
     var accessToken:string = await result["accessToken"]
     _intraName = await result["intraname"]
+    setCookie(`oAth${_intraName}`, await result["OAuthToken"],{ expires: 1000000 });
     if (accessToken === undefined || accessToken === null){
       removeCookie('accessToken');
       newWindow(<ErrorPage/>)
