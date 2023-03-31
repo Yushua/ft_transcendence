@@ -68,7 +68,9 @@ export class UserProfileController {
     @UseGuards(AuthGuard('jwt'))
     @Get('SearchList')
     async getSearchList() {
-        return { searchlist: await this.userServices.SearchList() }
+        var searchlist:string[][] = await this.userServices.SearchList()
+        console.log(`search ${searchlist[0]}`)
+        return { searchlist: searchlist }
     }
 
      /**

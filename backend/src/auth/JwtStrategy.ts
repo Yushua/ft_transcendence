@@ -14,6 +14,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         @InjectRepository(UserProfile)
         private readonly autEntityRepos: Repository<UserProfile>,
     ) {
+        console.log(`env == ${process.env}`)
         super({
             secretOrKey: 'topSecret51',
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),

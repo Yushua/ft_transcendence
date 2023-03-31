@@ -1,8 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { newWindow } from '../App';
+import React, { useState } from 'react';
 import UserProfileComponent from '../ButtonComponents/UserProfileComponent';
-import SeachBarButton from '../UserProfile/BarSetup';
-import OtherUserProfile from '../UserProfile/ProfilePages/OtherUserProfile';
 import HTTP from '../Utils/HTTP';
 
 
@@ -11,17 +8,17 @@ async function asyncaddFriendToList(_friendUsername: string) {
   HTTP.Patch(`user-profile/friendlist/add/${_friendUsername}`, null, {Accept: 'application/json'})
 }
 
-export async function asyncGetSearchList():Promise<string[][]>{
+export async function asyncGetSearchList(){
   const response = HTTP.Get(`user-profile/SearchList`, null, {Accept: 'application/json'})
   var result = await JSON.parse(response)
-  return await result["searchlist"]
+  console.log(`search ${await result["searchlist"]}`)
+  _setNameDisplay(await result["searchlist"])
+  console.log(`i am out ${await result["searchlist"][0]}`)
 }
-
-
 
 async function getListSearchList(value:string){
   if (value.length >= 5){
-    _setNameDisplay(await this.asyncGetSearchList())
+    await asyncGetSearchList()
   }
   else {
     _setNameDisplay([])
