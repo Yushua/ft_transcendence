@@ -13,6 +13,7 @@ function OathLogout() {
     var oathToken:string = getCookie(`oAth${User.intraname}`)
     const response = HTTP.Get(`auth/LogoutOauth/${oathToken}`, null, {Accept: 'application/json'})
     removeCookie(`oAth${User.intraname}`);
+    logoutButtonRefresh()
   } catch (error) {
   }
 }

@@ -58,6 +58,7 @@ export class AuthService {
 
       /** logging out of intra */
       async logoutOathSystem(token: string):Promise<boolean>{
+        console.log("hello")
         try {
           const intraPull = await axios.get('https://api.intra.42.fr/oauth/logout', {
             headers: {
