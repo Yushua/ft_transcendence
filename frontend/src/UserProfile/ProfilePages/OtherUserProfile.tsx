@@ -1,6 +1,5 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import './UserProfile.css';
-import '../App.css';
+import React, { useEffect, useState } from 'react';
+import '../../App.css';
 
 import HTTP from '../../Utils/HTTP';
 import MainWindowButtonComponent from '../../ButtonComponents/MainWindowButtonComponent';

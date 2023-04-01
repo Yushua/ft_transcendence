@@ -30,18 +30,23 @@ export function logoutButtonRefresh() {
 }
 
 function LogoutButtonComponent() {
-  useEffect(() => {
-		if (getCookie(`oAth${User.intraname}`) != undefined && getCookie(`oAth${User.intraname}`) != null){
-			OathLogout()
-		}
-    else {
-      logoutButtonRefresh()
-    }
-	}, []); // empty dependency array means it will only run once
-
+  // useEffect(() => {
+	// 	if (getCookie(`oAth${User.intraname}`) != undefined && getCookie(`oAth${User.intraname}`) != null){
+	// 		OathLogout()
+	// 	}
+  //   else {
+  //     logoutButtonRefresh()
+  //   }
+	// }, []); // empty dependency array means it will only run once
+  alert("logging out now")
+  removeCookie('accessToken');
+  User.Clear();
+  ChatUser.Clear();
+  ChatRoom.Clear();
+  removeCookie(`oAth${User.intraname}`);
+  newWindow(<LoginPage/>);
     return (
       <div>
-
       </div>
     )
 }

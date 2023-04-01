@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+import { newWindow } from '../App';
 import UserProfileComponent from '../ButtonComponents/UserProfileComponent';
+import OtherUserProfile from '../UserProfile/ProfilePages/OtherUserProfile';
 import HTTP from '../Utils/HTTP';
 
 
@@ -19,6 +21,8 @@ export async function asyncGetSearchList(){
 async function getListSearchList(value:string){
   if (value.length >= 5){
     await asyncGetSearchList()
+    //add filter
+    _setNameSearchList(_ListDisplay)
   }
   else {
     _setNameDisplay([])
@@ -33,16 +37,17 @@ async function addFriendFunction(friendName: string){
 
 var _setNameDisplay:React.Dispatch<React.SetStateAction<string[][]>>
 var _setNameSearchList:React.Dispatch<React.SetStateAction<string[][]>>
-
-var _SelectedOption: string[]
+var _ListDisplay:string[][]
 var _setShowDropdown:React.Dispatch<React.SetStateAction<boolean>>
 
 function SearchBar() {
+  //get into page, get the entire list online
   const [ListSearchList, setNameSearchList] = useState<string[][]>([]);
   const [ListDisplay, setNameDisplay] = useState<string[][]>([]);
   const [SearchTerm, setSearchTerm] = useState("");
   _setNameDisplay = setNameDisplay
   _setNameSearchList = setNameSearchList
+  _ListDisplay = ListDisplay
 
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
     setSearchTerm(event.target.value)
@@ -50,7 +55,9 @@ function SearchBar() {
   }
   const handleButtonClick = (e: any) => {
     e.preventDefault();
-    //go to the page
+    //go to the page of this user
+    alert(`username = ${e[0]}`)
+    newWindow(<OtherUserProfile username={e[0]}/>)
   };
 
     return (
@@ -69,7 +76,6 @@ function SearchBar() {
                 >{`name: ${option[0]}\nstatus: ${option[1]}`}
                 </button>
               ))}
-
           </div>
         </div>
       </div>
