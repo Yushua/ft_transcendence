@@ -7,16 +7,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserProfile } from 'src/user-profile/user.entity';
 import { JwtPayload } from './jwt-payload.interface';
-
+import { config } from 'dotenv';
+config();
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
     constructor(
         @InjectRepository(UserProfile)
         private readonly autEntityRepos: Repository<UserProfile>,
     ) {
-        console.log(`env == ${process.env}`)
         super({
-            secretOrKey: 'topSecret51',
+            secretOrKey: process.env.JWT_SECRET,
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
             ignoreExpiration: false,
         })

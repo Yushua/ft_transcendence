@@ -236,7 +236,7 @@ export class UserProfileService {
       async GetFriendList(id:string):Promise<string[][]> {
         const userprofile:UserProfile = await this.userEntity.findOneBy({id});
         const users: UserProfile[] = await this.userEntity.createQueryBuilder('user').where('user.id IN (:...id)', { id: userprofile.friendList }).getMany();
-        return users.map(user => [user.username, user.id]);
+        return users.map(user => [user.username, user.userStatus, user.id]);
       }
       
       // [["profiel picture", "name", "id"],]

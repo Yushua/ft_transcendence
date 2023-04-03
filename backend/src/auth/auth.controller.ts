@@ -1,11 +1,9 @@
-import { Controller, Get, Param,  HttpException, HttpStatus, UseGuards, Request, Post, Res } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards, Request, Post, Res } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthGuardEncryption } from './auth.guard';
 import { AuthService } from './auth.service';
-import { randomBytes } from 'crypto';
 import { authenticator } from '@otplib/preset-default';
 import * as qrcode from 'qrcode'
-import { UserProfile } from 'src/user-profile/user.entity';
 
 @Controller('auth')
 export class AuthController {

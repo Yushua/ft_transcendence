@@ -80,7 +80,6 @@ export default function MainWindow() {
 		case "TWTDisplay": display = <TWTCheckPage/>; break
 		case "Settings": display = <SettingsUser/>; break
 		case "TestPage": display = <TestPage/>; break
-		case "LogoutButton": display = <LogoutButtonComponent/>; break
 		default: break
 	}
 
@@ -104,7 +103,7 @@ export default function MainWindow() {
 								["chat", "Chat"],
 								["pong", "Play Pong"],
 								["Search", "Search"],
-								["TWTDisplay", "TwoFactor, LogoutButton"],
+								["TWTDisplay", "TwoFactor"],
 								].map(pair =>
 							<Box key={pair[0]} sx={{ pl:_buttonDistance }}>
 								<Button
@@ -113,7 +112,12 @@ export default function MainWindow() {
 										{pair[1]}
 								</Button>
 							</Box>)}
-							
+							{/* Logout Button */}
+							{/* <Box sx={{ pl:_buttonDistance }}>
+								<Button sx={{ color: 'white', display: 'block' }}
+									onClick={() => newWindow(<LogoutButtonComponent/>)}>Logout
+								</Button>
+							</Box> */}
 							{/* Avatar */}
 							<Box sx={{ position: "absolute", right: "0px" }}>
 								<IconButton sx={{ p: 0 }} onClick={() => SetMainWindow("profile")}>

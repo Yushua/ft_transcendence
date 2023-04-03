@@ -5,7 +5,6 @@ import HTTP from '../Utils/HTTP';
 
 import { newWindow } from '../App';
 import LoginPage from '../Login/LoginPage';
-import LogoutButtonComponent from '../ButtonComponents/LogoutButton';
 
 async function GetAchievement(name: string, message:string, picture:string){
   const response = HTTP.Post(`user-profile/user`, {name: name, message:message, picture:picture}, {Accept: 'application/json'})
@@ -55,7 +54,6 @@ function SetUsername(){
 
   return (
     <div className="setting up new account for Team Zero">
-      <LogoutButtonComponent/>
         <form onSubmit={(handleUsername)}>
           <div>
             <label htmlFor="username">Set you Username</label>

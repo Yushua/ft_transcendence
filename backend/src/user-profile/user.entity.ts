@@ -18,6 +18,9 @@ export class UserProfile {
     @Column({ default: ""})
     profilePicture: string
     
+    @Column({ default: "Creation"})
+    userStatus: string
+
     @Column({ default: false})
     TWTStatus: boolean
 
