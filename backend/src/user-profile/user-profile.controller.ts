@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthGuardEncryption } from 'src/auth/auth.guard';
+import { AddAchievement } from './dto/addAchievement.dto';
 import { UserProfileService } from './user-profile.service';
 import { UserProfile } from './user.entity';
 
@@ -102,10 +103,8 @@ export class UserProfileController {
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     @Post('PostAchievementList')
     async postAchievementList( @Request() req: Request,
-    @Body("name") name: string,
-    @Body("message") message: string,
-    @Body("picture") picture: string ) {
-        return { AchievementList: await this.userServices.postAchievementList(req["user"].id, name, message, picture)}
+    @Body() AddAchievement: AddAchievement) {
+        return { AchievementList: await this.userServices.postAchievementList(req["user"].id, AddAchievement)}
     }
 
     @Get("/username/:id")

@@ -193,7 +193,6 @@ var _setintraName: React.Dispatch<React.SetStateAction<string>>
 var _intraName: string
 
 function LoginPage(){
-  // setupLoginPage()
   const [intraName, setintraName] = useState<string>('');
   _intraName = intraName
   _setintraName = setintraName

@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { UserAchievement } from "./userAchievement.entity";
 
 @Entity()
 export class UserProfile {
@@ -26,15 +27,12 @@ export class UserProfile {
     @Column("text", { array: true , default: "{}"})
     friendList: string[];
 
-    @Column("text", { array: true , default: "{}"})
-    AchievementList: string[];
-
     @Column({ default: 0})
     wins: number;
 
     @Column({ default: 0})
     losses: number;
 
-    @Column("text", { array: true , default: []})
-    achievements: string[][];
+    @OneToMany(() => UserAchievement, UserAchievement => UserAchievement.userProfile)
+    UserAchievement : UserAchievement[];
 }

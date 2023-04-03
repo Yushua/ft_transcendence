@@ -1,14 +1,18 @@
 import { ConflictException, Injectable, InternalServerErrorException, NotFoundException, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { AddAchievement } from './dto/addAchievement.dto';
 import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { UserProfile } from './user.entity';
+import { UserAchievement } from './userAchievement.entity';
 
 @Injectable()
 export class UserProfileService {
     constructor(
         @InjectRepository(UserProfile)
         private readonly userEntity: Repository<UserProfile>,
+        @InjectRepository(UserProfile)
+        private readonly achievEntity: Repository<UserAchievement>,
       ) {}
 
       async addFriendToID(userID: string, friendID: string):Promise<void>{
@@ -234,22 +238,27 @@ export class UserProfileService {
         const users: UserProfile[] = await this.userEntity.createQueryBuilder('user').where('user.id IN (:...id)', { id: userprofile.friendList }).getMany();
         return users.map(user => [user.username, user.id]);
       }
+      
       // [["profiel picture", "name", "id"],]
       /**
        * returns based on [["picture", "name", "status"]]
        */
-      async GetAchievementList(id:string):Promise<string[][]> {
+      async GetAchievementList(id:string):Promise<UserAchievement[]> {
         const userprofile:UserProfile = await this.userEntity.findOneBy({id});
-        return userprofile.achievements;
+        return userprofile.UserAchievement
       }
 
         /**
        * returns based on [["picture", "name", "status"]]
        */
-      async postAchievementList(id:string, name:string, message:string, picture:string) {
-        const myStringArray: string[] = [name, message, picture];
+      async postAchievementList(id:string, AddAchievement:AddAchievement) {
+        const {nameAchievement, pictureLink, message} = AddAchievement
         const userprofile:UserProfile = await this.userEntity.findOneBy({id});
-        userprofile.achievements.push(myStringArray);
+        const achievement = new UserAchievement
+        achievement.message = message
+        achievement.nameAchievement = nameAchievement
+        achievement.pictureLink = pictureLink
+        userprofile.UserAchievement.push(achievement)
         await this.userEntity.save(userprofile);
       }
 }
