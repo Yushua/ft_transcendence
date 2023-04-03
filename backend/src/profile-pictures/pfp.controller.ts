@@ -27,18 +27,6 @@ export class PFPController {
 	
 	//#endregion
 	
-	@Get()
-	async GetDefaultPFP(@Response({ passthrough: true }) response) {
-		
-		const actualPath: string = `./src/profile-pictures/default_pfp.jpg`
-		
-		response.set({'Content-Type': lookup(actualPath)})
-		
-		const file = createReadStream(join(process.cwd(), actualPath))
-		
-		return new StreamableFile(file)
-	}
-	
 	@Get("user/:id")
 	async GetUserPFPURL(@Param("id") id: string) {
 		return this.userRepo.findOneBy({id})
@@ -50,6 +38,16 @@ export class PFPController {
 		@Param("path") path: string,
 		@Response({ passthrough: true }) response,
 	) {
+		if (path === "default_pfp.jpg") {
+			const actualPath: string = `./src/profile-pictures/default_pfp.jpg`
+			
+			response.set({'Content-Type': lookup(actualPath)})
+			
+			const file = createReadStream(join(process.cwd(), actualPath))
+			
+			return new StreamableFile(file)
+		}
+		
 		const pictureID = path.substring(0, path.lastIndexOf('.'))
 		const pfp = await this.pfpRepo.findOneBy({ID: pictureID})
 		
