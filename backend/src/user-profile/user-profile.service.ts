@@ -1,5 +1,6 @@
 import { ConflictException, Injectable, InternalServerErrorException, NotFoundException, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import OurSession from 'src/session/OurSession';
 import { Repository } from 'typeorm';
 import { AddAchievement } from './dto/addAchievement.dto';
 import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
@@ -231,12 +232,12 @@ export class UserProfileService {
       }
 
       /**
-       * returns based on [["pfp", "username", "status"]]
+       * returns based on [["pfp", "username", "status"], ["pfp", "username", "status"], ["pfp", "username", "status"]]
        */
       async GetFriendList(id:string):Promise<string[][]> {
         const userprofile:UserProfile = await this.userEntity.findOneBy({id});
         const users: UserProfile[] = await this.userEntity.createQueryBuilder('user').where('user.id IN (:...id)', { id: userprofile.friendList }).getMany();
-        return users.map(user => [user.username, user.userStatus, user.id]);
+        return users.map(user => [user.username, OurSession.GetUserState(user.id), user.id]);
       }
       
       // [["profiel picture", "name", "id"],]

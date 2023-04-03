@@ -113,11 +113,11 @@ export default function MainWindow() {
 								</Button>
 							</Box>)}
 							{/* Logout Button */}
-							{/* <Box sx={{ pl:_buttonDistance }}>
+							<Box sx={{ pl:_buttonDistance }}>
 								<Button sx={{ color: 'white', display: 'block' }}
 									onClick={() => newWindow(<LogoutButtonComponent/>)}>Logout
 								</Button>
-							</Box> */}
+							</Box>
 							{/* Avatar */}
 							<Box sx={{ position: "absolute", right: "0px" }}>
 								<IconButton sx={{ p: 0 }} onClick={() => SetMainWindow("profile")}>

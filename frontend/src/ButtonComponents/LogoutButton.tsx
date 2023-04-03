@@ -13,20 +13,8 @@ function OathLogout() {
     var oathToken:string = getCookie(`oAth${User.intraname}`)
     const response = HTTP.Get(`auth/LogoutOauth/${oathToken}`, null, {Accept: 'application/json'})
     removeCookie(`oAth${User.intraname}`);
-    logoutButtonRefresh()
   } catch (error) {
   }
-}
-
-export function logoutButtonRefresh() {
-  alert("logging out now")
-  removeCookie('accessToken');
-  User.Clear();
-  ChatUser.Clear();
-  ChatRoom.Clear();
-  //the session still remembers that you logged in and will automaticly log you back in. this should NOT happen
-  //you should reinstate your login AGAIN after your Login
-  newWindow(<LoginPage/>);
 }
 
 function LogoutButtonComponent() {
