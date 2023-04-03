@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { newWindow } from "../App";
-import MainChatWindow, { SetMainChatWindow } from "../Chat/Windows/MainChatWindow";
 import { Pong } from "../Games/pong/Pong";
 import TWTCheckPage from "../TwoFactorSystem/TWTCheckPage";
 import SearchBar from "../Search bar/SearchBar";
@@ -9,7 +8,6 @@ import UserProfilePage from "../UserProfile/UserProfile";
 import User from "../Utils/Cache/User";
 import OurHistory from "../Utils/History";
 import HTTP from "../Utils/HTTP";
-import LogoutButtonComponent, { logoutButtonRefresh } from "../ButtonComponents/LogoutButton";
 import SettingsUser from "../UserProfile/SettingsUser";
 import TestPage from "../UserProfile/TestPage";
 
