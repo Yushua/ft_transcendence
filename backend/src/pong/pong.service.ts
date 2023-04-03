@@ -66,7 +66,7 @@ export class PongService {
 		const pair2 = [{userId: userprofile2.id, gameId: stat.id}]
 		
 		this._joinedRepo.save(pair)
-		if (pair !== pair2)
+		if (userprofile1.id !== userprofile2.id)
 			this._joinedRepo.save(pair2)
 	}
 
