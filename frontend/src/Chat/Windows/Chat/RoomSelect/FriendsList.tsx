@@ -4,7 +4,7 @@ import ChatUser from "../../../../Utils/Cache/ChatUser";
 import User from "../../../../Utils/Cache/User";
 import HTTP from "../../../../Utils/HTTP";
 import NameStorage from "../../../../Utils/Cache/NameStorage";
-import { asyncChangeRoom } from "../../MainChatWindow";
+import { ChatLineHeight, ChatWindowHeight, asyncChangeRoom } from "../../MainChatWindow";
 import { Button } from "@mui/material";
 
 export async function asyncUpdateFriendsList() {
@@ -17,7 +17,7 @@ function GenerateFriedListJSX(): JSX.Element[] {
 		<Button 
 			variant={ChatRoom.IsRoomOfFriend(friendID) ? "contained" : "text"}
 			id={friendID}
-			style={{height: ".5cm", width: "100%", textAlign: "left", fontSize: ".35cm"}}
+			style={{height: `${ChatLineHeight}px`, width: "100%", textAlign: "left"}}
 			onClick={_ => _changeToFriendRoom(friendID)}
 		>{NameStorage.User.Get(friendID)}</Button></div>
 	)
@@ -50,7 +50,7 @@ export default function FriendsList() {
 	}
 	
 	return (
-		<div style={{overflowY: "scroll", overflowX: "hidden", width: "5cm", fontSize: ".45cm", height: "5cm"}}>
+		<div style={{overflowY: "scroll", overflowX: "hidden", width: "100%", height: `${ChatWindowHeight * .94}px`}}>
 			{friends}
 		</div>
 	)

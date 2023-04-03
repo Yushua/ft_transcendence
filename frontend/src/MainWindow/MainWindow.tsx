@@ -2,15 +2,18 @@ import React, { useEffect, useState } from "react";
 import { newWindow } from "../App";
 import { Pong } from "../Games/pong/Pong";
 import TWTCheckPage from "../TwoFactorSystem/TWTCheckPage";
-import SearchBar from "../Search bar/SearchBar";
 import SetUsername from "../UserProfile/SetUsername";
 import UserProfilePage from "../UserProfile/UserProfile";
 import User from "../Utils/Cache/User";
 import OurHistory from "../Utils/History";
 import HTTP from "../Utils/HTTP";
+import { AppBar, Box, Button, Container, IconButton, Toolbar } from "@mui/material";
+import NameStorage from "../Utils/Cache/NameStorage";
+import { WebsocketContext } from "../Games/contexts/WebsocketContext";
+import MainChatWindow from "../Chat/Windows/MainChatWindow";
+import SearchBar from "../Search bar/SearchBar";
 import SettingsUser from "../UserProfile/SettingsUser";
 import TestPage from "../UserProfile/TestPage";
-import MainChatWindow from "../Chat/Windows/MainChatWindow";
 import LogoutButtonComponent from "../ButtonComponents/LogoutButton";
 
 export async function asyncGetNameExport():Promise<string> {
@@ -24,6 +27,8 @@ export function GetCurrentWindow() {
 	return _currentWindow
 }
 var _currentWindow: string
+
+
 
 export function SetMainWindow(window: string, new_window = true) {
 	_currentWindow = window
@@ -42,7 +47,10 @@ async function asyncToggleGetName(){
   };
 
 
+export const Width: number = Math.trunc(window.screen.width * .5)
+
 export default function MainWindow() {
+	const socket = React.useContext(WebsocketContext)
 	const [currentWindow, setWindow] = useState<string>("")
 	const [nameDisplay, setNameDisplay] = useState<string>("");
 	const [Display, setDisplay] = useState<boolean>(false);
@@ -67,48 +75,58 @@ export default function MainWindow() {
 	switch (currentWindow) {
 		case "profile": display = <UserProfilePage/>; break
 		case "chat": display = <MainChatWindow/>; break
-		case "pong": display = <Pong/>; break
+		case "pong": display = <Pong/>; socket.emit('refresh'); break
 		case "Search": display = <SearchBar/>; break
 		case "TWTDisplay": display = <TWTCheckPage/>; break
 		case "Settings": display = <SettingsUser/>; break
 		case "TestPage": display = <TestPage/>; break
+		case "LogoutButton": display = <LogoutButtonComponent/>; break
 		default: break
 	}
-	
+
+	const _buttonDistance = "2%"
 	return (
-		<div>
-			<div>
-				<button onClick={() => {newWindow(<LogoutButtonComponent/>)}}>logout</button>
-				<button
-					onClick={() => SetMainWindow("profile")}
-					disabled={currentWindow === "profile"}
-					>Profile</button>
-				<button
-					onClick={() => SetMainWindow("chat")}
-					disabled={currentWindow === "chat"}
-					>Chat</button>
-				<button
-					onClick={() => SetMainWindow("pong")}
-					disabled={currentWindow === "pong"}
-					>Play Pong</button>
-				<button
-					onClick={() => SetMainWindow("Search")}
-					disabled={currentWindow === "Search"}
-					>Search</button>
-				<button
-					onClick={() => SetMainWindow("TWTDisplay")}
-					disabled={currentWindow === "TWTDisplay"}
-					>TwoFactor</button>
-				<button
-					onClick={() => SetMainWindow("Settings")}
-					disabled={currentWindow === "Settings"}
-					>Settings</button>
-				<button
-					onClick={() => SetMainWindow("TestPage")}
-					disabled={currentWindow === "TestPage"}
-					>TestPage</button>
+		<center>
+			<div className={"MainWidnow"} style={{width: `${Width}px`}}>
+				<AppBar position="static">
+					<Container maxWidth="xl">
+						<Toolbar disableGutters>
+							
+							{/* Logo */}
+							<Box
+								fontFamily={"'Courier New', monospace"}
+								fontSize={"200%"}>
+								Team-Zero
+							</Box>
+							
+							{/* Change Window Buttons */}
+							{[	["profile", "Profile"],
+								["chat", "Chat"],
+								["pong", "Play Pong"],
+								["Search", "Search"],
+								["TWTDisplay", "TwoFactor, LogoutButton"],
+								].map(pair =>
+							<Box key={pair[0]} sx={{ pl:_buttonDistance }}>
+								<Button
+									sx={{ my: 2, color: 'white', display: 'block' }}
+									onClick={() => SetMainWindow(pair[0])}>
+										{pair[1]}
+								</Button>
+							</Box>)}
+							
+							{/* Avatar */}
+							<Box sx={{ position: "absolute", right: "0px" }}>
+								<IconButton sx={{ p: 0 }} onClick={() => SetMainWindow("profile")}>
+									<img src={User.ID !== "" ? HTTP.HostRedirect() + NameStorage.UserPFP.Get(User.ID) : ""}
+										style={{width: `${Width * .04}px`, height: `${Width * .04}px`, borderRadius: "50%"}}/>
+								</IconButton>
+							</Box>
+						</Toolbar>
+					</Container>
+				</AppBar>
+				{display}
+				<canvas id="game-canvas" style={{width: "100%"}}></canvas>
 			</div>
-			{display}
-		</div>
+		</center>
 	)
 }

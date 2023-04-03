@@ -4,17 +4,23 @@ import ChatRoom from "../../../../Utils/Cache/ChatRoom";
 import NameStorage from "../../../../Utils/Cache/NameStorage";
 import User from "../../../../Utils/Cache/User";
 import { Avatar, CardHeader } from "@mui/material";
+import { ChatLineHeight, ChatWindowHeight } from "../../MainChatWindow";
 
 var roomCache: Map<string, JSX.Element[]> = new Map<string, JSX.Element[]>()
 var _chatLog: JSX.Element[] = []
 var _logDepth = 30
-var _fillDepth = 10
+var _fillDepth = 24
 var _oldRoomID = ""
 
 function scrollDown(time: number) {
-	var log = document.getElementById("ChatLog") as HTMLElement
-	if (!!log)
-		setTimeout(() => log.scrollTop = log.scrollHeight, time)
+	setTimeout(() => {
+			var log = document.getElementById("ChatLog") as HTMLElement
+			if (!!log)
+				log.scrollTop = log.scrollHeight
+		}, time
+	)
+	
+		
 }
 
 export async function asyncUpdateChatLog() {
@@ -53,7 +59,7 @@ export async function asyncUpdateChatLog() {
 						{
 							<img
 								src={HTTP.HostRedirect() + NameStorage.UserPFP.Get(msgs[i].OwnerID)}
-								style={{width: ".4cm", height: ".4cm", borderRadius: "50%"}}
+								style={{width: `${ChatLineHeight * .8}px`, height: `${ChatLineHeight * .8}px`, borderRadius: "50%"}}
 							/>
 						}
 						<b>{`${NameStorage.User.Get(msgs[i].OwnerID)}`}</b>
@@ -91,23 +97,21 @@ export default function ChatWindow() {
 	
 	useEffect(() => {
 		asyncUpdateChatLog()
-		return () => ChatRoom.Clear()
 	}, [])
+	scrollDown(100)
 	
 	if (ChatRoom.ID === "" || chatLog.length === 0)
 		return <div style={{display: "table-cell"}}></div>
 	
-	scrollDown(100)
-	
 	return (
-		<div style={{display: "table-cell", color: "black", maxHeight: "5.5cm", height: "5.5cm"}}>
+		<div style={{display: "table-cell", color: "black", height: `${ChatWindowHeight}px`}}>
 			
-			<div id="ChatLog" style={{overflowY: "scroll", fontSize: ".45cm", maxHeight: "5cm", height: "5cm"}}>
+			<div id="ChatLog" style={{overflowY: "scroll", fontSize: `${ChatLineHeight * .9}px`, height: "94%"}}>
 				{chatLog}
 			</div>
 			
 			<input
-				style={{width: "100%", boxSizing: "border-box", height: ".5cm", fontSize: ".4cm"}}
+				style={{width: "100%", boxSizing: "border-box", height: "5%", fontSize: `${ChatLineHeight * .8}px`}}
 				id="SendMessageTextField"
 				type="text"
 				onKeyDown={event => {

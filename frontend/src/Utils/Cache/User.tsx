@@ -1,4 +1,5 @@
 import ManualEventManager from "../../Events/ManualEventManager";
+import { ConenctSocket } from "../../Games/contexts/WebsocketContext";
 import HTTP from "../HTTP";
 import ChatUser from "./ChatUser";
 import NameStorage from "./NameStorage";
@@ -27,6 +28,7 @@ export default class User {
 			console.log(user.friendList)
 			this._user = user
 			NameStorage.User._ManualSet(user.id, user.username)
+			ConenctSocket()
 			this.UpdateEvent.Run()
 		}
 	}

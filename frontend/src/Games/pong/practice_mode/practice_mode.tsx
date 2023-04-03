@@ -38,7 +38,7 @@ export default class PracticeModeLoop {
 		if (!this.IsRunning())
 			return
 		
-		this._gamaData.p1.y = pos
+		this._gamaData.p1.y = pos - (this._gamaData.p1.height / 2)
 		if (this._gamaData.p1.y > this._canvasSize.y - 10 - this._gamaData.p1.height)
 			this._gamaData.p1.y = this._canvasSize.y - 10 - this._gamaData.p1.height
 		if (this._gamaData.p1.y < 10)

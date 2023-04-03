@@ -1,0 +1,25 @@
+.darkblue {
+	color: #3355FF;
+}
+
+.center {
+	text-align: center;
+}
+
+.position-middle-canvas {
+	transform: translateX(710px);
+}
+
+ul {
+    text-align: center;
+    list-style-position: outside;
+}
+
+.parent {
+	width: 100%
+}
+	
+.child {
+	float: right;
+}
+	

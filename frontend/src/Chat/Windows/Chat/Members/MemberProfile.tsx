@@ -6,6 +6,7 @@ import ChatUser from "../../../../Utils/Cache/ChatUser";
 import HTTP from "../../../../Utils/HTTP";
 import User from "../../../../Utils/Cache/User";
 import { Button } from "@mui/material";
+import { ChatLineHeight, ChatWindowHeight } from "../../MainChatWindow";
 
 export function setMemberProfileID(userID: string) {
 	_memberProfileID = userID
@@ -58,21 +59,21 @@ export default function MemberProfile() {
 	
 	return (
 		<>
-			<div style={{width: "100%", display: "table"}}>
+			<div style={{width: "100%", display: "table", height: `${ChatWindowHeight * .04}px`}}>
 				{ ChatRoom.Direct ? <>ProfileView</> :
 					<><Button variant="contained"
-						style={{height: ".5cm", boxSizing: "border-box"}}
+						style={{height: `${ChatLineHeight}px`, boxSizing: "border-box"}}
 						onClick={() => ChangeMemberWindow("members")}
 						>Back</Button> ProfileView</>
 				}
 			</div>
 			
-			<div style={{overflowY: "scroll", overflowX: "hidden", width: "5cm", fontSize: ".45cm", height: "5cm"}}>
+			<div style={{overflowY: "scroll", overflowX: "hidden", width: "100%", height: `${ChatWindowHeight * .94}px`}}>
 				{/* Username */}
 				<br />
 				<img
 					src={HTTP.HostRedirect() + NameStorage.UserPFP.Get(_memberProfileID)} alt=""
-					style={{width: "2cm", height: "2cm", borderRadius: "50%"}}	
+					style={{width: `${ChatLineHeight * 5}px`, height: `${ChatLineHeight * 5}px`, borderRadius: "50%"}}	
 				/>
 				
 				<div style={{width: "100%", display: "table"}}>
@@ -81,13 +82,13 @@ export default function MemberProfile() {
 				
 				<div style={{width: "100%", display: "table"}}>
 					<Button variant="contained"
-						style={{width: "100%", height: ".5cm", boxSizing: "border-box"}}
+						style={{width: "100%", height: `${ChatLineHeight}px`, boxSizing: "border-box"}}
 						onClick={() => {}}
 						>View Profile</Button>
 				</div>
 				<div style={{width: "100%", display: "table"}}>
 					<Button variant="contained"
-						style={{width: "100%", height: ".5cm", boxSizing: "border-box"}}
+						style={{width: "100%", height: `${ChatLineHeight}px`, boxSizing: "border-box"}}
 						onClick={() => {}}
 						>Block</Button>
 				</div>
@@ -101,18 +102,18 @@ export default function MemberProfile() {
 						
 						<div style={{width: "100%", display: "table"}}>
 							<Button variant="contained"
-								style={{width: "33%", height: ".5cm", boxSizing: "border-box"}}
+								style={{width: "33%", height: `${ChatLineHeight}px`, boxSizing: "border-box"}}
 								onClick={Mute}
 								>Mute</Button>
 							<Button variant="contained"
-								style={{width: "33%", height: ".5cm", boxSizing: "border-box"}}
+								style={{width: "33%", height: `${ChatLineHeight}px`, boxSizing: "border-box"}}
 								onClick={() => {
 									if (window.confirm(`Kick ${NameStorage.User.Get(_memberProfileID)}?`))
 										HTTP.asyncDelete(`chat/member/${ChatRoom.ID}/${_memberProfileID}`)
 								}}
 								>Kick</Button>
 							<Button variant="contained"
-								style={{width: "33%", height: ".5cm", boxSizing: "border-box"}}
+								style={{width: "33%", height: `${ChatLineHeight}px`, boxSizing: "border-box"}}
 								onClick={() => {
 									if (window.confirm(`Ban ${NameStorage.User.Get(_memberProfileID)}?`))
 										HTTP.asyncDelete(`chat/ban/${ChatRoom.ID}/${_memberProfileID}`)
@@ -121,7 +122,7 @@ export default function MemberProfile() {
 						</div>
 						<div style={{width: "100%", display: "table"}}>
 							<Button variant="contained"
-								style={{width: "100%", height: ".5cm", boxSizing: "border-box"}}
+								style={{width: "100%", height: `${ChatLineHeight}px`, boxSizing: "border-box"}}
 								onClick={() => {
 									if (window.confirm(`Make ${NameStorage.User.Get(_memberProfileID)} admin?`))
 										HTTP.asyncPatch(`chat/admin/${ChatRoom.ID}/${_memberProfileID}`)
@@ -144,7 +145,7 @@ export default function MemberProfile() {
 						
 						<div style={{width: "100%", display: "table"}}>
 							<Button variant="contained"
-								style={{width: "100%", height: ".5cm", boxSizing: "border-box"}}
+								style={{width: "100%", height: `${ChatLineHeight}px`, boxSizing: "border-box"}}
 								onClick={() => {
 									if (window.confirm(`Remove admin role from ${NameStorage.User.Get(_memberProfileID)}?`))
 										HTTP.asyncDelete(`chat/admin/${ChatRoom.ID}/${_memberProfileID}`)

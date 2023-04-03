@@ -6,6 +6,7 @@ import HTTP from "../../../../Utils/HTTP";
 import NameStorage from "../../../../Utils/Cache/NameStorage";
 import OurHistory from "../../../../Utils/History";
 import { Button, Checkbox } from "@mui/material";
+import { ChatLineHeight } from "../../MainChatWindow";
 
 export default function RoomEdit() {
 	
@@ -19,7 +20,7 @@ export default function RoomEdit() {
 		<>
 			<div style={{width: "100%", display: "table"}}>
 				<Button variant="contained"
-					style={{height: ".5cm", boxSizing: "border-box"}}
+					style={{height: `${ChatLineHeight}px`, boxSizing: "border-box"}}
 					onClick={() => ChangeMemberWindow("members")}
 					>Back</Button> Edit Room
 			</div>
@@ -27,13 +28,14 @@ export default function RoomEdit() {
 			New Room Name <input id="_RoomName" style={{width: "100%", boxSizing: "border-box"}} type="text" value={name} onChange={data => setName(data.target.value)} disabled={dis}/><br />
 			
 			New Password?
-				<Checkbox checked={newPass} onChange={event => setNewPass(event.target.checked)} sx={{width: ".5cm", height: ".5cm", transform: "scale(.75)"}}/>
+				<Checkbox checked={newPass} onChange={event => setNewPass(event.target.checked)} sx={{width: `${ChatLineHeight}px`, height: `${ChatLineHeight}px`, transform: "scale(.75)"}}/>
 				<input id="_RoomPassword" style={{width: "100%", boxSizing: "border-box"}} type="password" value={pass} onChange={data => setPass(data.target.value)} disabled={!newPass || dis}/><br />
 			<Button variant={priv ? "contained" : "outlined"}
-					style={{height: ".5cm"}}
+					sx={{height: `${ChatLineHeight}px`, mt: `${ChatLineHeight / 4}px`}}
 					onClick={() => setPriv(!priv)}
 					>{priv ? "Private" : "Public"}</Button><br />
 			<Button variant="contained"
+				sx={{mt: `${ChatLineHeight / 4}px`}}
 				disabled={dis}
 				onClick={() => {
 					if (User.ID === "")
@@ -57,6 +59,7 @@ export default function RoomEdit() {
 				>Update</Button>
 			<br />
 			<Button variant="contained"
+				sx={{mt: `${ChatLineHeight / 2}px`}}
 				disabled={dis}
 				onClick={() => {
 					if (User.ID === ""

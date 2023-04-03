@@ -3,7 +3,7 @@ import HTTP from "../../../../Utils/HTTP";
 import ChatUser from "../../../../Utils/Cache/ChatUser";
 import ChatRoom from "../../../../Utils/Cache/ChatRoom";
 import NameStorage from "../../../../Utils/Cache/NameStorage";
-import { asyncChangeRoom } from "../../MainChatWindow";
+import { ChatLineHeight, ChatWindowHeight, asyncChangeRoom } from "../../MainChatWindow";
 import { Button } from "@mui/material";
 
 export async function asyncUpdateRoomList() {
@@ -15,7 +15,7 @@ function GenerateRoomListJSX(): JSX.Element[] {
 	return ChatUser.ChatRoomsIn.map(roomID => <div key={roomID}>
 		<Button
 			variant={roomID == ChatRoom.ID ? "contained" : "text"}
-			style={{height: ".5cm", width: "100%", textAlign: "left", fontSize: ".35cm"}}
+			style={{height: `${ChatLineHeight}px`, width: "100%", textAlign: "left"}}
 			onClick={_ => asyncChangeRoom(roomID)}
 		>{NameStorage.Room.Get(roomID)}</Button></div>
 	)
@@ -37,7 +37,7 @@ export default function RoomList() {
 	}
 	
 	return (
-		<div style={{overflowY: "scroll", overflowX: "hidden", width: "5cm", fontSize: ".45cm", height: "5cm"}}>
+		<div style={{overflowY: "scroll", overflowX: "hidden", width: "100%", height: `${ChatWindowHeight * .94}px`}}>
 			{rooms}
 		</div>
 	)

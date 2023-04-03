@@ -1,19 +1,32 @@
 import React from 'react'
+import PracticeModeLoop from './practice_mode/practice_mode';
+import User from '../../Utils/Cache/User';
+import NameStorage from '../../Utils/Cache/NameStorage';
 import { WebsocketContext } from "../contexts/WebsocketContext"
 import { GameData,  } from './components/GameData'
 import { Canvas } from './components/Canvas'
 import { GameList } from './components/GameList';
-import { EmptyCanvas } from './components/EmtpyCanvas';
-import User from '../../Utils/Cache/User';
-import NameStorage from '../../Utils/Cache/NameStorage';
 import { JoinClassicButton } from './components/JoinClassicButton';
 import { CreateGameButton } from './components/CreateGameButton';
 import { Button } from '@mui/material'
-import PracticeModeLoop from './practice_mode/practice_mode';
 import { SetMainWindow } from '../../MainWindow/MainWindow'
 import { JoinPrivateButton } from './components/PrivateGameButton';
+import { EmptyCanvas } from './components/EmtpyCanvas';
+import { Tab, Tabs } from "@mui/material";
+import { ClassicPongTab } from './components/ClassicPongTab';
+import CustomPongTab from './components/CustomPongTab';
+import SpectateTab from './components/SpectateTab';
+import './Pong.css'
 
-var game:Canvas
+export function SetMainGameWindow(window: string) {
+	if (!!_setMainWindow_)
+		_setMainWindow_(window)
+}
+var _setMainWindow_: React.Dispatch<React.SetStateAction<string>> | null = null
+
+//if spectating -> show player names ? 
+//endless game ?
+
 var g_controls = ''
 var iniGameData = new GameData()
 var iniGameListMap = new Map<string, string[]>()
@@ -29,6 +42,7 @@ const Enum = {
 	activeGames: 5,
 	customGames: 6,
 	gameCreated: 7,
+	window: 8
 }
 
 /* Store states for when user switches windows and comes back  */
@@ -41,14 +55,15 @@ localStorage[Enum.gameData] = iniGameData
 localStorage[Enum.activeGames] = iniGameListMap
 localStorage[Enum.customGames] = iniCustomGames
 localStorage[Enum.gameCreated] = false
-
+localStorage[Enum.window] = 'classic'
 
 
 export const Pong = () => {
 
+	let canvas:Canvas = new Canvas('')
 	let userID = User.ID
 	let userName = NameStorage.User.Get(User.ID)
-
+	
 	const socket = React.useContext(WebsocketContext)
 	const gameName = React.useRef('')
 
@@ -61,6 +76,8 @@ export const Pong = () => {
 	const [customGames, setCustomGames] = React.useState(iniCustomGames)
 	const [gameCreated, setGameCreated] = React.useState(false)
 	const [gameID, setGameID] = React.useState('')
+	const [MainWindow, setMainWindow] = React.useState<string>("classic")
+	_setMainWindow_ = setMainWindow
 
 	/* reset states to locally stored states if user comes back to window */
 	if (!firstCall)
@@ -73,6 +90,7 @@ export const Pong = () => {
 		setActiveGames(localStorage[Enum.activeGames])
 		setCustomGames(localStorage[Enum.customGames])
 		setGameCreated(localStorage[Enum.gameCreated])
+		setMainWindow(localStorage[Enum.window])
 		firstCall = true
 	}
 
@@ -84,6 +102,7 @@ export const Pong = () => {
 			const newData = new GameData()
 			newData.gameState = data.gameState
 			newData.gameName = data.gameName
+			newData.isClassic = data.isClassic
 			newData.p1_score = data.p1_score
 			newData.p2_score = data.p2_score
 
@@ -105,26 +124,32 @@ export const Pong = () => {
 			localStorage[Enum.gameData] = newData
 		}
 
-		function updateCustomGames(customGameListMap:Map<string, any[]>)
+		function updateCustomGames(serializedGamesMap:any)
 		{
-			let newCustomGames = new Map<string, any[]>()
-			newCustomGames = customGameListMap
-			setCustomGames(newCustomGames)
-			localStorage[Enum.customGames] = newCustomGames
+			let customGamesMap:Map<string, any[]> = new Map<string, any[]>()
+			for (var instance of serializedGamesMap) {
+				customGamesMap.set(instance[0], [instance[1][0].p1_name, instance[1][0].p1_controls, instance[1][0].ballSpeed, instance[1][0].paddleSize])
+			}
+			setCustomGames(customGamesMap)
+			localStorage[Enum.customGames] = customGamesMap
 		}
 
-		function updateActiveGames(games:Map<string, string[]>)
+		function updateActiveGames(serializedGamesMap:any)
 		{
-			let newActiveGames = new Map<string, string[]>()
-			newActiveGames = games
-			setActiveGames(newActiveGames)
-			localStorage[Enum.activeGames] = newActiveGames
+			console.log('map', serializedGamesMap)
+			let games:Map<string, string[]> = new Map<string, string[]>()
+			for (var instance of serializedGamesMap) {
+				games.set(instance[0], [instance[1][0].p1_name, instance[1][0].p2_name, instance[1][0].isClassic])
+			}
+			setActiveGames(games)
+			localStorage[Enum.activeGames] = games
 		}
 	
 		/* INCOMING EVENTS ON SOCKET */
 		socket.on('connect', () => {
 			console.log('connected with gateway!', socket.id)
 		})
+
 		socket.on('pending', () => {
 			setPending(true)
 			localStorage[Enum.pending] = true
@@ -134,12 +159,12 @@ export const Pong = () => {
 			localStorage[Enum.pending] = false
 		})
 		socket.on('joined', (controls:string) => {
-
-			SetMainWindow("pong", true)
-			game = new Canvas('')
+			SetMainWindow("pong")
+			setMainWindow('canvas')
 			setInGame(true)
 			setPending(false)
 			setGameCreated(false)
+			localStorage[Enum.window] = 'canvas'
 			localStorage[Enum.inGame] = true
 			localStorage[Enum.pending] = false
 			localStorage[Enum.gameCreated] = false
@@ -149,18 +174,10 @@ export const Pong = () => {
 			updateGameData(s_gameData)
 		})
 		socket.on('gamelist', (serializedGamesMap:any) => {
-			let games:Map<string, string[]> = new Map<string, string[]>()
-			for (var instance of serializedGamesMap) {
-				games.set(instance[0], [instance[1][0].p1_name, instance[1][0].p2_name])
-			}
-			updateActiveGames(games)
+			updateActiveGames(serializedGamesMap)
 		})
 		socket.on('custom_gamelist', (serializedGamesMap:any) => {
-			let customGamesMap:Map<string, any[]> = new Map<string, any[]>()
-			for (var instance of serializedGamesMap) {
-				customGamesMap.set(instance[0], [instance[1][0].p1_name, instance[1][0].p1_controls, instance[1][0].ballSpeed, instance[1][0].paddleSize])
-			}
-			updateCustomGames(customGamesMap)
+			updateCustomGames(serializedGamesMap)
 		})
 		socket.on('game_created', (gamename:string, gameID:string) => {
 			setShowGameList(false)
@@ -172,9 +189,11 @@ export const Pong = () => {
 			gameName.current = gamename
 		})
 		socket.on('spectating', () => {
-			game = new Canvas('')
 			setSpectating(true)
 			setShowGameList(false)
+			SetMainWindow("pong")
+			setMainWindow('canvas')
+			localStorage[Enum.window] = 'canvas'
 			localStorage[Enum.spectating] = true
 			localStorage[Enum.showGameList] = false
 		})
@@ -184,11 +203,14 @@ export const Pong = () => {
 			setSpectating(false)
 			setShowGameList(false)
 			setGameCreated(false)
+			setMainWindow('classic')
+			setGameID('')
 			localStorage[Enum.pending] = false
 			localStorage[Enum.inGame] = false
 			localStorage[Enum.spectating] = false
 			localStorage[Enum.showGameList] = false
 			localStorage[Enum.gameCreated] = false
+			localStorage[Enum.window] = 'classic'
 			g_controls = ''
 		})
 		socket.on('disconnect', () => {
@@ -196,16 +218,12 @@ export const Pong = () => {
 		})
 		/* cleanup function after user leaves window/disconnects */
 		return () => {
-			console.log('unregistering events')
-			// socket.off('connect')
-			// socket.off('pending')
-			// socket.off('stop_pending')
-			// socket.off('gamedata')
-			// socket.off('gamelist')
-			// socket.off('custom_gamelist')
-			// socket.off('spectating')
-			// socket.off('disconnect')
 			PracticeModeLoop.Stop()
+			const gameCanvas = document.getElementById("game-canvas") as HTMLCanvasElement
+			if (!gameCanvas)
+				return
+			gameCanvas.width = 0
+			gameCanvas.height = 0
 			firstCall = false
 		}
 	},[socket])
@@ -223,8 +241,13 @@ export const Pong = () => {
 			keysPressed.set(event.key, false)
 		})
 		window.addEventListener("mousemove", (event) => {
-			mousePosition = event.y
-			PracticeModeLoop.SetMousePosition(mousePosition)
+			const canvas = Canvas.CurrentGameCanvas
+			let scale:number
+			if (canvas) {
+				scale = Canvas.InternalSize.height / canvas.offsetHeight
+				mousePosition = (event.y - canvas.offsetTop) * scale
+				PracticeModeLoop.SetMousePosition(mousePosition)
+			}
 		})
 
 		/* EMIT */
@@ -263,7 +286,6 @@ export const Pong = () => {
 	}
 
 	function StartPracticeGame() {
-		game = new Canvas('')
 		setInGame(true)
 		setPending(false)
 		localStorage[Enum.inGame] = true
@@ -273,41 +295,89 @@ export const Pong = () => {
 		PracticeModeLoop.Start(gamaData, setGameData)
 	}
 
+	var _window
+	switch (MainWindow) {
+		default:
+			return <></>
+		case "canvas" :
+			return (
+				<div>
+					<Canvas instance={canvas} socket={socket} gameData={gameData}/>
+					{spectating ?
+						<Button variant="contained" onClick={() => leaveGame()}>Stop Spectating</Button>
+					:
+						<Button variant="contained" onClick={() => leaveGame()}>Leave Game</Button> }
+				</div>
+			)
+		case "classic":
+			_window = <ClassicPongTab socket={socket} userID={userID} userName={userName}/>
+			break;
+		case "custom":
+			_window = <CustomPongTab/>	
+			break;
+		case "spectate":
+			_window = <SpectateTab socket={socket} activeGames={activeGames} />
+			break;
+	
+	}
+
 	//JSX 
 	return (
+		
 		<React.Fragment>
-			&nbsp;
-			{pending ? `Waiting for second player...` : <></>}
-			{inGame || spectating ? <Canvas instance={game} socket={socket} gameData={gameData}/> : <EmptyCanvas/>}
-			{!inGame && !spectating && !gameCreated ?
-				<ul>
-					<li><JoinClassicButton socket={socket} userID={userID} userName={userName}/></li>
-					&nbsp;
-					<li><JoinPrivateButton socket={socket} userID={userID} userName={userName}/></li>
-					&nbsp;
-					<li><CreateGameButton socket={socket} userID={userID} userName={userName}/></li>
-					&nbsp;
-					<li><Button variant="contained" onClick={() => StartPracticeGame()}>Practice Mode</Button></li>
-				</ul> : <></>}
-			{inGame ? 
-				<div>
-					<Button variant="contained" onClick={() => leaveGame()}>Leave Game</Button> 
-				</div> :
-				<div>
-					&nbsp;
-					{spectating ?
-							<Button variant="contained" onClick={() => leaveGame()}>Stop Spectating</Button> :
-							!gameCreated ?
-								<Button variant="outlined" onClick={() => ShowGameList()}>Game List</Button> : <></> }
-				</div>}
-			{showGameList && !inGame && !gameCreated ? <GameList userID={userID} userName={userName} customGames={customGames} activeGames={activeGames} socket={socket} /> : <></>}
-			{gameCreated ?
-				<div>
-					<div>
-						{gameID !== '' ? <>Code to join game: {gameID}</> : <>Waiting for players...</>}
-					</div>
-					<Button variant="contained" onClick={() => deleteGame(gameName.current)}>Delete Game</Button>
-				</div> : <></> }
+			<Tabs value={MainWindow} centered>
+				<Tab label="Classic Pong" value="classic" onClick={() => setMainWindow("classic")}/>
+				<Tab label="Custom Pong" value="custom" onClick={() => setMainWindow("custom")}/>
+				<Tab label="Spectate" value="spectate" onClick={() => setMainWindow("spectate")}/>
+			</Tabs>
+			
+			{/* MetaDiv */}
+			<div
+				style={{
+					// border: (MainWindow === "chat" ? "solid" : "none"),
+					color: "#3676cc",
+					borderColor: "#3676cc", borderRadius: ".1cm",
+					width: "100%", height: "5.6cm", lineHeight: ".5cm"}}
+			>
+				{/* ContentTable */}
+				<div style={{display: "table", width: "100%", height: "100%", color: "black"}}>
+					{_window}
+				</div>
+			</div>
 		</React.Fragment>
+
+		// <React.Fragment>
+		// 	&nbsp;
+		// 	{pending ? `Waiting for second player...` : <></>}
+		// 	{inGame || spectating ?
+		// 			<Canvas instance={canvas} socket={socket} gameData={gameData}/> :
+		// 			<EmptyCanvas></EmptyCanvas>}
+		// 	{!inGame && !spectating && !gameCreated ?
+		// 	<div>
+		// 		<div><JoinClassicButton socket={socket} userID={userID} userName={userName}/></div>
+		// 		&nbsp;
+		// 		<div><JoinPrivateButton socket={socket} userID={userID} userName={userName}/></div>
+		// 		&nbsp;
+		// 		<div><CreateGameButton socket={socket} userID={userID} userName={userName}/></div>
+		// 		&nbsp;
+		// 		<div><Button variant="contained" onClick={() => StartPracticeGame()}>Practice Mode</Button></div>	
+		// 	</div> : <></>}
+		// 	{inGame ? 
+		// 		<div>
+		// 			<Button variant="contained" onClick={() => leaveGame()}>Leave Game</Button> 
+		// 		</div> :
+		// 		<div>
+		// 			&nbsp;
+		// 			{spectating ? <Button variant="contained" onClick={() => leaveGame()}>Stop Spectating</Button> : <></> }
+		// 		</div>}
+		// 	{!inGame && !gameCreated && !spectating ? <GameList userID={userID} userName={userName} customGames={customGames} activeGames={activeGames} socket={socket} /> : <></>}
+		// 	{gameCreated ?
+		// 		<div>
+		// 			<div>
+		// 				{gameID !== '' ? <>Code to join game: {gameID}</> : <>Waiting for players...</>}
+		// 			</div>
+		// 			<Button variant="contained" onClick={() => deleteGame(gameName.current)}>Delete Game</Button>
+		// 		</div> : <></> }
+		// </React.Fragment>
 	)
 }

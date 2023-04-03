@@ -6,6 +6,7 @@ import User from "../../../../Utils/Cache/User";
 import HTTP from "../../../../Utils/HTTP";
 import OurHistory from "../../../../Utils/History";
 import { Button } from "@mui/material";
+import { ChatLineHeight, ChatWindowHeight } from "../../MainChatWindow";
 
 export async function asyncUpdateMemberList() {
 	if (!!_setMembers)
@@ -17,10 +18,10 @@ function GenerateRoomListJSX(): JSX.Element[] {
 		return (<div key={memberID}>
 			<img
 				src={HTTP.HostRedirect() + NameStorage.UserPFP.Get(memberID)}
-				style={{width: ".5cm", height: ".5cm", borderRadius: "50%"}}
+				style={{width: `${ChatLineHeight}px`, height: `${ChatLineHeight}px`, borderRadius: "50%"}}
 			/>
 			<Button variant="contained"
-			style={{height: ".5cm", width: "80%", textAlign: "left", fontSize: ".35cm"}}
+			style={{height: `${ChatLineHeight}px`, width: "80%", textAlign: "left"}}
 			onClick={() => ChangeMemberWindow(memberID)}>
 				{NameStorage.User.Get(memberID)}</Button>
 		</div>)
@@ -47,7 +48,7 @@ export default function MembersList() {
 		asyncUpdateMembersWindow()
 		return (
 		<>
-			<div style={{overflowY: "scroll", overflowX: "hidden", width: "5cm", fontSize: ".45cm", height: "5.5cm"}}>
+			<div style={{overflowY: "scroll", overflowX: "hidden", width: "100%", height: `${ChatLineHeight}px`}}>
 				{members}
 			</div>
 		</>
@@ -56,20 +57,20 @@ export default function MembersList() {
 	else
 		return (
 		<>
-			<div style={{display: "table", width: "100%"}}>
+			<div style={{display: "table", width: "100%", height: `${ChatWindowHeight * .04}px`}}>
 				{User.ID === ChatRoom.OwnerID
-					? <Button variant="outlined" style={{width: "50%", height: ".5cm"}}
+					? <Button variant="outlined" style={{width: "50%", height: `${ChatLineHeight}px`}}
 						onClick={() => ChangeMemberWindow("edit")}>Edit</Button>
-					: <Button variant="outlined" style={{width: "50%", height: ".5cm"}}
+					: <Button variant="outlined" style={{width: "50%", height: `${ChatLineHeight}px`}}
 						onClick={() => {
 							HTTP.Delete(`chat/leave/${ChatRoom.ID}`)
 							OurHistory.Add()
 						}}>Leave</Button>}
-				<Button  variant="outlined" style={{width: "50%", height: ".5cm"}}
+				<Button  variant="outlined" style={{width: "50%", height: `${ChatLineHeight}px`}}
 					onClick={() => ChangeMemberWindow("add")}>Add</Button>
 			</div>
 			
-			<div style={{overflowY: "scroll", overflowX: "hidden", width: "5cm", fontSize: ".45cm", height: "5cm"}}>
+			<div style={{overflowY: "scroll", overflowX: "hidden", width: "100%", height: `${ChatWindowHeight * .94}px`}}>
 				{members}
 			</div>
 		</>

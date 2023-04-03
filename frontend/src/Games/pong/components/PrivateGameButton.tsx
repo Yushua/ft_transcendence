@@ -19,12 +19,12 @@ export const JoinPrivateButton = (props:any) => {
 	}
 
 	return (
-		<div className='dropdown-menu'>
+		<React.Fragment>
 			<Button variant="outlined" onClick={() => _setShowMenu()}>Join Private Game</Button>
 			{showMenu ? 
-			<ul>
-				&nbsp;
-				<li className='dropdownItem'>
+			<div>
+				<p></p>
+				&nbsp;&nbsp;
 					<>Paste Code:</>
 					&nbsp;
 					<input
@@ -32,10 +32,9 @@ export const JoinPrivateButton = (props:any) => {
 						id="message"
 						name="message"
 						onChange={handleTextChange} />
-					&nbsp;
+					&nbsp;&nbsp;
 					<Button variant="contained" onClick={() => join(gameID, props.userID, props.userName, props.socket)}>Join</Button>
-				</li>
-			</ul> : <></> }
-		</div>
+			</div> : <></> }
+		</React.Fragment>
 	)
 }

@@ -80,7 +80,7 @@ export default class HTTP {
 		if (req.status < 300)
 			return req.responseText
 		console.log(req.responseText)
-		throw new Error(req.responseText)
+		throw req
 	}
 	
 	static async asyncSendRequest(
@@ -98,5 +98,6 @@ export default class HTTP {
 				error(this)
 		}
 		req.send(finalBody)
+		return req
 	}
 }
