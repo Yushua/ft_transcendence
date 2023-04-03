@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { newWindow } from '../App';
 import UserProfileComponent from '../ButtonComponents/UserProfileComponent';
+import OtherUserProfile from '../UserProfile/ProfilePages/OtherUserProfile';
 import HTTP from '../Utils/HTTP';
 
 async function asyncGetFriendListById():Promise<string[][]>{
@@ -9,7 +11,7 @@ async function asyncGetFriendListById():Promise<string[][]>{
 }
 
 async function seeProfileOther(username: string){
-  // newWindow(<OtherUserProfile{username: username}/>)
+  newWindow(<OtherUserProfile username={username}/>)
   _setShowDropdown(false);
 }
 

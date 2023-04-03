@@ -15,8 +15,10 @@ type Props = {
     username: string;
   }
 
-function OtherUserProfile(username: string){
+function OtherUserProfile(props: any){
 
+    var username = props["username"];
+    
     const [myUsername, setMyUsername] = useState<string>("");
     const [myPFP, setMyPFP] = useState<string>("");
     const [myWins, setMyWins] = useState<number>(0);
