@@ -1,6 +1,6 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { UserStat } from "./user.Stat";
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { UserAchievement } from "./userAchievement.entity";
+import { GameStats } from '../pong/pong.entity.gamestats'
 
 @Entity()
 export class UserProfile {
@@ -40,6 +40,21 @@ export class UserProfile {
     @OneToMany(() => UserAchievement, UserAchievement => UserAchievement.userProfile)
     UserAchievement : UserAchievement[];
 
-    @OneToMany(() => UserStat, UserStat => UserStat.userProfile)
-    UserStat : UserStat[];
+    @ManyToMany(
+        () => GameStats, 
+        gameStats => gameStats.userProfiles, //optional
+        {onDelete: 'NO ACTION', onUpdate: 'NO ACTION'})
+        @JoinTable({
+          name: 'user_profile_game_stats',
+          joinColumn: {
+            name: 'user_profile_id',
+            referencedColumnName: 'id',
+          },
+          inverseJoinColumn: {
+            name: 'game_stats_id',
+            referencedColumnName: 'id',
+          },
+        })
+        userStats?: GameStats[];
+      
 }

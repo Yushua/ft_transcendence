@@ -1,13 +1,13 @@
 import { Body, Controller, Get, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthGuardEncryption } from 'src/auth/auth.guard';
+import { GameStats } from 'src/pong/pong.entity.gamestats';
 import { AddAchievement } from './dto/addAchievement.dto';
-import { UserGameStat } from './dto/UsergameStat.dto';
 import { UserProfileService } from './user-profile.service';
 import { UserProfile } from './user.entity';
 
 @Controller('user-profile')
-@UseGuards(AuthGuard())
+// @UseGuards(AuthGuard())
 export class UserProfileController {
     constructor(private userServices: UserProfileService) {}
     
@@ -145,11 +145,21 @@ export class UserProfileController {
         this.userServices.removeFriend(req["user"].id, idfriend);
     }
 
-    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
-    @Post('PostGame')
-    async postGame(
-    @Body() UserGameStat: UserGameStat) {
-       await this.userServices.postGame1V1(UserGameStat)
+    @Get("/userstats/:id")
+    async ReturnStatsById(
+        @Param("id") id: string): Promise<GameStats[]>
+    {
+        const found = await this.userServices.ReturnStatsById(id);
+        return found;
+    }
+    /* added to get users unauthorized can delete this later */
+    @Get("/usersall/:id")
+    async Returnallusers_unauth(
+        @Param("id") id: string): Promise<UserProfile[]>
+    {
+        const found = await this.userServices.Returnallusers_unauth(id);
+        console.log(found)
+        return found;
     }
 
 }

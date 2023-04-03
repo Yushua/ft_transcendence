@@ -1,12 +1,11 @@
 import { ConflictException, Injectable, InternalServerErrorException, NotFoundException, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { GameStats } from 'src/pong/pong.entity.gamestats';
 import OurSession from 'src/session/OurSession';
 import { Repository } from 'typeorm';
 import { AddAchievement } from './dto/addAchievement.dto';
 import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
-import { UserGameStat } from './dto/UsergameStat.dto';
 import { UserProfile } from './user.entity';
-import { UserStat } from './user.Stat';
 import { UserAchievement } from './userAchievement.entity';
 
 @Injectable()
@@ -14,6 +13,8 @@ export class UserProfileService {
     constructor(
         @InjectRepository(UserProfile)
         private readonly userEntity: Repository<UserProfile>,
+        @InjectRepository(GameStats)
+        private readonly gameEntity: Repository<GameStats>,
         @InjectRepository(UserProfile)
         private readonly achievEntity: Repository<UserAchievement>,
       ) {}
@@ -82,6 +83,25 @@ export class UserProfileService {
         }
         return found;
       }
+
+      async Returnallusers_unauth(id: string): Promise<UserProfile[]> {
+        const found = await this.userEntity.find()
+        return found
+      }
+       async ReturnStatsById(id: string): Promise<GameStats[]> {
+        const stats = await this.userEntity.findOne({
+            select: ["id"],
+            relations: ["userStats"],
+            where: {
+              id: id
+            }
+        })
+        if (!stats){
+          throw new NotFoundException(`Task with ID "${id}" not found`);
+        }
+        return stats.userStats;
+      }
+
 
       async changeUsername(username: string, id: string): Promise<UserProfile> {
         const found = await this.findUserBy(id);
@@ -263,26 +283,6 @@ export class UserProfileService {
         achievement.pictureLink = pictureLink
         userprofile.UserAchievement.push(achievement)
         await this.userEntity.save(userprofile);
-      }
-
-      async postGame1V1(UsergameStat:UserGameStat) {
-        
-        const {player1, player2, nameGame, winner, loser, scoreWinner, scoreLoser, timeOfGame} = UsergameStat
-        const userprofile1:UserProfile = await this.userEntity.findOneBy({id: player1});//player1
-        const userprofile2:UserProfile = await this.userEntity.findOneBy({id: player2});//player1
-        const stat = new UserStat
-        
-        stat.nameGame = nameGame
-        stat.winner = winner
-        stat.loser = loser
-        stat.scoreWinner = scoreWinner
-        stat.scoreLoser = scoreLoser
-        stat.timeOfGame = timeOfGame
-        
-        userprofile1.UserStat.push(stat)
-        userprofile2.UserStat.push(stat)
-        await this.userEntity.save(userprofile1);
-        await this.userEntity.save(userprofile2);
       }
 
 }

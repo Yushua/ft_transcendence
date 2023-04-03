@@ -1,4 +1,4 @@
-import { OnModuleInit, UseGuards } from "@nestjs/common";
+import { OnModuleInit } from "@nestjs/common";
 import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Server, Socket } from 'socket.io'
 import { GameData } from '../components/GameData'
@@ -11,14 +11,15 @@ export const targetFPS = 60
 export const targetResponseRateS = 1 / targetFPS
 export const targetResponseRateMS = 1000 / targetFPS
 
-//todo: if both players leave, also stop the game and highest score wins/tie = nobody wins
-
-const IDs = {
+export const IDs = {
 	p1_socket_id: 0,
 	p1_userID: 1,
 	p2_socket_id: 2,
 	p2_userID: 3
 }
+
+
+//todo: if both players leave, also stop the game and highest score wins/tie = nobody wins
 
 let player2:Socket = undefined
 let n_games:number = 0
@@ -353,7 +354,6 @@ export class MyGateway implements OnModuleInit {
 		for (var game of games) {
 			
 			const gameData: GameData = game[1][0]
-			const gameIDs:string[] = game[1][1]
 			
 			/* Make sure games don't get updated twice */
 			const gameName: string = game[0]
@@ -366,21 +366,13 @@ export class MyGateway implements OnModuleInit {
 				)())
 			}
 			/* Handle end of game */
-			var winningPlayer: string | null = null
-			var losingPlayer: string | null = null
 			switch (gameData.gameState) {
-				case 'p1_won':
-					winningPlayer = gameIDs[IDs.p1_userID]
-					losingPlayer = gameIDs[IDs.p2_userID]
-					break;
-				case 'p2_won':
-					winningPlayer = gameIDs[IDs.p2_userID]
-					losingPlayer = gameIDs[IDs.p1_userID]
+				case 'p1_won' || 'p2_won':
+					PongService.postGameStats(game)
 					break;
 				default: continue;
 			}
 			games.delete(gameName)
-			PongService.updateWinLoss(winningPlayer, losingPlayer);
 			const serializedMap = [...games.entries()];
 			this.server.emit('gamelist', serializedMap)
 		}

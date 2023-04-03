@@ -17,6 +17,8 @@ export class GameData {
 	paddleSize:number
 	isClassic:boolean
 	acceleration:number
+	beginTime:number
+	endTime:number
 
 	constructor(Config:any, isClassic:boolean)
 	{
@@ -35,6 +37,7 @@ export class GameData {
 		this.p2 = new Paddle(12, 2, 1500, 750, 20, 20, Config.paddleSize, this.acceleration)
 		this.ball = new Ball(10 * Config.ballSpeed / 100, 3, 1500, 750, 20, 20, 20, this.acceleration)
 		this.isClassic = isClassic
+		this.beginTime = Date.now() / 1000 /* time in seconds since epoch */
 	}
 
 	update(deltaTime: number)
@@ -42,16 +45,18 @@ export class GameData {
 		switch (this.ball.update(this.p1, this.p2, deltaTime)) {
 			case 'p1_scored':
 				this.p1_score++
-				if (this.p1_score === 11)
+				if (this.p1_score === 1) {
 					this.gameState = 'p1_won'
+					this.endTime = Date.now() / 1000
+				}
 				break;
-			
 			case 'p2_scored':
 				this.p2_score++
-				if (this.p2_score === 11)
+				if (this.p2_score === 1) {
 					this.gameState = 'p2_won'
+					this.endTime = Date.now() / 1000
+				}
 				break;
-		
 			default: break;
 		}
 	}
