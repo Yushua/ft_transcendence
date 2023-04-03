@@ -16,7 +16,7 @@ type Props = {
     username: string;
   }
 
-const OtherUserProfile: React.FC<Props> = ({ username }) => {
+function OtherUserProfile(username: string){
 
     const [myUsername, setMyUsername] = useState<string>("");
     const [myPFP, setMyPFP] = useState<string>("");

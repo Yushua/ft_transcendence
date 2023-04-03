@@ -1,4 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { UserStat } from "./user.Stat";
 import { UserAchievement } from "./userAchievement.entity";
 
 @Entity()
@@ -38,4 +39,7 @@ export class UserProfile {
 
     @OneToMany(() => UserAchievement, UserAchievement => UserAchievement.userProfile)
     UserAchievement : UserAchievement[];
+
+    @OneToMany(() => UserStat, UserStat => UserStat.userProfile)
+    UserStat : UserStat[];
 }

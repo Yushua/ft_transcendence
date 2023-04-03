@@ -4,7 +4,9 @@ import OurSession from 'src/session/OurSession';
 import { Repository } from 'typeorm';
 import { AddAchievement } from './dto/addAchievement.dto';
 import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
+import { UserGameStat } from './dto/UsergameStat.dto';
 import { UserProfile } from './user.entity';
+import { UserStat } from './user.Stat';
 import { UserAchievement } from './userAchievement.entity';
 
 @Injectable()
@@ -254,7 +256,7 @@ export class UserProfileService {
        */
       async postAchievementList(id:string, AddAchievement:AddAchievement) {
         const {nameAchievement, pictureLink, message} = AddAchievement
-        const userprofile:UserProfile = await this.userEntity.findOneBy({id});
+        const userprofile:UserProfile = await this.userEntity.findOneBy({id});//player1
         const achievement = new UserAchievement
         achievement.message = message
         achievement.nameAchievement = nameAchievement
@@ -262,4 +264,25 @@ export class UserProfileService {
         userprofile.UserAchievement.push(achievement)
         await this.userEntity.save(userprofile);
       }
+
+      async postGame1V1(UsergameStat:UserGameStat) {
+        
+        const {player1, player2, nameGame, winner, loser, scoreWinner, scoreLoser, timeOfGame} = UsergameStat
+        const userprofile1:UserProfile = await this.userEntity.findOneBy({id: player1});//player1
+        const userprofile2:UserProfile = await this.userEntity.findOneBy({id: player2});//player1
+        const stat = new UserStat
+        
+        stat.nameGame = nameGame
+        stat.winner = winner
+        stat.loser = loser
+        stat.scoreWinner = scoreWinner
+        stat.scoreLoser = scoreLoser
+        stat.timeOfGame = timeOfGame
+        
+        userprofile1.UserStat.push(stat)
+        userprofile2.UserStat.push(stat)
+        await this.userEntity.save(userprofile1);
+        await this.userEntity.save(userprofile2);
+      }
+
 }
