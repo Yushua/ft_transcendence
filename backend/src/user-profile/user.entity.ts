@@ -16,7 +16,7 @@ export class UserProfile {
     username: string;
 
     //string path towards the picture
-    @Column({ default: ""})
+    @Column({ default: "default_pfp.jpg"})
     profilePicture: string
     
     @Column({ default: "Creation"})
