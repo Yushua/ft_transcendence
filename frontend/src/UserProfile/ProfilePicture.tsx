@@ -8,8 +8,7 @@ export default function ProfilePicture() {
 	
 	return (
 		<div>
-			{/* <img src={link} alt="Image" onClick={handleProfilePicture}/>; */}
-			<img src={HTTP.HostRedirect() + NameStorage.UserPFP.Get(User.ID)} alt="" style={{width: "2cm", height: "2cm"}}/>
+			<img src={`${HTTP.HostRedirect()}pfp/${NameStorage.UserPFP.Get(User.ID)}`} alt="" style={{width: "2cm", height: "2cm"}}/>
 			<input type="file" id="avatar" name="avatar" accept="image/png, image/jpeg, image/gif" onChange={event => {
 				if (!event.target.files)
 					return

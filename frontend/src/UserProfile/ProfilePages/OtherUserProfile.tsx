@@ -3,6 +3,7 @@ import '../../App.css';
 
 import HTTP from '../../Utils/HTTP';
 import MainWindowButtonComponent from '../../ButtonComponents/MainWindowButtonComponent';
+import NameStorage from '../../Utils/Cache/NameStorage';
 
 async function asyncGetuserUsername(username: string):Promise<any> {
 	const response = HTTP.Get(`user-profile/user/${username}`, null, {Accept: 'application/json'})
@@ -44,7 +45,7 @@ return (
             <MainWindowButtonComponent/>
         </div>
         <div>
-            <img src={myPFP} alt="" style={{width: "20px", height: "20px"}}/>
+            <img src={`${HTTP.HostRedirect()}pfp/${myPFP}`} alt="" style={{width: "20px", height: "20px"}}/>
             <label id="name" htmlFor="name">Welcome at {myUsername}</label>
         </div>
     </div>

@@ -6,6 +6,7 @@ import EXPBarComponent from '../ButtonComponents/EXPBarComponent';
 import User from '../Utils/Cache/User';
 import SearchBarFriend from '../Search bar/SearchbarFriend';
 import AchievementsComponent from '../ButtonComponents/AchievementsComponent';
+import NameStorage from '../Utils/Cache/NameStorage';
 
 async function asyncGetName():Promise<string> {
   const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
@@ -44,7 +45,7 @@ function UserProfilePage() {
   return (
     <div className="UserProfile">
       <div>
-        <img src={User.ProfilePicture} alt="" style={{width: "2cm", height: "2cm"}}/>
+        <img src={`${HTTP.HostRedirect()}pfp/${NameStorage.UserPFP.Get(User.ID)}`} alt="" style={{width: "2cm", height: "2cm"}}/>
         <div> <label id="name" htmlFor="name">Welcome {nameDisplay}</label> </div>
         <div> <label id="maxExp" htmlFor="maxExp">maxEXp - {TotalExp}</label> </div>
         <div> <EXPBarComponent/> </div>

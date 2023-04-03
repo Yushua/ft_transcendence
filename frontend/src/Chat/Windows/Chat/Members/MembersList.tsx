@@ -17,7 +17,7 @@ function GenerateRoomListJSX(): JSX.Element[] {
 	return ChatRoom.MemberIDs.map(memberID => {
 		return (<div key={memberID}>
 			<img
-				src={HTTP.HostRedirect() + NameStorage.UserPFP.Get(memberID)}
+				src={`${HTTP.HostRedirect()}pfp/${NameStorage.UserPFP.Get(memberID)}`}
 				style={{width: `${ChatLineHeight}px`, height: `${ChatLineHeight}px`, borderRadius: "50%"}}
 			/>
 			<Button variant="contained"
