@@ -2,6 +2,7 @@ import { Body, Controller, Get, Param, Patch, Post, Request, UseGuards } from '@
 import { AuthGuard } from '@nestjs/passport';
 import { AuthGuardEncryption } from 'src/auth/auth.guard';
 import { AddAchievement } from './dto/addAchievement.dto';
+import { UserGameStat } from './dto/UsergameStat.dto';
 import { UserProfileService } from './user-profile.service';
 import { UserProfile } from './user.entity';
 
@@ -104,7 +105,7 @@ export class UserProfileController {
     @Post('PostAchievementList')
     async postAchievementList( @Request() req: Request,
     @Body() AddAchievement: AddAchievement) {
-        return { AchievementList: await this.userServices.postAchievementList(req["user"].id, AddAchievement)}
+        await this.userServices.postAchievementList(req["user"].id, AddAchievement)
     }
 
     @Get("/username/:id")
@@ -142,6 +143,13 @@ export class UserProfileController {
         @Param('idFriend') idfriend: string,
         ) {
         this.userServices.removeFriend(req["user"].id, idfriend);
+    }
+
+    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+    @Post('PostGame')
+    async postGame(
+    @Body() UserGameStat: UserGameStat) {
+       await this.userServices.postGame1V1(UserGameStat)
     }
 
 }
