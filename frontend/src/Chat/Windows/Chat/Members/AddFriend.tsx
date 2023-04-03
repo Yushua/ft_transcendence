@@ -20,7 +20,7 @@ function GenerateAddFriendJSX(): JSX.Element[] {
 			?
 			<div key={friendID}>
 				<img
-					src={HTTP.HostRedirect() + NameStorage.UserPFP.Get(friendID)}
+					src={`${HTTP.HostRedirect()}pfp/${NameStorage.UserPFP.Get(friendID)}`}
 					style={{width: `${ChatLineHeight}px`, height: `${ChatLineHeight}px`, borderRadius: "50%"}}
 				/>
 				<Button variant="outlined"
@@ -30,7 +30,7 @@ function GenerateAddFriendJSX(): JSX.Element[] {
 			:
 			<div key={friendID}>
 				<img
-					src={HTTP.HostRedirect() + NameStorage.UserPFP.Get(friendID)}
+					src={`${HTTP.HostRedirect()}pfp/${NameStorage.UserPFP.Get(friendID)}`}
 					style={{width: `${ChatLineHeight}px`, height: `${ChatLineHeight}px`, borderRadius: "50%"}}
 				/>
 				<Button variant="outlined"

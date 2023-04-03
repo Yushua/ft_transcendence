@@ -1,6 +1,8 @@
 import './UserProfile.css';
 import '../App.css';
 import User from '../Utils/Cache/User';
+import NameStorage from '../Utils/Cache/NameStorage';
+import HTTP from '../Utils/HTTP';
 
 
 function TestPage() {
@@ -9,7 +11,7 @@ function TestPage() {
   return (
     <div className="pageborder">
       <button className="button" >hello</button>
-      <img src={User.ProfilePicture} alt="" className="profilePicture"/>
+      <img src={`${HTTP.HostRedirect()}pfp/${NameStorage.UserPFP.Get(User.ID)}`} alt="" className="profilePicture"/>
     </div>
   );
 }

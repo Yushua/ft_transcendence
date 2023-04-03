@@ -72,7 +72,7 @@ export default function MemberProfile() {
 				{/* Username */}
 				<br />
 				<img
-					src={HTTP.HostRedirect() + NameStorage.UserPFP.Get(_memberProfileID)} alt=""
+					src={`${HTTP.HostRedirect()}pfp/${NameStorage.UserPFP.Get(_memberProfileID)}`} alt=""
 					style={{width: `${ChatLineHeight * 5}px`, height: `${ChatLineHeight * 5}px`, borderRadius: "50%"}}	
 				/>
 				

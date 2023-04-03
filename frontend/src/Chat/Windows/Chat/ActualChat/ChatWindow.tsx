@@ -58,7 +58,7 @@ export async function asyncUpdateChatLog() {
 					<div key={count + _msgCount} style={{textAlign: "left"}}>
 						{
 							<img
-								src={HTTP.HostRedirect() + NameStorage.UserPFP.Get(msgs[i].OwnerID)}
+								src={`${HTTP.HostRedirect()}pfp/${NameStorage.UserPFP.Get(msgs[i].OwnerID)}`}
 								style={{width: `${ChatLineHeight * .8}px`, height: `${ChatLineHeight * .8}px`, borderRadius: "50%"}}
 							/>
 						}

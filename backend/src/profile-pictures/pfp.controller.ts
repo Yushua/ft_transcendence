@@ -8,6 +8,8 @@ import { Repository } from 'typeorm';
 import { validateBufferMIMEType } from "validate-image-type";
 import { AuthGuard } from '@nestjs/passport';
 import { AuthGuardEncryption } from 'src/auth/auth.guard';
+import { createReadStream } from 'fs';
+import { join } from 'path';
 
 @Controller("pfp")
 export class PFPController {
@@ -24,6 +26,18 @@ export class PFPController {
 	@Delete() deleteAll() { return this.pfpRepo.delete({}) }
 	
 	//#endregion
+	
+	@Get()
+	async GetDefaultPFP(@Response({ passthrough: true }) response) {
+		
+		const actualPath: string = `./src/profile-pictures/default_pfp.jpg`
+		
+		response.set({'Content-Type': lookup(actualPath)})
+		
+		const file = createReadStream(join(process.cwd(), actualPath))
+		
+		return new StreamableFile(file)
+	}
 	
 	@Get("user/:id")
 	async GetUserPFPURL(@Param("id") id: string) {
@@ -73,7 +87,7 @@ export class PFPController {
 		const pfpID = (await this.pfpRepo.save(this.pfpRepo.create({
 			PictureData: file.buffer.toString('base64')
 		}))).ID
-		const pfpURL = `pfp/${pfpID}.${extension(file.mimetype)}`
+		const pfpURL = `${pfpID}.${extension(file.mimetype)}`
 		
 		console.log(pfpURL)
 		
