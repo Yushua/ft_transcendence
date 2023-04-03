@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthGuardEncryption } from 'src/auth/auth.guard';
 import { UserProfileService } from './user-profile.service';
@@ -20,7 +20,7 @@ export class UserProfileController {
     @Get('/user')
     getUserByIdRequest(
         @Request() req: Request) {
-        return {user: req["user"], username: req["user"].username};
+        return {user: req["user"], username: req["user"].username, intraname: req["user"].intraName};
     }
 
     /**
@@ -31,10 +31,10 @@ export class UserProfileController {
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     @Get('/user/:id')
     getUserById( 
-        @Param('id') id: string): Promise<UserProfile> {
+        @Param('id') id: string){
         if (id == "undefined")
             return;
-        return this.userServices.findUserBy(id);
+        return { user: this.userServices.findUserBy(id) }
     }
 
     /**
@@ -58,74 +58,55 @@ export class UserProfileController {
         return this.userServices.ReturnUsername(id);
     }
 
+    /* search list templates*/
 
     /**
      * 
      * @param id 
-     * @returns get all users in  list minus this user, using ID
+     * @returns returns all the users [["pfp", "username"]]
      */
-        @Get('/userList/:id')
-        getUserFriendlistID(
-            @Param('id') id: string): Promise<string[]> {
-            return this.userServices.UsersFriendlistID(id);
-        }
-
-    /**
-     * 
-     * @param id 
-     * @returns get all users in a list minus this user, using ID
-     */
-    @Get('/userList/:id')
-    getUserFriendlistusername(
-        @Param('id') id: string): Promise<string[]> {
-        return this.userServices.UsersFriendlistUsername(id);
+    @UseGuards(AuthGuard('jwt'))
+    @Get('SearchList')
+    async getSearchList() {
+        var searchlist:string[][] = await this.userServices.SearchList()
+        console.log(`search ${searchlist[0]}`)
+        return { searchlist: searchlist }
     }
 
      /**
      * 
      * @param id 
-     * @returns get users all people the user can add, using ID.
+     * @returns returns based on [["pfp", "username", "status"]]
      */
-        @Get('/userAddList/:id')
-        getUserAddListById(
-            @Param('id') id: string): Promise<string[]> {
-            return this.userServices.getAllUsersAddList(id);
-        }
-         /**
-     * 
-     * @param id 
-     * @returns get users all people the user can add, using ID. 
-     * return array of usernames
-     */
-         @Get('/userAddListusername')
-         @UseGuards(AuthGuard())
-         getUserAddListByIdUsername(
-            @Request() req: Request): Promise<string[]> {
-             return this.userServices.getAllUsersAddListUsername(req["user"].id);
-         }
+     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+    @Get('GetFriendList')
+    async GetFriendList( @Request() req: Request) {
+        return { friendlist: await this.userServices.GetFriendList(req["user"].id) }
+    }
     
     /**
      * 
      * @param id 
-     * @returns get users friendlist with usernames
+     * @returns returns based on [["pfp", "username", "status"]]
      */
-        @Get('/userFriendListID')
-        @UseGuards(AuthGuard())
-        getUseFriendListIDById(
-            @Request() req: Request): Promise<string[]> {
-            return this.userServices.UsersFriendlistID(req["user"].id);
-        }
-    
+    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+    @Get('GetAchievementList')
+    async GetAchievementList( @Request() req: Request) {
+        return { AchievementList: await this.userServices.GetAchievementList(req["user"].id) }
+    }
     /**
      * 
      * @param id 
-     * @returns get users friendlist with usernames
+     * @returns returns based on [["pfp", "username", "status"]]
      */
-        @Get('/userFriendListUsername/:id')
-        getUseFriendListUsernameById(
-            @Param('id') id: string): Promise<string[]> {
-            return this.userServices.UsersFriendlistUsername(id);
-        }
+    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+    @Post('PostAchievementList')
+    async postAchievementList( @Request() req: Request,
+    @Body("name") name: string,
+    @Body("message") message: string,
+    @Body("picture") picture: string ) {
+        return { AchievementList: await this.userServices.postAchievementList(req["user"].id, name, message, picture)}
+    }
 
     @Get("/username/:id")
     async ReturnNameById(
@@ -138,8 +119,7 @@ export class UserProfileController {
     @Post('/userchange/:username')
     @UseGuards(AuthGuard())
     changeUsername(
-        @Param('username') username: string,
-        @Request() req: Request): Promise<UserProfile> {
+        @Param('username') username: string, @Request() req: Request): Promise<UserProfile> {
         return this.userServices.changeUsername(username, req["user"].id);
     }
 
@@ -148,33 +128,21 @@ export class UserProfileController {
      * @param username 
      * @returns add id based on the jwt authentication
      */
-    @Patch('/friendlist/add/:idFriend')
+    @Patch('friendlist/add/:usernameFriend')
     @UseGuards(AuthGuard())
     addFriend(
-        @Request() req: Request,
-        @Param('idFriend') idFriend: string,
-        )
-        : Promise<UserProfile> {
-        return this.userServices.addFriend(req["user"].id, idFriend);
+        @Request() req: Request, @Param('usernameFriend') usernameFriend: string,
+        ){
+        return this.userServices.addFriend(req["user"].id, usernameFriend);
     }
 
-    @Patch('/friendlist/remove/:idFriend')
+    @Patch('friendlist/remove/:idFriend')
     @UseGuards(AuthGuard())
     removeFriend(
         @Request() req: Request,
         @Param('idFriend') idfriend: string,
-        )
-        : Promise<UserProfile> {
-        return this.userServices.removeFriend(req["user"].id, idfriend);
+        ) {
+        this.userServices.removeFriend(req["user"].id, idfriend);
     }
 
-
-    /*
-        front app application will test
-        this week;
-    */
-    /*
-    when a game is created, look into the suer if the suer has the stats there
-    if yes, the  continue, if not, then create one
-    */
 }

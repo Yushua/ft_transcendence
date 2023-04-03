@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { newWindow } from '../../App';
-import HTTP from '../../Utils/HTTP';
+import { newWindow } from '../App';
 import UserProfileComponent from '../ButtonComponents/UserProfileComponent';
+import HTTP from '../Utils/HTTP';
 
 async function asyncReturnID(usernameFriend: string):Promise<string> {
   const response = HTTP.Get(`user-profile/returnID/${usernameFriend}`, null, {Accept: 'application/json'})
@@ -33,6 +33,7 @@ async function seeProfileOther(username: string){
 
 var _SelectedOption: string[]
 var _setShowDropdown:React.Dispatch<React.SetStateAction<boolean>>
+
 function SearchBarFriend() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedOption, setSelectedOption] = useState<string[]>([]);
@@ -47,27 +48,19 @@ function SearchBarFriend() {
 
   return (
     <div>
-      <div>
-      <UserProfileComponent/>
-      </div>
-    <div style={{ display: "flex", flexWrap: "wrap", maxHeight: "200px" }}>
+      <div style={{ display: "flex", flexWrap: "wrap", maxHeight: "200px" }}>
           {buttonLabels.map((option, index) => (
             <button
               key={index}
-              style={{ margin: "5px", width: "100px", height: "50px" }}
-              onClick={() => handleButtonClick(option)}
-            >{`name: ${option[0]}\nstatus: ${option[1]}`}
+              style={{ width: "130px", height: "100px"}}
+              // onClick={() => handleButtonClick(option)}
+            >{`name: ${option[0]} - ${option[1]}`}
+            <div style={{display: "flex", alignItems: "center" }}>
+              <button style={{ width: "50px", height: "50px", flex: "1", alignItems: "center" }} onClick={() => addFriendFunction(_SelectedOption[0])}> remove  </button>
+              <button style={{ width: "50px", height: "50px", flex: "1", alignItems: "center" }} onClick={() => addFriendFunction(_SelectedOption[0])}> check </button>
+            </div>
             </button>
           ))}
-          {showDropdown && (
-            <div style={{ position: "absolute", top: "60px", left: "0" }}>
-              <ul>
-                {/* <button onClick={() => addFriendFunction(selectedOption)}>Friendlist</button> */}
-                <button style={{ margin: "5px", width: "100px", height: "50px" }} onClick={() => addFriendFunction(_SelectedOption[0])}> add {_SelectedOption[0]} friendlist </button>
-                <button style={{ margin: "5px", width: "100px", height: "50px" }} onClick={() => addFriendFunction(_SelectedOption[0])}> add {_SelectedOption[0]} friendlist </button>
-              </ul>
-            </div>
-          )}
         </div>
     </div>
   )

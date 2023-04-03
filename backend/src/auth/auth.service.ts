@@ -5,6 +5,8 @@ import axios from 'axios';
 import { UserProfile } from 'src/user-profile/user.entity';
 import { Repository } from 'typeorm';
 import { JwtPayload } from './jwt-payload.interface';
+import { authenticator } from 'otplib';
+import { randomBytes } from 'crypto';
 
 export class AuthService {
     constructor(
@@ -54,6 +56,24 @@ export class AuthService {
         return intraName
       }
 
+      /** logging out of intra */
+      async logoutOathSystem(token: string):Promise<boolean>{
+        console.log("hello")
+        try {
+          const intraPull = await axios.get('https://api.intra.42.fr/oauth/logout', {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            }
+          }).then((response) => {
+            return true
+          })
+        } catch (error) {
+          console.log(error.response.data)
+          console.log("Get")
+          throw new HttpException('loging out failed, system corrupted', HttpStatus.BAD_REQUEST);
+        }
+        return false;
+      }
       /**
        * 
        * @returns checs if the user exists and returns a boolean
@@ -108,9 +128,6 @@ export class AuthService {
        */
       async makeAccountTWT(intraName: string):Promise<string>{
         var user:UserProfile= await this.userProfileEntityRepos.findOneBy({ intraName })
-          //whent the account is made, secretcode is set
-          // const crypto = require('crypto');
-          // var secretcode:string= crypto.randomBytes(Math.ceil(10 / 2)).toString('hex').slice(0, 10)
           const payload: JwtPayload = { userID: user.id, twoFactor: false}
           const TWToken: string = this.jwtService.sign(payload);
           return TWToken;
@@ -171,9 +188,8 @@ export class AuthService {
         return token["twoFactor"]
       }
 
-      async updateTWT(TWT:string, status:boolean):Promise<string>{
-        var token = this.jwtService.decode(TWT);
-        const payload: JwtPayload = { userID: token["userID"], twoFactor: status};
+      async updateTWT(userID:string, status:boolean):Promise<string>{
+        const payload: JwtPayload = { userID, twoFactor: status};
         const TWToken: string = this.jwtService.sign(payload);
         return TWToken
       }
@@ -184,5 +200,35 @@ export class AuthService {
         if (!user || (intraName == user.intraName))
           return true
         return false
+      }
+
+      /**
+       * validating TWT code input from QR
+       * @param code 
+       * @returns 
+       */
+      async checkCodeSecret(code:string, secret:string):Promise<boolean>{
+        try {
+          const isValid = authenticator.check(code, secret);
+          // or
+          // const isValid = authenticator.verify({ token, secret });
+        } catch (err) {
+          console.log("failed")
+          return false
+        }
+        console.log("success")
+        return true
+      }
+
+      async changeQRSecret(id: string):Promise<string>{
+        var user:UserProfile = await this.userProfileEntityRepos.findOneBy({ id })
+        var secret: string = authenticator.generateSecret(20);
+        user.QRSecret = secret
+        await this.userProfileEntityRepos.save(user);
+        return secret
+      }
+
+      async getUser(id: string):Promise<UserProfile> {
+        return await this.userProfileEntityRepos.findOneBy({ id })
       }
 }

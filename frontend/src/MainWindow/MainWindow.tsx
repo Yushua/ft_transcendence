@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { newWindow } from "../App";
-import MainChatWindow, { SetMainChatWindow } from "../Chat/Windows/MainChatWindow";
 import { Pong } from "../Games/pong/Pong";
 import TWTCheckPage from "../TwoFactorSystem/TWTCheckPage";
-import LogoutButtonComponent, { logoutButtonRefresh } from "../UserProfile/ButtonComponents/LogoutButton";
-import SearchBar from "../UserProfile/Search bar/SearchBar";
 import SetUsername from "../UserProfile/SetUsername";
 import UserProfilePage from "../UserProfile/UserProfile";
 import User from "../Utils/Cache/User";
 import OurHistory from "../Utils/History";
 import HTTP from "../Utils/HTTP";
-import { AppBar, Box, Button, Container, IconButton, Toolbar, Tooltip } from "@mui/material";
-import ProfilePicture from "../UserProfile/ProfilePicture";
+import { AppBar, Box, Button, Container, IconButton, Toolbar } from "@mui/material";
 import NameStorage from "../Utils/Cache/NameStorage";
 import { WebsocketContext } from "../Games/contexts/WebsocketContext";
+import MainChatWindow from "../Chat/Windows/MainChatWindow";
+import SearchBar from "../Search bar/SearchBar";
+import SettingsUser from "../UserProfile/SettingsUser";
+import TestPage from "../UserProfile/TestPage";
+import LogoutButtonComponent from "../ButtonComponents/LogoutButton";
 
-
-async function asyncGetName():Promise<string> {
+export async function asyncGetNameExport():Promise<string> {
 	const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
 	var user = await JSON.parse(response)
 	User._ManualUpdate(user["user"])
@@ -41,9 +41,8 @@ var _setWindow: React.Dispatch<React.SetStateAction<string>> | null = null
 
 var _setNameDisplay: React.Dispatch<React.SetStateAction<string>>
 var _setDisplay: React.Dispatch<React.SetStateAction<boolean>>
-var _setTWTDisplay: React.Dispatch<React.SetStateAction<string>>
 async function asyncToggleGetName(){
-	_setNameDisplay(await asyncGetName())
+	_setNameDisplay(await asyncGetNameExport())
 	_setDisplay(true)
   };
 
@@ -58,16 +57,15 @@ export default function MainWindow() {
 	_setNameDisplay = setNameDisplay
 	_setDisplay = setDisplay
 	useEffect(() => {
-		if (Display == false){
+		if (Display === false){
 			asyncToggleGetName()
 		}
 	}, []); // empty dependency array means it will only run once
-	if (Display == true){
-		if (nameDisplay == ""){
+	if (Display === true){
+		if (nameDisplay === ""){
 			newWindow(<SetUsername/>)
 		}
 	}
-
 	_setWindow = setWindow
 	_currentWindow = currentWindow
 	
@@ -80,6 +78,9 @@ export default function MainWindow() {
 		case "pong": display = <Pong/>; socket.emit('refresh'); break
 		case "Search": display = <SearchBar/>; break
 		case "TWTDisplay": display = <TWTCheckPage/>; break
+		case "Settings": display = <SettingsUser/>; break
+		case "TestPage": display = <TestPage/>; break
+		case "LogoutButton": display = <LogoutButtonComponent/>; break
 		default: break
 	}
 
@@ -103,7 +104,7 @@ export default function MainWindow() {
 								["chat", "Chat"],
 								["pong", "Play Pong"],
 								["Search", "Search"],
-								["TWTDisplay", "TwoFactor"],
+								["TWTDisplay", "TwoFactor, LogoutButton"],
 								].map(pair =>
 							<Box key={pair[0]} sx={{ pl:_buttonDistance }}>
 								<Button
@@ -112,13 +113,6 @@ export default function MainWindow() {
 										{pair[1]}
 								</Button>
 							</Box>)}
-							
-							{/* Logout Button */}
-							<Box sx={{ pl:_buttonDistance }}>
-								<Button sx={{ color: 'white', display: 'block' }}
-									onClick={() => logoutButtonRefresh()}>Logout
-								</Button>
-							</Box>
 							
 							{/* Avatar */}
 							<Box sx={{ position: "absolute", right: "0px" }}>

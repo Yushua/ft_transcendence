@@ -1,14 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
 import { newWindow } from '../App';
 import '../App.css';
 import LoginPage from '../Login/LoginPage';
 import HTTP from '../Utils/HTTP';
-import TurnTWTOnLoginPage from './TurnTWTOnLoginPage';
 
-async function turningTWTOn(code:string):Promise<string>{
+async function turningTWTOn(code:string){
   try {
-    const response = await fetch(HTTP.HostRedirect() + `auth/checkTWT/${getCookie('TWToken')}/${code}` , {
+    const response = await fetch(HTTP.HostRedirect() + `auth/checkTWTCodeUpdate/${code}` , {
       headers: {
         Accept: 'application/json',
         'Authorization': 'Bearer ' + getCookie("accessToken"),
@@ -20,10 +19,10 @@ async function turningTWTOn(code:string):Promise<string>{
       throw new Error(`Error! status: ${response.status}`);
     }
     var result = await response.json();
-    console.log(`turning TWT on if {${await result["status"]}} == true`)
     if (await result["status"] === true){
-      removeCookie('TWToken');
-      return await result["TWT"]
+      removeCookie(`TWToken${_intraName}`);
+      alert("setting the cookie on")
+      setCookie(`TWToken${_intraName}`, await result["TWT"], { expires: 100000 });
     }
     else {
         alert("wrong code input, try again")
@@ -33,29 +32,45 @@ async function turningTWTOn(code:string):Promise<string>{
     alert("wrong code input, try again")
     _setInputValue("")
   }
-  return ""
 }
 async function handleSubmit(event:any){
   event.preventDefault();
-  var input:string = await turningTWTOn(_inputValue)
-  if (input !== ""){
-    setCookie('TWToken', input, { expires: 10000 });
-  }
+  await turningTWTOn(_inputValue)
   alert("wrong code input, try again")
   _setInputValue("")
 };
 
+async function asyncGetName():Promise<string> {
+	const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
+	var user = await JSON.parse(response)
+	return await user["intraname"];
+  }
+
+
 var _inputValue: string
 var _setInputValue: React.Dispatch<React.SetStateAction<string>>
+var _intraName: string
+var _setIntraName: React.Dispatch<React.SetStateAction<string>>
 
+//get the username in here
 function TWTCheckLoginPage(){
+  alert("in check TWT")
   const [inputValue, setInputValue] = useState("");
   _inputValue = inputValue
   _setInputValue = setInputValue
+  const [intraName, setintraName] = useState<string>('');
+  _intraName = intraName
+  _setIntraName = setintraName
   const handleInputChange = (event:any) => {
     setInputValue(event.target.value);
   };
+  async function getIntraName(){
+    setintraName(await asyncGetName())
+  }
 
+  useEffect(() => {
+    getIntraName()
+  }, []);
   newWindow(<LoginPage/>)
   return (
     <form onSubmit={handleSubmit}>
@@ -63,7 +78,7 @@ function TWTCheckLoginPage(){
       enable two Factor Authentication to login
       <input type="text" value={inputValue} onChange={handleInputChange} />
     </label>
-    <button type="submit">Submit</button>
+    <button type="submit">Submit Code</button>
   </form>
   );
 }

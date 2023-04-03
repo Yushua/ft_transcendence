@@ -24,6 +24,7 @@ export class UserProfileService {
           user.friendList.push(friendID);
           await this.userEntity.save(user);
       }
+
       async removeFriendFromID(userID: string, friendID: string):Promise<void>{
         const user = await this.findUserBy(userID);
         user.friendList.forEach( (item, index) => {
@@ -96,11 +97,13 @@ export class UserProfileService {
         return found;
       }
 
-      async addFriend(id:string, idfriend: string):Promise<UserProfile> {
-        const found = await this.userEntity.findOneBy({id});
-        found.friendList.push(idfriend);
+      //turn the username of the friend into an id, and then add it to the currect user
+      async addFriend(userid:string, usernameFriend: string) {
+        const found = await this.userEntity.findOneBy({id: userid});
+        const foundFriend = await this.userEntity.findOneBy({username: usernameFriend});
+        found.friendList.push(foundFriend.id);
         await this.userEntity.save(found);
-        return found;
+        console.log(found)
       }
 
         /** */
@@ -210,8 +213,43 @@ export class UserProfileService {
        * @param id 
        * @returns get the users friendslist returns an array of the suers friendlist
        */
-      async getUsersListFriendById(id:string):Promise<string[]> {
+      async getUsersFriendlist(id:string):Promise<string[]> {
         const found = await this.userEntity.findOneBy({id});
         return(found.friendList);
+      }
+
+      /**
+       * returns based on [["pfp", "username"]]
+       */
+      async SearchList():Promise<string[][]>{
+        const users:UserProfile[] = await this.userEntity.find()
+        return users.map(user => [user.username, user.id]);
+      }
+
+      /**
+       * returns based on [["pfp", "username", "status"]]
+       */
+      async GetFriendList(id:string):Promise<string[][]> {
+        const userprofile:UserProfile = await this.userEntity.findOneBy({id});
+        const users: UserProfile[] = await this.userEntity.createQueryBuilder('user').where('user.id IN (:...id)', { id: userprofile.friendList }).getMany();
+        return users.map(user => [user.username, user.id]);
+      }
+      // [["profiel picture", "name", "id"],]
+      /**
+       * returns based on [["picture", "name", "status"]]
+       */
+      async GetAchievementList(id:string):Promise<string[][]> {
+        const userprofile:UserProfile = await this.userEntity.findOneBy({id});
+        return userprofile.achievements;
+      }
+
+        /**
+       * returns based on [["picture", "name", "status"]]
+       */
+      async postAchievementList(id:string, name:string, message:string, picture:string) {
+        const myStringArray: string[] = [name, message, picture];
+        const userprofile:UserProfile = await this.userEntity.findOneBy({id});
+        userprofile.achievements.push(myStringArray);
+        await this.userEntity.save(userprofile);
       }
 }

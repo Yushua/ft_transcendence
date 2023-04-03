@@ -16,16 +16,25 @@ export class UserProfile {
     //string path towards the picture
     @Column({ default: ""})
     profilePicture: string
-
+    
     @Column({ default: false})
     TWTStatus: boolean
+
+    @Column({ default: ""})
+    QRSecret: string
 
     @Column("text", { array: true , default: "{}"})
     friendList: string[];
 
-    @Column()
+    @Column("text", { array: true , default: "{}"})
+    AchievementList: string[];
+
+    @Column({ default: 0})
     wins: number;
 
-    @Column()
+    @Column({ default: 0})
     losses: number;
+
+    @Column("text", { array: true , default: []})
+    achievements: string[][];
 }

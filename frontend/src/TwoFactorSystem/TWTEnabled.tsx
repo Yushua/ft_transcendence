@@ -1,16 +1,79 @@
+import { useState } from 'react';
+import { removeCookie, setCookie } from 'typescript-cookie';
+import { newWindow } from '../App';
 import '../App.css';
-import MainWindowButtonComponent from '../UserProfile/ButtonComponents/MainWindowButtonComponent';
-import TurnTWTOn from './TurnTWTOn';
+import MainWindowButtonComponent from '../ButtonComponents/MainWindowButtonComponent';
+import MainWindow from '../MainWindow/MainWindow';
+import HTTP from '../Utils/HTTP';
+import User from '../Utils/Cache/User';
 
+async function CheckTWTSetup(code:string){
+  const response = HTTP.Get(`auth/checkTWTCodeUpdate/${code}`, null, {Accept: 'application/json'})
+  var result = await JSON.parse(response)
+  if (await result["status"] == true){
+    alert("change cookie")
+    User._ManualUpdate(result["user"])
+    removeCookie(`TWToken${User.intraname}`);
+    setCookie(`TWToken${User.intraname}`, await result["TWT"],{ expires: 100000 });
+      newWindow(<MainWindow/>);
+  }
+  else {
+    alert("wrong code input, try again")
+    _setInputValue("")
+  }
+}
+
+async function getBackendTWTSecret():Promise<string>{
+  const response = HTTP.Get(`auth/getQRCode`, null, {Accept: 'application/json'})
+  var result = await JSON.parse(response)
+  return await result["QRCode"]
+}
+
+async function handleSubmit(event:any){
+  event.preventDefault();
+  if (_inputValue.length < 2){
+    alert("input is too small")
+    _setInputValue("")
+  }
+  else {
+    await CheckTWTSetup(_inputValue)
+  }
+};
+
+async function getSecret(){
+  _setOtpSecret(await getBackendTWTSecret())
+}
+var _inputValue: string
+var _setInputValue: React.Dispatch<React.SetStateAction<string>>
+var _setOtpSecret: React.Dispatch<React.SetStateAction<string>>
 
 function TWTEnabled(){
-  //to check if your accessToken is already valid
-  // const [Display, setDisplay] = useState<boolean>(false);
-  //setu the QR code. if input Code, then it will be turned on. so there is always a QR code
+  const [inputValue, setInputValue] = useState("");
+  const [otpSecret, setOtpSecret] = useState("");
+  _inputValue = inputValue
+  _setInputValue = setInputValue
+  _setOtpSecret = setOtpSecret
+  const handleInputChange = (event:any) => {
+    setInputValue(event.target.value);
+  };
+
+  if (otpSecret === ""){
+    getSecret()
+  }
+
   return (
     <div className="TWTEnabled">
       <MainWindowButtonComponent/>
-      <TurnTWTOn/>
+      <div>
+      <img src={ otpSecret } alt="QR Code" />
+        <form onSubmit={handleSubmit}>
+          <label>
+            please fill in the code to enable Two Factor Authorization
+            <input type="text" value={inputValue} onChange={handleInputChange} />
+          </label>
+          <button type="submit">Submit</button>
+        </form>
+      </div>
     </div>
   );
 }

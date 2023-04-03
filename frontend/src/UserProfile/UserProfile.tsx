@@ -1,14 +1,11 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { useState } from 'react';
 import './UserProfile.css';
 import '../App.css';
-import ProfilePicture from './ProfilePicture';
 import HTTP from '../Utils/HTTP'
-import { newWindow } from '../App';
-import SetUsername from './SetUsername';
-import LogoutButtonComponent from './ButtonComponents/LogoutButton';
-import TWTButtonComponent from './ButtonComponents/TWTButtonComponent';
-import SearchButtonComponent from './ButtonComponents/SearchButtonComponent';
-import FriendListSearchButtonComponent from './ButtonComponents/FriendListSearchButtonComponent';
+import EXPBarComponent from '../ButtonComponents/EXPBarComponent';
+import User from '../Utils/Cache/User';
+import SearchBarFriend from '../Search bar/SearchbarFriend';
+import AchievementsComponent from '../ButtonComponents/AchievementsComponent';
 
 async function asyncGetName():Promise<string> {
   const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
@@ -29,12 +26,6 @@ export interface YourFormElement extends HTMLFormElement {
   readonly elements: FormElements
  }
 
-async function handleUsernameChange(e: React.FormEvent<YourFormElement>){
-  e.preventDefault();
-  await asyncChangeName(e.currentTarget.elements.username.value);
-  _setNameDisplay(e.currentTarget.elements.username.value)
-}
-
 var _setNameDisplay: React.Dispatch<React.SetStateAction<string>>
 
 async function asyncToggleGetName(){
@@ -43,30 +34,27 @@ async function asyncToggleGetName(){
 
 function UserProfilePage() {
   const [nameDisplay, setNameDisplay] = useState<string>("");
+  const [TotalExp, setExp] = useState<number>((User.wins*10));
   _setNameDisplay = setNameDisplay
-  if (nameDisplay == ""){
+  if (nameDisplay === ""){
     asyncToggleGetName()
   }
   //in the end, Friendlist will be displayed on the side
+  console.log(User.ProfilePicture)
   return (
     <div className="UserProfile">
-      <LogoutButtonComponent/>
-      <TWTButtonComponent/>
-      <SearchButtonComponent/>
-      <FriendListSearchButtonComponent/>
       <div>
-        <ProfilePicture/>
-        <label id="name" htmlFor="name">Welcome {nameDisplay}</label>
-      </div>
-      <div>
-      <form onSubmit={handleUsernameChange}>
-        <div>
-          <label htmlFor="username">new username Input:</label>
-          <input id="username" type="text" />
-          <button type="submit">Submit</button>
+        <img src={User.ProfilePicture} alt="" style={{width: "2cm", height: "2cm"}}/>
+        <div> <label id="name" htmlFor="name">Welcome {nameDisplay}</label> </div>
+        <div> <label id="maxExp" htmlFor="maxExp">maxEXp - {TotalExp}</label> </div>
+        <div> <EXPBarComponent/> </div>
+      </div >
+       <div style={{width: "145px", height: "300px", border: "2px solid black", overflow: "auto"}}>
+        <div style={{display: 'flex'}}>
+          <SearchBarFriend/>
         </div>
-      </form>
-      </div>
+          <AchievementsComponent/>
+       </div>
     </div>
     //logout when initialized
   );

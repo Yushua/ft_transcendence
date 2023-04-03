@@ -2,10 +2,16 @@ import '../App.css';
 
 import { getCookie, removeCookie } from 'typescript-cookie';
 import HTTP from '../Utils/HTTP';
-import LogoutButtonComponent from './ButtonComponents/LogoutButton';
+
 import { newWindow } from '../App';
-import MainWindow from '../MainWindow/MainWindow';
 import LoginPage from '../Login/LoginPage';
+import LogoutButtonComponent from '../ButtonComponents/LogoutButton';
+
+async function GetAchievement(name: string, message:string, picture:string){
+  const response = HTTP.Post(`user-profile/user`, {name: name, message:message, picture:picture}, {Accept: 'application/json'})
+  var result = await JSON.parse(response)
+  return await result["username"];
+}
 
 async function getAccessToken(username:string){
   try {
@@ -22,14 +28,15 @@ async function getAccessToken(username:string){
     }
     var result = await response.json();
     var status:boolean = result["status"]
-    if (status == undefined){
+    if (status === undefined){
       alert("JWT authorization failed, returned nothing")
       window.location.replace('http://localhost:4242/');
     }
-    if (status == false){
+    if (status === false){
       alert(`error in SetUsername already in use ${username}`)
     }
-    else if (status == true){
+    else if (status === true){
+      await this.GetAchievement("setusername", "you set your username", "./blem.jpg")
       newWindow(<LoginPage/>)
     }
   } catch (error) {
