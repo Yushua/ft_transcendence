@@ -63,11 +63,11 @@ export class PongService {
 		await this._gameRepo.save(stat)
 
 		const pair = [{userId: userprofile1.id, gameId: stat.id}]
-		// const pair2 = [{userId: "54d52bd7-d7ed-48e2-9780-0fd9fc74188d", gameId: stat.id}]
 		const pair2 = [{userId: userprofile2.id, gameId: stat.id}]
-
+		
 		this._joinedRepo.save(pair)
-		this._joinedRepo.save(pair2)
+		if (pair !== pair2)
+			this._joinedRepo.save(pair2)
 	}
 
 	
