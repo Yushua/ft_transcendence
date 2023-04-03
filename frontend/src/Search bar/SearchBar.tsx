@@ -56,8 +56,9 @@ function SearchBar() {
   const handleButtonClick = (e: any) => {
     e.preventDefault();
     //go to the page of this user
+    var username:string = e[0]
     alert(`username = ${e[0]}`)
-    newWindow(<OtherUserProfile username={e[0]}/>)
+    // newWindow(<OtherUserProfile username={username}/>)
   };
 
     return (
