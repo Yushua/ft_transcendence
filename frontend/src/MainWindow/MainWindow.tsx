@@ -10,6 +10,8 @@ import OurHistory from "../Utils/History";
 import HTTP from "../Utils/HTTP";
 import SettingsUser from "../UserProfile/SettingsUser";
 import TestPage from "../UserProfile/TestPage";
+import MainChatWindow from "../Chat/Windows/MainChatWindow";
+import LogoutButtonComponent from "../ButtonComponents/LogoutButton";
 
 export async function asyncGetNameExport():Promise<string> {
 	const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
