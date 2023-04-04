@@ -17,8 +17,6 @@ export const IDs = {
 	p2_socket_id: 2,
 	p2_userID: 3
 }
-
-
 //todo: if both players leave, also stop the game and highest score wins/tie = nobody wins
 
 let player2:Socket = undefined
@@ -55,6 +53,16 @@ export class MyGateway implements OnModuleInit {
 	handleLFG(
 		@MessageBody() playerInfo: {controls: string, userID:string, userName:string},
 		@ConnectedSocket() player: Socket) {
+			//check if player has a game created - if so delete this, one can only play one at the time
+			for (var game of customGames) {
+				if (game[1][1][IDs.p1_userID] === playerInfo.userID)
+				{
+					customGames.delete(game[0])
+					const serializedMap = [...customGames.entries()]
+					this.server.emit('custom_gamelist', serializedMap)		
+					break
+				}
+			}
 			if (player2 === undefined || player === player2)
 			{
 				player2 = player
@@ -116,6 +124,16 @@ export class MyGateway implements OnModuleInit {
 			player2.emit('stop_pending')
 			player2 = undefined
 		}
+		//cant create 2 games
+		for (var game of customGames) {
+			if (game[1][1][IDs.p1_userID] === gameInfo.userID)
+			{
+				customGames.delete(game[0])
+				const serializedMap = [...customGames.entries()]
+				this.server.emit('custom_gamelist', serializedMap)		
+				break
+			}
+		}
 		/* check if game already exists with chosen name */
 		for (var game of customGames) {
 			if (game[0] === gameInfo.customSettings.gameName)
@@ -147,7 +165,7 @@ export class MyGateway implements OnModuleInit {
 			gameData.gameName === undefined
 			customGames.set(gameInfo.gameID, [gameData, [player.id, gameInfo.userID]])
 		}
-		player.emit('game_created', CustomConfig.gameName, gameInfo.gameID)
+		player.emit('game_created', gameInfo.gameID)
 	}
 
 	@SubscribeMessage('joinCustomGame')
@@ -164,6 +182,9 @@ export class MyGateway implements OnModuleInit {
 		if (customGame && customGame[1][IDs.p1_socket_id] !== player2.id)
 		{
 			customGames.delete(key)
+			const serializedMap = [...customGames.entries()];
+			this.server.emit('custom_gamelist', serializedMap)
+		
 			let gameData = customGame[0]
 			gameData.p2_name = playerInfo.userName
 			let _IDs = customGame[1]
@@ -171,14 +192,14 @@ export class MyGateway implements OnModuleInit {
 			_IDs.push(player2.id)
 			_IDs.push(playerInfo.userID)
 			games.set(key, [gameData, _IDs])
+			const serializedMap2 = [...games.entries()];
+			this.server.emit('gamelist', serializedMap2)
+
 			connections.set(player2.id, [gameData, _IDs])
 			connections.set(player1_id, [gameData, _IDs])
 			player2.emit('joined', gameData.p1_controls)
 			this.server.to(player1_id).emit('joined', gameData.p2_controls)
-			const serializedMap = [...customGames.entries()];
-			this.server.emit('custom_gamelist', serializedMap)
-			const serializedMap2 = [...games.entries()];
-			this.server.emit('gamelist', serializedMap2)
+			
 			OurSession.GameJoining(player1_id)
 			OurSession.GameJoining(player2.id)
 		}
@@ -319,11 +340,10 @@ export class MyGateway implements OnModuleInit {
 
 	@SubscribeMessage('deleteCreatedGame')
 	handleDelete(
-		@MessageBody() gameName:string,
 		@ConnectedSocket() creator: Socket) {
 			for (const game of customGames) {
 				if (game[1][1][0] === creator.id) {
-					customGames.delete(gameName)
+					customGames.delete(game[0])
 					const serializedMap = [...customGames.entries()]
 					this.server.emit('custom_gamelist', serializedMap)
 				}
