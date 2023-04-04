@@ -18,7 +18,7 @@ type Props = {
 function OtherUserProfile(props: any){
 
     var username = props["username"];
-    
+
     const [myUsername, setMyUsername] = useState<string>("");
     const [myPFP, setMyPFP] = useState<string>("");
     const [myWins, setMyWins] = useState<number>(0);
@@ -37,7 +37,6 @@ function OtherUserProfile(props: any){
         setMyWins(_user.wins)
         setMyLosses(_user.losses)
         setMyAchievements(_user.AchievementList)
-        //maybe a compare of relatable friends
     }
 
 return (

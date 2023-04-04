@@ -145,21 +145,21 @@ export class UserProfileController {
         this.userServices.removeFriend(req["user"].id, idfriend);
     }
 
-    @Get("/userstats/:id")
-    async ReturnStatsById(
-        @Param("id") id: string): Promise<GameStats[]>
-    {
-        const found = await this.userServices.ReturnStatsById(id);
-        return found;
-    }
-    /* added to get users unauthorized can delete this later */
-    @Get("/usersall/:id")
-    async Returnallusers_unauth(
-        @Param("id") id: string): Promise<UserProfile[]>
-    {
-        const found = await this.userServices.Returnallusers_unauth(id);
-        console.log(found)
-        return found;
-    }
+    // @Get("/userstats/:id")
+    // async ReturnStatsById(
+    //     @Param("id") id: string): Promise<GameStats[]>
+    // {
+    //     const found = await this.userServices.ReturnStatsById(id);
+    //     return found;
+    // }
+    // /* added to get users unauthorized can delete this later */
+    // @Get("/usersall/:id")
+    // async Returnallusers_unauth(
+    //     @Param("id") id: string): Promise<UserProfile[]>
+    // {
+    //     const found = await this.userServices.Returnallusers_unauth(id);
+    //     console.log(found)
+    //     return found;
+    // }
 
 }
