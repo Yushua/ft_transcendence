@@ -18,7 +18,8 @@ export const IDs = {
 	p2_userID: 3
 }
 //todo: if both players leave, also stop the game and highest score wins/tie = nobody wins
-
+//check if sessions update properly
+//re-tabbing into pong doesnt change window if in custom game, why ?
 let player2:Socket = undefined
 let n_games:number = 0
 let game_name:string = 'Classic: 0'
@@ -201,7 +202,7 @@ export class MyGateway implements OnModuleInit {
 			connections.set(player1_id, [gameData, _IDs])
 			player2.emit('joined', gameData.p1_controls)
 			this.server.to(player1_id).emit('joined', gameData.p2_controls)
-			
+
 			OurSession.GameJoining(player1_id)
 			OurSession.GameJoining(player2.id)
 		}
