@@ -231,7 +231,7 @@ export class UserProfileService {
        */
       async SearchList():Promise<string[][]>{
         const users:UserProfile[] = await this.userEntity.find()
-        return users.map(user => [user.username, user.id]);
+        return users.map(user => [user.profilePicture, user.username, OurSession.GetUserState(user.id), user.id]);
       }
 
       /**
@@ -240,7 +240,7 @@ export class UserProfileService {
       async GetFriendList(id:string):Promise<string[][]> {
         const userprofile:UserProfile = await this.userEntity.findOneBy({id});
         const users: UserProfile[] = await this.userEntity.createQueryBuilder('user').where('user.id IN (:...id)', { id: userprofile.friendList }).getMany();
-        return users.map(user => [user.username, OurSession.GetUserState(user.id), user.id]);
+        return users.map(user => [user.profilePicture, user.username, OurSession.GetUserState(user.id), user.id]);
       }
       
       // [["profiel picture", "name", "id"],]
