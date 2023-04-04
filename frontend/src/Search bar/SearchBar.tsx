@@ -60,7 +60,7 @@ function SearchBar() {
     var username:string = e[0]
     newWindow(<OtherUserProfile username={username}/>)
   };
-
+    //width is always. padding + ((width object + padding) * amount)
     return (
       <center>
         <div >
