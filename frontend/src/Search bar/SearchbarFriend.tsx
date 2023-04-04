@@ -25,6 +25,7 @@ var _setFriendList:React.Dispatch<React.SetStateAction<string[][]>>
 
 type Props = {
     width:number;
+    height:number;
   }
 
 function SearchBarFriend(props: any) {

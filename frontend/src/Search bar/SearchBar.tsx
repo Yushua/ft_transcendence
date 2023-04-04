@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { newWindow } from '../App';
 import UserProfileComponent from '../ButtonComponents/UserProfileComponent';
+import { Width } from '../MainWindow/MainWindow';
 import OtherUserProfile from '../UserProfile/ProfilePages/OtherUserProfile';
 import HTTP from '../Utils/HTTP';
 
@@ -61,25 +62,29 @@ function SearchBar() {
   };
 
     return (
-      <div>
-        <div>
-          </div>
-            <input type="text" value={SearchTerm} onChange={handleInputChange} />
-            {/* the size of the buttons, should include the profile picture, and the tet underneadth*/}
-            <div style={{width: `${145*5}px`, height: `${200*5}px`, border: "2px solid black", overflow: "auto"}}>
-                <div style={{display: 'flex'}}>
-                  {/*  button size */}
-                  {ListSearchList.map((option, index) => (
-                    <button
-                      key={index}
-                      style={{ width: "100px", height: "50px" }}
-                      onClick={() => handleButtonClick(option)}
-                    >{`name: ${option[0]}\nstatus: ${option[1]}`}
-                    </button>
-                  ))}
-                </div>
-            </div>
-      </div>
+      <center>
+        <div >
+              <input type="text" value={SearchTerm} onChange={handleInputChange} />
+              {/* the size of the buttons, should include the profile picture, and the tet underneadth*/}
+              <div style={{width: `${Width*0.9}px`, height: `${Width*1.5}px`, border: "2px solid black", overflow: "auto"}}>
+                  <div style={{display: 'flex'}}>
+                    {/*  button size */}
+                    {ListSearchList.map((option, index) => (
+                      <button
+                        key={index}
+                        style={{ width: `${(Width - (Width*0.015))/5}`, height: `${Width*0.2}px`, padding: `${Width*0.01}px`}}
+                        onClick={() => handleButtonClick(option)}
+                      ><div style={{ display: 'flex', alignItems: 'center', width: `${Width}px` }}>
+                        <h2 >{`name   :${option[0]}`}</h2>
+                        <h2 >{`status :${option[1]}`}</h2>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+              </div>
+        </div>
+
+      </center>
     )
 }
 
