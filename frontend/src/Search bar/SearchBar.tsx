@@ -61,6 +61,7 @@ function SearchBar() {
     newWindow(<OtherUserProfile username={username}/>)
   };
     //width is always. padding + ((width object + padding) * amount)
+    //if you know the wdith only (width - (pading + (padding * amount)))/amount
     return (
       <center>
         <div >
