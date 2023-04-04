@@ -141,6 +141,23 @@ export class ChatService {
 		}
 		return changed
 	}
+	
+	private async _postMessageToRoom(room: ChatRoom, msg: ChatMessage) {
+		room.MessageCount += 1
+		var depth = room.MessageGroupDepth
+		var msgGroup = await this.chatMessageRepo.findOneBy({ ID: this._getMsgID(room.ID, depth, room) })
+		if (!msgGroup || !msgGroup.AddMessage(msg)) {
+			depth = (room.MessageGroupDepth += 1)
+			msgGroup = await this._addMessageGroup(this._getMsgID(room.ID, depth, room))
+			msgGroup.AddMessage(msg)
+		}
+		
+		await Promise.all([
+			this.chatRoomRepo.save(room),
+			this.chatMessageRepo.save(msgGroup),
+		])
+		this.Notify("room-" + room.ID, "msg")
+	}
 	//#endregion
 	
 	//#region Owner Commands
@@ -380,21 +397,18 @@ export class ChatService {
 		}
 		
 		/* Add Message */
-		room.MessageCount += 1
-		var depth = room.MessageGroupDepth
-		var msgGroup = await this.chatMessageRepo.findOneBy({ ID: this._getMsgID(room.ID, depth, room) })
-		if (!msgGroup || !msgGroup.AddMessage(msg)) {
-			depth = (room.MessageGroupDepth += 1)
-			msgGroup = await this._addMessageGroup(this._getMsgID(room.ID, depth, room))
-			msgGroup.AddMessage(msg)
-		}
-		
-		await Promise.all([
-			this.chatRoomRepo.save(room),
-			this.chatMessageRepo.save(msgGroup),
-		])
-		this.Notify("room-" + roomID, ChatMessageDTO.toString())
+		await this._postMessageToRoom(room, msg)
 		return ""
+	}
+	
+	async InviteFriendToGame(userID: string, friendID: string) {
+		const user = await this.GetOrAddUser(userID)
+		const index = user.FriedsWithDirect.indexOf(friendID)
+		if (index === -1)
+			throw new HttpException("", HttpStatus.UNAUTHORIZED)
+		
+		const room = await this.GetRoom(user.DirectChatsIn[index], userID)
+		await this._postMessageToRoom(room, new ChatMessage("game", "game"))
 	}
 	
 	async BlockUser(userID: string, memberID: string) {

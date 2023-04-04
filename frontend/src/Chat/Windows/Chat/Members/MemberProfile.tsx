@@ -89,24 +89,36 @@ export default function MemberProfile() {
 						onClick={() => {}}
 						>View Profile</Button>
 				</div>
-				<div style={{width: "100%", display: "table"}}>
-					<Button variant="contained"
-						disabled={isBlocked}
-						style={{width: "100%", height: `${ChatLineHeight}px`, boxSizing: "border-box"}}
-						onClick={() => {
-							if (window.confirm(`Are you sure you want to block user ${NameStorage.User.Get(_memberProfileID)}?\nYou won't be able to see anything they write.`)
-								&& window.confirm(`Are you REALLY sure?\nThe user ${NameStorage.User.Get(_memberProfileID)} will be blocked forever!`))
-									HTTP.asyncPatch(`chat/block/${_memberProfileID}`, null, null, async () => {
-										await ChatUser.asyncUpdate(ChatUser.ID)
-										ClearChatMessageCache()
-									})
-						}}
-						>{isBlocked ? "Already blocked" : "Block"}</Button>
-				</div>
+				{ ChatRoom.Direct && _memberProfileID !== User.ID ?
+					<div style={{width: "100%", display: "table"}}>
+						<Button variant="contained"
+							style={{width: "100%", height: `${ChatLineHeight}px`, boxSizing: "border-box"}}
+							onClick={() => {HTTP.asyncPost(`chat/invite/${_memberProfileID}`)}}
+							>Invite to Pong</Button>
+					</div> : <></>
+				}
+				{ _memberProfileID !== User.ID ?
+					<div style={{width: "100%", display: "table", marginTop: `${ChatLineHeight/2}px`}}>
+						<Button variant="contained"
+							disabled={isBlocked}
+							style={{width: "100%", height: `${ChatLineHeight}px`, boxSizing: "border-box"}}
+							onClick={() => {
+								if (window.confirm(`Are you sure you want to block user ${NameStorage.User.Get(_memberProfileID)}?\nYou won't be able to see anything they write.`)
+									&& window.confirm(`Are you REALLY sure?\nThe user ${NameStorage.User.Get(_memberProfileID)} will be blocked forever!`))
+										HTTP.asyncPatch(`chat/block/${_memberProfileID}`, null, null, async () => {
+											await ChatUser.asyncUpdate(ChatUser.ID)
+											ClearChatMessageCache()
+										})
+							}}
+							>{isBlocked ? "Already blocked" : "Block"}</Button>
+					</div> : <></>
+				}
+				
 				
 				{/* Admin Options */}
 				{ (ChatRoom.AdminIDs.includes(User.ID) && !ChatRoom.AdminIDs.includes(_memberProfileID)) ?
 					<>
+						<br />
 						<div style={{width: "100%", display: "table"}}>
 							<div>Admin Options</div>
 						</div>
@@ -150,6 +162,7 @@ export default function MemberProfile() {
 					&& User.ID !== _memberProfileID
 					&& ChatRoom.AdminIDs.includes(_memberProfileID)) ?
 					<>
+						<br />
 						<div style={{width: "100%", display: "table"}}>
 							<div>Owner Options</div>
 						</div>

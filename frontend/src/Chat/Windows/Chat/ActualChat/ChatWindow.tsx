@@ -3,7 +3,7 @@ import HTTP from "../../../../Utils/HTTP";
 import ChatRoom from "../../../../Utils/Cache/ChatRoom";
 import NameStorage from "../../../../Utils/Cache/NameStorage";
 import User from "../../../../Utils/Cache/User";
-import { Avatar, CardHeader } from "@mui/material";
+import { Avatar, Button, CardHeader } from "@mui/material";
 import { ChatLineHeight, ChatWindowHeight } from "../../MainChatWindow";
 import ChatUser from "../../../../Utils/Cache/ChatUser";
 
@@ -61,16 +61,23 @@ export async function asyncUpdateChatLog() {
 				newChatLog.unshift(
 					<>
 						{ChatUser.BlockedUserIDs.includes(msgs[i].OwnerID) ? <></> :
-						<>
-							<div key={count + _msgCount} style={{textAlign: "left"}}>
-								<img
-									src={`${HTTP.HostRedirect()}pfp/${NameStorage.UserPFP.Get(msgs[i].OwnerID)}`}
-									style={{width: `${ChatLineHeight * .8}px`, height: `${ChatLineHeight * .8}px`, borderRadius: "50%"}}
-								/>
-								<b>{`${NameStorage.User.Get(msgs[i].OwnerID)}`}</b>
-								{`: ${msgs[i].Message}`}
-							</div>
-						</>
+							(msgs[i].OwnerID === "game" ? 
+								<div key={count + _msgCount} style={{textAlign: "left"}}>
+									<Button
+										variant={"contained"}
+										style={{height: `${ChatLineHeight}px`, textAlign: "left"}}
+										onClick={_ => {}}
+									>Try joining game</Button>
+								</div> : <>
+								<div key={count + _msgCount} style={{textAlign: "left"}}>
+									<img
+										src={`${HTTP.HostRedirect()}pfp/${NameStorage.UserPFP.Get(msgs[i].OwnerID)}`}
+										style={{width: `${ChatLineHeight * .8}px`, height: `${ChatLineHeight * .8}px`, borderRadius: "50%"}}
+									/>
+									<b>{`${NameStorage.User.Get(msgs[i].OwnerID)}`}</b>
+									{`: ${msgs[i].Message}`}
+								</div>
+							</>)
 						}
 					</>
 				)
