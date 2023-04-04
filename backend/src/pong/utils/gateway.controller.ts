@@ -1,4 +1,4 @@
-import { OnModuleInit } from "@nestjs/common";
+import { OnModuleInit, HttpException, HttpStatus } from "@nestjs/common";
 import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Server, Socket } from 'socket.io'
 import { GameData } from '../components/GameData'
@@ -47,6 +47,8 @@ export class MyGateway implements OnModuleInit {
 	onModuleInit() {
 		this.server.on('connection', async (socket) => {
 			const user = await this._guard.GetUser(socket.handshake.headers["authorization"])
+			if (!user)
+				throw new HttpException("", HttpStatus.UNAUTHORIZED)
 			OurSession.SocketConnecting(user, socket.id)
 		})
 	}
