@@ -57,8 +57,7 @@ function SearchBar() {
     e.preventDefault();
     //go to the page of this user
     var username:string = e[0]
-    alert(`username = ${e[0]}`)
-    // newWindow(<OtherUserProfile username={username}/>)
+    newWindow(<OtherUserProfile username={username}/>)
   };
 
     return (
@@ -69,6 +68,7 @@ function SearchBar() {
             {/* the size of the buttons, should include the profile picture, and the tet underneadth*/}
             <div style={{width: `${145*5}px`, height: `${200*5}px`, border: "2px solid black", overflow: "auto"}}>
                 <div style={{display: 'flex'}}>
+                  {/*  button size */}
                   {ListSearchList.map((option, index) => (
                     <button
                       key={index}
