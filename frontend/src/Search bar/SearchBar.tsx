@@ -64,21 +64,21 @@ function SearchBar() {
     return (
       <div>
         <div>
-         <UserProfileComponent/>
           </div>
             <input type="text" value={SearchTerm} onChange={handleInputChange} />
+            {/* the size of the buttons, should include the profile picture, and the tet underneadth*/}
             <div style={{width: `${145*5}px`, height: `${200*5}px`, border: "2px solid black", overflow: "auto"}}>
-              <div style={{display: 'flex'}}>
-              {ListSearchList.map((option, index) => (
-                <button
-                  key={index}
-                  style={{ width: "100px", height: "50px" }}
-                  onClick={() => handleButtonClick(option)}
-                >{`name: ${option[0]}\nstatus: ${option[1]}`}
-                </button>
-              ))}
-          </div>
-        </div>
+                <div style={{display: 'flex'}}>
+                  {ListSearchList.map((option, index) => (
+                    <button
+                      key={index}
+                      style={{ width: "100px", height: "50px" }}
+                      onClick={() => handleButtonClick(option)}
+                    >{`name: ${option[0]}\nstatus: ${option[1]}`}
+                    </button>
+                  ))}
+                </div>
+            </div>
       </div>
     )
 }

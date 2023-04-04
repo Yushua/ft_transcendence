@@ -58,21 +58,28 @@ function UserProfilePage() {
             {/* centter left will have two blocks. one achievement, the other, games played. the right will have the friendlist*/}
             <div style={{ display: 'flex', alignItems: 'center', width: `${Width}px` }}>
               {/* includes Achievement and games played in a small box format*/}
-              {/* friendlist heightbox == (width - (0.02*Width))/2 */}
-              <div style={{ display: 'flex', alignItems: 'center', width: `${Width}px` }}>
+              {/* friendlist widthbox == (width - (0.02*Width))/2 */}
+              {/* friendlist heightbox == (width - (0.02*Width)) */}
+              <div style={{width: `${(Width - (0.02*Width))/2}px`, height: `${(Width - (0.02*Width))}px`, border: "2px solid black", overflow: "auto", padding: `${0.01*Width}px`}}>
+                <div style={{display: 'flex', padding: `${0.01*Width}px`}}>
+                  <SearchBarFriend width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/>
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column', width: `${(Width - (0.03*Width))/2}px`, padding: `${0.01*Width}px` }}>
                 {/* width of the box == (width - (0.03*Width))/2 */}
                 {/* height of the box == (width - (0.03*Width))/2 */}
+                  <div style={{width: `${(Width - (0.03*Width))/2}px`, height: `${(Width - (0.03*Width))/2}px`, border: "2px solid black", overflow: "auto", padding: `${0.01*Width}px`}}>
+                    <div style={{display: 'flex'}}>
+                    <SearchBarFriend width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/>
+                    </div>
+                  </div>
+                  <div style={{width: `${(Width - (0.03*Width))/2}px`, height: `${(Width - (0.03*Width))/2}px`, border: "2px solid black", overflow: "auto", padding: `${0.01*Width}px`}}>
+                    <div style={{display: 'flex'}}>
+                      <SearchBarFriend width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/>
+                    </div>
+                  </div>
               </div>
             </div>
-
-        {/* <div>
-        </div >
-        <div style={{width: "145px", height: "300px", border: "2px solid black", overflow: "auto"}}>
-          <div style={{display: 'flex'}}>
-            <SearchBarFriend/>
-          </div>
-            <AchievementsComponent/>
-        </div> */}
 
       </div>
     </center>
