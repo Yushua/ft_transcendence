@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { newWindow } from "../App";
+import { Width } from "../MainWindow/MainWindow";
 import UserProfilePage from "../UserProfile/UserProfile";
 import User from "../Utils/Cache/User";
 
@@ -10,13 +11,12 @@ export function ButtonRefresh() {
 function EXPBarComponent() {
   const [TotalExp, setExp] = useState<number>((User.wins*10));
   const [expPercent, setExpPercent] = useState<number>((User.wins % 100));
-  const [expbarPercent, setBarExpPercent] = useState<number>((User.wins % 10));
   const [level, setlevel] = useState<number>(Math.floor(User.wins / 10));
     return (
       <div>
-        <div style={{ width: "200px", height: "20px", backgroundColor: '#333', color: 'white', textAlign: 'center'  }}>
-          <div style={{ width: `${(expbarPercent) * 20}px`, height: "20px", backgroundColor: 'green' }}>
-            <div style={{ width: "200px", height: "20px", color: 'white', textAlign: 'center'  }}>level {level} - {expPercent}%</div>
+        <div style={{ width: `${Width}px`, height: `${0.05 * Width}px`, backgroundColor: '#333', color: 'white', textAlign: 'center', padding: `${0.01*Width}px` }}>
+          <div style={{ width: `${(expPercent) * Width}px`, height: `${0.05 * Width}px`, backgroundColor: 'green' }}>
+            <div style={{ width: `${Width}px`, height: `${0.05 * Width}px`, color: 'white', textAlign: 'center', justifyContent: 'center', fontSize: `${0.05 * Width}px` }}>level {level} - {expPercent}%</div>
           </div>
        </div>
       </div>

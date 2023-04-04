@@ -7,6 +7,7 @@ import User from '../Utils/Cache/User';
 import SearchBarFriend from '../Search bar/SearchbarFriend';
 import AchievementsComponent from '../ButtonComponents/AchievementsComponent';
 import NameStorage from '../Utils/Cache/NameStorage';
+import { Width } from '../MainWindow/MainWindow';
 
 async function asyncGetName():Promise<string> {
   const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
@@ -43,20 +44,38 @@ function UserProfilePage() {
   //in the end, Friendlist will be displayed on the side
   console.log(User.ProfilePicture)
   return (
-    <div className="UserProfile">
-      <div>
-        <img src={`${HTTP.HostRedirect()}pfp/${NameStorage.UserPFP.Get(User.ID)}`} alt="" style={{width: "2cm", height: "2cm"}}/>
-        <div> <label id="name" htmlFor="name">Welcome {nameDisplay}</label> </div>
-        <div> <label id="maxExp" htmlFor="maxExp">maxEXp - {TotalExp}</label> </div>
-        <div> <EXPBarComponent/> </div>
-      </div >
-       <div style={{width: "145px", height: "300px", border: "2px solid black", overflow: "auto"}}>
-        <div style={{display: 'flex'}}>
-          <SearchBarFriend/>
-        </div>
-          <AchievementsComponent/>
-       </div>
-    </div>
+    <center>
+      <div className={"MainWidnow"} style={{width: `${Width}px`}}>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <img src={`${HTTP.HostRedirect()}pfp/${NameStorage.UserPFP.Get(User.ID)}`} alt="" style={{width: `${0.1*Width}px`, height: `${0.1*Width}px`, alignItems: 'center', padding: `${0.01*Width}px`}}/>
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: `${0.01*Width}px`}}>
+                <h2 >{`Welcome: ${User.Name}`}</h2>
+              </div>
+            </div>
+
+            <div> <EXPBarComponent/> </div>
+            
+            {/* centter left will have two blocks. one achievement, the other, games played. the right will have the friendlist*/}
+            <div style={{ display: 'flex', alignItems: 'center', width: `${Width}px` }}>
+              {/* includes Achievement and games played in a small box format*/}
+              {/* friendlist heightbox == (width - (0.02*Width))/2 */}
+              <div style={{ display: 'flex', alignItems: 'center', width: `${Width}px` }}>
+                {/* width of the box == (width - (0.03*Width))/2 */}
+                {/* height of the box == (width - (0.03*Width))/2 */}
+              </div>
+            </div>
+
+        {/* <div>
+        </div >
+        <div style={{width: "145px", height: "300px", border: "2px solid black", overflow: "auto"}}>
+          <div style={{display: 'flex'}}>
+            <SearchBarFriend/>
+          </div>
+            <AchievementsComponent/>
+        </div> */}
+
+      </div>
+    </center>
     //logout when initialized
   );
 }
