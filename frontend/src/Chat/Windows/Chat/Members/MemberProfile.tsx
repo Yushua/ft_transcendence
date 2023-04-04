@@ -7,6 +7,7 @@ import HTTP from "../../../../Utils/HTTP";
 import User from "../../../../Utils/Cache/User";
 import { Button } from "@mui/material";
 import { ChatLineHeight, ChatWindowHeight } from "../../MainChatWindow";
+import { ClearChatMessageCache, asyncUpdateChatLog } from "../ActualChat/ChatWindow";
 
 export function setMemberProfileID(userID: string) {
 	_memberProfileID = userID
@@ -57,6 +58,8 @@ function Mute() {
 
 export default function MemberProfile() {
 	
+	const isBlocked = ChatUser.BlockedUserIDs.includes(_memberProfileID)
+	
 	return (
 		<>
 			<div style={{width: "100%", display: "table", height: `${ChatWindowHeight * .04}px`}}>
@@ -88,9 +91,17 @@ export default function MemberProfile() {
 				</div>
 				<div style={{width: "100%", display: "table"}}>
 					<Button variant="contained"
+						disabled={isBlocked}
 						style={{width: "100%", height: `${ChatLineHeight}px`, boxSizing: "border-box"}}
-						onClick={() => {}}
-						>Block</Button>
+						onClick={() => {
+							if (window.confirm(`Are you sure you want to block user ${NameStorage.User.Get(_memberProfileID)}?\nYou won't be able to see anything they write.`)
+								&& window.confirm(`Are you REALLY sure?\nThe user ${NameStorage.User.Get(_memberProfileID)} will be blocked forever!`))
+									HTTP.asyncPatch(`chat/block/${_memberProfileID}`, null, null, async () => {
+										await ChatUser.asyncUpdate(ChatUser.ID)
+										ClearChatMessageCache()
+									})
+						}}
+						>{isBlocked ? "Already blocked" : "Block"}</Button>
 				</div>
 				
 				{/* Admin Options */}

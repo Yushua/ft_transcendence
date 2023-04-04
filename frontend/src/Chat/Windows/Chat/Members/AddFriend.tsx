@@ -6,6 +6,7 @@ import User from "../../../../Utils/Cache/User";
 import HTTP from "../../../../Utils/HTTP";
 import { Button } from "@mui/material";
 import { ChatLineHeight, ChatWindowHeight } from "../../MainChatWindow";
+import ChatUser from "../../../../Utils/Cache/ChatUser";
 
 export async function asyncUpdateAddFriendList() {
 	if (!!_setFriends)
@@ -14,7 +15,7 @@ export async function asyncUpdateAddFriendList() {
 
 function GenerateAddFriendJSX(): JSX.Element[] {
 	return User.Friends
-		.filter(friendID => !ChatRoom.MemberIDs.includes(friendID))
+		.filter(friendID => !ChatRoom.MemberIDs.includes(friendID) && !ChatUser.BlockedUserIDs.includes(friendID))
 		.map(friendID => 
 			ChatRoom.BanIDs.includes(friendID)
 			?

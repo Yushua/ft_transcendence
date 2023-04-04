@@ -5,12 +5,18 @@ import NameStorage from "../../../../Utils/Cache/NameStorage";
 import User from "../../../../Utils/Cache/User";
 import { Avatar, CardHeader } from "@mui/material";
 import { ChatLineHeight, ChatWindowHeight } from "../../MainChatWindow";
+import ChatUser from "../../../../Utils/Cache/ChatUser";
 
 var roomCache: Map<string, JSX.Element[]> = new Map<string, JSX.Element[]>()
 var _chatLog: JSX.Element[] = []
-var _logDepth = 30
 var _fillDepth = 24
 var _oldRoomID = ""
+
+export function ClearChatMessageCache() {
+	roomCache.clear()
+	_oldRoomID = ""
+	asyncUpdateChatLog()
+}
 
 function scrollDown(time: number) {
 	setTimeout(() => {
@@ -19,15 +25,13 @@ function scrollDown(time: number) {
 				log.scrollTop = log.scrollHeight
 		}, time
 	)
-	
-		
 }
 
 export async function asyncUpdateChatLog() {
 	if (!_setChatLog)
 		return
 	if (_oldRoomID !== ChatRoom.ID) {
-		if (_oldRoomID !== "")
+		if (_oldRoomID !== "" && _chatLog.length !== 0)
 			roomCache.set(_oldRoomID, _chatLog)
 		_oldRoomID = ChatRoom.ID
 		_chatLog = roomCache.get(_oldRoomID) ?? []
@@ -55,16 +59,20 @@ export async function asyncUpdateChatLog() {
 			for (let i = msgs.length - 1; count < target && i >= 0; i--) {
 				count++
 				newChatLog.unshift(
-					<div key={count + _msgCount} style={{textAlign: "left"}}>
-						{
-							<img
-								src={`${HTTP.HostRedirect()}pfp/${NameStorage.UserPFP.Get(msgs[i].OwnerID)}`}
-								style={{width: `${ChatLineHeight * .8}px`, height: `${ChatLineHeight * .8}px`, borderRadius: "50%"}}
-							/>
+					<>
+						{ChatUser.BlockedUserIDs.includes(msgs[i].OwnerID) ? <></> :
+						<>
+							<div key={count + _msgCount} style={{textAlign: "left"}}>
+								<img
+									src={`${HTTP.HostRedirect()}pfp/${NameStorage.UserPFP.Get(msgs[i].OwnerID)}`}
+									style={{width: `${ChatLineHeight * .8}px`, height: `${ChatLineHeight * .8}px`, borderRadius: "50%"}}
+								/>
+								<b>{`${NameStorage.User.Get(msgs[i].OwnerID)}`}</b>
+								{`: ${msgs[i].Message}`}
+							</div>
+						</>
 						}
-						<b>{`${NameStorage.User.Get(msgs[i].OwnerID)}`}</b>
-						{`: ${msgs[i].Message}`}
-					</div>
+					</>
 				)
 			}
 		}
@@ -75,7 +83,7 @@ export async function asyncUpdateChatLog() {
 	_msgCount = newMsgCount
 	
 	var chatLog = _chatLog.map(x=>x)
-	for (var fill = _msgCount; fill < _fillDepth; fill++)
+	for (var fill = 1; fill < _fillDepth; fill++)
 		chatLog.unshift(<div key={`fill${fill}`}><span>&#8203;</span></div>)
 	
 	_setChatLog(chatLog)

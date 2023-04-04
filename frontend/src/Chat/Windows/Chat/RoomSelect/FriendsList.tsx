@@ -13,7 +13,10 @@ export async function asyncUpdateFriendsList() {
 }
 
 function GenerateFriedListJSX(): JSX.Element[] {
-	return User.Friends.map(friendID => <div key={friendID}>
+	return User.Friends
+		.filter(friendID => !ChatUser.BlockedUserIDs.includes(friendID) && !ChatUser.FriedsWithDirect.includes(friendID))
+		.concat(ChatUser.FriedsWithDirect)
+		.map(friendID => <div key={friendID}>
 		<Button 
 			variant={ChatRoom.IsRoomOfFriend(friendID) ? "contained" : "text"}
 			id={friendID}
@@ -31,6 +34,8 @@ async function _changeToFriendRoom(friendID: string) {
 		HTTP.asyncPost(`chat/direct/${friendID}`, null, null, async msg => {
 			await ChatUser.asyncUpdate(ChatUser.ID)
 			asyncChangeRoom(msg.responseText)
+		}, async err => {
+			alert((await JSON.parse(err.responseText))?.message ?? "Error")
 		})
 }
 
