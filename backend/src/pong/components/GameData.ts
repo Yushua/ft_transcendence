@@ -45,14 +45,14 @@ export class GameData {
 		switch (this.ball.update(this.p1, this.p2, deltaTime)) {
 			case 'p1_scored':
 				this.p1_score++
-				if (this.p1_score === 1) {
+				if (this.p1_score === 11) {
 					this.gameState = 'p1_won'
 					this.endTime = Date.now() / 1000
 				}
 				break;
 			case 'p2_scored':
 				this.p2_score++
-				if (this.p2_score === 1) {
+				if (this.p2_score === 11) {
 					this.gameState = 'p2_won'
 					this.endTime = Date.now() / 1000
 				}

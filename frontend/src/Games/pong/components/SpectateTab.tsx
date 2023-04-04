@@ -14,7 +14,7 @@ function createData_active(id: number, gameName: string, displayName:string, p1:
 	return { id, gameName, displayName, p1, p2 };
 }
 
-export default class SpectateRab extends React.Component<any, any> {
+export default class SpectateTab extends React.Component<any, any> {
 
 	spectate(gameName:string, socket:Socket)
 	{
@@ -35,7 +35,7 @@ export default class SpectateRab extends React.Component<any, any> {
 			if (game[1][2]) {
 				rows[i] = createData_active(i, game[0], 'Classic', game[1][0], game[1][1])
 			}
-			else
+			else if (game[0].length < 15)
 				rows[i] = createData_active(i, game[0], game[0], game[1][0], game[1][1])
 			i++
 		}
