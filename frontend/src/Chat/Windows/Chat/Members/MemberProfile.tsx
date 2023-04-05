@@ -15,6 +15,15 @@ export function setMemberProfileID(userID: string) {
 }
 var _memberProfileID: string = "";
 
+export function UnblockUser(memberID: string) {
+	if (window.confirm(`Are you sure you want to unblock user ${NameStorage.User.Get(memberID)}?`)
+		&& window.confirm(`Are you REALLY sure?\nYou porbably blocked this user for a good reason.`))
+			HTTP.asyncPatch(`chat/unblock/${memberID}`, null, null, async () => {
+				await ChatUser.asyncUpdate(ChatUser.ID)
+				ClearChatMessageCache()
+			})
+}
+
 function Mute() {
 	var time: string | null = ""
 	var actualTime: number = 0
@@ -99,20 +108,29 @@ export default function MemberProfile() {
 					</div> : <></>
 				}
 				{ _memberProfileID !== User.ID ?
-					<div style={{width: "100%", display: "table", marginTop: `${ChatLineHeight/2}px`}}>
-						<Button variant="contained"
-							disabled={isBlocked}
-							style={{width: "100%", height: `${ChatLineHeight}px`, boxSizing: "border-box"}}
-							onClick={() => {
-								if (window.confirm(`Are you sure you want to block user ${NameStorage.User.Get(_memberProfileID)}?\nYou won't be able to see anything they write.`)
-									&& window.confirm(`Are you REALLY sure?\nThe user ${NameStorage.User.Get(_memberProfileID)} will be blocked forever!`))
-										HTTP.asyncPatch(`chat/block/${_memberProfileID}`, null, null, async () => {
-											await ChatUser.asyncUpdate(ChatUser.ID)
-											ClearChatMessageCache()
-										})
-							}}
-							>{isBlocked ? "Already blocked" : "Block"}</Button>
-					</div> : <></>
+					(isBlocked ? 
+						<div style={{width: "100%", display: "table", marginTop: `${ChatLineHeight/2}px`}}>
+							<Button variant="contained"
+								style={{width: "100%", height: `${ChatLineHeight}px`, boxSizing: "border-box"}}
+								onClick={() => { UnblockUser(_memberProfileID) }}
+								>{"Unblock"}</Button>
+						</div>
+							:
+						<div style={{width: "100%", display: "table", marginTop: `${ChatLineHeight/2}px`}}>
+							<Button variant="contained"
+								style={{width: "100%", height: `${ChatLineHeight}px`, boxSizing: "border-box"}}
+								onClick={() => {
+									if (window.confirm(`Are you sure you want to block user ${NameStorage.User.Get(_memberProfileID)}?\nYou won't be able to see anything they write and private messages will be deleted.`)
+										&& window.confirm(`Are you REALLY sure?\nAll private messages with this user will be deleted.`))
+											HTTP.asyncPatch(`chat/block/${_memberProfileID}`, null, null, async () => {
+												await ChatUser.asyncUpdate(ChatUser.ID)
+												if (ChatRoom.Direct)
+													ChatRoom.Clear()
+												ClearChatMessageCache()
+											})
+								}}
+								>{"Block"}</Button>
+						</div>) : <></>
 				}
 				
 				
