@@ -258,13 +258,15 @@ export class UserProfileService {
        */
       async postAchievementList(id:string, AddAchievement:AddAchievement) {
         const {nameAchievement, pictureLink, message} = AddAchievement
+        console.log(`i am adding everything {${nameAchievement}}{${pictureLink}}{${message}}`)
         const userprofile:UserProfile = await this.userEntity.findOneBy({id});//player1
         const achievement = new UserAchievement
         achievement.message = message
         achievement.nameAchievement = nameAchievement
         achievement.pictureLink = pictureLink
-        userprofile.UserAchievement.push(achievement)
-        await this.userEntity.save(userprofile);
+      
+        await this.achievEntity.save(achievement)
+        console.log("achievment saved")
       }
 
       async GetGameStatUser(id:string):Promise<GameStats[]> {

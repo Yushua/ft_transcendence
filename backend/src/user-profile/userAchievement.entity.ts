@@ -15,6 +15,6 @@ export class UserAchievement {
     @Column()
     message: string;
 
-    @ManyToOne(() => UserProfile, userProfile => userProfile.UserAchievement)
+    @ManyToOne((_type) => UserProfile, (userProfile) => userProfile.UserAchievement, {eager: false})
     userProfile: UserProfile;
 }

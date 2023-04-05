@@ -37,7 +37,7 @@ export class UserProfile {
     @Column({ default: 0})
     losses: number;
 
-    @OneToMany(() => UserAchievement, UserAchievement => UserAchievement.userProfile)
+    @OneToMany((_type) => UserAchievement, (UserAchievement) => UserAchievement.userProfile, { eager: true})
     UserAchievement : UserAchievement[];
 
     @ManyToMany(

@@ -8,9 +8,9 @@ import LoginPage from '../Login/LoginPage';
 import { useState } from 'react';
 
 async function GetAchievement(name: string, message:string, picture:string){
-  const response = HTTP.Post(`user-profile/user`, {name: name, message:message, picture:picture}, {Accept: 'application/json'})
-  var result = await JSON.parse(response)
-  return await result["username"];
+  alert("in function")
+  HTTP.Post(`user-profile/PostAchievementList`, {nameAchievement: name, message:message, pictureLink:picture}, {Accept: 'application/json'})
+  alert("it is done")
 }
 
 async function getAccessToken(username:string){
@@ -24,8 +24,8 @@ async function getAccessToken(username:string){
       _setValue("")
     }
     else if (status === true){
-      alert("setting achievement value is true")
-      await this.GetAchievement("setusername", "you set your username", "./blem.jpg")
+      alert("setting achievement value is true here")
+      await GetAchievement("setusername", "you set your username", "default_pfp.jpg")
       newWindow(<LoginPage/>)
     }
   } catch (error) {
