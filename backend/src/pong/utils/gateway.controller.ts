@@ -93,19 +93,12 @@ export class MyGateway implements OnModuleInit {
 				//add this game with the client IDs to a gamelist and insert <client, [data, IDs]> in a map which
 				//can be used to access the right gamedata for movement events by clients, and based on ID order
 				//update the correct Paddle (first ID = p1 = left paddle, second ID = p2 = right paddle, extra IDs are spectators)
-				let gameIDs:string[] = new Array<string>()
-				let dataIdTuple: [GameData, string[]]	
-				
-				gameIDs.push(player.id)
-				gameIDs.push(gameConfig.p1_userID)
-				gameIDs.push(player2.id)
-				gameIDs.push(gameConfig.p2_userID)
-				dataIdTuple = [gamedata, gameIDs]
+				let dataIdTuple: [GameData, string[]]
+				dataIdTuple = [gamedata, [player.id, gameConfig.p1_userID, player2.id, gameConfig.p2_userID]]
 				games.set(gameConfig.gameName, dataIdTuple)
 				connections.set(player.id, dataIdTuple)
 				connections.set(player2.id, dataIdTuple)
 				player2 = undefined
-				gameIDs = []
 
 				const serializedMap = [...games.entries()]
 				this.server.emit('gamelist', serializedMap)
@@ -117,7 +110,7 @@ export class MyGateway implements OnModuleInit {
 			player.emit('stop_pending')
 			player2 = undefined
 		}
-	
+
 	@SubscribeMessage('createGame')
 	handleCreateGame(
 	@MessageBody() gameInfo: {type:string, gameID:string, userID:string, userName:string, customSettings:any},
@@ -145,7 +138,6 @@ export class MyGateway implements OnModuleInit {
 				return
 			}
 		}
-
 		/* create new game with custom config, add it to customgames so others can see and join it */
 		let CustomConfig = new Config()
 		CustomConfig.p1_controls = gameInfo.customSettings.controls
@@ -219,14 +211,32 @@ export class MyGateway implements OnModuleInit {
 			for (var game of games) {
 				var _IDs = game[1][1]
 				if (user.id === _IDs[IDs.p1_userID]) {
-					_IDs[IDs.p1_socket_id] = client.id
-					connections.set(client.id, game[1])
-					client.emit('joined', game[1][0].p1_controls)
+					if (_IDs[IDs.p1_socket_id] === 'left') {
+						break
+					}
+					else if (_IDs[IDs.p1_socket_id] === 'disconnected') {
+						_IDs[IDs.p1_socket_id] = client.id
+						connections.set(client.id, game[1])
+						OurSession.GameJoining(client.id)
+						client.emit('joined', game[1][0].p1_controls)
+					}
+					else if (_IDs[IDs.p1_socket_id] === client.id) {
+						client.emit('joined', game[1][0].p1_controls)
+					}
 				}
-				else if (user.id === _IDs[IDs.p2_userID]) {
-					_IDs[IDs.p2_socket_id] = client.id
-					connections.set(client.id, game[1])
-					client.emit('joined', game[1][0].p2_controls)
+				if (user.id === _IDs[IDs.p2_userID]) {
+					if (_IDs[IDs.p2_socket_id] === 'left') {
+						break
+					}
+					else if (_IDs[IDs.p2_socket_id] === 'disconnected') {
+						_IDs[IDs.p2_socket_id] = client.id
+						connections.set(client.id, game[1])
+						OurSession.GameJoining(client.id)
+						client.emit('joined', game[1][0].p2_controls)
+					}
+					else if (_IDs[IDs.p2_socket_id] === client.id) {
+						client.emit('joined', game[1][0].p2_controls)
+					}
 				}
 			}
 		}
@@ -287,6 +297,10 @@ export class MyGateway implements OnModuleInit {
 			this.server.emit('gamelist', serializedMap)
 			this.server.to(gameInfo.p1SocketID).emit('joined', 'mouse')
 			this.server.to(gameInfo.p2SocketID).emit('joined', 'mouse')
+
+			OurSession.GameJoining(gameInfo.p1SocketID)
+			OurSession.GameJoining(gameInfo.p2SocketID)
+
 		}
 
 	@SubscribeMessage('spectate')
@@ -300,29 +314,6 @@ export class MyGateway implements OnModuleInit {
 				client.emit('spectating')
 			}
 		}
-
-	//switching to pong window automatically tries to reconnect to any ongoing games
-	@SubscribeMessage('reconnect')
-	handleReconnect(
-		@ConnectedSocket() client: Socket) {
-			for (var game of games) {
-				const clients = game[1][1]
-				if (client.id === clients[IDs.p1_socket_id])
-				{
-					connections.set(client.id, game[1])
-					client.emit('joined', game[1][0].p1_controls)
-					OurSession.GameJoining(client.id)
-					break; 
-				}
-				if (client.id === clients[IDs.p2_socket_id])
-				{
-					connections.set(client.id, game[1])
-					client.emit('joined', game[1][0].p2_controls)
-					OurSession.GameJoining(client.id)
-					break;
-				}
-			}
-		}
 	
 	@SubscribeMessage('refreshGameList')
 	handleRefreshGL() {
@@ -333,12 +324,24 @@ export class MyGateway implements OnModuleInit {
 		}
 	
 	@SubscribeMessage('disconnect')
-	handleDisconnect(
+	async handleDisconnect(
 		@ConnectedSocket() client: Socket) {
 			let connection = connections.get(client.id)
 			if (connection !== undefined)
 				connections.delete(client.id)
+			const user = await this._guard.GetUser(client.handshake.headers["authorization"])
+			const state = OurSession.GetUserState(user.id)
+			if (state === 'inGame')
+				OurSession.GameLeaving(client.id)
 			OurSession.SocketDisconnecting(client.id)
+			for (var game of games) {
+				if (game[1][1].includes(client.id)) {
+					if (game[1][1][IDs.p1_socket_id] == client.id)
+						game[1][1][IDs.p1_socket_id] = 'disconnected'
+					if (game[1][1][IDs.p2_socket_id] == client.id)
+						game[1][1][IDs.p2_socket_id] = 'disconnected'
+				}
+			}
 		}
 
 	@SubscribeMessage('deleteCreatedGame')
@@ -362,6 +365,14 @@ export class MyGateway implements OnModuleInit {
 				connections.delete(client.id)
 				if (connection[1].includes(client.id))
 					OurSession.GameLeaving(client.id)
+			}
+			for (var game of games) {
+				if (game[1][1].includes(client.id)) {
+					if (game[1][1][IDs.p1_socket_id] == client.id)
+						game[1][1][IDs.p1_socket_id] = 'left'
+					if (game[1][1][IDs.p2_socket_id] == client.id)
+						game[1][1][IDs.p2_socket_id] = 'left'
+				}
 			}
 			this.server.to(client.id).emit('left')
 		}
@@ -417,8 +428,11 @@ export class MyGateway implements OnModuleInit {
 			)())
 			
 			/* Handle end of a game */
-			if (gameData.gameState === 'p1_won' || gameData.gameState === 'p2_won' )
+			if (gameData.gameState === 'p1_won' || gameData.gameState === 'p2_won' ) {
 				connections.delete(clientID)
+				if (connection[1][1].includes(clientID))
+					OurSession.GameLeaving(clientID)
+			}
 		}
 		
 		/* Simulate Lag */

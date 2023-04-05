@@ -58,15 +58,15 @@ export const Pong = () => {
 	const [activeGames, setActiveGames] = React.useState(iniActiveGames)
 	const [customGames, setCustomGames] = React.useState(iniCustomGames)
 
-	const [MainWindow, setMainPongWindow] = React.useState<string>("classic")
-	_setMainWindow_ = setMainPongWindow
+	const [MainWindow, setMainPongTab] = React.useState<string>("classic")
+	_setMainWindow_ = setMainPongTab
 
 	/* reset states to locally stored states if user comes back to window */
 	if (!firstCall)
 	{
 		setSpectating(localStorage[Enum.spectating])
 		setGameData(localStorage[Enum.gameData])
-		setMainPongWindow(localStorage[Enum.window])
+		setMainPongTab(localStorage[Enum.window])
 		setActiveGames(localStorage[Enum.activeGames])
 		setCustomGames(localStorage[Enum.customGames])
 		firstCall = true
@@ -131,23 +131,27 @@ export const Pong = () => {
 		socket.on('joined', (controls:string) => {
 			CreatingGameData.gameID = null
 			SetMainWindow("pong")
-			setMainPongWindow('canvas')
+			setMainPongTab('canvas')
 			localStorage[Enum.window] = 'canvas'
 			g_controls = controls
 		})
 		socket.on('gamedata', (s_gameData:GameData) => {
 			updateGameData(s_gameData)
 		})
+		// socket.on('refresh', () => {
+		// 	if (window)
+		// })
+
 		socket.on('spectating', () => {
 			setSpectating(true)
-			setMainPongWindow("pong")
-			setMainPongWindow('canvas')
+			setMainPongTab("pong")
+			setMainPongTab('canvas')
 			localStorage[Enum.window] = 'canvas'
 			localStorage[Enum.spectating] = true
 		})
 		socket.on('left', () => {
 			setSpectating(false)
-			setMainPongWindow('classic')
+			setMainPongTab('classic')
 			localStorage[Enum.spectating] = false
 			localStorage[Enum.window] = 'classic'
 			g_controls = ''
@@ -208,9 +212,9 @@ export const Pong = () => {
 	return (
 		<React.Fragment>
 			<Tabs value={MainWindow} centered>
-				<Tab label="Classic Pong" value="classic" onClick={() => setMainPongWindow("classic")}/>
-				<Tab label="Custom Pong" value="custom" onClick={() => setMainPongWindow("custom")}/>
-				<Tab label="Spectate" value="spectate" onClick={() => setMainPongWindow("spectate")}/>
+				<Tab label="Classic Pong" value="classic" onClick={() => setMainPongTab("classic")}/>
+				<Tab label="Custom Pong" value="custom" onClick={() => setMainPongTab("custom")}/>
+				<Tab label="Spectate" value="spectate" onClick={() => setMainPongTab("spectate")}/>
 			</Tabs>
 
 			{/* MetaDiv */}
@@ -262,3 +266,11 @@ setInterval(() => {
 		}
 	}
 }, 10)
+
+export function JoinedGame(controls:string) {
+	SetMainWindow("pong")
+	_setMainWindow_('canvas')
+	localStorage[Enum.window] = 'canvas'
+	g_controls = controls
+}
+
