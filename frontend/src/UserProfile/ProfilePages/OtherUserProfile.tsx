@@ -4,20 +4,20 @@ import '../../App.css';
 import HTTP from '../../Utils/HTTP';
 import MainWindowButtonComponent from '../../ButtonComponents/MainWindowButtonComponent';
 
-async function asyncGetuserUsername(username: string):Promise<any> {
-	const response = HTTP.Get(`user-profile/user/${username}`, null, {Accept: 'application/json'})
+async function asyncGetuserUsername(id: string):Promise<any> {
+	const response = HTTP.Get(`user-profile/user/${id}`, null, {Accept: 'application/json'})
 	var user = await JSON.parse(response)
 	return await user["user"];
   }
 
 
 type Props = {
-    username: string;
+    id: string;
   }
 
 function OtherUserProfile(props: any){
 
-    var username = props["username"];
+    var id = props["id"];
 
     const [myUsername, setMyUsername] = useState<string>("");
     const [myPFP, setMyPFP] = useState<string>("");
@@ -26,12 +26,12 @@ function OtherUserProfile(props: any){
     const [myAchievements, setMyAchievements] = useState<string[]>([]);
 
     useEffect(() => {
-        setUp(username)
+        setUp(id)
     }, []); // empty dependency array means it will only run once
 
     // do something with myString
-    async function setUp(username:string) {
-        var _user: any | null = await asyncGetuserUsername(username)
+    async function setUp(id:string) {
+        var _user: any | null = await asyncGetuserUsername(id)
         setMyUsername(_user.username)
         setMyPFP(_user.profilePicture)
         setMyWins(_user.wins)

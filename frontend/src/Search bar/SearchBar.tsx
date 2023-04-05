@@ -24,8 +24,8 @@ export async function asyncGetSearchList(){
 async function getListSearchList(value:string){
   if (value.length >= 5){
     await asyncGetSearchList()
-    //add filter
     _setNameSearchList(_ListDisplay)
+    //add filter
   }
   else {
     _setNameDisplay([])
@@ -56,12 +56,10 @@ function SearchBar() {
     setSearchTerm(event.target.value)
     getListSearchList(event.target.value)
   }
-  const handleButtonClick = (e: any) => {
-    e.preventDefault();
-    //go to the page of this user
-    var username:string = e
-    alert(`I am in click ${username}`)
-    newWindow(<OtherUserProfile username={username}/>)
+  const handleButtonClick = (e: string) => {
+    var id:string = e
+    alert(`I am in click ${id}`)
+    newWindow(<OtherUserProfile id={id}/>)
   };
     //width is always. padding + ((width object + padding) * amount)
     //if you know the wdith only (width - (pading + (padding * amount)))/amount
@@ -77,7 +75,7 @@ function SearchBar() {
                       <button
                         key={index}
                         style={{ display: "inline-block", width: `${((Width*0.9) - (Width*0.9*0.03 * 3 * 2))/3}px`, height: `${Width*0.2}px`, marginLeft: `${Width*0.02}px`, marginRight: `${Width*0.02}px`, marginTop: `${Width*0.03}px`, marginBottom: `${Width*0.03}px`, border: "4px solid black" }}
-                        onClick={() => handleButtonClick(option[1])}>
+                        onClick={() => handleButtonClick(option[3])}>
                           <img src={`${HTTP.HostRedirect()}pfp/${option[0]}`} alt="" style={{width: `${0.05*Width}px`, height: `${0.05*Width}px`, alignItems: 'center', marginRight: `${0.01*Width}px`}}/>
                           <h2 >{`name   ${option[1]}`}</h2>
                           <h2 >{`status ${option[2]}`}</h2>
