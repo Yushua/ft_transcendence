@@ -145,7 +145,6 @@ export class MyGateway implements OnModuleInit {
 				return
 			}
 		}
-
 		/* create new game with custom config, add it to customgames so others can see and join it */
 		let CustomConfig = new Config()
 		CustomConfig.p1_controls = gameInfo.customSettings.controls
@@ -287,6 +286,10 @@ export class MyGateway implements OnModuleInit {
 			this.server.emit('gamelist', serializedMap)
 			this.server.to(gameInfo.p1SocketID).emit('joined', 'mouse')
 			this.server.to(gameInfo.p2SocketID).emit('joined', 'mouse')
+
+			OurSession.GameJoining(gameInfo.p1SocketID)
+			OurSession.GameJoining(gameInfo.p2SocketID)
+
 		}
 
 	@SubscribeMessage('spectate')
@@ -298,29 +301,6 @@ export class MyGateway implements OnModuleInit {
 			{
 				connections.set(client.id, game)
 				client.emit('spectating')
-			}
-		}
-
-	//switching to pong window automatically tries to reconnect to any ongoing games
-	@SubscribeMessage('reconnect')
-	handleReconnect(
-		@ConnectedSocket() client: Socket) {
-			for (var game of games) {
-				const clients = game[1][1]
-				if (client.id === clients[IDs.p1_socket_id])
-				{
-					connections.set(client.id, game[1])
-					client.emit('joined', game[1][0].p1_controls)
-					OurSession.GameJoining(client.id)
-					break; 
-				}
-				if (client.id === clients[IDs.p2_socket_id])
-				{
-					connections.set(client.id, game[1])
-					client.emit('joined', game[1][0].p2_controls)
-					OurSession.GameJoining(client.id)
-					break;
-				}
 			}
 		}
 	
@@ -415,8 +395,10 @@ export class MyGateway implements OnModuleInit {
 			)())
 			
 			/* Handle end of a game */
-			if (gameData.gameState === 'p1_won' || gameData.gameState === 'p2_won' )
+			if (gameData.gameState === 'p1_won' || gameData.gameState === 'p2_won' ) {
 				connections.delete(clientID)
+				OurSession.GameLeaving(clientID)
+			}
 		}
 		
 		/* Simulate Lag */
