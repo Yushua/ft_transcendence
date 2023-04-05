@@ -7,7 +7,7 @@ export class UserProfile {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({
+    @Column({ 
         unique: true
     })
     intraName: string;
@@ -32,13 +32,16 @@ export class UserProfile {
     friendList: string[];
 
     @Column({ default: 0})
-    wins: number;
+    pong_experience: number;
 
     @Column({ default: 0})
-    losses: number;
+    pong_wins: number;
 
-    @OneToMany(() => UserAchievement, UserAchievement => UserAchievement.userProfile)
-    UserAchievement : UserAchievement[];
+    @Column({ default: 0})
+    pong_losses: number;
+
+    // @OneToMany(() => UserAchievement, userAchievement => userAchievement.userProfile)
+    //   userAchievements?: UserAchievement[];
 
     @ManyToMany(
         () => GameStats, 
@@ -56,5 +59,23 @@ export class UserProfile {
           },
         })
         userStats?: GameStats[];
+
+    @ManyToMany(
+      () => UserAchievement, 
+      userAchievements => userAchievements.userProfiles, //optional
+      {onDelete: 'NO ACTION', onUpdate: 'NO ACTION'})
+      @JoinTable({
+        name: 'user_profile_achievements',
+        joinColumn: {
+          name: 'user_profile_id',
+          referencedColumnName: 'id',
+        },
+        inverseJoinColumn: {
+          name: 'achievement_id',
+          referencedColumnName: 'id',
+        },
+      })
+      userAchievements?: UserAchievement[];
+  
       
 }

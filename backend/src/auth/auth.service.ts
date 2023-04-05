@@ -107,7 +107,7 @@ export class AuthService {
         var user:UserProfile = await this.userProfileEntityRepos.findOneBy({ intraName })
         if(!user){
           user = this.userProfileEntityRepos.create({
-            intraName, wins: 0, losses: 0,
+            intraName
           });
           try {
             await this.userProfileEntityRepos.save(user);

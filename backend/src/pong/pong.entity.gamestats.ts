@@ -6,23 +6,23 @@ export class GameStats{
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column()
+    @Column({default:""})
     player1_id:string
-    @Column()
+    @Column({default:""})
     player2_id:string
 
-    @Column()
+    @Column({default:""})
     nameGame: string
-    @Column()
+    @Column({default:""})
     winner:string
-    @Column()
+    @Column({default:""})
     loser:string
 
-    @Column()
+    @Column({default: 11})
     scoreWinner: number
-    @Column()
+    @Column({default: 0})
     scoreLoser: number
-    @Column()
+    @Column({default: 0})
     timeOfGame: number
 
     @ManyToMany(

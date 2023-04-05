@@ -55,7 +55,7 @@ export default class SpectateTab extends React.Component<any, any> {
 						<Table padding="checkbox" size="small">
 							<TableHead >
 								<TableRow >
-									<TableCell style={{color: "#3368FF"}}>Game Name</TableCell>
+									<TableCell style={{color: "#3368FF"}}>Game</TableCell>
 									<TableCell style={{width: 70, color: "#3368FF"}}>Player 1</TableCell>
 									<TableCell style={{width: 70, color: "#3368FF"}}>Player 2</TableCell>
 								</TableRow>

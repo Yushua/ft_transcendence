@@ -5,6 +5,7 @@ import { GameStats } from 'src/pong/pong.entity.gamestats';
 import { AddAchievement } from './dto/addAchievement.dto';
 import { UserProfileService } from './user-profile.service';
 import { UserProfile } from './user.entity';
+import { UserAchievement } from './userAchievement.entity';
 
 @Controller('user-profile')
 // @UseGuards(AuthGuard())
@@ -152,13 +153,18 @@ export class UserProfileController {
         const found = await this.userServices.ReturnStatsById(id);
         return found;
     }
-    /* added to get users unauthorized can delete this later */
-    @Get("/usersall/:id")
-    async Returnallusers_unauth(
-        @Param("id") id: string): Promise<UserProfile[]>
+    @Get("/userachievements/:id")
+    async ReturnAchById(
+        @Param("id") id: string): Promise<UserAchievement[]>
     {
-        const found = await this.userServices.Returnallusers_unauth(id);
-        console.log(found)
+        const found = await this.userServices.ReturnAchById(id);
+        return found;
+    }
+    @Post("/postuserachievements/:id")
+    async PostAchById(
+        @Param("id") id: string): Promise<boolean>
+    {
+        const found = await this.userServices.PostAchById(id);
         return found;
     }
 

@@ -83,6 +83,8 @@ export const Pong = () => {
 			newData.isClassic = data.isClassic
 			newData.p1_score = data.p1_score
 			newData.p2_score = data.p2_score
+			newData.p1_name = data.p1_name
+			newData.p2_name = data.p2_name
 
 			newData.p1.x = data.p1.x
 			newData.p1.y = data.p1.y
@@ -128,19 +130,16 @@ export const Pong = () => {
 			console.log('connected with gateway!', socket.id)
 		})
 
-		socket.on('joined', (controls:string) => {
-			CreatingGameData.gameID = null
-			SetMainWindow("pong")
-			setMainPongTab('canvas')
-			localStorage[Enum.window] = 'canvas'
-			g_controls = controls
-		})
+		// socket.on('joined', (controls:string) => {
+		// 	CreatingGameData.gameID = null
+		// 	SetMainWindow("pong")
+		// 	setMainPongTab('canvas')
+		// 	localStorage[Enum.window] = 'canvas'
+		// 	g_controls = controls
+		// })
 		socket.on('gamedata', (s_gameData:GameData) => {
 			updateGameData(s_gameData)
 		})
-		// socket.on('refresh', () => {
-		// 	if (window)
-		// })
 
 		socket.on('spectating', () => {
 			setSpectating(true)
@@ -190,12 +189,13 @@ export const Pong = () => {
 			return <></>
 		case "canvas" :
 			return (
-				<div>
-					<Canvas instance={canvas} socket={socket} gameData={gameData}/>
+				<div >
 					{spectating ?
 						<Button variant="contained" onClick={() => leaveGame()}>Stop Spectating</Button>
-					:
+						:
 						<Button variant="contained" onClick={() => leaveGame()}>Leave Game</Button> }
+					{/* <>{gameData.p2_name}</> */}
+					<Canvas instance={canvas} socket={socket} gameData={gameData}/>
 				</div>
 			)
 		case "classic":
