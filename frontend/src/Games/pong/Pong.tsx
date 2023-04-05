@@ -127,14 +127,16 @@ export const Pong = () => {
 		socket.on('connect', () => {
 			console.log('connected with gateway!', socket.id)
 		})
-
-		socket.on('joined', (controls:string) => {
-			CreatingGameData.gameID = null
-			SetMainWindow("pong")
-			setMainPongTab('canvas')
-			localStorage[Enum.window] = 'canvas'
-			g_controls = controls
-		})
+		
+		/* This function was moved below out of scope */
+		// socket.on('joined', (controls:string) => {
+		// 	CreatingGameData.gameID = null
+		// 	SetMainWindow("pong")
+		// 	setMainPongTab('canvas')
+		// 	localStorage[Enum.window] = 'canvas'
+		// 	g_controls = controls
+		// })
+		
 		socket.on('gamedata', (s_gameData:GameData) => {
 			updateGameData(s_gameData)
 		})
@@ -268,7 +270,7 @@ setInterval(() => {
 }, 10)
 
 export function JoinedGame(controls:string) {
-	SetMainWindow("pong")
+	SetMainWindow("pong", false)
 	_setMainWindow_('canvas')
 	localStorage[Enum.window] = 'canvas'
 	g_controls = controls
