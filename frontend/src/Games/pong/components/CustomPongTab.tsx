@@ -1,7 +1,7 @@
 import { Button, Box, Slider, Typography } from '@mui/material'
 import React from 'react'
 import { JoinPrivateButton } from './JoinPrivateButton'
-import { CreateGameMenu } from './CreateGameMenu'
+import { CreateGameMenu, CreatingGameData } from './CreateGameMenu'
 import { CustomGameList } from './CustomGameList'
 
 var reset = false
@@ -68,6 +68,7 @@ export const CustomPongTab = (props:any) => {
 		setGameID('')
 		localStorage[Enum.gameCreated] = false
 		localStorage[Enum.gameID] = ''
+		CreatingGameData.gameID = null
 	}
 
 	function toggleCustomMenu() {

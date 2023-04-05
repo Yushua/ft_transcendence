@@ -6,6 +6,8 @@ import User from "../../../../Utils/Cache/User";
 import { Avatar, Button, CardHeader } from "@mui/material";
 import { ChatLineHeight, ChatWindowHeight } from "../../MainChatWindow";
 import ChatUser from "../../../../Utils/Cache/ChatUser";
+import { socket } from "../../../../Games/contexts/WebsocketContext";
+import OurHistory from "../../../../Utils/History";
 
 var roomCache: Map<string, JSX.Element[]> = new Map<string, JSX.Element[]>()
 var _chatLog: JSX.Element[] = []
@@ -66,8 +68,10 @@ export async function asyncUpdateChatLog() {
 									<Button
 										variant={"contained"}
 										style={{height: `${ChatLineHeight}px`, textAlign: "left"}}
-										onClick={_ => {}}
-									>Try joining game</Button>
+										onClick={_ => {
+											socket.emit('joinCustomGame', {gameID: msgs[i].Message, userID: User.ID, userName: User.Name})
+										}}
+									>Join game: {msgs[i].Message}</Button>
 								</div> : <>
 								<div key={count + _msgCount} style={{textAlign: "left"}}>
 									<img

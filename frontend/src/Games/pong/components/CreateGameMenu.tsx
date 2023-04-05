@@ -15,6 +15,7 @@ function makeGameID() {
     return gameID;
 }	
 
+export var CreatingGameData: {gameID: string | null} = {gameID:null}
 
 export const CreateGameMenu = (props:any) => {
 	const [ballSpeed, setBallSpeed] = React.useState(100)
@@ -55,6 +56,7 @@ export const CreateGameMenu = (props:any) => {
 		let gameID = undefined
 		if (type === 'private') {
 			gameID = makeGameID()
+			CreatingGameData.gameID = gameID
 		}
 		props.socket.emit('createGame', {type, gameID, userID, userName, customSettings})
 	}

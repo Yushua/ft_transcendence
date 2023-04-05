@@ -401,14 +401,18 @@ export class ChatService {
 		return ""
 	}
 	
-	async InviteFriendToGame(userID: string, friendID: string) {
+	async InviteFriendToGame(userID: string, friendID: string, body: any) {
+		const id = body?.id
+		if (!id || typeof(id) !== 'string' || id === "" || id.length > 20)
+			throw new HttpException("", HttpStatus.BAD_REQUEST)
+		
 		const user = await this.GetOrAddUser(userID)
 		const index = user.FriedsWithDirect.indexOf(friendID)
 		if (index === -1)
 			throw new HttpException("", HttpStatus.UNAUTHORIZED)
 		
 		const room = await this.GetRoom(user.DirectChatsIn[index], userID)
-		await this._postMessageToRoom(room, new ChatMessage("game", "game"))
+		await this._postMessageToRoom(room, new ChatMessage("game", id))
 	}
 	
 	async BlockUser(userID: string, memberID: string) {

@@ -100,9 +100,10 @@ export class ChatController {
 	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
 	async InviteFriendToGame(
 		@Request() req: Request,
-		@Param("friendID") friendID: string)
+		@Param("friendID") friendID: string,
+		@Body() body: any)
 		: Promise<void>
-			{ await this.service.InviteFriendToGame(req["user"].id, friendID) }
+			{ await this.service.InviteFriendToGame(req["user"].id, friendID, body) }
 	
 	//#endregion
 	

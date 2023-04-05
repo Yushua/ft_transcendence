@@ -12,6 +12,7 @@ import { ClassicPongTab } from './components/ClassicPongTab';
 import { CustomPongTab } from './components/CustomPongTab';
 import SpectateTab from './components/SpectateTab';
 import './Pong.css'
+import { CreatingGameData } from './components/CreateGameMenu';
 
 export function SetMainGameWindow(window:string) {
 	if (!!_setMainWindow_)
@@ -128,6 +129,7 @@ export const Pong = () => {
 		})
 
 		socket.on('joined', (controls:string) => {
+			CreatingGameData.gameID = null
 			SetMainWindow("pong")
 			setMainPongWindow('canvas')
 			localStorage[Enum.window] = 'canvas'

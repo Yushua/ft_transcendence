@@ -8,6 +8,7 @@ import User from "../../../../Utils/Cache/User";
 import { Button } from "@mui/material";
 import { ChatLineHeight, ChatWindowHeight } from "../../MainChatWindow";
 import { ClearChatMessageCache, asyncUpdateChatLog } from "../ActualChat/ChatWindow";
+import { CreatingGameData } from "../../../../Games/pong/components/CreateGameMenu";
 
 export function setMemberProfileID(userID: string) {
 	_memberProfileID = userID
@@ -89,11 +90,11 @@ export default function MemberProfile() {
 						onClick={() => {}}
 						>View Profile</Button>
 				</div>
-				{ ChatRoom.Direct && _memberProfileID !== User.ID ?
+				{ !!CreatingGameData.gameID && ChatRoom.Direct && _memberProfileID !== User.ID ?
 					<div style={{width: "100%", display: "table"}}>
 						<Button variant="contained"
 							style={{width: "100%", height: `${ChatLineHeight}px`, boxSizing: "border-box"}}
-							onClick={() => {HTTP.asyncPost(`chat/invite/${_memberProfileID}`)}}
+							onClick={() => {HTTP.asyncPost(`chat/invite/${_memberProfileID}`, {id: CreatingGameData.gameID})}}
 							>Invite to Pong</Button>
 					</div> : <></>
 				}
