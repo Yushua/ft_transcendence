@@ -94,7 +94,10 @@ export class UserProfileController {
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     @Get('GetAchievementList/:id')
     async GetAchievementList( @Param('id') id: string ) {
-        return { list: await this.userServices.GetAchievementList(id) }
+        var user:UserProfile = await this.userServices.GetAchievementList(id)
+        console.log(`achievment {${user.UserAchievement}}`)
+        await this.userServices.GetAllAchievements()
+        return { list: user.UserAchievement, user:user }
     }
     /**
      * 

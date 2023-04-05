@@ -7,9 +7,7 @@ export class UserProfile {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({
-        unique: true
-    })
+    @Column({ default: ""})
     intraName: string;
 
     @Column({ default: ""})
@@ -37,7 +35,7 @@ export class UserProfile {
     @Column({ default: 0})
     losses: number;
 
-    @OneToMany((_type) => UserAchievement, (UserAchievement) => UserAchievement.userProfile, { eager: true})
+    @OneToMany((_type) => UserAchievement, (UserAchievement) => UserAchievement.userProfile, { eager: true, cascade:true})
     UserAchievement : UserAchievement[];
 
     @ManyToMany(

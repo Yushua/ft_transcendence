@@ -247,10 +247,12 @@ export class UserProfileService {
       /**
        * returns based on [["picture", "name", "status"]]
        */
-      async GetAchievementList(id:string):Promise<UserAchievement[]> {
+      async GetAchievementList(id:string) {
+        // const userprofile:UserProfile = await this.userEntity.findOneBy({id});
+        // const achievment:UserAchievement = await this.achievEntity.findOneBy({userProfile: userprofile});
         const userprofile:UserProfile = await this.userEntity.findOneBy({id});
-        console.log(`!!!+========getting achievement ${userprofile.UserAchievement}+=========!!!!!`)
-        return userprofile.UserAchievement
+        // console.log(`!!!+========getting achievement (${userprofile})+=========!!!!!`)
+        return (userprofile)
       }
 
         /**
@@ -259,19 +261,34 @@ export class UserProfileService {
       async postAchievementList(id:string, AddAchievement:AddAchievement) {
         const {nameAchievement, pictureLink, message} = AddAchievement
         console.log(`i am adding everything {${nameAchievement}}{${pictureLink}}{${message}}`)
-        const userprofile:UserProfile = await this.userEntity.findOneBy({id});//player1
-        const achievement = new UserAchievement
-        achievement.message = message
-        achievement.nameAchievement = nameAchievement
-        achievement.pictureLink = pictureLink
+        var userprofile = await this.userEntity.findOneBy({id});//player1
+        const achievement = await this.achievEntity.create({
+          nameAchievement: nameAchievement,
+          pictureLink: pictureLink,
+          message: message,
+          userProfile: userprofile
+        });
+        // const achievement = new UserAchievement
+        // achievement.message = message
+        // achievement.nameAchievement = nameAchievement
+        // achievement.pictureLink = pictureLink
+        // achievement.userProfile = userprofile
       
-        await this.achievEntity.save(achievement)
+        // await this.achievEntity.save(achievement)
+        await this.achievEntity.save(achievement);
         console.log("achievment saved")
+        
       }
 
       async GetGameStatUser(id:string):Promise<GameStats[]> {
         const userprofile:UserProfile = await this.userEntity.findOneBy({id});
         return userprofile.userStats
+      }
+
+      async GetAllAchievements():Promise<UserAchievement[]> {
+        const achieve:UserAchievement[] = await this.achievEntity.find()
+        console.log(`all achieve {${achieve}}{${achieve[0]}}`)
+        return achieve
       }
 
       async getAllGameStat():Promise<GameStats[]>{
