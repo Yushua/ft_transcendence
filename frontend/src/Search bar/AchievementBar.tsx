@@ -1,9 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { newWindow } from '../App';
-import UserProfileComponent from '../ButtonComponents/UserProfileComponent';
-import { Width } from '../MainWindow/MainWindow';
-import OtherUserProfile from '../UserProfile/ProfilePages/OtherUserProfile';
-import NameStorage from '../Utils/Cache/NameStorage';
 import User from '../Utils/Cache/User';
 import HTTP from '../Utils/HTTP';
 
@@ -16,7 +11,8 @@ async function asyncaddFriendToList(_friendUsername: string) {
 export async function asyncAchievmentList(){
   const response = HTTP.Get(`user-profile/GetAchievementList/${User.ID}`, null, {Accept: 'application/json'})
   var result = await JSON.parse(response)
-  _setList(await result["List"])
+  console.log(`object achieve ${await result["list"]}`)
+  _setList(await result["list"])
 }
 
 async function getList(){
@@ -26,7 +22,12 @@ async function getList(){
 
 var _setList:React.Dispatch<React.SetStateAction<string[][]>>
 
-function AchievementBar() {
+type Props = {
+  width:number;
+  height:number;
+}
+
+function AchievementBar(props: any) {
   //get into page, get the entire list online
   const [ListSearchList, setList] = useState<object>([]);
   _setList = setList

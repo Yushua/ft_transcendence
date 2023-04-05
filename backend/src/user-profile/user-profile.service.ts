@@ -249,6 +249,7 @@ export class UserProfileService {
        */
       async GetAchievementList(id:string):Promise<UserAchievement[]> {
         const userprofile:UserProfile = await this.userEntity.findOneBy({id});
+        console.log(`!!!+========getting achievement ${userprofile.UserAchievement}+=========!!!!!`)
         return userprofile.UserAchievement
       }
 

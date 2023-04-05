@@ -8,6 +8,7 @@ import SearchBarFriend from '../Search bar/SearchbarFriend';
 import AchievementsComponent from '../ButtonComponents/AchievementsComponent';
 import NameStorage from '../Utils/Cache/NameStorage';
 import { Width } from '../MainWindow/MainWindow';
+import AchievementBar from '../Search bar/AchievementBar';
 
 async function asyncGetName():Promise<string> {
   const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
@@ -70,7 +71,7 @@ function UserProfilePage() {
                   <div style={{width: `${(Width - (0.05*Width))/2}px`, height: `${(Width - (0.03*Width))/2}px`, border: "2px solid black", overflow: "auto", marginLeft: `${Width*0.01}px`, marginRight: `${Width*0.01}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`,}}>
                     <div style={{display: 'flex'}}>
                       {/* gameStat */}
-                      <SearchBarFriend width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/>
+                      <AchievementBar width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/>
                     </div>
                   </div>
               </div>
