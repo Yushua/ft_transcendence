@@ -338,10 +338,12 @@ export class MyGateway implements OnModuleInit {
 	handleLeaver(
 		@ConnectedSocket() client: Socket) {
 			let connection = connections.get(client.id)
-			if (connection !== undefined)
+			if (connection !== undefined) {
 				connections.delete(client.id)
+				if (connection[1].includes(client.id))
+					OurSession.GameLeaving(client.id)
+			}
 			this.server.to(client.id).emit('left')
-			OurSession.GameLeaving(client.id)
 		}
 	
 	private _startGameLoop = (deltaTime: number) => this._runGameLoop(deltaTime)
