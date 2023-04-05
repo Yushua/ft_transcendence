@@ -69,6 +69,4 @@ export class PongService {
 		if (userprofile1.id !== userprofile2.id)
 			this._joinedRepo.save(pair2)
 	}
-
-	
 }
