@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import HTTP from "../../../Utils/HTTP";
 import ChatUser from "../../../Utils/Cache/ChatUser";
 import ChatRoom from "../../../Utils/Cache/ChatRoom";
-import { SetMainChatWindow, asyncChangeRoom } from "../MainChatWindow";
+import { ChatLineHeight, SetMainChatWindow, asyncChangeRoom } from "../MainChatWindow";
 import User from "../../../Utils/Cache/User";
 import { Box, Button, Card, CardContent, Paper, TextField } from "@mui/material";
 
@@ -23,9 +23,11 @@ export default function RoomCreation() {
 				label="Password" type="password" variant="filled"
 				value={pass} onChange={e => setPass(e.target.value)}/><br />
 			<Button variant={priv ? "contained" : "outlined"}
+					sx={{mt: `${ChatLineHeight / 4}px`}}
 					onClick={() => setPriv(!priv)}
 					>{priv ? "Private" : "Public"}</Button><br />
 			<Button variant="contained"
+				sx={{mt: `${ChatLineHeight / 4}px`}}
 				disabled={dis}
 				onClick={() => {
 					if (User.ID === "")
