@@ -40,6 +40,8 @@ export default class ChatRoom {
 				})
 			}
 		}
+		else
+			this.Clear()
 	}
 	
 	static UpdateMessageCount() {

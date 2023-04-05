@@ -137,7 +137,7 @@ export class ChatService {
 		})
 		if (changed) {
 			this.Notify(`room-${roomID}`, "mem")
-			this.Notify(`user-${memberID}`, "kick")
+			this.Notify(`user-${memberID}`, `kick${roomID}`)
 		}
 		return changed
 	}
@@ -252,7 +252,7 @@ export class ChatService {
 					user.ChatRoomsIn.splice(index, 1)
 					return true
 				})
-				this.Notify(`user-${memberID}`, "kick")
+				this.Notify(`user-${memberID}`, `kick${roomID}`)
 			}
 		
 		for (let index = 1; index <= room.MessageGroupDepth; index++)
@@ -422,24 +422,36 @@ export class ChatService {
 		user.BlockedUserIDs.push(memberID)
 		
 		var index = user.FriedsWithDirect.indexOf(memberID)
+		var roomID: string | null = null
 		if (index !== -1) {
-			this.DeleteRoom("", user.DirectChatsIn[index], false)
+			roomID = user.DirectChatsIn[index]
+			this.DeleteRoom(userID, roomID, false)
 			user.FriedsWithDirect.splice(index, 1)
 			user.DirectChatsIn.splice(index, 1)
-			await this.chatUserRepo.save(user);
+			await this.chatUserRepo.save(user)
 			
 			index = member.FriedsWithDirect.indexOf(userID)
 			member.FriedsWithDirect.splice(index, 1)
 			member.DirectChatsIn.splice(index, 1)
-			await this.chatUserRepo.save(member);	
+			await this.chatUserRepo.save(member)
 		}
 		else
-			await this.chatUserRepo.save(user);
+			await this.chatUserRepo.save(user)
 		
-		if (index !== -1) {
-			this.Notify(`user-${userID}`, "kick")
-			this.Notify(`user-${memberID}`, "kick")
+		if (!!roomID) {
+			this.Notify(`user-${userID}`, `kick${roomID}`)
+			this.Notify(`user-${memberID}`, `kick${roomID}`)
 		}
+	}
+	
+	async UnblockUser(userID: string, memberID: string) {
+		await this._modifyUser(userID, async user => {
+			const index = user.BlockedUserIDs.indexOf(memberID)
+			if (index === -1)
+				return false
+			user.BlockedUserIDs.splice(index, 1)
+			return true
+		})
 	}
 	//#endregion
 	
@@ -473,8 +485,11 @@ export class ChatService {
 	
 	async NewDirect(userID: string, memberID: string): Promise<string>{
 		var user = await this.GetOrAddUser(userID)
-		if (user.FriedsWithDirect.includes(memberID))
-			throw new HttpException("Direct chat already exists.", HttpStatus.BAD_REQUEST)
+		
+		const existingRoomID = user.FriedsWithDirect.indexOf(memberID)
+		if (existingRoomID !== -1)
+			return user.DirectChatsIn[existingRoomID]
+		
 		if (user.BlockedUserIDs.includes(memberID))
 			throw new HttpException("You have blocked this user.", HttpStatus.BAD_REQUEST)
 		

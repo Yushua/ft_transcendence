@@ -12,7 +12,6 @@ import { ClassicPongTab } from './components/ClassicPongTab';
 import { CustomPongTab } from './components/CustomPongTab';
 import SpectateTab from './components/SpectateTab';
 import './Pong.css'
-import { CreatingGameData } from './components/CreateGameMenu';
 
 export function SetMainGameWindow(window:string) {
 	if (!!_setMainWindow_)
@@ -130,13 +129,6 @@ export const Pong = () => {
 			console.log('connected with gateway!', socket.id)
 		})
 
-		// socket.on('joined', (controls:string) => {
-		// 	CreatingGameData.gameID = null
-		// 	SetMainWindow("pong")
-		// 	setMainPongTab('canvas')
-		// 	localStorage[Enum.window] = 'canvas'
-		// 	g_controls = controls
-		// })
 		socket.on('gamedata', (s_gameData:GameData) => {
 			updateGameData(s_gameData)
 		})
@@ -268,7 +260,7 @@ setInterval(() => {
 }, 10)
 
 export function JoinedGame(controls:string) {
-	SetMainWindow("pong")
+	SetMainWindow("pong", false)
 	_setMainWindow_('canvas')
 	localStorage[Enum.window] = 'canvas'
 	g_controls = controls

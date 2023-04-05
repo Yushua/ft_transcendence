@@ -117,6 +117,14 @@ export class ChatController {
 		: Promise<void>
 			{ await this.service.BlockUser(req["user"].id, memberID) }
 	
+	@Patch("unblock/:memberID")
+	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+	async UnblockUser(
+		@Request() req: Request,
+		@Param("memberID") memberID: string)
+		: Promise<void>
+			{ await this.service.UnblockUser(req["user"].id, memberID) }
+	
 	@Patch("room/:roomID")
 	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
 	async EditRoom(

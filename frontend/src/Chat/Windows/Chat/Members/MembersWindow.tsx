@@ -8,7 +8,7 @@ import ChatUser from "../../../../Utils/Cache/ChatUser"
 
 export async function asyncUpdateMembersWindow() {
 	if (ChatRoom.ID !== "" && ChatRoom.Direct)
-		ChangeMemberWindow(ChatRoom.MemberIDs.find(userID => userID !== ChatUser.ID) ?? ChatUser.ID)
+		ChangeMemberWindow(`!${ChatRoom.MemberIDs.find(userID => userID !== ChatUser.ID) ?? ChatUser.ID}`)
 	else
 		ChangeMemberWindow("members")
 }
@@ -39,7 +39,10 @@ export default function MembersWindow() {
 		case "edit": window = <RoomEdit/>; break
 		case "add": window = <AddFriend/>; break
 		default:
-			setMemberProfileID(display)
+			if (display.startsWith("!"))
+				setMemberProfileID(display.substring(1))
+			else
+				setMemberProfileID(display)
 			window = <MemberProfile/>;
 			break
 	}
