@@ -3,7 +3,7 @@ import User from '../Utils/Cache/User';
 import HTTP from '../Utils/HTTP';
 
 export async function asyncAchievmentList(){
-  const response = HTTP.Get(`user-profile/GetAchievementList/${User.ID}`, null, {Accept: 'application/json'})
+  const response = HTTP.Get(`user-profile/GameStat/${User.ID}`, null, {Accept: 'application/json'})
   var result = await JSON.parse(response)
   _setList(Object.values(result["list"]))
 }
@@ -20,7 +20,7 @@ type Props = {
   height:number;
 }
 
-function AchievementBar(props: any) {
+function GameDataBar(props: any) {
   //get into page, get the entire list online
   const [ListSearchList, setList] = useState<any[]>([]);
   const [width, setwidth] = useState<number>(props.width);
@@ -49,4 +49,4 @@ function AchievementBar(props: any) {
     )
 }
 
-export default AchievementBar;
+export default GameDataBar;

@@ -81,9 +81,31 @@ export class UserProfileController {
      * @returns returns based on [["pfp", "username", "status"]]
      */
      @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
-    @Get('GetFriendList')
-    async GetFriendList( @Request() req: Request) {
-        return { friendlist: await this.userServices.GetFriendList(req["user"].id) }
+    @Get('GetFriendList/:id')
+    async GetFriendList( @Param('id') id: string, @Request() req: Request) {
+        return { friendlist: await this.userServices.GetFriendList(id) }
+    }
+        /**
+     * 
+     * @param username 
+     * @returns add id based on the jwt authentication
+     */
+    @Patch('friendlist/add/:usernameFriend')
+    @UseGuards(AuthGuard())
+    addFriend(
+        @Request() req: Request, @Param('usernameFriend') usernameFriend: string,
+        ){
+        return this.userServices.addFriend(req["user"].id, usernameFriend);
+    }
+
+    @Patch('friendlist/remove/:idFriend/:id')
+    @UseGuards(AuthGuard())
+    removeFriend(
+        @Request() req: Request,
+        @Param('idFriend') idfriend: string,
+        @Param('id') id: string,
+        ) {
+        this.userServices.removeFriend(id, idfriend);
     }
     
     /**
@@ -124,34 +146,12 @@ export class UserProfileController {
         return this.userServices.changeUsername(username, req["user"].id);
     }
 
-    /**
-     * 
-     * @param username 
-     * @returns add id based on the jwt authentication
-     */
-    @Patch('friendlist/add/:usernameFriend')
-    @UseGuards(AuthGuard())
-    addFriend(
-        @Request() req: Request, @Param('usernameFriend') usernameFriend: string,
-        ){
-        return this.userServices.addFriend(req["user"].id, usernameFriend);
-    }
-
-    @Patch('friendlist/remove/:idFriend')
-    @UseGuards(AuthGuard())
-    removeFriend(
-        @Request() req: Request,
-        @Param('idFriend') idfriend: string,
-        ) {
-        this.userServices.removeFriend(req["user"].id, idfriend);
-    }
-
     @Get("/GameStat/:id")
     @UseGuards(AuthGuard())
     async ReturnStatsById(
         @Param("id") id: string)
     {
-        return { gameStat: await this.userServices.GetGameStatUser(id) }
+        return { list: await this.userServices.GetGameStatUser(id) }
     }
 
     /* added to get users unauthorized can delete this later */

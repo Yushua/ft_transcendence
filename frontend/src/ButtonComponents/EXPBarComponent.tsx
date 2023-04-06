@@ -10,7 +10,7 @@ export function ButtonRefresh() {
 
 function EXPBarComponent() {
   const [TotalExp, setExp] = useState<number>((User.wins*10));
-  const [expPercent, setExpPercent] = useState<number>((User.wins % 100));
+  const [expPercent, setExpPercent] = useState<number>((User.wins *10 % 100));
   const [level, setlevel] = useState<number>(Math.floor(User.wins / 10));
     return (
       <div>

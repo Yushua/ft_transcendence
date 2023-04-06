@@ -9,6 +9,8 @@ import AchievementsComponent from '../ButtonComponents/AchievementsComponent';
 import NameStorage from '../Utils/Cache/NameStorage';
 import { Width } from '../MainWindow/MainWindow';
 import AchievementBar from '../Search bar/AchievementBar';
+import GameDataBar from '../Search bar/GameDataBar';
+import FriendListBar from '../Search bar/FriendListBar';
 
 async function asyncGetName():Promise<string> {
   const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
@@ -57,17 +59,19 @@ function UserProfilePage() {
             <div> <EXPBarComponent/> </div>
             
             {/* centter left will have two blocks. one achievement, the other, games played. the right will have the friendlist*/}
-            <div style={{ display: 'flex', alignItems: 'center', width: `${Width}px` }}>
+            <div style={{ display: 'flex', alignItems: 'center', width: `${Width}px`, border: "2px solid black" }}>
             {/*  */}
             <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column', width: `${(Width - (0.03*Width))/2}px`, padding: `${0.01*Width}px` }}>
                 {/* width of the box == (width - (0.03*Width))/2 */}
                 {/* height of the box == (width - (0.03*Width))/2 */}
+                  <div style={{ display: 'flex', border: "2px solid black", padding: `${0.01*Width}px`  }}> Game Data </div>
                   <div style={{width: `${(Width - (0.05*Width))/2}px`, height: `${(Width - (0.02*Width))/2}px`, border: "2px solid black", overflow: "auto", marginLeft: `${Width*0.01}px`, marginRight: `${Width*0.01}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`,}}>
                     <div style={{display: 'flex'}}>
                     {/* friendlist */}
-                    <SearchBarFriend width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/>
+                      <GameDataBar width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/>
                     </div>
                   </div>
+                 <div style={{ display: 'flex', border: "2px solid black", padding: `${0.01*Width}px`  }}> Achievemement Data </div>
                   <div style={{width: `${(Width - (0.05*Width))/2}px`, height: `${(Width - (0.03*Width))/2}px`, border: "2px solid black", overflow: "auto", marginLeft: `${Width*0.01}px`, marginRight: `${Width*0.01}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`,}}>
                     <div style={{display: 'flex'}}>
                       {/* gameStat */}
@@ -79,15 +83,17 @@ function UserProfilePage() {
               <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column', width: `${(Width - (0.03*Width))/2}px`, padding: `${0.01*Width}px` }}>
                 {/* width of the box == (width - (0.03*Width))/2 */}
                 {/* height of the box == (width - (0.03*Width))/2 */}
+                  <div style={{ display: 'flex', border: "2px solid black", padding: `${0.01*Width}px`  }}> FriendList </div>
                   <div style={{width: `${(Width - (0.05*Width))/2}px`, height: `${(Width - (0.02*Width))/2}px`, border: "2px solid black", overflow: "auto", marginLeft: `${Width*0.01}px`, marginRight: `${Width*0.01}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`,}}>
                     <div style={{display: 'flex'}}>
-                    {/* achievment */}
-                    <SearchBarFriend width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/>
+                    {/* friendlist */}
+                      <FriendListBar width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/>
                     </div>
                   </div>
+                 <div style={{ display: 'flex', border: "2px solid black", padding: `${0.01*Width}px`  }}> nothing </div>
                   <div style={{width: `${(Width - (0.05*Width))/2}px`, height: `${(Width - (0.03*Width))/2}px`, border: "2px solid black", overflow: "auto", marginLeft: `${Width*0.01}px`, marginRight: `${Width*0.01}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`,}}>
                     <div style={{display: 'flex'}}>
-                      {/* leaderbords */}
+                      {/* gameStat */}
                       <SearchBarFriend width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/>
                     </div>
                   </div>
