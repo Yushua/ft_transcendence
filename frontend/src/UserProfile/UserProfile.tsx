@@ -54,7 +54,7 @@ function UserProfilePage() {
               </div>
             </div>
 
-            <div> <EXPBarComponent/> </div>
+            <div> <EXPBarComponent wins={User.wins}/> </div>
             
             {/* centter left will have two blocks. one achievement, the other, games played. the right will have the friendlist*/}
             <div style={{ display: 'flex', alignItems: 'center', width: `${Width}px`, border: "2px solid black" }}>

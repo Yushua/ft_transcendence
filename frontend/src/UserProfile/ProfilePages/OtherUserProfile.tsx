@@ -28,7 +28,6 @@ function OtherUserProfile(props: any){
     const [myPFP, setMyPFP] = useState<string>("");
     const [myWins, setMyWins] = useState<number>(0);
     const [myLosses, setMyLosses] = useState<number>(0);
-    const [myAchievements, setMyAchievements] = useState<string[]>([]);
 
     useEffect(() => {
         setUp(id)
@@ -41,20 +40,19 @@ function OtherUserProfile(props: any){
         setMyPFP(_user.profilePicture)
         setMyWins(_user.wins)
         setMyLosses(_user.losses)
-        setMyAchievements(_user.AchievementList)
     }
 
 return (
     <center>
       <div className={"MainWidnow"} style={{width: `${Width}px`}}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
-              <img src={`${HTTP.HostRedirect()}pfp/${NameStorage.UserPFP.Get(id)}`} alt="" style={{width: `${0.1*Width}px`, height: `${0.1*Width}px`, alignItems: 'center', padding: `${0.01*Width}px`}}/>
+              <img src={`${HTTP.HostRedirect()}pfp/${myPFP}`} alt="" style={{width: `${0.1*Width}px`, height: `${0.1*Width}px`, alignItems: 'center', padding: `${0.01*Width}px`}}/>
               <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: `${0.01*Width}px`}}>
                 <h2 >{`Welcome: ${myUsername}`}</h2>
               </div>
             </div>
 
-            <div> <EXPBarComponent/> </div>
+            <div> <EXPBarComponent wins={myWins}/> </div>
             
             {/* centter left will have two blocks. one achievement, the other, games played. the right will have the friendlist*/}
             <div style={{ display: 'flex', alignItems: 'center', width: `${Width}px`, border: "2px solid black" }}>
