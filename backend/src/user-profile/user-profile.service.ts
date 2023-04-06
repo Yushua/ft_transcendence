@@ -1,23 +1,15 @@
 import { ConflictException, Injectable, InternalServerErrorException, NotFoundException, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { GameStats } from 'src/pong/pong.entity.gamestats';
 import OurSession from 'src/session/OurSession';
 import { Repository } from 'typeorm';
-import { AddAchievement } from './dto/addAchievement.dto';
 import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { UserProfile } from './user.entity';
-import { UserAchievement } from './userAchievement.entity';
-import { UserProfileAchievements } from './entity.user_profile_achievements';
 
 @Injectable()
 export class UserProfileService {
     constructor(
         @InjectRepository(UserProfile)
         private readonly userEntity: Repository<UserProfile>,
-        @InjectRepository(UserProfileAchievements)
-        private readonly ProfileAchievementRepo: Repository<UserProfileAchievements>,
-        @InjectRepository(UserAchievement)
-        private readonly achievEntity: Repository<UserAchievement>,
       ) {}
 
       async addFriendToID(userID: string, friendID: string):Promise<void>{
@@ -242,74 +234,5 @@ export class UserProfileService {
         const userprofile:UserProfile = await this.userEntity.findOneBy({id});
         const users: UserProfile[] = await this.userEntity.createQueryBuilder('user').where('user.id IN (:...id)', { id: userprofile.friendList }).getMany();
         return users.map(user => [user.username, OurSession.GetUserState(user.id), user.id]);
-      }
-      
-      // [["profiel picture", "name", "id"],]
-      /**
-       * returns based on [["picture", "name", "status"]]
-       */
-      async GetAchievementList(id:string):Promise<UserAchievement[]> {
-        const userprofile:UserProfile = await this.userEntity.findOneBy({id});
-        console.log('profile:', userprofile)
-        return userprofile.userAchievements
-      }
-
-        /**
-       * returns based on [["picture", "name", "status"]]
-       */
-      async postAchievementList(id:string, AddAchievement:AddAchievement) {
-        const {nameAchievement, pictureLink, message} = AddAchievement
-        const userprofile:UserProfile = await this.userEntity.findOneBy({id});//player1
-        const achievement = new UserAchievement
-        achievement.message = message
-        achievement.nameAchievement = nameAchievement
-        achievement.pictureLink = pictureLink
-        userprofile.userAchievements.push(achievement)
-        await this.userEntity.save(userprofile)
-      }
-
-      async ReturnStatsById(id: string): Promise<GameStats[]> {
-        const stats = await this.userEntity.findOne({
-            select: ["id"],
-            relations: ["userStats"],
-            where: {
-              id: id
-            }
-        })
-        if (!stats){
-          throw new NotFoundException(`Task with ID "${id}" not found`);
-        }
-        return stats.userStats;
-      }
-
-      async ReturnAchById(id: string): Promise<UserAchievement[]> {
-        const achievements = await this.userEntity.findOne({
-          select: ["id"],
-          relations: ["userAchievements"],
-          where: {
-            id: id
-          }
-      })
-      if (!achievements){
-        throw new NotFoundException(`Task with ID "${id}" not found`);
-      }
-      return achievements.userAchievements;
-    }
-
-      async PostAchById(id: string): Promise<boolean> {
-        const profile:UserProfile = await this.userEntity.findOneBy({id});
-        if (!profile){
-          throw new NotFoundException(`Task with ID "${id}" not found`);
-        }
-        const newAchievement = new UserAchievement
-        newAchievement.message = 'hoi'
-        newAchievement.nameAchievement = 'whoo'
-        newAchievement.pictureLink = 'x.com/whatever'
-        await this.achievEntity.save(newAchievement)
-
-        const pair = [{userId: profile.id, achievementId: newAchievement.id}]
-        this.ProfileAchievementRepo.save(pair)
-
-        return true
       }
 }

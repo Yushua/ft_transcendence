@@ -1,15 +1,15 @@
 import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
-import { GameStats } from '../pong/pong.entity.gamestats'
-import { UserProfile } from "./user.entity";
+import { UserProfile } from "../user-profile/user.entity";
+import { PongStats } from "src/game-stats/pong-stats.entity";
 
 
-@Entity('user_profile_game_stats')
-export class UserProfileGameStats {
+@Entity('user_profile_pong_stats')
+export class UserProfilePongStats {
   @PrimaryColumn({ name: 'user_profile_id' })
   userId: string;
 
-  @PrimaryColumn({ name: 'game_stats_id' })
-  gameId: string;
+  @PrimaryColumn({ name: 'pong_stats_id' })
+  pongStatsId: string;
 
   @ManyToOne(
     () => UserProfile,
@@ -20,10 +20,10 @@ export class UserProfileGameStats {
   users: UserProfile[];
 
   @ManyToOne(
-    () => GameStats,
+    () => PongStats,
     game => game.userProfiles,
     {onDelete: 'NO ACTION', onUpdate: 'NO ACTION'}
   )
-  @JoinColumn([{ name: 'game_stats_id', referencedColumnName: 'id' }])
-  games: GameStats[];
+  @JoinColumn([{ name: 'pong_stats_id', referencedColumnName: 'id' }])
+  games: PongStats[];
 }

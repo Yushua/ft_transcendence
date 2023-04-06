@@ -405,7 +405,7 @@ export class MyGateway implements OnModuleInit {
 			/* Handle end of game */
 			switch (gameData.gameState) {
 				case 'p1_won' || 'p2_won':
-					PongService.postGameStats(game)
+					PongService.postPongStats(game)
 					break;
 				default: continue;
 			}

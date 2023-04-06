@@ -8,6 +8,8 @@ import { GatewayModule } from './pong/utils/gateway.module';
 import { PFPModule } from './profile-pictures/pfp.module';
 import { PongModule } from './pong/pong.module';
 import { ConfigModule } from '@nestjs/config';
+import { AchievementsModule } from './achievements/achievements.module';
+import { GameStatsModule } from './game-stats/game-stats.module';
 
 @Module({
   imports: [
@@ -28,6 +30,8 @@ import { ConfigModule } from '@nestjs/config';
     PFPModule,
     PongModule,
     ConfigModule.forRoot(),
+    AchievementsModule,
+    GameStatsModule,
   ],
   controllers: [AppController]
 })

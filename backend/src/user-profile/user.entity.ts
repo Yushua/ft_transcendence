@@ -1,51 +1,57 @@
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { UserAchievement } from "./userAchievement.entity";
-import { GameStats } from '../pong/pong.entity.gamestats'
-
+import { Achievement } from "src/achievements/achievements.entity";
+import { PongStats } from "src/game-stats/pong-stats.entity";
 @Entity()
 export class UserProfile {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({ 
-        unique: true
-    })
+    /* USER INFO */
+    @Column({unique: true})
     intraName: string;
 
-    @Column({ default: ""})
+    @Column({default: ""})
     username: string;
 
-    //string path towards the picture
-    @Column({ default: "default_pfp.jpg"})
+    @Column({default: "default_pfp.jpg"}) /* string path towards the picture */
     profilePicture: string
     
-    @Column({ default: "Creation"})
+    @Column({default: "Creation"})
     userStatus: string
 
-    @Column({ default: false})
+    @Column({default: false})
     TWTStatus: boolean
 
-    @Column({ default: ""})
+    @Column({default: ""})
     QRSecret: string
 
-    @Column("text", { array: true , default: "{}"})
+    @Column("text", {array: true , default: "{}"})
     friendList: string[];
 
-    @Column({ default: 0})
+
+    /* GAME STATS  */
+    @Column({default: 0})
+    experience: number;
+
+    @Column({default: 0})
+    wins: number;
+
+    @Column({default: 0})
+    losses: number;
+
+    @Column({default: 0})
     pong_experience: number;
 
-    @Column({ default: 0})
+    @Column({default: 0})
     pong_wins: number;
 
-    @Column({ default: 0})
+    @Column({default: 0})
     pong_losses: number;
 
-    // @OneToMany(() => UserAchievement, userAchievement => userAchievement.userProfile)
-    //   userAchievements?: UserAchievement[];
-
+    /* RELATIONS */
     @ManyToMany(
-        () => GameStats, 
-        gameStats => gameStats.userProfiles, //optional
+        () => PongStats, 
+        pongStats => pongStats.userProfiles, //optional
         {onDelete: 'NO ACTION', onUpdate: 'NO ACTION'})
         @JoinTable({
           name: 'user_profile_game_stats',
@@ -58,10 +64,10 @@ export class UserProfile {
             referencedColumnName: 'id',
           },
         })
-        userStats?: GameStats[];
+        userStats?: PongStats[];
 
     @ManyToMany(
-      () => UserAchievement, 
+      () => Achievement, 
       userAchievements => userAchievements.userProfiles, //optional
       {onDelete: 'NO ACTION', onUpdate: 'NO ACTION'})
       @JoinTable({
@@ -75,7 +81,7 @@ export class UserProfile {
           referencedColumnName: 'id',
         },
       })
-      userAchievements?: UserAchievement[];
+      userAchievements?: Achievement[];
   
       
 }

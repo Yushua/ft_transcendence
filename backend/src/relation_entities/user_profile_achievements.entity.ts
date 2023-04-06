@@ -1,6 +1,6 @@
 import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
-import { UserProfile } from "./user.entity";
-import { UserAchievement } from "./userAchievement.entity";
+import { UserProfile } from "src/user-profile/user.entity"; 
+import { Achievement } from "src/achievements/achievements.entity";
 
 
 @Entity('user_profile_achievements')
@@ -20,10 +20,10 @@ export class UserProfileAchievements {
   users: UserProfile[];
 
   @ManyToOne(
-    () => UserAchievement,
+    () => Achievement,
     achievement => achievement.userProfiles,
     {onDelete: 'NO ACTION', onUpdate: 'NO ACTION'}
   )
   @JoinColumn([{ name: 'achievement_id', referencedColumnName: 'id' }])
-  achievements: UserAchievement[];
+  achievements: Achievement[];
 }

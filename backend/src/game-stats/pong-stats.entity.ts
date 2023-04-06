@@ -1,8 +1,8 @@
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { UserProfile } from "../user-profile/user.entity";
+import { UserProfile } from "src/user-profile/user.entity";
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
-export class GameStats{
+export class PongStats{
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
@@ -32,5 +32,4 @@ export class GameStats{
       )
       userProfiles?: UserProfile[];
 }
-
 

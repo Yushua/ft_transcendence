@@ -1,11 +1,8 @@
-import { Body, Controller, Get, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthGuardEncryption } from 'src/auth/auth.guard';
-import { GameStats } from 'src/pong/pong.entity.gamestats';
-import { AddAchievement } from './dto/addAchievement.dto';
 import { UserProfileService } from './user-profile.service';
 import { UserProfile } from './user.entity';
-import { UserAchievement } from './userAchievement.entity';
 
 @Controller('user-profile')
 // @UseGuards(AuthGuard())
@@ -87,28 +84,6 @@ export class UserProfileController {
         return { friendlist: await this.userServices.GetFriendList(req["user"].id) }
     }
     
-    /**
-     * 
-     * @param id 
-     * @returns returns based on [["pfp", "username", "status"]]
-     */
-    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
-    @Get('GetAchievementList')
-    async GetAchievementList( @Request() req: Request) {
-        return { AchievementList: await this.userServices.GetAchievementList(req["user"].id) }
-    }
-    /**
-     * 
-     * @param id 
-     * @returns returns based on [["pfp", "username", "status"]]
-     */
-    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
-    @Post('PostAchievementList')
-    async postAchievementList( @Request() req: Request,
-    @Body() AddAchievement: AddAchievement) {
-        await this.userServices.postAchievementList(req["user"].id, AddAchievement)
-    }
-
     @Get("/username/:id")
     async ReturnNameById(
         @Param("id") id: string): Promise<string>
@@ -145,27 +120,4 @@ export class UserProfileController {
         ) {
         this.userServices.removeFriend(req["user"].id, idfriend);
     }
-
-    @Get("/userstats/:id")
-    async ReturnStatsById(
-        @Param("id") id: string): Promise<GameStats[]>
-    {
-        const found = await this.userServices.ReturnStatsById(id);
-        return found;
-    }
-    @Get("/userachievements/:id")
-    async ReturnAchById(
-        @Param("id") id: string): Promise<UserAchievement[]>
-    {
-        const found = await this.userServices.ReturnAchById(id);
-        return found;
-    }
-    @Post("/postuserachievements/:id")
-    async PostAchById(
-        @Param("id") id: string): Promise<boolean>
-    {
-        const found = await this.userServices.PostAchById(id);
-        return found;
-    }
-
 }

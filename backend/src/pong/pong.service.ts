@@ -1,45 +1,49 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { UserProfileGameStats } from 'src/user-profile/entity.user_profile_game_stats'
 import { UserProfile } from 'src/user-profile/user.entity'
 import { Repository } from 'typeorm'
 import { GameData } from './components/GameData'
-import { GameStats } from './pong.entity.gamestats'
 import { IDs } from './utils/gateway.controller'
+import { AchievementService } from '../achievements/achievements.service'
+import { PongStats } from 'src/game-stats/pong-stats.entity'
+import { GameStatsService } from 'src/game-stats/game-stats.service'
 
 @Injectable()
 export class PongService {
 	constructor(
-		@InjectRepository(GameStats)
-		private readonly gameRepo: Repository<GameStats>,
-		@InjectRepository(UserProfileGameStats)
-		private readonly userProfile_gameStats: Repository<UserProfileGameStats>,	
+		@InjectRepository(PongStats)
+		private readonly PongRepo: Repository<PongStats>,
 		@InjectRepository(UserProfile)
 		private readonly UserRepo: Repository<UserProfile>
 	) { 
 		PongService._userRepo = this.UserRepo
-		PongService._gameRepo = this.gameRepo
-		PongService._joinedRepo = this.userProfile_gameStats
+		PongService._PongRepo = this.PongRepo
 
 	}
 		
 	private static _userRepo: Repository<UserProfile>
-	private static _gameRepo: Repository<GameStats>
-	private static _joinedRepo: Repository<UserProfileGameStats>
+	private static _PongRepo: Repository<PongStats>
 
-	async findAll(): Promise<GameStats[]> {
-		return this.gameRepo.find();
-	}
-
-	static async postGameStats(game:[string, [GameData, string[]]]) {
+	/* On game end update database */
+	static async postPongStats(game:[string, [GameData, string[]]]) {
 
 		const gameData:GameData = game[1][0]
 		const gameIDs:string[] = game[1][1]
 		
-		const userprofile1:UserProfile = await this._userRepo.findOneBy({id: gameIDs[IDs.p1_userID]})
-		const userprofile2:UserProfile = await this._userRepo.findOneBy({id: gameIDs[IDs.p2_userID]})
-		const stat = new GameStats
+		/* get users */ 
+		const user1:UserProfile = await this._userRepo.findOneBy({id: gameIDs[IDs.p1_userID]})
+		const user2:UserProfile = await this._userRepo.findOneBy({id: gameIDs[IDs.p2_userID]})
 		
+		/* set game stats and update users */
+
+		// const achievement = await this.achievEntity.create({
+		// 	nameAchievement: nameAchievement,
+		// 	pictureLink: pictureLink,
+		// 	message: message,
+		// 	userProfile: userprofile
+		//   });
+  
+		let stat = new PongStats
 		stat.nameGame = "Pong_Classic"
 		stat.player1_id = gameIDs[IDs.p1_userID]
 		stat.player2_id = gameIDs[IDs.p2_userID]
@@ -48,34 +52,41 @@ export class PongService {
 		if (gameData.gameState === 'p1_won') {
 			stat.winner = gameData.p1_name
 			stat.loser = gameData.p2_name
-			stat.scoreLoser = gameData.p2_score	
-			userprofile1.pong_wins += 1
-			userprofile1.pong_experience += (100 - (gameData.p2_score * 2))
-			userprofile2.pong_losses += 1
-			userprofile2.pong_experience += (gameData.p2_score * 2)
+			stat.scoreLoser = gameData.p2_score
+			user1.wins += 1
+			user1.pong_wins += 1
+			user1.pong_experience += (100 - (gameData.p2_score * 2))
+			user1.experience += (100 - (gameData.p2_score * 2))
+			if (user1.wins == 1) {
+				AchievementService.giveAchievement("first_win", user1.id)
+			}
+			user2.losses += 1
+			user2.pong_losses += 1
+			user2.pong_experience += (gameData.p2_score * 2)
+			user2.experience += (gameData.p2_score * 2)
 		}
 		else {
 			stat.loser = gameData.p1_name
 			stat.winner = gameData.p2_name
 			stat.scoreLoser = gameData.p1_score	
-			userprofile2.pong_wins += 1
-			userprofile2.pong_experience += (100 - (gameData.p1_score * 2))
-			userprofile1.pong_losses += 1
-			userprofile1.pong_experience += (gameData.p1_score * 2)
+			user2.pong_wins += 1
+			user2.pong_experience += (100 - (gameData.p1_score * 2))
+			user1.pong_losses += 1
+			user1.pong_experience += (gameData.p1_score * 2)
 		}
+		/*	this happened once for unknown reasons, some sync issue mayb? mayb fixed, mayb not, 
+			somehow game didnt end in time and let p2 get an extra point after game end */
 		if (stat.scoreLoser === 11)
 			stat.scoreLoser = 10
 		stat.scoreWinner = 11
 		stat.timeOfGame = Math.floor(gameData.endTime - gameData.beginTime)
-		await this._userRepo.save(userprofile1)
-		await this._userRepo.save(userprofile2)
 
-		await this._gameRepo.save(stat)
-		const pair = [{userId: userprofile1.id, gameId: stat.id}]
-		const pair2 = [{userId: userprofile2.id, gameId: stat.id}]
+		/* save updated profiles and the game */
+		await this._userRepo.save(user1)
+		await this._userRepo.save(user2)
+		await this._PongRepo.save(stat)
 		
-		this._joinedRepo.save(pair)
-		if (userprofile1.id !== userprofile2.id)
-			this._joinedRepo.save(pair2)
+		/* link stats to user */
+		GameStatsService.savePongStats(stat.id, user1.id, user2.id)
 	}
 }

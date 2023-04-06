@@ -1,22 +1,19 @@
+import { UserProfile } from "src/user-profile/user.entity";
 import { Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { UserProfile } from "./user.entity";
 
 @Entity()
-export class UserAchievement {
+export class Achievement {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
     @Column({ default: ""})
-    nameAchievement: string;
+    name: string;
 
     @Column({ default: ""})
     pictureLink: string;
 
     @Column({ default: ""})
     message: string;
-
-    // @ManyToOne(() => UserProfile, userProfile => userProfile.userAchievements)
-    // userProfile: UserProfile;
 
     @ManyToMany(
         () => UserProfile,
