@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
 import { newWindow } from '../App';
-import UserProfileComponent from '../ButtonComponents/UserProfileComponent';
 import { Width } from '../MainWindow/MainWindow';
 import OtherUserProfile from '../UserProfile/ProfilePages/OtherUserProfile';
-import NameStorage from '../Utils/Cache/NameStorage';
-import User from '../Utils/Cache/User';
 import HTTP from '../Utils/HTTP';
 
 var test:boolean = true

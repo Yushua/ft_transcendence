@@ -91,13 +91,11 @@ export class UserProfileController {
      * @param id 
      * @returns returns based on [["pfp", "username", "status"]]
      */
-    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+    // @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     @Get('GetAchievementList/:id')
     async GetAchievementList( @Param('id') id: string ) {
-        var user:UserProfile = await this.userServices.GetAchievementList(id)
-        console.log(`achievment {${user.UserAchievement}}`)
-        await this.userServices.GetAllAchievements()
-        return { list: user.UserAchievement, user:user }
+
+        return {  list: await this.userServices.GetUserAchievment(id) }
     }
     /**
      * 

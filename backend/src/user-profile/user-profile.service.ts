@@ -13,7 +13,7 @@ export class UserProfileService {
     constructor(
         @InjectRepository(UserProfile)
         private readonly userEntity: Repository<UserProfile>,
-        @InjectRepository(UserProfile)
+        @InjectRepository(UserAchievement)
         private readonly achievEntity: Repository<UserAchievement>,
         @InjectRepository(GameStats)
         private readonly gameStat: Repository<GameStats>,
@@ -242,18 +242,6 @@ export class UserProfileService {
         const users: UserProfile[] = await this.userEntity.createQueryBuilder('user').where('user.id IN (:...id)', { id: userprofile.friendList }).getMany();
         return users.map(user => [user.profilePicture, user.username, OurSession.GetUserState(user.id), user.id]);
       }
-      
-      // [["profiel picture", "name", "id"],]
-      /**
-       * returns based on [["picture", "name", "status"]]
-       */
-      async GetAchievementList(id:string) {
-        // const userprofile:UserProfile = await this.userEntity.findOneBy({id});
-        // const achievment:UserAchievement = await this.achievEntity.findOneBy({userProfile: userprofile});
-        const userprofile:UserProfile = await this.userEntity.findOneBy({id});
-        // console.log(`!!!+========getting achievement (${userprofile})+=========!!!!!`)
-        return (userprofile)
-      }
 
         /**
        * returns based on [["picture", "name", "status"]]
@@ -268,16 +256,8 @@ export class UserProfileService {
           message: message,
           userProfile: userprofile
         });
-        // const achievement = new UserAchievement
-        // achievement.message = message
-        // achievement.nameAchievement = nameAchievement
-        // achievement.pictureLink = pictureLink
-        // achievement.userProfile = userprofile
-      
-        // await this.achievEntity.save(achievement)
         await this.achievEntity.save(achievement);
         console.log("achievment saved")
-        
       }
 
       async GetGameStatUser(id:string):Promise<GameStats[]> {
@@ -289,6 +269,23 @@ export class UserProfileService {
         const achieve:UserAchievement[] = await this.achievEntity.find()
         console.log(`all achieve {${achieve}}{${achieve[0]}}`)
         return achieve
+      }
+
+      async GetUserAchievment(id:string):Promise<UserAchievement[]> {
+        const userprofile:UserProfile = await this.userEntity.findOneBy({id});
+        
+        return userprofile.UserAchievement
+      }
+      // [["profiel picture", "name", "id"],]
+      /**
+       * returns based on [["picture", "name", "status"]]
+       */
+      async GetAchievementList(id:string) {
+        // const userprofile:UserProfile = await this.userEntity.findOneBy({id});
+        // const achievment:UserAchievement = await this.achievEntity.findOneBy({userProfile: userprofile});
+        const user = await this.userEntity.find()
+        // console.log(`!!!+========getting achievement (${user})+=========!!!!!`)
+        return (user)
       }
 
       async getAllGameStat():Promise<GameStats[]>{
