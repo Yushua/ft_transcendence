@@ -135,6 +135,15 @@ export class UserProfileService {
         return found;
       }
 
+        /**
+       * check if to follow or unfollow
+       * @returns 
+       */
+           async checkFriend(id:string, idfriend: string):Promise<Number> {
+            if (id == idfriend)
+              return 3
+            return 3
+          }
       async getAllUsersIntoList():Promise<string[]> {
         return (await this.userEntity.query("SELECT id FROM user_profile;")).map(user => user.id)
       }

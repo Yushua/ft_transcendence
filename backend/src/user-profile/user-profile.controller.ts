@@ -107,6 +107,15 @@ export class UserProfileController {
         ) {
         this.userServices.removeFriend(id, idfriend);
     }
+    @Patch('friendlist/check/:idFriend/:id')
+    @UseGuards(AuthGuard())
+    checkFriend(
+        @Request() req: Request,
+        @Param('idFriend') idfriend: string,
+        @Param('id') id: string,
+        ) {
+        this.userServices.checkFriend(id, idfriend);
+    }
     
     /**
      * 
