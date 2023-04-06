@@ -3,6 +3,7 @@ import { newWindow } from '../App';
 import { Width } from '../MainWindow/MainWindow';
 import OtherUserProfile from '../UserProfile/ProfilePages/OtherUserProfile';
 import HTTP from '../Utils/HTTP';
+import User from '../Utils/Cache/User';
 
 var test:boolean = true
 //add the ID to the list
@@ -54,7 +55,7 @@ function SearchBar() {
   const handleButtonClick = (e: any) => {
     var id:string = e
     alert(`I am in click ${id}`)
-    newWindow(<OtherUserProfile id={id}/>)
+    newWindow(<OtherUserProfile id={id} userId={User.ID}/>)
   };
     return (
         <div >

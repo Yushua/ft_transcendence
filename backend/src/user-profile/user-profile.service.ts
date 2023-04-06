@@ -106,9 +106,9 @@ export class UserProfileService {
       }
 
       //turn the username of the friend into an id, and then add it to the currect user
-      async addFriend(userid:string, usernameFriend: string) {
+      async addFriend(userid:string, otherId: string) {
         const found = await this.userEntity.findOneBy({id: userid});
-        const foundFriend = await this.userEntity.findOneBy({username: usernameFriend});
+        const foundFriend = await this.userEntity.findOneBy({id: otherId});
         found.friendList.push(foundFriend.id);
         await this.userEntity.save(found);
         console.log(found)

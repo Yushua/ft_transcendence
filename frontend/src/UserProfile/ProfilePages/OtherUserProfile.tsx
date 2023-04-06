@@ -9,11 +9,17 @@ import GameDataBar from '../../Search bar/GameDataBar';
 import EXPBarComponent from '../../ButtonComponents/EXPBarComponent';
 import NameStorage from '../../Utils/Cache/NameStorage';
 
-async function asyncGetuserUsername(id: string):Promise<any> {
+async function asyncGetUserUsername(id: string):Promise<any> {
 	const response = HTTP.Get(`user-profile/user/${id}`, null, {Accept: 'application/json'})
 	var user = await JSON.parse(response)
 	return await user["user"];
   }
+
+async function asyncUpdateAddFriendList(otherId: string):Promise<any> {
+const response = HTTP.Get(`user-profile/friendlist/add/${otherId}`, null, {Accept: 'application/json'})
+var user = await JSON.parse(response)
+return await user["user"];
+}
 
 
 type Props = {
@@ -22,9 +28,11 @@ type Props = {
 
 function OtherUserProfile(props: any){
 
-    var id = props["id"];
+    var id = props.id;
 
     const [myUsername, setMyUsername] = useState<string>("");
+    const [userId, setUser] = useState<string>(props.userId);
+    const [userOtherId, setOtherUser] = useState<string>(props.id);
     const [myPFP, setMyPFP] = useState<string>("");
     const [myWins, setMyWins] = useState<number>(0);
     const [myLosses, setMyLosses] = useState<number>(0);
@@ -35,11 +43,15 @@ function OtherUserProfile(props: any){
 
     // do something with myString
     async function setUp(id:string) {
-        var _user: any = await asyncGetuserUsername(id)
+        var _user: any = await asyncGetUserUsername(id)
         setMyUsername(_user.username)
         setMyPFP(_user.profilePicture)
         setMyWins(_user.wins)
         setMyLosses(_user.losses)
+    }
+
+    async function AddFriend() {
+        await asyncUpdateAddFriendList(userOtherId)
     }
 
 return (
@@ -49,6 +61,7 @@ return (
               <img src={`${HTTP.HostRedirect()}pfp/${myPFP}`} alt="" style={{width: `${0.1*Width}px`, height: `${0.1*Width}px`, alignItems: 'center', padding: `${0.01*Width}px`}}/>
               <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: `${0.01*Width}px`}}>
                 <h2 >{`Welcome: ${myUsername}`}</h2>
+                <button onClick={AddFriend}> Add </button>
               </div>
             </div>
 

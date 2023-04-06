@@ -90,12 +90,12 @@ export class UserProfileController {
      * @param username 
      * @returns add id based on the jwt authentication
      */
-    @Patch('friendlist/add/:usernameFriend')
+    @Patch('friendlist/add/:OtherId')
     @UseGuards(AuthGuard())
     addFriend(
-        @Request() req: Request, @Param('usernameFriend') usernameFriend: string,
+        @Request() req: Request, @Param('OtherId') OtherId: string,
         ){
-        return this.userServices.addFriend(req["user"].id, usernameFriend);
+        return this.userServices.addFriend(req["user"].id, OtherId);
     }
 
     @Patch('friendlist/remove/:idFriend/:id')
