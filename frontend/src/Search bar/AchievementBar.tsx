@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import User from '../Utils/Cache/User';
 import HTTP from '../Utils/HTTP';
 
 export async function asyncAchievmentList(){
-  const response = HTTP.Get(`user-profile/GetAchievementList/${User.ID}`, null, {Accept: 'application/json'})
+  const response = HTTP.Get(`user-profile/GetAchievementList/${_id}`, null, {Accept: 'application/json'})
   var result = await JSON.parse(response)
   _setList(Object.values(result["list"]))
 }
@@ -18,14 +17,19 @@ var _setList:React.Dispatch<React.SetStateAction<string[]>>
 type Props = {
   width:number;
   height:number;
+  id:string
 }
+
+var _id:Number
 
 function AchievementBar(props: any) {
   //get into page, get the entire list online
   const [ListSearchList, setList] = useState<any[]>([]);
   const [width, setwidth] = useState<number>(props.width);
+  const [Id, setId] = useState<number>(props.id);
   const [widthButton, setwidthButton] = useState<number>(((width*0.9) - (width*0.9*0.03 * 3 * 2))/3);
   _setList = setList
+  _id = Id
   useEffect(() => {
 		getList()
 	}, []); // empty dependency array means it will only run once

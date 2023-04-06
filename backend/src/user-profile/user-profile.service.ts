@@ -238,12 +238,16 @@ export class UserProfileService {
        * returns based on [["pfp", "username", "status"], ["pfp", "username", "status"], ["pfp", "username", "status"]]
        */
       async GetFriendList(id:string):Promise<string[][]> {
-        const userprofile:UserProfile = await this.userEntity.findOneBy({id});
+        var userprofile:UserProfile = await this.userEntity.findOneBy({id});
+        if (userprofile.friendList == undefined){
+          return []
+        }
         const users: UserProfile[] = await this.userEntity.createQueryBuilder('user').where('user.id IN (:...id)', { id: userprofile.friendList }).getMany();
-        return users.map(user => [user.profilePicture, user.username, OurSession.GetUserState(user.id), user.id]);
+        var list:string[][] = users.map(user => [user.profilePicture, user.username, OurSession.GetUserState(user.id), user.id]);
+        return list
       }
 
-        /**
+      /**
        * returns based on [["picture", "name", "status"]]
        */
       async postAchievementList(id:string, AddAchievement:AddAchievement) {

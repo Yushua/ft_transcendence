@@ -82,7 +82,7 @@ export class UserProfileController {
      */
      @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     @Get('GetFriendList/:id')
-    async GetFriendList( @Param('id') id: string, @Request() req: Request) {
+    async GetFriendList( @Param('id') id: string) {
         return { friendlist: await this.userServices.GetFriendList(id) }
     }
         /**

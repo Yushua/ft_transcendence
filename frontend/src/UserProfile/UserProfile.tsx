@@ -4,8 +4,6 @@ import '../App.css';
 import HTTP from '../Utils/HTTP'
 import EXPBarComponent from '../ButtonComponents/EXPBarComponent';
 import User from '../Utils/Cache/User';
-import SearchBarFriend from '../Search bar/SearchbarFriend';
-import AchievementsComponent from '../ButtonComponents/AchievementsComponent';
 import NameStorage from '../Utils/Cache/NameStorage';
 import { Width } from '../MainWindow/MainWindow';
 import AchievementBar from '../Search bar/AchievementBar';
@@ -75,7 +73,7 @@ function UserProfilePage() {
                   <div style={{width: `${(Width - (0.05*Width))/2}px`, height: `${(Width - (0.03*Width))/2}px`, border: "2px solid black", overflow: "auto", marginLeft: `${Width*0.01}px`, marginRight: `${Width*0.01}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`,}}>
                     <div style={{display: 'flex'}}>
                       {/* gameStat */}
-                      <AchievementBar width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/>
+                      <AchievementBar id={User.ID} width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/>
                     </div>
                   </div>
               </div>
@@ -87,14 +85,14 @@ function UserProfilePage() {
                   <div style={{width: `${(Width - (0.05*Width))/2}px`, height: `${(Width - (0.02*Width))/2}px`, border: "2px solid black", overflow: "auto", marginLeft: `${Width*0.01}px`, marginRight: `${Width*0.01}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`,}}>
                     <div style={{display: 'flex'}}>
                     {/* friendlist */}
-                      <FriendListBar width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/>
+                      <FriendListBar id={User.ID} width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/>
                     </div>
                   </div>
                  <div style={{ display: 'flex', border: "2px solid black", padding: `${0.01*Width}px`  }}> nothing </div>
                   <div style={{width: `${(Width - (0.05*Width))/2}px`, height: `${(Width - (0.03*Width))/2}px`, border: "2px solid black", overflow: "auto", marginLeft: `${Width*0.01}px`, marginRight: `${Width*0.01}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`,}}>
                     <div style={{display: 'flex'}}>
                       {/* gameStat */}
-                      <SearchBarFriend width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/>
+                      {/* <SearchBarFriend width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/> */}
                     </div>
                   </div>
               </div>

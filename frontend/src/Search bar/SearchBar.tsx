@@ -13,9 +13,7 @@ async function asyncaddFriendToList(_friendUsername: string) {
 export async function asyncGetSearchList(){
   const response = HTTP.Get(`user-profile/SearchList`, null, {Accept: 'application/json'})
   var result = await JSON.parse(response)
-  console.log(`search ${await result["searchlist"]}`)
   _setNameDisplay(await result["searchlist"])
-  console.log(`i am out ${await result["searchlist"][0]}`)
 }
 
 async function getListSearchList(value:string){
@@ -53,14 +51,11 @@ function SearchBar() {
     setSearchTerm(event.target.value)
     getListSearchList(event.target.value)
   }
-  const handleButtonClick = (e: string) => {
+  const handleButtonClick = (e: any) => {
     var id:string = e
     alert(`I am in click ${id}`)
     newWindow(<OtherUserProfile id={id}/>)
   };
-    //width is always. padding + ((width object + padding) * amount)
-    //if you know the wdith only (width - (pading + (padding * amount)))/amount
-    //width: `${((Width*0.9) - (Width*0.9*0.02 * 3 * 2))/3}px`, height: `${Width*0.2}px`
     return (
         <div >
               <input type="text" value={SearchTerm} onChange={handleInputChange} />
