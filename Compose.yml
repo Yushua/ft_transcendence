@@ -1,22 +1,24 @@
 version: '3'
 
-# volumes:
-#   source_code:
-#     driver: local
-#     name: source_code
-#     driver_opts:
-#       type: none
-#       o: bind
-#       device: /Users/rdrazsky/Desktop/Work/pong/src
-
 services:
-  ft_transcendence:
-    build: ./
-    # restart: always
+  postgres:
+    image: postgres:12.3-alpine
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: team-zero
+
+  backend:
+    depends_on:
+      - postgres
+    build: src
+    restart: always
     ports:
-      - "80:80"
-      - "5432:5432"
-      - "53603:53603"
-    volumes:
-      - /Users/rdrazsky/Desktop/Work/ft_transcendence/src:/src
-    # environment:
+      - "443:443"
+
+# 42 API and other redirects need to got to https://url:443
+
+# ENV is not implemented
+
+# Volumes are not implemented

@@ -137,9 +137,26 @@ export class ChatService {
 		})
 		if (changed) {
 			this.Notify(`room-${roomID}`, "mem")
-			this.Notify(`user-${memberID}`, "kick")
+			this.Notify(`user-${memberID}`, `kick${roomID}`)
 		}
 		return changed
+	}
+	
+	private async _postMessageToRoom(room: ChatRoom, msg: ChatMessage) {
+		room.MessageCount += 1
+		var depth = room.MessageGroupDepth
+		var msgGroup = await this.chatMessageRepo.findOneBy({ ID: this._getMsgID(room.ID, depth, room) })
+		if (!msgGroup || !msgGroup.AddMessage(msg)) {
+			depth = (room.MessageGroupDepth += 1)
+			msgGroup = await this._addMessageGroup(this._getMsgID(room.ID, depth, room))
+			msgGroup.AddMessage(msg)
+		}
+		
+		await Promise.all([
+			this.chatRoomRepo.save(room),
+			this.chatMessageRepo.save(msgGroup),
+		])
+		this.Notify("room-" + room.ID, "msg")
 	}
 	//#endregion
 	
@@ -221,20 +238,22 @@ export class ChatService {
 		return changed
 	}
 	
-	async DeleteRoom(ownerID: string, roomID: string) {
+	async DeleteRoom(ownerID: string, roomID: string, clearMembers: boolean = true) {
 		const room = await this.GetRoom(roomID, ownerID);
-		if (ownerID !== room.OwnerID)
+		if (room.OwnerID !== "" && ownerID !== room.OwnerID)
 			throw new HttpException("", HttpStatus.UNAUTHORIZED)
 		
-		for (const memberID of room.MemberIDs) {
-			this._modifyUser(memberID, async user => {
-				const index = user.ChatRoomsIn.indexOf(roomID);
-				if (index === -1)
-					return false
-				user.ChatRoomsIn.splice(index, 1)
-				return true
-			}).then(() => this.Notify(`user-${memberID}`, "kick"))
-		}
+		if (clearMembers)
+			for (const memberID of room.MemberIDs) {
+				await this._modifyUser(memberID, async user => {
+					const index = user.ChatRoomsIn.indexOf(roomID);
+					if (index === -1)
+						return false
+					user.ChatRoomsIn.splice(index, 1)
+					return true
+				})
+				this.Notify(`user-${memberID}`, `kick${roomID}`)
+			}
 		
 		for (let index = 1; index <= room.MessageGroupDepth; index++)
 			this.chatMessageRepo.delete({ID: this._getMsgID(roomID, index, room)})
@@ -378,65 +397,65 @@ export class ChatService {
 		}
 		
 		/* Add Message */
-		room.MessageCount += 1
-		var depth = room.MessageGroupDepth
-		var msgGroup = await this.chatMessageRepo.findOneBy({ ID: this._getMsgID(room.ID, depth, room) })
-		if (!msgGroup || !msgGroup.AddMessage(msg)) {
-			depth = (room.MessageGroupDepth += 1)
-			msgGroup = await this._addMessageGroup(this._getMsgID(room.ID, depth, room))
-			msgGroup.AddMessage(msg)
-		}
-		
-		await Promise.all([
-			this.chatRoomRepo.save(room),
-			this.chatMessageRepo.save(msgGroup),
-		])
-		this.Notify("room-" + roomID, ChatMessageDTO.toString())
+		await this._postMessageToRoom(room, msg)
 		return ""
+	}
+	
+	async InviteFriendToGame(userID: string, friendID: string, body: any) {
+		const id = body?.id
+		if (!id || typeof(id) !== 'string' || id === "" || id.length > 20)
+			throw new HttpException("", HttpStatus.BAD_REQUEST)
+		
+		const user = await this.GetOrAddUser(userID)
+		const index = user.FriedsWithDirect.indexOf(friendID)
+		if (index === -1)
+			throw new HttpException("", HttpStatus.UNAUTHORIZED)
+		
+		const room = await this.GetRoom(user.DirectChatsIn[index], userID)
+		await this._postMessageToRoom(room, new ChatMessage("game", id))
+	}
+	
+	async BlockUser(userID: string, memberID: string) {
+		var user = await this.GetOrAddUser(userID)
+		var member = await this.GetOrAddUser(memberID)
+		
+		user.BlockedUserIDs.push(memberID)
+		
+		var index = user.FriedsWithDirect.indexOf(memberID)
+		var roomID: string | null = null
+		if (index !== -1) {
+			roomID = user.DirectChatsIn[index]
+			this.DeleteRoom(userID, roomID, false)
+			user.FriedsWithDirect.splice(index, 1)
+			user.DirectChatsIn.splice(index, 1)
+			await this.chatUserRepo.save(user)
+			
+			index = member.FriedsWithDirect.indexOf(userID)
+			member.FriedsWithDirect.splice(index, 1)
+			member.DirectChatsIn.splice(index, 1)
+			await this.chatUserRepo.save(member)
+		}
+		else
+			await this.chatUserRepo.save(user)
+		
+		if (!!roomID) {
+			this.Notify(`user-${userID}`, `kick${roomID}`)
+			this.Notify(`user-${memberID}`, `kick${roomID}`)
+		}
+	}
+	
+	async UnblockUser(userID: string, memberID: string) {
+		await this._modifyUser(userID, async user => {
+			const index = user.BlockedUserIDs.indexOf(memberID)
+			if (index === -1)
+				return false
+			user.BlockedUserIDs.splice(index, 1)
+			return true
+		})
 	}
 	//#endregion
 	
 	//#region Creation Commands
-	async NewDirect(userID: string, memberID: string): Promise<string>{
-		var user = await this.GetOrAddUser(userID)
-		if (user.FriedsWithDirect.includes(memberID))
-			throw new HttpException("Direct chat already exists!", HttpStatus.BAD_REQUEST)
-		
-		const room = await this.chatRoomRepo.save(this.chatRoomRepo.create({
-			OwnerID:"", Name:"", HasPassword: false, RoomType: +ChatRoomType.Private,
-			MemberIDs:[userID, memberID], AdminIDs:[],
-			BanIDs:[], MuteIDs:[], MuteDates:[],
-			MessageGroupDepth: 0, MessageCount: 0, Direct: true
-		}))
-		
-		user.DirectChatsIn.push(room.ID)
-		user.FriedsWithDirect.push(memberID)
-		await Promise.all([
-			this.chatUserRepo.save(user),
-			this._modifyUser(memberID, async user => {
-				user.DirectChatsIn.push(room.ID)
-				user.FriedsWithDirect.push(userID)
-				return true
-			}),
-		])
-		this.Notify(`user-${memberID}`, "room")
-		return room.ID
-	}
-	//#endregion
-	
-	//#region Outside Room Commands
-	Join = (roomID: string, selfID: string, password: string)
-		: Promise<string> => this._addMemberToRoom(roomID, selfID, password)	
-	
-	async GetOrAddUser(userID: string): Promise<ChatUser> {
-		var user = await this.chatUserRepo.findOneBy({ ID: userID })
-		if (!!user)
-			return user
-		return await this.chatUserRepo.save(this.chatUserRepo.create({
-			ID: userID, ChatRoomsIn:[], DirectChatsIn:[], FriedsWithDirect:[], BlockedUserIDs:[]
-		}))
-	}
-	
 	async NewRoom(roomDTO: ChatRoomDTO, userID: string): Promise<string> {
 		
 		const { OwnerID, Name, Password, RoomType } =  roomDTO
@@ -462,6 +481,61 @@ export class ChatService {
 		])
 		
 		return room.ID
+	}
+	
+	async NewDirect(userID: string, memberID: string): Promise<string>{
+		var user = await this.GetOrAddUser(userID)
+		
+		const existingRoomID = user.FriedsWithDirect.indexOf(memberID)
+		if (existingRoomID !== -1)
+			return user.DirectChatsIn[existingRoomID]
+		
+		if (user.BlockedUserIDs.includes(memberID))
+			throw new HttpException("You have blocked this user.", HttpStatus.BAD_REQUEST)
+		
+		var member = await this.GetOrAddUser(memberID)
+		if (member.BlockedUserIDs.includes(userID))
+			throw new HttpException("This user has blocked you.", HttpStatus.UNAUTHORIZED)
+		
+		const index = member.FriedsWithDirect.indexOf(userID)
+		if (index != -1) {
+			user.DirectChatsIn.push(member.DirectChatsIn[index])
+			user.FriedsWithDirect.push(memberID)
+			await this.chatUserRepo.save(user)
+			return
+		}
+		
+		const room = await this.chatRoomRepo.save(this.chatRoomRepo.create({
+			OwnerID:"", Name:"", HasPassword: false, RoomType: +ChatRoomType.Private,
+			MemberIDs:[userID, memberID], AdminIDs:[],
+			BanIDs:[], MuteIDs:[], MuteDates:[],
+			MessageGroupDepth: 0, MessageCount: 0, Direct: true
+		}))
+		
+		user.DirectChatsIn.push(room.ID)
+		user.FriedsWithDirect.push(memberID)
+		await this.chatUserRepo.save(user)
+		
+		member.DirectChatsIn.push(room.ID)
+		member.FriedsWithDirect.push(userID)
+		await this.chatUserRepo.save(member)
+		
+		this.Notify(`user-${memberID}`, "room")
+		return room.ID
+	}
+	//#endregion
+	
+	//#region Outside Room Commands
+	Join = (roomID: string, selfID: string, password: string)
+		: Promise<string> => this._addMemberToRoom(roomID, selfID, password)	
+	
+	async GetOrAddUser(userID: string): Promise<ChatUser> {
+		var user = await this.chatUserRepo.findOneBy({ ID: userID })
+		if (!!user)
+			return user
+		return await this.chatUserRepo.save(this.chatUserRepo.create({
+			ID: userID, ChatRoomsIn:[], DirectChatsIn:[], FriedsWithDirect:[], BlockedUserIDs:[]
+		}))
 	}
 	
 	async GetPublicRooms(): Promise<ChatRoomPreview[]> {

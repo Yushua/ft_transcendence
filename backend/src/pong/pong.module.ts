@@ -1,16 +1,15 @@
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { UserProfileGameStats } from 'src/user-profile/entity.user_stats_relation'
 import { UserProfile } from 'src/user-profile/user.entity'
-import { PongController } from './pong.controller'
-import { GameStats } from './pong.entity.gamestats'
 import { PongService } from './pong.service'
+import { PongStats } from 'src/game-stats/pong-stats.entity'
+import { UserProfileService } from 'src/user-profile/user-profile.service'
+import { UserProfileModule } from 'src/user-profile/user-profile.module'
 
 @Module({
 	imports: [
-		TypeOrmModule.forFeature([UserProfile, GameStats, UserProfileGameStats]),
+		TypeOrmModule.forFeature([UserProfile, PongStats]),
 	],
-	controllers: [PongController],
 	providers: [PongService],
 })
 export class PongModule {}

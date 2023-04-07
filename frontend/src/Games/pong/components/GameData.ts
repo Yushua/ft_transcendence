@@ -2,6 +2,8 @@ export class GameData {
 	gameState: string
 	p1_score: number
 	p2_score: number
+	p1_name:string
+	p2_name:string
 	p1: Paddle
 	p2: Paddle
 	ball: Ball

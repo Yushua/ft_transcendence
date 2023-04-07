@@ -1,4 +1,4 @@
-import { OnModuleInit } from "@nestjs/common";
+import { OnModuleInit, HttpException, HttpStatus } from "@nestjs/common";
 import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Server, Socket } from 'socket.io'
 import { GameData } from '../components/GameData'
@@ -17,10 +17,9 @@ export const IDs = {
 	p2_socket_id: 2,
 	p2_userID: 3
 }
-
-
 //todo: if both players leave, also stop the game and highest score wins/tie = nobody wins
-
+//check if sessions update properly
+//re-tabbing into pong doesnt change window if in custom game, why ?
 let player2:Socket = undefined
 let n_games:number = 0
 let game_name:string = 'Classic: 0'
@@ -47,6 +46,8 @@ export class MyGateway implements OnModuleInit {
 	onModuleInit() {
 		this.server.on('connection', async (socket) => {
 			const user = await this._guard.GetUser(socket.handshake.headers["authorization"])
+			if (!user)
+				throw new HttpException("", HttpStatus.UNAUTHORIZED)
 			OurSession.SocketConnecting(user, socket.id)
 		})
 	}
@@ -55,6 +56,16 @@ export class MyGateway implements OnModuleInit {
 	handleLFG(
 		@MessageBody() playerInfo: {controls: string, userID:string, userName:string},
 		@ConnectedSocket() player: Socket) {
+			//check if player has a game created - if so delete this, one can only play one at the time
+			for (var game of customGames) {
+				if (game[1][1][IDs.p1_userID] === playerInfo.userID)
+				{
+					customGames.delete(game[0])
+					const serializedMap = [...customGames.entries()]
+					this.server.emit('custom_gamelist', serializedMap)		
+					break
+				}
+			}
 			if (player2 === undefined || player === player2)
 			{
 				player2 = player
@@ -65,6 +76,7 @@ export class MyGateway implements OnModuleInit {
 			}
 			else
 			{
+				console.log('p2:', player2.id)
 				game_name = game_name.replace(n_games.toString(), (n_games+1).toString())
 				n_games++
 				gameConfig.gameName = game_name
@@ -82,19 +94,12 @@ export class MyGateway implements OnModuleInit {
 				//add this game with the client IDs to a gamelist and insert <client, [data, IDs]> in a map which
 				//can be used to access the right gamedata for movement events by clients, and based on ID order
 				//update the correct Paddle (first ID = p1 = left paddle, second ID = p2 = right paddle, extra IDs are spectators)
-				let gameIDs:string[] = new Array<string>()
-				let dataIdTuple: [GameData, string[]]	
-				
-				gameIDs.push(player.id)
-				gameIDs.push(gameConfig.p1_userID)
-				gameIDs.push(player2.id)
-				gameIDs.push(gameConfig.p2_userID)
-				dataIdTuple = [gamedata, gameIDs]
+				let dataIdTuple: [GameData, string[]]
+				dataIdTuple = [gamedata, [player.id, gameConfig.p1_userID, player2.id, gameConfig.p2_userID]]
 				games.set(gameConfig.gameName, dataIdTuple)
 				connections.set(player.id, dataIdTuple)
 				connections.set(player2.id, dataIdTuple)
 				player2 = undefined
-				gameIDs = []
 
 				const serializedMap = [...games.entries()]
 				this.server.emit('gamelist', serializedMap)
@@ -106,7 +111,7 @@ export class MyGateway implements OnModuleInit {
 			player.emit('stop_pending')
 			player2 = undefined
 		}
-	
+
 	@SubscribeMessage('createGame')
 	handleCreateGame(
 	@MessageBody() gameInfo: {type:string, gameID:string, userID:string, userName:string, customSettings:any},
@@ -116,6 +121,16 @@ export class MyGateway implements OnModuleInit {
 			player2.emit('stop_pending')
 			player2 = undefined
 		}
+		//cant create 2 games
+		for (var game of customGames) {
+			if (game[1][1][IDs.p1_userID] === gameInfo.userID)
+			{
+				customGames.delete(game[0])
+				const serializedMap = [...customGames.entries()]
+				this.server.emit('custom_gamelist', serializedMap)		
+				break
+			}
+		}
 		/* check if game already exists with chosen name */
 		for (var game of customGames) {
 			if (game[0] === gameInfo.customSettings.gameName)
@@ -124,7 +139,6 @@ export class MyGateway implements OnModuleInit {
 				return
 			}
 		}
-
 		/* create new game with custom config, add it to customgames so others can see and join it */
 		let CustomConfig = new Config()
 		CustomConfig.p1_controls = gameInfo.customSettings.controls
@@ -147,7 +161,7 @@ export class MyGateway implements OnModuleInit {
 			gameData.gameName === undefined
 			customGames.set(gameInfo.gameID, [gameData, [player.id, gameInfo.userID]])
 		}
-		player.emit('game_created', CustomConfig.gameName, gameInfo.gameID)
+		player.emit('game_created', gameInfo.gameID)
 	}
 
 	@SubscribeMessage('joinCustomGame')
@@ -164,6 +178,9 @@ export class MyGateway implements OnModuleInit {
 		if (customGame && customGame[1][IDs.p1_socket_id] !== player2.id)
 		{
 			customGames.delete(key)
+			const serializedMap = [...customGames.entries()];
+			this.server.emit('custom_gamelist', serializedMap)
+		
 			let gameData = customGame[0]
 			gameData.p2_name = playerInfo.userName
 			let _IDs = customGame[1]
@@ -171,14 +188,14 @@ export class MyGateway implements OnModuleInit {
 			_IDs.push(player2.id)
 			_IDs.push(playerInfo.userID)
 			games.set(key, [gameData, _IDs])
+			const serializedMap2 = [...games.entries()];
+			this.server.emit('gamelist', serializedMap2)
+
 			connections.set(player2.id, [gameData, _IDs])
 			connections.set(player1_id, [gameData, _IDs])
 			player2.emit('joined', gameData.p1_controls)
 			this.server.to(player1_id).emit('joined', gameData.p2_controls)
-			const serializedMap = [...customGames.entries()];
-			this.server.emit('custom_gamelist', serializedMap)
-			const serializedMap2 = [...games.entries()];
-			this.server.emit('gamelist', serializedMap2)
+
 			OurSession.GameJoining(player1_id)
 			OurSession.GameJoining(player2.id)
 		}
@@ -194,15 +211,33 @@ export class MyGateway implements OnModuleInit {
 		{
 			for (var game of games) {
 				var _IDs = game[1][1]
-				if (user.id === _IDs[IDs.p1_userID]) {
-					_IDs[IDs.p1_socket_id] = client.id
-					connections.set(client.id, game[1])
-					client.emit('joined', game[1][0].p1_controls)
+				if (user.id === _IDs[IDs.p1_userID]) { //if user left game we dont let him re-join
+					if (_IDs[IDs.p1_socket_id] === 'left') {
+						break
+					}
+					else if (_IDs[IDs.p1_socket_id] === 'disconnected') { //if user disconnected from game he joins with new socket id
+						_IDs[IDs.p1_socket_id] = client.id
+						connections.set(client.id, game[1])
+						OurSession.GameJoining(client.id)
+						client.emit('joined', game[1][0].p1_controls)
+					}
+					else if (_IDs[IDs.p1_socket_id] === client.id) { //if user just switched tabs he just switches back to the canvas
+						client.emit('joined', game[1][0].p1_controls)
+					}
 				}
-				else if (user.id === _IDs[IDs.p2_userID]) {
-					_IDs[IDs.p2_socket_id] = client.id
-					connections.set(client.id, game[1])
-					client.emit('joined', game[1][0].p2_controls)
+				if (user.id === _IDs[IDs.p2_userID]) {
+					if (_IDs[IDs.p2_socket_id] === 'left') {
+						break
+					}
+					else if (_IDs[IDs.p2_socket_id] === 'disconnected') {
+						_IDs[IDs.p2_socket_id] = client.id
+						connections.set(client.id, game[1])
+						OurSession.GameJoining(client.id)
+						client.emit('joined', game[1][0].p2_controls)
+					}
+					else if (_IDs[IDs.p2_socket_id] === client.id) {
+						client.emit('joined', game[1][0].p2_controls)
+					}
 				}
 			}
 		}
@@ -263,6 +298,10 @@ export class MyGateway implements OnModuleInit {
 			this.server.emit('gamelist', serializedMap)
 			this.server.to(gameInfo.p1SocketID).emit('joined', 'mouse')
 			this.server.to(gameInfo.p2SocketID).emit('joined', 'mouse')
+
+			OurSession.GameJoining(gameInfo.p1SocketID)
+			OurSession.GameJoining(gameInfo.p2SocketID)
+
 		}
 
 	@SubscribeMessage('spectate')
@@ -276,29 +315,6 @@ export class MyGateway implements OnModuleInit {
 				client.emit('spectating')
 			}
 		}
-
-	//switching to pong window automatically tries to reconnect to any ongoing games
-	@SubscribeMessage('reconnect')
-	handleReconnect(
-		@ConnectedSocket() client: Socket) {
-			for (var game of games) {
-				const clients = game[1][1]
-				if (client.id === clients[IDs.p1_socket_id])
-				{
-					connections.set(client.id, game[1])
-					client.emit('joined', game[1][0].p1_controls)
-					OurSession.GameJoining(client.id)
-					break; 
-				}
-				if (client.id === clients[IDs.p2_socket_id])
-				{
-					connections.set(client.id, game[1])
-					client.emit('joined', game[1][0].p2_controls)
-					OurSession.GameJoining(client.id)
-					break;
-				}
-			}
-		}
 	
 	@SubscribeMessage('refreshGameList')
 	handleRefreshGL() {
@@ -309,21 +325,42 @@ export class MyGateway implements OnModuleInit {
 		}
 	
 	@SubscribeMessage('disconnect')
-	handleDisconnect(
+	async handleDisconnect(
 		@ConnectedSocket() client: Socket) {
 			let connection = connections.get(client.id)
 			if (connection !== undefined)
 				connections.delete(client.id)
+			const user = await this._guard.GetUser(client.handshake.headers["authorization"])
+			const state = OurSession.GetUserState(user.id)
+			if (state === 'inGame')
+				OurSession.GameLeaving(client.id)
 			OurSession.SocketDisconnecting(client.id)
+			for (var game of games) {
+				if (game[1][1].includes(client.id)) {
+					if (game[1][1][IDs.p1_socket_id] == client.id)
+						game[1][1][IDs.p1_socket_id] = 'disconnected'
+					if (game[1][1][IDs.p2_socket_id] == client.id)
+						game[1][1][IDs.p2_socket_id] = 'disconnected'
+				}
+			}
+			for (var game of customGames) {
+				if (game[1][1][IDs.p1_userID] === user.id)
+				{
+					customGames.delete(game[0])
+					const serializedMap = [...customGames.entries()]
+					this.server.emit('custom_gamelist', serializedMap)		
+					break
+				}
+			}
+
 		}
 
 	@SubscribeMessage('deleteCreatedGame')
 	handleDelete(
-		@MessageBody() gameName:string,
 		@ConnectedSocket() creator: Socket) {
 			for (const game of customGames) {
 				if (game[1][1][0] === creator.id) {
-					customGames.delete(gameName)
+					customGames.delete(game[0])
 					const serializedMap = [...customGames.entries()]
 					this.server.emit('custom_gamelist', serializedMap)
 				}
@@ -335,10 +372,20 @@ export class MyGateway implements OnModuleInit {
 	handleLeaver(
 		@ConnectedSocket() client: Socket) {
 			let connection = connections.get(client.id)
-			if (connection !== undefined)
+			if (connection !== undefined) {
 				connections.delete(client.id)
+				if (connection[1].includes(client.id))
+					OurSession.GameLeaving(client.id)
+			}
+			for (var game of games) {
+				if (game[1][1].includes(client.id)) {
+					if (game[1][1][IDs.p1_socket_id] == client.id)
+						game[1][1][IDs.p1_socket_id] = 'left'
+					if (game[1][1][IDs.p2_socket_id] == client.id)
+						game[1][1][IDs.p2_socket_id] = 'left'
+				}
+			}
 			this.server.to(client.id).emit('left')
-			OurSession.GameLeaving(client.id)
 		}
 	
 	private _startGameLoop = (deltaTime: number) => this._runGameLoop(deltaTime)
@@ -368,7 +415,7 @@ export class MyGateway implements OnModuleInit {
 			/* Handle end of game */
 			switch (gameData.gameState) {
 				case 'p1_won' || 'p2_won':
-					PongService.postGameStats(game)
+					PongService.postPongStats(game)
 					break;
 				default: continue;
 			}
@@ -392,8 +439,11 @@ export class MyGateway implements OnModuleInit {
 			)())
 			
 			/* Handle end of a game */
-			if (gameData.gameState === 'p1_won' || gameData.gameState === 'p2_won' )
+			if (gameData.gameState === 'p1_won' || gameData.gameState === 'p2_won' ) {
 				connections.delete(clientID)
+				if (connection[1][1].includes(clientID))
+					OurSession.GameLeaving(clientID)
+			}
 		}
 		
 		/* Simulate Lag */

@@ -13,11 +13,11 @@ function makeGameID() {
     	counter += 1;
     }
     return gameID;
-}
+}	
 
+export var CreatingGameData: {gameID: string | null} = {gameID:null}
 
-export const CreateGameButton = (props:any) => {
-	const [customGame, setCustomGame] = React.useState(false)
+export const CreateGameMenu = (props:any) => {
 	const [ballSpeed, setBallSpeed] = React.useState(100)
 	const [acceleration, setBallAcceleration] = React.useState(0.5	)
 	const [paddleSize, setPaddleSize] = React.useState(100)
@@ -27,10 +27,8 @@ export const CreateGameButton = (props:any) => {
 	const [gameNameTaken, setGameNameTaken] = React.useState(false)
 
 	props.socket.on('gamename taken', () => {
-		console.log('allo')
 		setGameNameTaken(true)
 	})
-
 	const handleBallChange = (event: Event, newValue: number | number[]) => {
 		if (typeof newValue === 'number') {
 			setBallSpeed(newValue);
@@ -51,18 +49,16 @@ export const CreateGameButton = (props:any) => {
 	const handleTextChange = (event:any) => {
 		setGameName(event.target.value);
 	}
-			
+
 	const createGame = (type:string, customSettings: any) => {
 		let userID = props.userID
 		let userName = props.userName
 		let gameID = undefined
 		if (type === 'private') {
 			gameID = makeGameID()
+			CreatingGameData.gameID = gameID
 		}
 		props.socket.emit('createGame', {type, gameID, userID, userName, customSettings})
-	}
-	const isCustomGame = () => {
-		setCustomGame(!customGame)
 	}
 	const setMouse = () => {
 		setIsMouse(true)
@@ -75,9 +71,27 @@ export const CreateGameButton = (props:any) => {
 
 	return (
 		<React.Fragment>
-			<Button variant="outlined" onClick={() => isCustomGame()}>Create Custom Game</Button>
-			{customGame ? 
 			<div>
+				<h4 style={{ color: "#3368FF"}}>Game Name</h4>
+				<input
+					type="text"
+					id="message"
+					name="message"
+					maxLength={12}
+					onChange={handleTextChange} />
+				<p></p>
+				{isMouse ?
+					<div>
+						<Button variant="contained" onClick={() => setMouse()}>Mouse</Button>
+						&nbsp;
+						<Button variant="outlined" onClick={() => setKeyboard()}>Keyboard</Button> 
+					</div>
+				:
+					<div>
+						<Button variant="outlined" onClick={() => setMouse()}>Mouse</Button>
+						&nbsp;
+						<Button variant="contained" onClick={() => setKeyboard()}>Keyboard</Button>
+					</div> }
 				<h4 style={{ color: "#3368FF"}}>Choose Ball Speed
 					<Box sx={{ width: 250 }}>
 						<Typography id="non-linear-slider" gutterBottom style={{ color: "#3368FF"}}>
@@ -126,35 +140,7 @@ export const CreateGameButton = (props:any) => {
 						/>
 					</Box>
 				</h4>
-					{isMouse ?
-						<div>
-							<Button variant="contained" onClick={() => setMouse()}>Mouse</Button>
-							&nbsp;
-							<Button variant="outlined" onClick={() => setKeyboard()}>Keyboard</Button> 
-						</div> :
-						<div>
-							<Button variant="outlined" onClick={() => setMouse()}>Mouse</Button>
-							&nbsp;
-							<Button variant="contained" onClick={() => setKeyboard()}>Keyboard</Button>
-						</div> }
-				<h4 style={{ color: "#3368FF"}}>Game Name</h4>
-				&nbsp;
-				<input
-					type="text"
-					id="message"
-					name="message"
-					maxLength={12}
-					onChange={handleTextChange} />
 				<p></p>
-				{gameNameTaken ?
-					<div style={{color: "#FF3333", display: 'inline-block'}}>
-						<h4>
-							&nbsp;
-							This name already exists... choose another
-						</h4>
-					</div> :
-					<></> }
-				&nbsp;
 				<Button
 					variant="contained"
 					onClick={() => createGame('public', {
@@ -178,7 +164,18 @@ export const CreateGameButton = (props:any) => {
 					})}>
 					Create Private Game
 				</Button>
-			</div> : <></> }
+				<p></p>
+				{gameNameTaken ?
+					<div style={{color: "#FF3333", display: 'inline-block'}}>
+						<h4>
+							&nbsp;
+							Game name already exists... choose another
+						</h4>
+					</div>
+				:
+					<></> }
+
+			</div>
 		</React.Fragment>
 	)
 }

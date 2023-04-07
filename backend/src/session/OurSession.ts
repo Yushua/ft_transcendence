@@ -39,8 +39,8 @@ export default class OurSession {
 	
 	static GameJoining(socketID: string, userID: string | null = null) {
 		userID ??= this._socketIDMap.get(socketID)
-		const userEnty = this._userMap.get(userID)
-		userEnty.state += 1
+		const userEntry = this._userMap.get(userID)
+		userEntry.state += 1
 		
 		console.log(`User '${userID}' joined a Game: ${socketID}`)
 	}

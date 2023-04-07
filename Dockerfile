@@ -1,14 +1,20 @@
-from debian:bullseye
+from node
 
-run apt-get update;\
-	apt-get -qq -y install npm;\
-	apt-get -qq -y install postgresql postgresql-contrib;
+run apt-get update && apt-get install -y openssl
 
-run npm install;\
-	npm install -save @nestjs/serve-static;\
-	npm install -g @nestjs/cli;
+copy . /ft_transcendence
 
-copy ./Entrypoint.sh /Entrypoint.sh
-# copy ./source_code /src
+run cd /ft_transcendence; npm install
+run cd /ft_transcendence; make react
+run cd /ft_transcendence; make setup
+run cd /ft_transcendence/frontend; npm run build
 
-entrypoint /Entrypoint.sh
+run mkdir -p /keys;\
+    cd /keys;\
+    openssl req\
+        -newkey rsa:2048 -x509 -sha256 -nodes \
+        -out "/keys/key.pem"\
+        -keyout "/keys/key.key"\
+        -subj "/C=NL/ST=Amsterdam/L=Amsterdam/O=Codam/OU=IT/CN=transcendence"
+
+entrypoint /ft_transcendence/Entrypoint.sh

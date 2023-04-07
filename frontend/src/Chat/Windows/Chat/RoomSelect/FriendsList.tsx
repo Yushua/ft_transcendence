@@ -6,6 +6,7 @@ import HTTP from "../../../../Utils/HTTP";
 import NameStorage from "../../../../Utils/Cache/NameStorage";
 import { ChatLineHeight, ChatWindowHeight, asyncChangeRoom } from "../../MainChatWindow";
 import { Button } from "@mui/material";
+import { UnblockUser } from "../Members/MemberProfile";
 
 export async function asyncUpdateFriendsList() {
 	if (!!_setFriends)
@@ -13,7 +14,10 @@ export async function asyncUpdateFriendsList() {
 }
 
 function GenerateFriedListJSX(): JSX.Element[] {
-	return User.Friends.map(friendID => <div key={friendID}>
+	return ChatUser.FriedsWithDirect
+		.filter(friendID => !User.Friends.includes(friendID))
+		.concat(User.Friends)
+		.map(friendID => <div key={friendID}>
 		<Button 
 			variant={ChatRoom.IsRoomOfFriend(friendID) ? "contained" : "text"}
 			id={friendID}
@@ -31,6 +35,15 @@ async function _changeToFriendRoom(friendID: string) {
 		HTTP.asyncPost(`chat/direct/${friendID}`, null, null, async msg => {
 			await ChatUser.asyncUpdate(ChatUser.ID)
 			asyncChangeRoom(msg.responseText)
+		}, async err => {
+			const msg = (await JSON.parse(err.responseText))?.message
+			switch (msg) {
+				case "You have blocked this user.":
+					if (window.confirm("You have blocked this user. Do you wish to unblock them?"))
+						UnblockUser(friendID)
+					break
+				default: alert(msg ?? "Error"); break
+			}
 		})
 }
 

@@ -96,9 +96,34 @@ export class ChatController {
 		: Promise<string>
 			{ return this.service.PostNewMessage(roomID, msg, req["user"].id) }
 	
+	@Post("invite/:friendID")
+	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+	async InviteFriendToGame(
+		@Request() req: Request,
+		@Param("friendID") friendID: string,
+		@Body() body: any)
+		: Promise<void>
+			{ await this.service.InviteFriendToGame(req["user"].id, friendID, body) }
+	
 	//#endregion
 	
 	//#region Patch
+	
+	@Patch("block/:memberID")
+	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+	async BlockUser(
+		@Request() req: Request,
+		@Param("memberID") memberID: string)
+		: Promise<void>
+			{ await this.service.BlockUser(req["user"].id, memberID) }
+	
+	@Patch("unblock/:memberID")
+	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+	async UnblockUser(
+		@Request() req: Request,
+		@Param("memberID") memberID: string)
+		: Promise<void>
+			{ await this.service.UnblockUser(req["user"].id, memberID) }
 	
 	@Patch("room/:roomID")
 	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)

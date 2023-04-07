@@ -1,12 +1,11 @@
 import { ConflictException, Injectable, InternalServerErrorException, NotFoundException, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { GameStats } from 'src/pong/pong.entity.gamestats';
 import OurSession from 'src/session/OurSession';
 import { Repository } from 'typeorm';
-import { AddAchievement } from './dto/addAchievement.dto';
 import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { UserProfile } from './user.entity';
 import { UserAchievement } from './userAchievement.entity';
+import { AddAchievement } from './dto/addAchievement.dto';
 
 @Injectable()
 export class UserProfileService {
@@ -15,8 +14,6 @@ export class UserProfileService {
         private readonly userEntity: Repository<UserProfile>,
         @InjectRepository(UserAchievement)
         private readonly achievEntity: Repository<UserAchievement>,
-        @InjectRepository(GameStats)
-        private readonly gameStat: Repository<GameStats>,
       ) {}
 
       async addFriendToID(userID: string, friendID: string):Promise<void>{
@@ -273,31 +270,13 @@ export class UserProfileService {
         console.log("achievment saved")
       }
 
-      async GetGameStatUser(id:string):Promise<GameStats[]> {
-        const userprofile:UserProfile = await this.userEntity.findOneBy({id});
-        return userprofile.userStats
-      }
-
       async GetAllAchievements():Promise<UserAchievement[]> {
         const achieve:UserAchievement[] = await this.achievEntity.find()
-        console.log(`all achieve {${achieve}}{${achieve[0]}}`)
         return achieve
       }
 
       async GetUserAchievment(id:string):Promise<UserAchievement[]> {
         const userprofile:UserProfile = await this.userEntity.findOneBy({id});
-        
         return userprofile.UserAchievement
-      }
-      // [["profiel picture", "name", "id"],]
-      /**
-       * returns based on [["picture", "name", "status"]]
-       */
-      async GetAchievementList(id:string) {
-        // const userprofile:UserProfile = await this.userEntity.findOneBy({id});
-        // const achievment:UserAchievement = await this.achievEntity.findOneBy({userProfile: userprofile});
-        const user = await this.userEntity.find()
-        // console.log(`!!!+========getting achievement (${user})+=========!!!!!`)
-        return (user)
       }
 }

@@ -135,7 +135,7 @@ export class UserProfileController {
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     @Post('PostAchievementList')
     async postAchievementList( @Request() req: Request,
-    @Body() AddAchievement: AddAchievement) {
+        @Body() AddAchievement: AddAchievement) {
         await this.userServices.postAchievementList(req["user"].id, AddAchievement)
     }
 

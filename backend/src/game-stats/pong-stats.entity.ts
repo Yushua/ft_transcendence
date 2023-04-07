@@ -1,28 +1,28 @@
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { UserProfile } from "../user-profile/user.entity";
+import { UserProfile } from "src/user-profile/user.entity";
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
-export class GameStats{
+export class PongStats{
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column()
+    @Column({default:""})
     player1_id:string
-    @Column()
+    @Column({default:""})
     player2_id:string
 
-    @Column()
+    @Column({default:""})
     nameGame: string
-    @Column()
+    @Column({default:""})
     winner:string
-    @Column()
+    @Column({default:""})
     loser:string
 
-    @Column()
+    @Column({default: 11})
     scoreWinner: number
-    @Column()
+    @Column({default: 0})
     scoreLoser: number
-    @Column()
+    @Column({default: 0})
     timeOfGame: number
 
     @ManyToMany(
@@ -32,5 +32,4 @@ export class GameStats{
       )
       userProfiles?: UserProfile[];
 }
-
 

@@ -7,11 +7,22 @@ import HTTP from "../../../../Utils/HTTP";
 import User from "../../../../Utils/Cache/User";
 import { Button } from "@mui/material";
 import { ChatLineHeight, ChatWindowHeight } from "../../MainChatWindow";
+import { ClearChatMessageCache, asyncUpdateChatLog } from "../ActualChat/ChatWindow";
+import { CreatingGameData } from "../../../../Games/pong/components/CreateGameMenu";
 
 export function setMemberProfileID(userID: string) {
 	_memberProfileID = userID
 }
 var _memberProfileID: string = "";
+
+export function UnblockUser(memberID: string) {
+	if (window.confirm(`Are you sure you want to unblock user ${NameStorage.User.Get(memberID)}?`)
+		&& window.confirm(`Are you REALLY sure?\nYou porbably blocked this user for a good reason.`))
+			HTTP.asyncPatch(`chat/unblock/${memberID}`, null, null, async () => {
+				await ChatUser.asyncUpdate(ChatUser.ID)
+				ClearChatMessageCache()
+			})
+}
 
 function Mute() {
 	var time: string | null = ""
@@ -57,6 +68,8 @@ function Mute() {
 
 export default function MemberProfile() {
 	
+	const isBlocked = ChatUser.BlockedUserIDs.includes(_memberProfileID)
+	
 	return (
 		<>
 			<div style={{width: "100%", display: "table", height: `${ChatWindowHeight * .04}px`}}>
@@ -86,16 +99,45 @@ export default function MemberProfile() {
 						onClick={() => {}}
 						>View Profile</Button>
 				</div>
-				<div style={{width: "100%", display: "table"}}>
-					<Button variant="contained"
-						style={{width: "100%", height: `${ChatLineHeight}px`, boxSizing: "border-box"}}
-						onClick={() => {}}
-						>Block</Button>
-				</div>
+				{ !!CreatingGameData.gameID && ChatRoom.Direct && _memberProfileID !== User.ID ?
+					<div style={{width: "100%", display: "table"}}>
+						<Button variant="contained"
+							style={{width: "100%", height: `${ChatLineHeight}px`, boxSizing: "border-box"}}
+							onClick={() => {HTTP.asyncPost(`chat/invite/${_memberProfileID}`, {id: CreatingGameData.gameID})}}
+							>Invite to Pong</Button>
+					</div> : <></>
+				}
+				{ _memberProfileID !== User.ID ?
+					(isBlocked ? 
+						<div style={{width: "100%", display: "table", marginTop: `${ChatLineHeight/2}px`}}>
+							<Button variant="contained"
+								style={{width: "100%", height: `${ChatLineHeight}px`, boxSizing: "border-box"}}
+								onClick={() => { UnblockUser(_memberProfileID) }}
+								>{"Unblock"}</Button>
+						</div>
+							:
+						<div style={{width: "100%", display: "table", marginTop: `${ChatLineHeight/2}px`}}>
+							<Button variant="contained"
+								style={{width: "100%", height: `${ChatLineHeight}px`, boxSizing: "border-box"}}
+								onClick={() => {
+									if (window.confirm(`Are you sure you want to block user ${NameStorage.User.Get(_memberProfileID)}?\nYou won't be able to see anything they write and private messages will be deleted.`)
+										&& window.confirm(`Are you REALLY sure?\nAll private messages with this user will be deleted.`))
+											HTTP.asyncPatch(`chat/block/${_memberProfileID}`, null, null, async () => {
+												await ChatUser.asyncUpdate(ChatUser.ID)
+												if (ChatRoom.Direct)
+													ChatRoom.Clear()
+												ClearChatMessageCache()
+											})
+								}}
+								>{"Block"}</Button>
+						</div>) : <></>
+				}
+				
 				
 				{/* Admin Options */}
 				{ (ChatRoom.AdminIDs.includes(User.ID) && !ChatRoom.AdminIDs.includes(_memberProfileID)) ?
 					<>
+						<br />
 						<div style={{width: "100%", display: "table"}}>
 							<div>Admin Options</div>
 						</div>
@@ -115,7 +157,8 @@ export default function MemberProfile() {
 							<Button variant="contained"
 								style={{width: "33%", height: `${ChatLineHeight}px`, boxSizing: "border-box"}}
 								onClick={() => {
-									if (window.confirm(`Ban ${NameStorage.User.Get(_memberProfileID)}?`))
+									if (window.confirm(`Do you really want to ban ${NameStorage.User.Get(_memberProfileID)}?`)
+										&& window.confirm(`Are you REALLY sure?\nThis can't be undone.`))
 										HTTP.asyncDelete(`chat/ban/${ChatRoom.ID}/${_memberProfileID}`)
 								}}
 								>Ban</Button>
@@ -124,7 +167,8 @@ export default function MemberProfile() {
 							<Button variant="contained"
 								style={{width: "100%", height: `${ChatLineHeight}px`, boxSizing: "border-box"}}
 								onClick={() => {
-									if (window.confirm(`Make ${NameStorage.User.Get(_memberProfileID)} admin?`))
+									if (window.confirm(`Make ${NameStorage.User.Get(_memberProfileID)} admin?`)
+										&& window.confirm(`Are you REALLY sure?`))
 										HTTP.asyncPatch(`chat/admin/${ChatRoom.ID}/${_memberProfileID}`)
 								}}
 								>Make Admin</Button>
@@ -139,6 +183,7 @@ export default function MemberProfile() {
 					&& User.ID !== _memberProfileID
 					&& ChatRoom.AdminIDs.includes(_memberProfileID)) ?
 					<>
+						<br />
 						<div style={{width: "100%", display: "table"}}>
 							<div>Owner Options</div>
 						</div>

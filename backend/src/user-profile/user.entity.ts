@@ -1,6 +1,6 @@
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { PongStats } from "src/game-stats/pong-stats.entity";
 import { UserAchievement } from "./userAchievement.entity";
-import { GameStats } from '../pong/pong.entity.gamestats'
 
 @Entity()
 export class UserProfile {
@@ -10,37 +10,50 @@ export class UserProfile {
     @Column({ default: ""})
     intraName: string;
 
-    @Column({ default: ""})
+    @Column({default: ""})
     username: string;
 
-    //string path towards the picture
-    @Column({ default: "default_pfp.jpg"})
+    @Column({default: "default_pfp.jpg"}) /* string path towards the picture */
     profilePicture: string
     
-    @Column({ default: "Creation"})
+    @Column({default: "Creation"})
     userStatus: string
 
-    @Column({ default: false})
+    @Column({default: false})
     TWTStatus: boolean
 
-    @Column({ default: ""})
+    @Column({default: ""})
     QRSecret: string
 
-    @Column("text", { array: true , default: "{}"})
+    @Column("text", {array: true , default: "{}"})
     friendList: string[];
 
-    @Column({ default: 0})
+    /* GAME STATS  */
+    @Column({default: 0})
+    experience: number;
+
+    @Column({default: 0})
     wins: number;
 
-    @Column({ default: 0})
+    @Column({default: 0})
     losses: number;
+
+    @Column({default: 0})
+    pong_wins: number;
+
+    @Column({default: 0})
+    pong_experience: number;
 
     @OneToMany((_type) => UserAchievement, (UserAchievement) => UserAchievement.userProfile, { eager: true, cascade:true})
     UserAchievement : UserAchievement[];
 
+    @Column({default: 0})
+    pong_losses: number;
+
+    /* RELATIONS */
     @ManyToMany(
-        () => GameStats, 
-        gameStats => gameStats.userProfiles, //optional
+        () => PongStats, 
+        pongStats => pongStats.userProfiles, //optional
         {onDelete: 'NO ACTION', onUpdate: 'NO ACTION'})
         @JoinTable({
           name: 'user_profile_game_stats',
@@ -53,6 +66,5 @@ export class UserProfile {
             referencedColumnName: 'id',
           },
         })
-        userStats?: GameStats[];
-      
+        userStats?: PongStats[];
 }
