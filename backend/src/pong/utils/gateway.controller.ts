@@ -343,6 +343,16 @@ export class MyGateway implements OnModuleInit {
 						game[1][1][IDs.p2_socket_id] = 'disconnected'
 				}
 			}
+			for (var game of customGames) {
+				if (game[1][1][IDs.p1_userID] === user.id)
+				{
+					customGames.delete(game[0])
+					const serializedMap = [...customGames.entries()]
+					this.server.emit('custom_gamelist', serializedMap)		
+					break
+				}
+			}
+
 		}
 
 	@SubscribeMessage('deleteCreatedGame')

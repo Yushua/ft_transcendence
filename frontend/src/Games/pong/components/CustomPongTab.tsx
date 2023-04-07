@@ -83,7 +83,10 @@ export const CustomPongTab = (props:any) => {
 				<div>
 					{gameID !== '' ? <>Code to join game: {gameID}</> : <></>}
 					<p></p>
-					<Button variant="contained" onClick={() => deleteGame()}>Delete Game</Button>
+					<div>
+						<>Waiting for other player...    </>
+						<Button variant="contained" onClick={() => deleteGame()}>Delete Game</Button>
+					</div>
 				</div>
 			:
 				<div>

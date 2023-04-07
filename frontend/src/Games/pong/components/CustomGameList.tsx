@@ -9,7 +9,6 @@ import TableContainer from "@mui/material/TableContainer";
 import { Socket } from "socket.io-client";
 import Paper from "@mui/material/Paper";
 
-
 function createData(id: number, gameName: string, p1: string, controls:string, BallSpeed: number, PaddleSize:number)
 {
 	return { id, gameName, p1, controls, BallSpeed, PaddleSize }
@@ -48,28 +47,28 @@ export class CustomGameList extends React.Component<any, any> {
 				&nbsp;
 				<TableContainer
         			component={Paper}
-        			style={{ border: "1px solid rgba(0,0,1,0.2)", padding: 40 }}>
+        			style={{ width:"100%", justifyContent:"center", border: "1px solid rgba(0,0,1,0.2)" }}>
 				{rows.length === 0 ? <h3 style={{color: "#3355FF"}}>No Custom Games</h3> : 
 				<div>
 					<h3 style={{color: "#3355FF"}}>Custom Games</h3>
-					<Table size="small">
+					<Table  style={{tableLayout: "fixed"}} size="small">
 						<TableHead>
-							<TableRow>
-								<TableCell style={{color: "#3368FF"}}>Game Name</TableCell>
+							<TableRow >
+								<TableCell style={{color: "#3368FF"}}>Game</TableCell>
 								<TableCell style={{color: "#3368FF"}}>Creator</TableCell>
 								<TableCell style={{color: "#3368FF"}}>Controls</TableCell>
-								<TableCell style={{width: 70, color: "#3368FF"}}>Ball Speed</TableCell>
-								<TableCell style={{width: 80, color: "#3368FF"}}>Paddle Size</TableCell>
+								<TableCell style={{color: "#3368FF"}}>Ball Speed</TableCell>
+								<TableCell style={{color: "#3368FF"}}>Paddle Size</TableCell>
 							</TableRow>
 						</TableHead>
 						<TableBody>
 						{rows.map((row) => (
 							<TableRow key={row.id}>
-								<TableCell style={{width: 120, color: "#FF3333"}}>{row.gameName}</TableCell>
-								<TableCell style={{width: 50, color: "#FF3333"}}>{row.p1}</TableCell>
-								<TableCell style={{width: 50, color: "#FF3333"}}>{row.controls}</TableCell>
-								<TableCell style={{width: 50, color: "#FF3333"}}>{row.BallSpeed}</TableCell>
-								<TableCell style={{width: 50, color: "#FF3333"}}>{row.PaddleSize}</TableCell>
+								<TableCell style={{color: "#FF3333"}}>{row.gameName}</TableCell>
+								<TableCell style={{color: "#FF3333"}}>{row.p1}</TableCell>
+								<TableCell style={{color: "#FF3333"}}>{row.controls}</TableCell>
+								<TableCell style={{color: "#FF3333"}}>{row.BallSpeed}</TableCell>
+								<TableCell style={{color: "#FF3333"}}>{row.PaddleSize}</TableCell>
 								<TableCell><Button variant="contained" onClick={() => this.join(row.gameName, this.props.userID, this.props.userName, this.props.socket)}>Join Game</Button></TableCell>
 							</TableRow>
 						))}
