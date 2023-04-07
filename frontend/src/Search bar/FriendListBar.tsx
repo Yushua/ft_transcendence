@@ -39,11 +39,6 @@ function FriendListBar(props: any) {
     alert(`I am in click {${stuff[0]}} {${stuff[1]}}`)
     // newWindow(<OtherUserProfile id={id}/>)
   };
-  const handleButtonClickRemove = (e: any) => {
-    // var stuff:any = e
-    alert(`I am in click to remove}`)
-    // newWindow(<OtherUserProfile id={id}/>)
-  };
     return (
         <div >
           {ListSearchList.map((option, index) => (
