@@ -4,9 +4,10 @@ import { UserProfile } from 'src/user-profile/user.entity'
 import { Repository } from 'typeorm'
 import { GameData } from './components/GameData'
 import { IDs } from './utils/gateway.controller'
-import { AchievementService } from '../achievements/achievements.service'
 import { PongStats } from 'src/game-stats/pong-stats.entity'
 import { GameStatsService } from 'src/game-stats/game-stats.service'
+import { UserProfileService } from 'src/user-profile/user-profile.service'
+import { AddAchievement } from 'src/user-profile/dto/addAchievement.dto'
 
 @Injectable()
 export class PongService {
@@ -14,7 +15,7 @@ export class PongService {
 		@InjectRepository(PongStats)
 		private readonly PongRepo: Repository<PongStats>,
 		@InjectRepository(UserProfile)
-		private readonly UserRepo: Repository<UserProfile>
+		private readonly UserRepo: Repository<UserProfile>,
 	) { 
 		PongService._userRepo = this.UserRepo
 		PongService._PongRepo = this.PongRepo
@@ -58,7 +59,8 @@ export class PongService {
 			user1.pong_experience += (100 - (gameData.p2_score * 2))
 			user1.experience += (100 - (gameData.p2_score * 2))
 			if (user1.wins == 1) {
-				AchievementService.giveAchievement("first_win", user1.id)
+				var AddAchievement:AddAchievement = {nameAchievement: "first_win", pictureLink: `default_pfp.jpg`, message: `you won your first game, congratz`}
+				// this.user.postAchievementList(user1.id, AddAchievement)
 			}
 			user2.losses += 1
 			user2.pong_losses += 1

@@ -1,13 +1,13 @@
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Achievement } from "src/achievements/achievements.entity";
 import { PongStats } from "src/game-stats/pong-stats.entity";
+import { UserAchievement } from "./userAchievement.entity";
+
 @Entity()
 export class UserProfile {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    /* USER INFO */
-    @Column({unique: true})
+    @Column({ default: ""})
     intraName: string;
 
     @Column({default: ""})
@@ -28,7 +28,6 @@ export class UserProfile {
     @Column("text", {array: true , default: "{}"})
     friendList: string[];
 
-
     /* GAME STATS  */
     @Column({default: 0})
     experience: number;
@@ -40,10 +39,13 @@ export class UserProfile {
     losses: number;
 
     @Column({default: 0})
-    pong_experience: number;
+    pong_wins: number;
 
     @Column({default: 0})
-    pong_wins: number;
+    pong_experience: number;
+
+    @OneToMany((_type) => UserAchievement, (UserAchievement) => UserAchievement.userProfile, { eager: true, cascade:true})
+    UserAchievement : UserAchievement[];
 
     @Column({default: 0})
     pong_losses: number;
@@ -65,23 +67,4 @@ export class UserProfile {
           },
         })
         userStats?: PongStats[];
-
-    @ManyToMany(
-      () => Achievement, 
-      userAchievements => userAchievements.userProfiles, //optional
-      {onDelete: 'NO ACTION', onUpdate: 'NO ACTION'})
-      @JoinTable({
-        name: 'user_profile_achievements',
-        joinColumn: {
-          name: 'user_profile_id',
-          referencedColumnName: 'id',
-        },
-        inverseJoinColumn: {
-          name: 'achievement_id',
-          referencedColumnName: 'id',
-        },
-      })
-      userAchievements?: Achievement[];
-  
-      
 }

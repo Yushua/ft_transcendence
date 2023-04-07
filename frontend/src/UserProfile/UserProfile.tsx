@@ -4,9 +4,11 @@ import '../App.css';
 import HTTP from '../Utils/HTTP'
 import EXPBarComponent from '../ButtonComponents/EXPBarComponent';
 import User from '../Utils/Cache/User';
-import SearchBarFriend from '../Search bar/SearchbarFriend';
-import AchievementsComponent from '../ButtonComponents/AchievementsComponent';
 import NameStorage from '../Utils/Cache/NameStorage';
+import { Width } from '../MainWindow/MainWindow';
+import AchievementBar from '../Search bar/AchievementBar';
+import GameDataBar from '../Search bar/GameDataBar';
+import FriendListBar from '../Search bar/FriendListBar';
 
 async function asyncGetName():Promise<string> {
   const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
@@ -40,23 +42,66 @@ function UserProfilePage() {
   if (nameDisplay === ""){
     asyncToggleGetName()
   }
+  //
   //in the end, Friendlist will be displayed on the side
   console.log(User.ProfilePicture)
   return (
-    <div className="UserProfile">
-      <div>
-        <img src={`${HTTP.HostRedirect()}pfp/${NameStorage.UserPFP.Get(User.ID)}`} alt="" style={{width: "2cm", height: "2cm"}}/>
-        <div> <label id="name" htmlFor="name">Welcome {nameDisplay}</label> </div>
-        <div> <label id="maxExp" htmlFor="maxExp">maxEXp - {TotalExp}</label> </div>
-        <div> <EXPBarComponent/> </div>
-      </div >
-       <div style={{width: "145px", height: "300px", border: "2px solid black", overflow: "auto"}}>
-        <div style={{display: 'flex'}}>
-          <SearchBarFriend/>
-        </div>
-          <AchievementsComponent/>
-       </div>
-    </div>
+    <center>
+      <div className={"MainWidnow"} style={{width: `${Width}px`}}>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <img src={`${HTTP.HostRedirect()}pfp/${NameStorage.UserPFP.Get(User.ID)}`} alt="" style={{width: `${0.1*Width}px`, height: `${0.1*Width}px`, alignItems: 'center', padding: `${0.01*Width}px`}}/>
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: `${0.01*Width}px`}}>
+                <h2 >{`Welcome: ${User.Name}`}</h2>
+              </div>
+            </div>
+
+            <div> <EXPBarComponent wins={User.wins}/> </div>
+            
+            {/* centter left will have two blocks. one achievement, the other, games played. the right will have the friendlist*/}
+            <div style={{ display: 'flex', alignItems: 'center', width: `${Width}px`, border: "2px solid black" }}>
+            {/*  */}
+            <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column', width: `${(Width - (0.03*Width))/2}px`, padding: `${0.01*Width}px` }}>
+                {/* width of the box == (width - (0.03*Width))/2 */}
+                {/* height of the box == (width - (0.03*Width))/2 */}
+                  <div style={{ display: 'flex', border: "2px solid black", padding: `${0.01*Width}px`  }}> Game Data </div>
+                  <div style={{width: `${(Width - (0.05*Width))/2}px`, height: `${(Width - (0.02*Width))/2}px`, border: "2px solid black", overflow: "auto", marginLeft: `${Width*0.01}px`, marginRight: `${Width*0.01}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`,}}>
+                    <div style={{display: 'flex'}}>
+                    {/* friendlist */}
+                      {/* <GameDataBar width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/> */}
+                    </div>
+                  </div>
+                 <div style={{ display: 'flex', border: "2px solid black", padding: `${0.01*Width}px`  }}> Achievemement Data </div>
+                  <div style={{width: `${(Width - (0.05*Width))/2}px`, height: `${(Width - (0.03*Width))/2}px`, border: "2px solid black", overflow: "auto", marginLeft: `${Width*0.01}px`, marginRight: `${Width*0.01}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`,}}>
+                    <div style={{display: 'flex'}}>
+                      {/* gameStat */}
+                      <AchievementBar id={User.ID} width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/>
+                    </div>
+                  </div>
+              </div>
+              {/*  */}
+              <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column', width: `${(Width - (0.03*Width))/2}px`, padding: `${0.01*Width}px` }}>
+                {/* width of the box == (width - (0.03*Width))/2 */}
+                {/* height of the box == (width - (0.03*Width))/2 */}
+                  <div style={{ display: 'flex', border: "2px solid black", padding: `${0.01*Width}px`  }}> FriendList </div>
+                  <div style={{width: `${(Width - (0.05*Width))/2}px`, height: `${(Width - (0.02*Width))/2}px`, border: "2px solid black", overflow: "auto", marginLeft: `${Width*0.01}px`, marginRight: `${Width*0.01}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`,}}>
+                    <div style={{display: 'flex'}}>
+                    {/* friendlist */}
+                      <FriendListBar id={User.ID} width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/>
+                    </div>
+                  </div>
+                 <div style={{ display: 'flex', border: "2px solid black", padding: `${0.01*Width}px`  }}> nothing </div>
+                  <div style={{width: `${(Width - (0.05*Width))/2}px`, height: `${(Width - (0.03*Width))/2}px`, border: "2px solid black", overflow: "auto", marginLeft: `${Width*0.01}px`, marginRight: `${Width*0.01}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`,}}>
+                    <div style={{display: 'flex'}}>
+                      {/* gameStat */}
+                      {/* <SearchBarFriend width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/> */}
+                    </div>
+                  </div>
+              </div>
+
+            </div>
+
+      </div>
+    </center>
     //logout when initialized
   );
 }

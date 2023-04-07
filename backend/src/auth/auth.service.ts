@@ -6,7 +6,6 @@ import { UserProfile } from 'src/user-profile/user.entity';
 import { Repository } from 'typeorm';
 import { JwtPayload } from './jwt-payload.interface';
 import { authenticator } from 'otplib';
-import { randomBytes } from 'crypto';
 
 export class AuthService {
     constructor(

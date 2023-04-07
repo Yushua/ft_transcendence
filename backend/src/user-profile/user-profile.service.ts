@@ -4,12 +4,16 @@ import OurSession from 'src/session/OurSession';
 import { Repository } from 'typeorm';
 import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { UserProfile } from './user.entity';
+import { UserAchievement } from './userAchievement.entity';
+import { AddAchievement } from './dto/addAchievement.dto';
 
 @Injectable()
 export class UserProfileService {
     constructor(
         @InjectRepository(UserProfile)
         private readonly userEntity: Repository<UserProfile>,
+        @InjectRepository(UserAchievement)
+        private readonly achievEntity: Repository<UserAchievement>,
       ) {}
 
       async addFriendToID(userID: string, friendID: string):Promise<void>{
@@ -99,9 +103,9 @@ export class UserProfileService {
       }
 
       //turn the username of the friend into an id, and then add it to the currect user
-      async addFriend(userid:string, usernameFriend: string) {
+      async addFriend(userid:string, otherId: string) {
         const found = await this.userEntity.findOneBy({id: userid});
-        const foundFriend = await this.userEntity.findOneBy({username: usernameFriend});
+        const foundFriend = await this.userEntity.findOneBy({id: otherId});
         found.friendList.push(foundFriend.id);
         await this.userEntity.save(found);
         console.log(found)
@@ -128,6 +132,15 @@ export class UserProfileService {
         return found;
       }
 
+        /**
+       * check if to follow or unfollow
+       * @returns 
+       */
+           async checkFriend(id:string, idfriend: string):Promise<Number> {
+            if (id == idfriend)
+              return 3
+            return 3
+          }
       async getAllUsersIntoList():Promise<string[]> {
         return (await this.userEntity.query("SELECT id FROM user_profile;")).map(user => user.id)
       }
@@ -224,15 +237,46 @@ export class UserProfileService {
        */
       async SearchList():Promise<string[][]>{
         const users:UserProfile[] = await this.userEntity.find()
-        return users.map(user => [user.username, user.id]);
+        return users.map(user => [user.profilePicture, user.username, OurSession.GetUserState(user.id), user.id]);
       }
 
       /**
        * returns based on [["pfp", "username", "status"], ["pfp", "username", "status"], ["pfp", "username", "status"]]
        */
       async GetFriendList(id:string):Promise<string[][]> {
-        const userprofile:UserProfile = await this.userEntity.findOneBy({id});
+        var userprofile:UserProfile = await this.userEntity.findOneBy({id});
+        if (userprofile.friendList == undefined){
+          return []
+        }
         const users: UserProfile[] = await this.userEntity.createQueryBuilder('user').where('user.id IN (:...id)', { id: userprofile.friendList }).getMany();
-        return users.map(user => [user.username, OurSession.GetUserState(user.id), user.id]);
+        var list:string[][] = users.map(user => [user.profilePicture, user.username, OurSession.GetUserState(user.id), user.id]);
+        return list
+      }
+
+      /**
+       * returns based on [["picture", "name", "status"]]
+       */
+      async postAchievementList(id:string, AddAchievement:AddAchievement) {
+        const {nameAchievement, pictureLink, message} = AddAchievement
+        console.log(`i am adding everything {${nameAchievement}}{${pictureLink}}{${message}}`)
+        var userprofile = await this.userEntity.findOneBy({id});//player1
+        const achievement = await this.achievEntity.create({
+          nameAchievement: nameAchievement,
+          pictureLink: pictureLink,
+          message: message,
+          userProfile: userprofile
+        });
+        await this.achievEntity.save(achievement);
+        console.log("achievment saved")
+      }
+
+      async GetAllAchievements():Promise<UserAchievement[]> {
+        const achieve:UserAchievement[] = await this.achievEntity.find()
+        return achieve
+      }
+
+      async GetUserAchievment(id:string):Promise<UserAchievement[]> {
+        const userprofile:UserProfile = await this.userEntity.findOneBy({id});
+        return userprofile.UserAchievement
       }
 }

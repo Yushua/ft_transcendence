@@ -22,7 +22,13 @@ async function getFriendList(){
 var _SelectedOption: string[]
 var _setShowDropdown:React.Dispatch<React.SetStateAction<boolean>>
 var _setFriendList:React.Dispatch<React.SetStateAction<string[][]>>
-function SearchBarFriend() {
+
+type Props = {
+    width:number;
+    height:number;
+  }
+
+function SearchBarFriend(props: any) {
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedOption, setSelectedOption] = useState<string[]>([]);
   const [FriendList, setFriendList] = useState<string[][]>([]);
