@@ -42,6 +42,7 @@ function UserProfilePage() {
   if (nameDisplay === ""){
     asyncToggleGetName()
   }
+  //
   //in the end, Friendlist will be displayed on the side
   console.log(User.ProfilePicture)
   return (
@@ -66,7 +67,7 @@ function UserProfilePage() {
                   <div style={{width: `${(Width - (0.05*Width))/2}px`, height: `${(Width - (0.02*Width))/2}px`, border: "2px solid black", overflow: "auto", marginLeft: `${Width*0.01}px`, marginRight: `${Width*0.01}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`,}}>
                     <div style={{display: 'flex'}}>
                     {/* friendlist */}
-                      <GameDataBar width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/>
+                      {/* <GameDataBar width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/> */}
                     </div>
                   </div>
                  <div style={{ display: 'flex', border: "2px solid black", padding: `${0.01*Width}px`  }}> Achievemement Data </div>
