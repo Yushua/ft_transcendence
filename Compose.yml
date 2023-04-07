@@ -12,17 +12,13 @@ services:
   backend:
     depends_on:
       - postgres
-    build: ft_transcendence
+    build: src
     restart: always
     ports:
       - "443:443"
 
+# 42 API and other redirects need to got to https://url:443
+
 # ENV is not implemented
 
-# import * as fs from 'fs';
-#   const app = await NestFactory.create(AppModule, {
-#     httpsOptions: {
-#       key: fs.readFileSync(`/keys/key.key`),
-#       cert: fs.readFileSync(`/keys/key.pem`),
-#     }
-#   });
+# Volumes are not implemented
