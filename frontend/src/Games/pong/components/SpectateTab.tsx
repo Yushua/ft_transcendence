@@ -44,33 +44,36 @@ export default class SpectateTab extends React.Component<any, any> {
 
 	render()
 	{
-		const rows_active = this.setRows(this.props.activeGames)
+		const rows = this.setRows(this.props.activeGames)
 		return (
 			<center>
 				&nbsp;
 				<TableContainer
         			component={Paper}
-        			style={{ width: "100%", border: "1px solid rgba(0,0,1,0.2)" }}>
-					{rows_active.length === 0 ? <h3 style={{color: "#3355FF"}}>No Active Games</h3> : 
-						<Table padding="checkbox" size="small">
-							<TableHead >
+        			style={{ width: "100%", justifyContent:"center", border: "1px solid rgba(0,0,1,0.2)" }}>
+					{rows.length === 0 ? <h3 style={{color: "#3355FF"}}>No Active Games</h3> :
+					<div>
+						<h3 style={{color: "#3355FF"}}>Active Games</h3>
+						<Table  style={{tableLayout: "fixed"}} size="small">
+							<TableHead>
 								<TableRow >
 									<TableCell style={{color: "#3368FF"}}>Game</TableCell>
-									<TableCell style={{width: 70, color: "#3368FF"}}>Player 1</TableCell>
-									<TableCell style={{width: 70, color: "#3368FF"}}>Player 2</TableCell>
+									<TableCell style={{color: "#3368FF"}}>Player 1</TableCell>
+									<TableCell style={{color: "#3368FF"}}>Player 2</TableCell>
 								</TableRow>
 							</TableHead>
-							<TableBody>
-							{rows_active.map((row) => (
-								<TableRow key={row.id}>
-									<TableCell style={{width: 85, color: "#FF3333"}}>{row.displayName}</TableCell>
-									<TableCell style={{width: 50, color: "#FF3333"}}>{row.p1}</TableCell>
-									<TableCell style={{width: 50, color: "#FF3333"}}>{row.p2}</TableCell>
-									<TableCell><Button variant="contained" onClick={() => this.spectate(row.gameName, this.props.socket)}>Spectate</Button></TableCell>
-								</TableRow>
-							))}
-							</TableBody>
-						</Table> }
+						<TableBody>
+						{rows.map((row) => (
+							<TableRow key={row.id}>
+								<TableCell style={{color: "#FF3333"}}>{row.displayName}</TableCell>
+								<TableCell style={{color: "#FF3333"}}>{row.p1}</TableCell>
+								<TableCell style={{color: "#FF3333"}}>{row.p2}</TableCell>
+								<TableCell><Button variant="contained" onClick={() => this.spectate(row.gameName, this.props.socket)}>Spectate</Button></TableCell>
+							</TableRow>
+						))}
+						</TableBody>
+					</Table>
+					</div> }
 				</TableContainer>
 			</center>
 		)

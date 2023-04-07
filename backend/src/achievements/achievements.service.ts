@@ -19,7 +19,6 @@ export class AchievementService {
       ) {
 		AchievementService._relationRepo = this.relationRepo
 		AchievementService._achievementRepo = this.achievementRepo
-
 	  }
 	
 	private static _relationRepo: Repository<UserProfileAchievements>
@@ -53,17 +52,17 @@ export class AchievementService {
 	}
 
 	async getAchievementsById(id: string): Promise<Achievement[]> {
-    	const achievements = await this.userProfileRepo.findOne({
+    	const user = await this.userProfileRepo.findOne({
         	select: ["id"],
         	relations: ["userAchievements"],
         	where: {
         		id: id
         	}
     	})
-    	if (!achievements){
+    	if (!user){
     		throw new NotFoundException(`Task with ID "${id}" not found`);
     		}
-      	return achievements.userAchievements;
+      	return user.userAchievements;
     }
 
 	async getAllAchievements(): Promise<Achievement[]> {
