@@ -1,7 +1,6 @@
 import { Body, Controller, Get, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthGuardEncryption } from 'src/auth/auth.guard';
-import { GameStats } from 'src/pong/pong.entity.gamestats';
 import { AddAchievement } from './dto/addAchievement.dto';
 import { UserProfileService } from './user-profile.service';
 import { UserProfile } from './user.entity';
@@ -153,22 +152,6 @@ export class UserProfileController {
     changeUsername(
         @Param('username') username: string, @Request() req: Request): Promise<UserProfile> {
         return this.userServices.changeUsername(username, req["user"].id);
-    }
-
-    @Get("/GameStat/:id")
-    @UseGuards(AuthGuard())
-    async ReturnStatsById(
-        @Param("id") id: string)
-    {
-        return { list: await this.userServices.GetGameStatUser(id) }
-    }
-
-    /* added to get users unauthorized can delete this later */
-    @Get("/allGameStat")
-    @UseGuards(AuthGuard())
-    async Returnallusers_unauth()
-    {
-        return { AllGameStat: await this.userServices.getAllGameStat() }
     }
 
     /*

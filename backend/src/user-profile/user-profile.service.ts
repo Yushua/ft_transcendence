@@ -300,30 +300,4 @@ export class UserProfileService {
         // console.log(`!!!+========getting achievement (${user})+=========!!!!!`)
         return (user)
       }
-
-      async getAllGameStat():Promise<GameStats[]>{
-        return await this.gameStat.find()
-      }
-      // async postGame1V1(UsergameStat:UserGameStat) {
-        
-      //   const {player1, player2, nameGame, winner, loser, scoreWinner, scoreLoser, timeOfGame} = UsergameStat
-      //   const userprofile1:UserProfile = await this.userEntity.findOneBy({id: player1});//player1
-      //   const userprofile2:UserProfile = await this.userEntity.findOneBy({id: player2});//player1
-      //   //update the winn and loss
-      //   //add exp
-      //   const stat = new UserStat
-        
-      //   stat.nameGame = nameGame
-      //   stat.winner = winner
-      //   stat.loser = loser
-      //   stat.scoreWinner = scoreWinner
-      //   stat.scoreLoser = scoreLoser
-      //   stat.timeOfGame = timeOfGame
-
-      //   userprofile1.UserStat.push(stat)
-      //   userprofile2.UserStat.push(stat)
-      //   await this.userEntity.save(userprofile1);
-      //   await this.userEntity.save(userprofile2);
-      // }
-
 }
