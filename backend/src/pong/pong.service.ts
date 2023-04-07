@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { UserProfile } from 'src/user-profile/user.entity'
 import { Repository } from 'typeorm'
@@ -12,6 +12,8 @@ import { AddAchievement } from 'src/user-profile/dto/addAchievement.dto'
 @Injectable()
 export class PongService {
 	constructor(
+		// @Injects(UserProfileService)
+  		// private readonly UserServices: UserProfileService,
 		@InjectRepository(PongStats)
 		private readonly PongRepo: Repository<PongStats>,
 		@InjectRepository(UserProfile)
@@ -59,8 +61,11 @@ export class PongService {
 			user1.pong_experience += (100 - (gameData.p2_score * 2))
 			user1.experience += (100 - (gameData.p2_score * 2))
 			if (user1.wins == 1) {
-				var AddAchievement:AddAchievement = {nameAchievement: "first_win", pictureLink: `default_pfp.jpg`, message: `you won your first game, congratz`}
-				// this.user.postAchievementList(user1.id, AddAchievement)
+				var AddAchievement:AddAchievement = {
+					nameAchievement: "first_win",
+					pictureLink: `aa.com/hoi.jpg`,
+					message: `you won your first game, congratz`}
+				// await this.UserServices.postAchievementList(user1.id, AddAchievement)
 			}
 			user2.losses += 1
 			user2.pong_losses += 1

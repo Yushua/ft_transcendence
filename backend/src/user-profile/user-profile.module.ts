@@ -15,5 +15,6 @@ import { UserAchievement } from './userAchievement.entity';
   ],
   controllers: [UserProfileController],
   providers: [UserProfileService, JwtService],
+  exports: [UserProfileService]
 })
 export class UserProfileModule {}
