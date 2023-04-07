@@ -25,7 +25,7 @@ export class GameStats{
     @Column({default: 0})
     timeOfGame: number
 
-    @ManyToOne((_type) => UserProfile, (UserProfile) => UserProfile.GameStats, {})
-    UserProfile : UserProfile[];
+    @ManyToOne((_type) => UserProfile, (userProfile) => userProfile.GameStats, {eager: false})
+    userProfile: UserProfile;
 }
 
