@@ -4,11 +4,9 @@ import { Width } from '../MainWindow/MainWindow';
 import HTTP from '../Utils/HTTP';
 
 async function asyncGetList(){
-  alert("in list")
   const response = HTTP.Get(`user-profile/PongWinsList`, null, {Accept: 'application/json'})
   var result = await JSON.parse(response)
   _setList(await result["list"])
-  console.log(`list {${result["list"]}}`)
 }
 
 async function asyncPutList(){
@@ -32,7 +30,7 @@ function PongWins(){
               //hey, f this index is 3 dividable, then go to next round
               <button
                 key={index}
-                style={{ display: "inline-block", width: `${Width*0.8}px`, height: `${Width*0.2}px`, marginLeft: `${Width*0.02}px`, marginRight: `${Width*0.02}px`, marginTop: `${Width*0.03}px`, marginBottom: `${Width*0.03}px`, border: "4px solid black" }}>
+                style={{ display: "inline-block", width: `${Width*0.8}px`, height: `${Width*0.05}px`, marginLeft: `${Width*0.02}px`, marginRight: `${Width*0.02}px`, marginTop: `${Width*0.005}px`, marginBottom: `${Width*0.005}px`, border: "4px solid black" }}>
                   <h2 >{`[${index}]: name{${option[0]}}: wins{${option[1]}} : loses{${option[2]}}`}</h2>
               </button>
             ))}

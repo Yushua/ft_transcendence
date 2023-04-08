@@ -158,20 +158,22 @@ export class UserProfileController {
     */
 
     @Get("WinList")
+    @UseGuards(AuthGuard())
     async GetWinList(
-        @Request() req: Request ){
-        return {list: await this.userServices.getWinList(req["user"].id) }
+        ){
+        return {list: await this.userServices.getWinList() }
     }
 
     @Get("ExpList")
+
     async GeExpList(
-        @Request() req: Request ){
-        return {list: await this.userServices.getExpList(req["user"].id) }
+        ){
+        return {list: await this.userServices.getExpList() }
     }  
 
     @Get("PongWinsList")
     async GetPongWinsList(
-        @Request() req: Request ){
-        return {list: await this.userServices.getPongWinsList(req["user"].id) }
+        ){
+        return {list: await this.userServices.getPongWinsList() }
     }  
 }
