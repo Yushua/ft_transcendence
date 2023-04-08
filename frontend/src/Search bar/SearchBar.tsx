@@ -54,7 +54,6 @@ function SearchBar() {
   }
   const handleButtonClick = (e: any) => {
     var id:string = e
-    alert(`I am in click ${id}`)
     newWindow(<OtherUserProfile id={id} userId={User.ID}/>)
   };
     return (

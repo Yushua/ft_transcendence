@@ -154,7 +154,24 @@ export class UserProfileController {
     }
 
     /*
-    make a leaderbaord based on X game, pong, then pong_wins
-    pong score
+        LeaderboardList
     */
+
+    @Get("WinList")
+    async GetWinList(
+        @Request() req: Request ){
+        return {list: await this.userServices.getWinList(req["user"].id) }
+    }
+
+    @Get("ExpList")
+    async GeExpList(
+        @Request() req: Request ){
+        return {list: await this.userServices.getExpList(req["user"].id) }
+    }  
+
+    @Get("PongWinsList")
+    async GetPongWinsList(
+        @Request() req: Request ){
+        return {list: await this.userServices.getPongWinsList(req["user"].id) }
+    }  
 }

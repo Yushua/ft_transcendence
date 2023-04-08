@@ -272,4 +272,22 @@ export class UserProfileService {
         const userprofile:UserProfile = await this.userEntity.findOneBy({id});
         return userprofile.UserAchievement
       }
+
+      async getWinList(id:string):Promise<string[][]>{
+        const users: UserProfile[] = await this.userEntity.createQueryBuilder('user').where('user.id IN (:...id)', { id: id }).orderBy('user.wins', 'DESC').getMany();
+        var list:string[][] = users.map(user => [user.username, user.wins.toString(), user.losses.toString()]);
+        return list
+      }
+
+      async getExpList(id:string):Promise<string[][]>{
+        const users: UserProfile[] = await this.userEntity.createQueryBuilder('user').where('user.id IN (:...id)', { id: id }).orderBy('user.experience', 'DESC').getMany();
+        var list:string[][] = users.map(user => [user.username, user.experience.toString()]);
+        return list
+      }
+
+      async getPongWinsList(id:string):Promise<string[][]>{
+        const users: UserProfile[] = await this.userEntity.createQueryBuilder('user').where('user.id IN (:...id)', { id: id }).orderBy('user.pong_wins', 'DESC').getMany();
+        var list:string[][] = users.map(user => [user.username, user.pong_wins.toString()]);
+        return list
+      }
 }
