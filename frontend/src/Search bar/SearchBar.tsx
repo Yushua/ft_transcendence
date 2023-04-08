@@ -5,52 +5,35 @@ import OtherUserProfile from '../UserProfile/ProfilePages/OtherUserProfile';
 import HTTP from '../Utils/HTTP';
 import User from '../Utils/Cache/User';
 
-var test:boolean = true
-//add the ID to the list
-async function asyncaddFriendToList(_friendUsername: string) {
-  HTTP.Patch(`user-profile/friendlist/add/${_friendUsername}`, null, {Accept: 'application/json'})
-}
-
-export async function asyncGetSearchList(){
-  const response = HTTP.Get(`user-profile/SearchList`, null, {Accept: 'application/json'})
+export async function asyncGetSearchList(SearchTerm:string){
+  const response = HTTP.Get(`user-profile/SearchList/${SearchTerm}`, null, {Accept: 'application/json'})
   var result = await JSON.parse(response)
-  _setNameDisplay(await result["searchlist"])
+  _setNameSearchList(await result["searchlist"])
 }
 
-async function getListSearchList(value:string){
-  if (value.length >= 5){
-    await asyncGetSearchList()
-    _setNameSearchList(_ListDisplay)
-    //add filter
-  }
-  else {
-    _setNameDisplay([])
-  }
+async function getListSearchList(SearchTerm:string){
+  asyncGetSearchList(SearchTerm)
 }
 
-async function addFriendFunction(friendName: string){
-  await asyncaddFriendToList(friendName)
-  //refresh the list
-  _setShowDropdown(false);
-}
-
-var _setNameDisplay:React.Dispatch<React.SetStateAction<string[][]>>
 var _setNameSearchList:React.Dispatch<React.SetStateAction<string[][]>>
-var _ListDisplay:string[][]
-var _setShowDropdown:React.Dispatch<React.SetStateAction<boolean>>
 
 function SearchBar() {
   //get into page, get the entire list online
   const [ListSearchList, setNameSearchList] = useState<string[][]>([]);
-  const [ListDisplay, setNameDisplay] = useState<string[][]>([]);
   const [SearchTerm, setSearchTerm] = useState("");
-  _setNameDisplay = setNameDisplay
+  const [Display, setDisplay] = useState<Boolean>(false);
   _setNameSearchList = setNameSearchList
-  _ListDisplay = ListDisplay
 
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
     setSearchTerm(event.target.value)
-    getListSearchList(event.target.value)
+    if (Display == true && event.target.value.length < 5){
+      _setNameSearchList([])
+      setDisplay(false);
+    }
+    else if (event.target.value.length >= 5){
+      getListSearchList(event.target.value)
+      setDisplay(true);
+    }
   }
   const handleButtonClick = (e: any) => {
     var id:string = e

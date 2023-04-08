@@ -67,9 +67,9 @@ export class UserProfileController {
      * @returns returns all the users [["pfp", "username"]]
      */
     @UseGuards(AuthGuard('jwt'))
-    @Get('SearchList')
-    async getSearchList() {
-        var searchlist:string[][] = await this.userServices.SearchList()
+    @Get('SearchList/:friendName')
+    async getSearchList(@Param('friendName') friendName:string) {
+        var searchlist:string[][] = await this.userServices.SearchList(friendName)
         return { searchlist: searchlist }
     }
 

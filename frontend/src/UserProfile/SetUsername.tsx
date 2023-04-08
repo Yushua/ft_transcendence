@@ -6,6 +6,8 @@ import HTTP from '../Utils/HTTP';
 import { newWindow } from '../App';
 import LoginPage from '../Login/LoginPage';
 import { useState } from 'react';
+import { Box } from '@mui/material';
+import { Width } from '../MainWindow/MainWindow';
 
 async function GetAchievement(name: string, message:string, picture:string){
   HTTP.Post(`user-profile/PostAchievementList`, {nameAchievement: name, message:message, pictureLink:picture}, {Accept: 'application/json'})
@@ -46,8 +48,14 @@ function SetUsername(){
 
   return (
     <form onSubmit={handleSubmit}>
-      <input type="text" value={value} onChange={handleChange} />
-      <button type="submit">Submit</button>
+      <Box
+          fontFamily={"'Courier New', monospace"}
+          fontSize={"200%"}
+          marginTop={`${Width*0.3}px`}>
+          Input Username
+        <input type="text" value={value} onChange={handleChange} />
+        <button type="submit">Submit</button>
+			</Box>
     </form>
   );
 }

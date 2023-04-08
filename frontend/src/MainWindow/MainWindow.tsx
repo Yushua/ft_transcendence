@@ -28,8 +28,6 @@ export function GetCurrentWindow() {
 }
 var _currentWindow: string
 
-
-
 export function SetMainWindow(window: string, new_window = true) {
 	_currentWindow = window
 	if (!!_setWindow)

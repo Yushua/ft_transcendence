@@ -230,9 +230,10 @@ export class UserProfileService {
       /**
        * returns based on [["pfp", "username"]]
        */
-      async SearchList():Promise<string[][]>{
-        const users:UserProfile[] = await this.userEntity.find()
-        return users.map(user => [user.profilePicture, user.username, OurSession.GetUserState(user.id), user.id]);
+      async SearchList(friendName:string):Promise<string[][]>{
+        const users = await this.userEntity.find();
+        const filteredUsers = users.filter(user => user.username.includes(friendName));
+        return filteredUsers.map(user => [user.profilePicture, user.username, OurSession.GetUserState(user.id), user.id]);
       }
 
       /**
