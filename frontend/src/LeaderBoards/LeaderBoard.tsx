@@ -10,6 +10,8 @@ import { WebsocketContext } from "../Games/contexts/WebsocketContext";
 import LogoutButtonComponent from "../ButtonComponents/LogoutButton";
 import MainWindow, { Width } from "../MainWindow/MainWindow";
 import TotalWins from "./TotalWins";
+import PongWins from "./PongWins";
+import TotalExpWins from "./TotalExpWins";
 
 export async function asyncGetNameExport():Promise<string> {
 	const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
@@ -66,6 +68,8 @@ function LeaderBoard() {
 	var display = <></>
 	switch (currentWindow) {
 		case "totalWins": display = <TotalWins/>; break
+		case "PongWins": display = <PongWins/>; break
+		case "TotalExpWins": display = <TotalExpWins/>; break
 		default: break
 	}
 
@@ -85,6 +89,8 @@ function LeaderBoard() {
 							</Box>
 							
 							{[	["totalWins", "TotalWins"],
+							["PongWins", "PongWins"],
+							["TotalExpWins", "TotalExpWins"],
 								].map(pair =>
 							<Box key={pair[0]} sx={{ pl:_buttonDistance }}>
 								<Button
