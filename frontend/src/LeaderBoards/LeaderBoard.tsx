@@ -9,6 +9,7 @@ import NameStorage from "../Utils/Cache/NameStorage";
 import { WebsocketContext } from "../Games/contexts/WebsocketContext";
 import LogoutButtonComponent from "../ButtonComponents/LogoutButton";
 import MainWindow, { Width } from "../MainWindow/MainWindow";
+import TotalWins from "./TotalWins";
 
 export async function asyncGetNameExport():Promise<string> {
 	const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
@@ -64,7 +65,7 @@ function LeaderBoard() {
 	
 	var display = <></>
 	switch (currentWindow) {
-		case "mainWindow": display = <MainWindow/>; break
+		case "totalWins": display = <TotalWins/>; break
 		default: break
 	}
 
@@ -83,8 +84,7 @@ function LeaderBoard() {
 								LeaderBoard
 							</Box>
 							
-							{/* Change Window Buttons
-							{[	["mainWindow", "MainWindow"],
+							{[	["totalWins", "TotalWins"],
 								].map(pair =>
 							<Box key={pair[0]} sx={{ pl:_buttonDistance }}>
 								<Button
@@ -92,7 +92,7 @@ function LeaderBoard() {
 									onClick={() => SetMainWindow(pair[0])}>
 										{pair[1]}
 								</Button>
-							</Box>)} */}
+							</Box>)}
 							{/* Logout Button */}
 							<Box sx={{ pl:_buttonDistance }}>
 								<Button sx={{ color: 'white', display: 'block' }}
