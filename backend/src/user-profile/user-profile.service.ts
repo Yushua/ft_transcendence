@@ -58,7 +58,7 @@ export class UserProfileService {
       } 
 
       async findUserBy(id: string): Promise<UserProfile> {
-        const found = await this.userEntity.findOneBy({id});
+        const found:UserProfile = await this.userEntity.findOneBy({id});
         if (!found){
           throw new NotFoundException(`Task with ID "${id}" not found`);
         }
