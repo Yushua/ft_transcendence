@@ -84,18 +84,14 @@ export class UserProfileService {
       async changeUsername(username: string, id: string): Promise<UserProfile> {
         const found = await this.findUserBy(id);
         found.username = username;
-        console.log("hello")
         try {
-          console.log("succesful")
           await this.userEntity.save(found);
         }
         catch (error) {
             if (error.code === '23505'){
-              console.log("already in use")
                 throw new ConflictException(`account name "${username} was already in use`);
             }
             else {
-              console.log("already in use but different")
                 throw new InternalServerErrorException(`account name "${error.code} was already in use, but the error is different`);
             }
         }
@@ -108,7 +104,6 @@ export class UserProfileService {
         const foundFriend = await this.userEntity.findOneBy({id: otherId});
         found.friendList.push(foundFriend.id);
         await this.userEntity.save(found);
-        console.log(found)
       }
 
         /** */
@@ -258,7 +253,6 @@ export class UserProfileService {
        */
       async postAchievementList(id:string, AddAchievement:AddAchievement) {
         const {nameAchievement, pictureLink, message} = AddAchievement
-        console.log(`i am adding everything {${nameAchievement}}{${pictureLink}}{${message}}`)
         var userprofile = await this.userEntity.findOneBy({id});//player1
         const achievement = await this.achievEntity.create({
           nameAchievement: nameAchievement,
@@ -267,7 +261,6 @@ export class UserProfileService {
           userProfile: userprofile
         });
         await this.achievEntity.save(achievement);
-        console.log("achievment saved")
       }
 
       async GetAllAchievements():Promise<UserAchievement[]> {

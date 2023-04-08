@@ -70,7 +70,6 @@ export class UserProfileController {
     @Get('SearchList')
     async getSearchList() {
         var searchlist:string[][] = await this.userServices.SearchList()
-        console.log(`search ${searchlist[0]}`)
         return { searchlist: searchlist }
     }
 

@@ -36,7 +36,7 @@ function AchievementBar(props: any) {
 
   const handleButtonClick = (e: any) => {
     var stuff:any = e
-    alert(`I am in click {${stuff.message}} {${stuff.nameAchievement}}`)
+    // alert(`I am in click {${stuff.message}} {${stuff.nameAchievement}}`)
     // newWindow(<OtherUserProfile id={id}/>)
   };
     return (

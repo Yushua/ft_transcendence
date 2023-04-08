@@ -33,7 +33,6 @@ async function turningTWTOn(code:string){
     }
     var result = await response.json();
     if (await result["status"] === true){
-      alert("making new TWT")
       removeCookie(`TWToken${_intraName}`);
       setCookie(`TWToken${_intraName}`, await result["TWT"],{ expires: 100000 });
       return true
@@ -52,7 +51,6 @@ async function turningTWTOn(code:string){
 async function handleSubmit(event:any){
   event.preventDefault();
   var status:boolean =  await turningTWTOn(_inputValue)
-  alert(`status TWT ${await asyncGetTWTStatusTWT(getCookie(`TWToken${_intraName}`))} intraname ${_intraName}`)
   if (status == true){
     newWindow(<MainWindow/>);
   }

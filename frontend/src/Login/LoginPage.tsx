@@ -162,7 +162,6 @@ async function setupLoginPage(){
   }
   else {
     //no token
-    alert(`logging in, no token`)
     loginIntoOAuth()
   }
 }

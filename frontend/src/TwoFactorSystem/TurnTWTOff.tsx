@@ -7,7 +7,6 @@ import HTTP from '../Utils/HTTP';
 import TWTEnabled from './TWTEnabled';
 
 async function setNewTWT(){
-  alert("setoff")
   try {
     const response = await fetch(HTTP.HostRedirect() + `auth/makeNewTWT` , {
       headers: {
@@ -21,7 +20,6 @@ async function setNewTWT(){
     var result = await response.json();
     var TWToken:string = result["TWToken"]
     if (TWToken === undefined){
-      alert("remove TWT setNewTWT")
       removeCookie(`TWToken${User.intraname}`);
     }
     if (TWToken === undefined){
@@ -29,7 +27,6 @@ async function setNewTWT(){
       window.location.replace(HTTP.HostRedirect());
     }
     else {
-      alert("it is turned off")
       removeCookie(`TWToken${User.intraname}`);
       setCookie(`TWToken${User.intraname}`, TWToken,{ expires: 100000 });
     }

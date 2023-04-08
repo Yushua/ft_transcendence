@@ -11,7 +11,6 @@ async function CheckTWTSetup(code:string){
   const response = HTTP.Get(`auth/checkTWTCodeUpdate/${code}`, null, {Accept: 'application/json'})
   var result = await JSON.parse(response)
   if (await result["status"] == true){
-    alert("change cookie")
     User._ManualUpdate(result["user"])
     removeCookie(`TWToken${User.intraname}`);
     setCookie(`TWToken${User.intraname}`, await result["TWT"],{ expires: 100000 });
@@ -32,7 +31,6 @@ async function getBackendTWTSecret():Promise<string>{
 async function handleSubmit(event:any){
   event.preventDefault();
   if (_inputValue.length < 2){
-    alert("input is too small")
     _setInputValue("")
   }
   else {

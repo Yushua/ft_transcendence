@@ -8,7 +8,6 @@ import User from '../Utils/Cache/User';
 import TWTEnabled from './TWTEnabled';
 
 async function setNewTWT(){
-  alert("seton")
   try {
     const response = await fetch(HTTP.HostRedirect() + `auth/makeNewTWT` , {
       headers: {

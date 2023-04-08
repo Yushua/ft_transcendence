@@ -6,14 +6,12 @@ import { GameData } from './components/GameData'
 import { IDs } from './utils/gateway.controller'
 import { PongStats } from 'src/game-stats/pong-stats.entity'
 import { GameStatsService } from 'src/game-stats/game-stats.service'
-import { UserProfileService } from 'src/user-profile/user-profile.service'
+import { UserProfileService } from '../user-profile/user-profile.service'
 import { AddAchievement } from 'src/user-profile/dto/addAchievement.dto'
 
 @Injectable()
 export class PongService {
 	constructor(
-		// @Injects(UserProfileService)
-  		// private readonly UserServices: UserProfileService,
 		@InjectRepository(PongStats)
 		private readonly PongRepo: Repository<PongStats>,
 		@InjectRepository(UserProfile)
@@ -65,6 +63,7 @@ export class PongService {
 					nameAchievement: "first_win",
 					pictureLink: `aa.com/hoi.jpg`,
 					message: `you won your first game, congratz`}
+				// UserProfileService.postAchievementList(user1.id, AddAchievement)
 				// await this.UserServices.postAchievementList(user1.id, AddAchievement)
 			}
 			user2.losses += 1

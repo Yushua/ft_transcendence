@@ -36,7 +36,7 @@ function FriendListBar(props: any) {
 
   const handleButtonClick = (e: any) => {
     var stuff:string[] = e
-    alert(`I am in click {${stuff[0]}} {${stuff[1]}}`)
+    // alert(`I am in click {${stuff[0]}} {${stuff[1]}}`)
     // newWindow(<OtherUserProfile id={id}/>)
   };
     return (

@@ -42,9 +42,6 @@ function UserProfilePage() {
   if (nameDisplay === ""){
     asyncToggleGetName()
   }
-  //
-  //in the end, Friendlist will be displayed on the side
-  console.log(User.ProfilePicture)
   return (
     <center>
       <div className={"MainWidnow"} style={{width: `${Width}px`}}>

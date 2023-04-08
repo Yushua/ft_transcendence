@@ -24,8 +24,6 @@ export default class User {
 
 	static async _ManualUpdate(user: any) {
 		if (!!user) {
-			console.log(user.id)
-			console.log(user.friendList)
 			this._user = user
 			NameStorage.User._ManualSet(user.id, user.username)
 			ConenctSocket()

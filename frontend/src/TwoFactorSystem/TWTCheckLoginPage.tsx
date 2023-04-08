@@ -21,7 +21,6 @@ async function turningTWTOn(code:string){
     var result = await response.json();
     if (await result["status"] === true){
       removeCookie(`TWToken${_intraName}`);
-      alert("setting the cookie on")
       setCookie(`TWToken${_intraName}`, await result["TWT"], { expires: 100000 });
     }
     else {
@@ -54,7 +53,6 @@ var _setIntraName: React.Dispatch<React.SetStateAction<string>>
 
 //get the username in here
 function TWTCheckLoginPage(){
-  alert("in check TWT")
   const [inputValue, setInputValue] = useState("");
   _inputValue = inputValue
   _setInputValue = setInputValue
