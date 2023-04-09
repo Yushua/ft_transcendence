@@ -47,16 +47,18 @@ function SetUsername(){
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <Box
-          fontFamily={"'Courier New', monospace"}
-          fontSize={"200%"}
-          marginTop={`${Width*0.3}px`}>
-          Input Username
-        <input type="text" value={value} onChange={handleChange} />
-        <button type="submit">Submit</button>
-			</Box>
-    </form>
+    <center>
+      <form onSubmit={handleSubmit}>
+        <Box
+            fontFamily={"'Courier New', monospace"}
+            fontSize={"200%"}
+            marginTop={`${Width*0.3}px`}>
+            Input Username
+          <input type="text" value={value} onChange={handleChange} />
+          <button type="submit">Submit</button>
+        </Box>
+      </form>
+    </center>
   );
 }
 
