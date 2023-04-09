@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import HTTP from '../Utils/HTTP';
+import OverlaySetup from '../UserProfile/OverlaySetup';
+import { newWindow } from '../App';
+import { setupOverlay } from '../UserProfile/UserProfile';
 
-export async function asyncAchievmentList(){
-  const response = HTTP.Get(`user-profile/GetAchievementList/${_id}`, null, {Accept: 'application/json'})
+export async function asyncAchievmentList(id:string){
+  const response = HTTP.Get(`user-profile/GetAchievementList/${id}`, null, {Accept: 'application/json'})
   var result = await JSON.parse(response)
   _setList(Object.values(result["list"]))
 }
 
-async function getList(){
-  await asyncAchievmentList()
+async function getList(id:string){
+  await asyncAchievmentList(id)
   // const myArr = Object.values(myObj).map(val => val * 2);
 }
 
@@ -20,24 +23,21 @@ type Props = {
   id:string
 }
 
-var _id:Number
-
 function AchievementBar(props: any) {
   //get into page, get the entire list online
   const [ListSearchList, setList] = useState<any[]>([]);
   const [width, setwidth] = useState<number>(props.width);
-  const [Id, setId] = useState<number>(props.id);
   const [widthButton, setwidthButton] = useState<number>(((width*0.9) - (width*0.9*0.03 * 3 * 2))/3);
+  const [AchieveData, setAchieveData] = useState<any>(null);
   _setList = setList
-  _id = Id
   useEffect(() => {
-		getList()
+		getList(props.id)
 	}, []); // empty dependency array means it will only run once
 
   const handleButtonClick = (e: any) => {
     var stuff:any = e
-    // alert(`I am in click {${stuff.message}} {${stuff.nameAchievement}}`)
-    // newWindow(<OtherUserProfile id={id}/>)
+    setAchieveData(stuff)
+    setupOverlay(true, <OverlaySetup  AchievementData={AchieveData} status={true} infoSend="achieve"/>)
   };
     return (
         <div >

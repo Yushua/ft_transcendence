@@ -81,7 +81,7 @@ export class UserProfileController {
      @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     @Get('GetFriendList/:id')
     async GetFriendList( @Param('id') id: string) {
-        return { friendlist: await this.userServices.GetFriendList(id) }
+        return { list: await this.userServices.GetFriendList(id) }
     }
         /**
      * 
@@ -165,15 +165,26 @@ export class UserProfileController {
     }
 
     @Get("ExpList")
-
+    @UseGuards(AuthGuard())
     async GeExpList(
         ){
         return {list: await this.userServices.getExpList() }
     }  
 
     @Get("PongWinsList")
+    @UseGuards(AuthGuard())
     async GetPongWinsList(
         ){
         return {list: await this.userServices.getPongWinsList() }
-    }  
+    }
+    
+    @Get("Experience/:id")
+    @UseGuards(AuthGuard())
+    async GetTotalExp(
+        @Param("id") id:string
+        ):Promise<number>{
+        var user = await this.userServices.findUserBy(id)
+        console.log(`experience = ${user.experience}`)
+        return user.experience
+    }
 }

@@ -29,21 +29,38 @@ export interface YourFormElement extends HTMLFormElement {
   readonly elements: FormElements
  }
 
+ 
+ async function asyncToggleGetName(){
+   _setNameDisplay(await asyncGetName())
+  };
+  
+  export function setupOverlay(status:boolean, LinkData:any){
+    _setShowOverlay(true)
+    _setLinkData(LinkData)
+  }
+  
 var _setNameDisplay: React.Dispatch<React.SetStateAction<string>>
-
-async function asyncToggleGetName(){
-  _setNameDisplay(await asyncGetName())
-};
+var _setShowOverlay:React.Dispatch<React.SetStateAction<boolean>>
+var _setLinkData:React.Dispatch<any>
 
 function UserProfilePage() {
   const [nameDisplay, setNameDisplay] = useState<string>("");
   const [TotalExp, setExp] = useState<number>((User.wins*10));
+  const [showOverlay, setShowOverlay] = useState(false);
+  const [linkData, setLinkData] = useState<any>(null);
+
   _setNameDisplay = setNameDisplay
+  _setShowOverlay = setShowOverlay
+  _setLinkData = setLinkData
   if (nameDisplay === ""){
     asyncToggleGetName()
   }
   return (
     <center>
+        {showOverlay
+          ? linkData
+          : <></>
+        }
       <div className={"MainWidnow"} style={{width: `${Width}px`}}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <img src={`${HTTP.HostRedirect()}pfp/${NameStorage.UserPFP.Get(User.ID)}`} alt="" style={{width: `${0.1*Width}px`, height: `${0.1*Width}px`, alignItems: 'center', padding: `${0.01*Width}px`}}/>
@@ -52,9 +69,9 @@ function UserProfilePage() {
               </div>
             </div>
 
-            <div> <EXPBarComponent wins={User.wins}/> </div>
+            <div> <EXPBarComponent wins={User.wins} id={User.ID}/> </div>
             
-            {/* centter left will have two blocks. one achievement, the other, games played. the right will have the friendlist*/}
+            {/* center left will have two blocks. one achievement, the other, games played. the right will have the friendlist*/}
             <div style={{ display: 'flex', alignItems: 'center', width: `${Width}px`, border: "2px solid black" }}>
             {/*  */}
             <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column', width: `${(Width - (0.03*Width))/2}px`, padding: `${0.01*Width}px` }}>
@@ -64,7 +81,7 @@ function UserProfilePage() {
                   <div style={{width: `${(Width - (0.05*Width))/2}px`, height: `${(Width - (0.02*Width))/2}px`, border: "2px solid black", overflow: "auto", marginLeft: `${Width*0.01}px`, marginRight: `${Width*0.01}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`,}}>
                     <div style={{display: 'flex'}}>
                     {/* friendlist */}
-                      {/* <GameDataBar width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/> */}
+                      <GameDataBar id={User.ID} width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/>
                     </div>
                   </div>
                  <div style={{ display: 'flex', border: "2px solid black", padding: `${0.01*Width}px`  }}> Achievemement Data </div>
