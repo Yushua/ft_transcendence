@@ -21,5 +21,4 @@ export class GameStatsController {
         const PongGames = await this.GameStatsServices.getAllPongStats();
         return PongGames;
     }
-
 }

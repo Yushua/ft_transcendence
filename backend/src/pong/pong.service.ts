@@ -26,14 +26,17 @@ export class PongService {
 	private static _PongRepo: Repository<PongStats>
 
 	/* On game end update database */
-	static async postPongStats(game:[string, [GameData, string[]]]) {
-
-		const gameData:GameData = game[1][0]
-		const gameIDs:string[] = game[1][1]
+	static async postPongStats(gameIDs:string[], gameData:GameData) {
 		
 		/* get users */ 
 		const user1:UserProfile = await this._userRepo.findOneBy({id: gameIDs[IDs.p1_userID]})
 		const user2:UserProfile = await this._userRepo.findOneBy({id: gameIDs[IDs.p2_userID]})
+
+		/* stats vs yourself don't count */
+		if (user1 === user2) {
+			//achievement?
+			return ;
+		}
 		
 		/* set game stats and update users */
 
@@ -74,16 +77,12 @@ export class PongService {
 		else {
 			stat.loser = gameData.p1_name
 			stat.winner = gameData.p2_name
-			stat.scoreLoser = gameData.p1_score	
+			stat.scoreLoser = gameData.p1_score
 			user2.pong_wins += 1
 			user2.pong_experience += (100 - (gameData.p1_score * 2))
 			user1.pong_losses += 1
 			user1.pong_experience += (gameData.p1_score * 2)
 		}
-		/*	this happened once for unknown reasons, some sync issue mayb? mayb fixed, mayb not, 
-			somehow game didnt end in time and let p2 get an extra point after game end */
-		if (stat.scoreLoser === 11)
-			stat.scoreLoser = 10
 		stat.scoreWinner = 11
 		stat.timeOfGame = Math.floor(gameData.endTime - gameData.beginTime)
 

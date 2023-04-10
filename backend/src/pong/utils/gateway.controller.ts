@@ -398,8 +398,9 @@ export class MyGateway implements OnModuleInit {
 		/* Update all Games */
 		for (var game of games) {
 			
-			const gameData: GameData = game[1][0]
-			
+			const gameData:GameData = game[1][0]
+			const gameIDs:string[] = game[1][1]
+
 			/* Make sure games don't get updated twice */
 			const gameName: string = game[0]
 			if (!updated_games[gameName]) {
@@ -413,7 +414,7 @@ export class MyGateway implements OnModuleInit {
 			/* Handle end of game */
 			switch (gameData.gameState) {
 				case 'p1_won' || 'p2_won':
-					PongService.postPongStats(game)
+					PongService.postPongStats(gameIDs, gameData)
 					break;
 				default: continue;
 			}
