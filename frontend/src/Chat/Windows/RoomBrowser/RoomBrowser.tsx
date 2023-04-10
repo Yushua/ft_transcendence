@@ -21,7 +21,10 @@ function _tryJoiningRoom(roomID: string, hasPass: boolean) {
 			await ChatUser.asyncUpdate(ChatUser.ID)
 			SetMainChatWindow("chat")
 			asyncChangeRoom(roomID)},
-		error => {alert("Failed to join room.")})
+		async error => {
+			if (error.status === 401)
+				alert((await JSON.parse(error.responseText)).message)
+		})
 }
 
 var _updating = false // No clue why it's needed, but it fixes it

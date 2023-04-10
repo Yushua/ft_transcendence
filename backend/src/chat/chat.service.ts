@@ -81,11 +81,19 @@ export class ChatService {
 	: Promise<string>
 	{
 		const [_, changed] = await this._modifyRoom(roomID, async room => {
-			if (room.HasPassword)
-				if (!room.MemberIDs.includes(memberID) && !await bcrypt.compare(password, (await this.chatRoomPassRepo.findOneBy({ID: roomID})).Password))
-					throw new HttpException("", HttpStatus.UNAUTHORIZED)
+			/* Adding friend */
+			if (room.MemberIDs.includes(memberID)) {
+				const user = await this.userProfileRepo.findOneBy({id: userID});
+				if (!user.friendList.includes(memberID))
+					throw new HttpException("You can only add people that friend you back.", HttpStatus.UNAUTHORIZED)
+			}
+			/* Joining with password */
+			else if (room.HasPassword)
+				if (!await bcrypt.compare(password, (await this.chatRoomPassRepo.findOneBy({ID: roomID})).Password))
+					throw new HttpException("Incorrect password.", HttpStatus.UNAUTHORIZED)
+			
 			if (room.BanIDs.includes(userID))
-				throw new HttpException("", HttpStatus.UNAUTHORIZED)
+				throw new HttpException("This user is banned from this room.", HttpStatus.UNAUTHORIZED)
 			if (room.MemberIDs.includes(userID))
 				false
 			

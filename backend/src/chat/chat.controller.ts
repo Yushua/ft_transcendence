@@ -158,8 +158,8 @@ export class ChatController {
 		@Request() req: Request,
 		@Param("roomID") roomID: string,
 		@Param("userID") userID: string,)
-		: Promise<void>
-			{ this.service.AddFriend(roomID, userID, req["user"].id) }
+		: Promise<string>
+			{ return this.service.AddFriend(roomID, userID, req["user"].id) }
 	
 	@Patch("unban/:roomID/:userID")
 	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
