@@ -75,7 +75,19 @@ function OtherUserProfile(props: any){
     _otherUser = otherUser
     useEffect(() => {
       if (myDisplay == false){
-        setUpUser(props.id)
+        setup()
+    }}, []);
+
+    const handleButtonUnfollowClick = (id:string) => {
+      RemoveFriend(id)
+    };
+
+    const handleButtonFollowClick = (id:string) => {
+      AddFriend(id)
+    };
+
+    async function setup(){
+      await setUpUser(props.id)
         setMyDisplay(true)
         console.log(`button {${ButtonStatus}}`)
         if (ButtonStatus == 1){
@@ -106,15 +118,6 @@ function OtherUserProfile(props: any){
           )
         }
       }
-    }, []);
-
-    const handleButtonUnfollowClick = (id:string) => {
-      RemoveFriend(id)
-    };
-
-    const handleButtonFollowClick = (id:string) => {
-      AddFriend(id)
-    };
 
     return (
       <center>
