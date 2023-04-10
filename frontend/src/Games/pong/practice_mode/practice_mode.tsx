@@ -15,6 +15,9 @@ export default class PracticeModeLoop {
 	static readonly IsRunning = () => !!this._gamaData
 	
 	static Start(gamaData: GameData, updateMethod: React.Dispatch<React.SetStateAction<GameData>>) {
+		if (this.IsRunning())
+			return
+		
 		this._renerGameData = updateMethod
 		
 		gamaData.ball.width = 20

@@ -13,14 +13,7 @@ import { CustomPongTab } from './components/CustomPongTab';
 import SpectateTab from './components/SpectateTab';
 import './Pong.css'
 
-export function SetMainGameWindow(window:string) {
-	if (!!_setMainWindow_)
-		_setMainWindow_(window)
-}
-var _setMainWindow_: React.Dispatch<React.SetStateAction<string>> | null = null
-
-//if spectating -> show player names ? 
-//endless game ?
+var _setMainPongTab: React.Dispatch<React.SetStateAction<string>> | null = null
 
 var g_controls = ''
 var iniGameData = new GameData()
@@ -57,8 +50,8 @@ export const Pong = () => {
 	const [activeGames, setActiveGames] = React.useState(iniActiveGames)
 	const [customGames, setCustomGames] = React.useState(iniCustomGames)
 
-	const [MainWindow, setMainPongTab] = React.useState<string>("classic")
-	_setMainWindow_ = setMainPongTab
+	const [MainTab, setMainPongTab] = React.useState<string>("classic")
+	_setMainPongTab = setMainPongTab
 
 	/* reset states to locally stored states if user comes back to window */
 	if (!firstCall)
@@ -175,8 +168,8 @@ export const Pong = () => {
 	}
 
 	//JSX 
-	var _window
-	switch (MainWindow) {
+	var _tab
+	switch (MainTab) {
 		default:
 			return <></>
 		case "canvas" :
@@ -186,35 +179,45 @@ export const Pong = () => {
 						<Button style={{}} variant="contained" onClick={() => leaveGame()}>
 							{spectating ? "Stop Spectating" : "Leave Game"}
 						</Button>
-						{PracticeModeLoop.IsRunning() ? <></> : <>
-							<Button variant="text" style={{float: "left"}}>
-								{gameData.p1_name}
-							</Button>
-							<Button variant="text" style={{float: "right"}}>
-								{gameData.p2_name}
+						<Button variant="text" style={{float: "left"}}>
+							{gameData.p1_name}
 						</Button>
-						</>}
+						<Button variant="text" style={{float: "right"}}>
+							{gameData.p2_name}
+						</Button>
 					</div>
 					<Canvas instance={canvas} socket={socket} gameData={gameData}/>
 				</div>
 			)
 		case "classic":
-			_window = <ClassicPongTab socket={socket} userID={userID} userName={userName}/>
+			_tab = <ClassicPongTab socket={socket} userID={userID} userName={userName}/>
 			break;
 		case "custom":
-			_window = <CustomPongTab socket={socket} userID={userID} userName={userName} customGames={customGames} />	
+			_tab = <CustomPongTab socket={socket} userID={userID} userName={userName} customGames={customGames} />	
 			break;
-		case "spectate":
-			_window = <SpectateTab socket={socket} activeGames={activeGames}/>
-			break;
+			case "spectate":
+				_tab = <SpectateTab socket={socket} activeGames={activeGames}/>
+				break;
+			case "practicemode":
+				PracticeModeLoop.Start(gameData, setGameData)
+				return(
+					<>
+						<Button style={{}} variant="contained" onClick={() => leaveGame()}>
+							Leave Game
+						</Button>
+						<Canvas instance={canvas} socket={socket} gameData={gameData}/>
+					</>
+				)
 	
 	}
+
 	return (
 		<React.Fragment>
-			<Tabs value={MainWindow} centered>
+			<Tabs value={MainTab} centered>
 				<Tab label="Classic Pong" value="classic" onClick={() => setMainPongTab("classic")}/>
 				<Tab label="Custom Pong" value="custom" onClick={() => setMainPongTab("custom")}/>
 				<Tab label="Spectate" value="spectate" onClick={() => setMainPongTab("spectate")}/>
+				<Tab style={{color: "#0000FF"}}	label="Practice Mode" value="practicemode" onClick={() => setMainPongTab("practicemode")}/>
 			</Tabs>
 
 			{/* MetaDiv */}
@@ -227,7 +230,7 @@ export const Pong = () => {
 			>
 				{/* ContentTable */}
 				<div style={{display: "table", width: "100%", height: "100%", color: "black"}}>
-					{_window}
+					{_tab}
 				</div>
 			</div>
 		</React.Fragment>
@@ -269,7 +272,7 @@ setInterval(() => {
 
 export function JoinedGame(controls:string) {
 	SetMainWindow("pong", false)
-	_setMainWindow_('canvas')
+	_setMainPongTab('canvas')
 	localStorage[Enum.window] = 'canvas'
 	g_controls = controls
 }
