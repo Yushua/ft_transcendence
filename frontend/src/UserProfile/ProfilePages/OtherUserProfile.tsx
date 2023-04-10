@@ -25,7 +25,6 @@ async function AsyncSetButtonStatus(otherId: string):Promise<any> {
  async function AsyncGeOtherUser(otherId: string):Promise<any> {
       const response = HTTP.Get(`user-profile/user/${otherId}`, null, {Accept: 'application/json'})
       var result = await JSON.parse(response)
-      _setOtherUser(result["user"])
       _setMyUsername(result["username"])
       _setMyPFP(result["profilePicture"])
     }
@@ -51,7 +50,6 @@ type Props = {
 }
 
 var _setButtonStatus:React.Dispatch<React.SetStateAction<number>>
-var _setOtherUser:React.Dispatch<React.SetStateAction<any>>
 
 var _setMyUsername:React.Dispatch<React.SetStateAction<string>>
 var _setMyPFP:React.Dispatch<React.SetStateAction<string>>
@@ -60,7 +58,6 @@ var _otherUser:any
 
 function OtherUserProfile(props: any){
 
-    const [otherUser, setOtherUser] = useState<any>(null);
     const [Button, setButton] = useState<any>(0);
     const [ButtonStatus, setButtonStatus] = useState<number>(0);
     const [myPFP, setMyPFP] = useState<string>("");
@@ -69,10 +66,8 @@ function OtherUserProfile(props: any){
 
     _setMyDisplay = setMyDisplay
     _setButtonStatus = setButtonStatus
-    _setOtherUser = setOtherUser
     _setMyUsername = setMyUsername
     _setMyPFP = setMyPFP
-    _otherUser = otherUser
     useEffect(() => {
       if (myDisplay == false){
         setup()
@@ -121,7 +116,6 @@ function OtherUserProfile(props: any){
 
     return (
       <center>
-          <div> <MainWindowButtonComponent /></div>
           <div className={"MainWidnow"} style={{width: `${Width}px`}}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   <img src={`${HTTP.HostRedirect()}pfp/${myPFP}`} alt="" style={{width: `${0.1*Width}px`, height: `${0.1*Width}px`, alignItems: 'center', padding: `${0.01*Width}px`}}/>

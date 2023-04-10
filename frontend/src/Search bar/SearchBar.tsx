@@ -4,6 +4,7 @@ import { Width } from '../MainWindow/MainWindow';
 import OtherUserProfile from '../UserProfile/ProfilePages/OtherUserProfile';
 import HTTP from '../Utils/HTTP';
 import User from '../Utils/Cache/User';
+import { SetWindowProfile } from '../UserProfile/ProfileMainWindow';
 
 export async function asyncGetSearchList(SearchTerm:string){
   const response = HTTP.Get(`user-profile/SearchList/${SearchTerm}`, null, {Accept: 'application/json'})
@@ -37,7 +38,7 @@ function SearchBar() {
   }
   const handleButtonClick = (e: any) => {
     var id:string = e
-    newWindow(<OtherUserProfile id={id} userId={User.ID}/>)
+    SetWindowProfile(<OtherUserProfile id={id} userId={User.ID}/>)
   };
     return (
         <div >

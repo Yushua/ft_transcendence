@@ -12,7 +12,7 @@ function OathLogout() {
   try {
     var oathToken:string = getCookie(`oAth${User.intraname}`)
     const response = HTTP.Get(`auth/LogoutOauth/${oathToken}`, null, {Accept: 'application/json'})
-    removeCookie(`oAth${User.intraname}`);
+    // removeCookie(`oAth${User.intraname}`);
   } catch (error) {
   }
 }
@@ -23,7 +23,7 @@ function LogoutButtonComponent() {
   User.Clear();
   ChatUser.Clear();
   ChatRoom.Clear();
-  removeCookie(`oAth${User.intraname}`);
+  // removeCookie(`oAth${User.intraname}`);
   newWindow(<LoginPage/>);
     return (
       <div>

@@ -45,7 +45,6 @@ var _setLinkData:React.Dispatch<any>
 
 function UserProfilePage() {
   const [nameDisplay, setNameDisplay] = useState<string>("");
-  const [TotalExp, setExp] = useState<number>((User.wins*10));
   const [showOverlay, setShowOverlay] = useState(false);
   const [linkData, setLinkData] = useState<any>(null);
 
@@ -57,10 +56,6 @@ function UserProfilePage() {
   }
   return (
     <center>
-        {showOverlay
-          ? linkData
-          : <></>
-        }
       <div className={"MainWidnow"} style={{width: `${Width}px`}}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <img src={`${HTTP.HostRedirect()}pfp/${NameStorage.UserPFP.Get(User.ID)}`} alt="" style={{width: `${0.1*Width}px`, height: `${0.1*Width}px`, alignItems: 'center', padding: `${0.01*Width}px`}}/>
@@ -69,7 +64,7 @@ function UserProfilePage() {
               </div>
             </div>
 
-            <div> <EXPBarComponent wins={User.wins} id={User.ID}/> </div>
+            <div> <EXPBarComponent id={User.ID}/> </div>
             
             {/* center left will have two blocks. one achievement, the other, games played. the right will have the friendlist*/}
             <div style={{ display: 'flex', alignItems: 'center', width: `${Width}px`, border: "2px solid black" }}>
