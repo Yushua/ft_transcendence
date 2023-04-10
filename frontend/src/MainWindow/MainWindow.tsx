@@ -104,12 +104,6 @@ export default function MainWindow() {
 							{/* Logout Button */}
 							<Box sx={{ pl:_buttonDistance }}>
 								<Button sx={{ color: 'white', display: 'block' }}
-									onClick={() => newWindow(<LeaderBoard/>)}>LeaderBoard
-								</Button>
-							</Box>
-							{/* Logout Button */}
-							<Box sx={{ pl:_buttonDistance }}>
-								<Button sx={{ color: 'white', display: 'block' }}
 									onClick={() => newWindow(<LogoutButtonComponent/>)}>Logout
 								</Button>
 							</Box>

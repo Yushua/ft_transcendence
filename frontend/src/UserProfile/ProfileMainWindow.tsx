@@ -7,7 +7,6 @@ import { Width } from "../MainWindow/MainWindow";
 import User from "../Utils/Cache/User";
 import TWTDisabled from "../TwoFactorSystem/TWTDisabled";
 import TWTEnabled from "../TwoFactorSystem/TWTEnabled";
-import LeaderBoard from "../LeaderBoards/LeaderBoard";
 import LeaderBoardMainPage from "./LeaderBoardMainPage";
 
 export function SetMainProfileWindow(window: string) {
@@ -68,7 +67,7 @@ function ProfileMainWindow() {
           <Tab value="profile" label="profile" onClick={() => SetMainProfileWindow("profile")}/>
           <Tab value="search" label="search user" onClick={() => SetMainProfileWindow("search")}/>
           <Tab value="tWTDisplay" label="TwoFactor" onClick={() => SetMainProfileWindow("tWTDisplay")}/>
-          <Tab value="leaderboard" label="Game LeaderBoard" onClick={() => SetMainProfileWindow("leaderboard")}/>
+          <Tab value="leaderboard" label="Game LeaderBoard" onClick={() => SetMainProfileWindow("leaderBoard")}/>
           <Tab value="settings" label="settings" onClick={() => SetMainProfileWindow("settings")}/>
         </Tabs>
       </div>
