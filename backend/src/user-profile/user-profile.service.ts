@@ -246,7 +246,6 @@ export class UserProfileService {
         var userprofile:UserProfile = await this.userEntity.findOneBy({id});
         console.log(`friendlist == {${userprofile.friendList}}`)
         if (userprofile.friendList.length === 0){
-          console.log("nothing here")
           return []
         }
         const users: UserProfile[] = await this.userEntity.createQueryBuilder('user').where('user.id IN (:...id)', { id: userprofile.friendList }).getMany();
@@ -258,6 +257,21 @@ export class UserProfileService {
        * returns based on [["picture", "name", "status"]]
        */
       async postAchievementList(id:string, AddAchievement:AddAchievement) {
+        const {nameAchievement, pictureLink, message} = AddAchievement
+        var userprofile = await this.userEntity.findOneBy({id});//player1
+        const achievement = await this.achievEntity.create({
+          nameAchievement: nameAchievement,
+          pictureLink: pictureLink,
+          message: message,
+          userProfile: userprofile
+        });
+        await this.achievEntity.save(achievement);
+      }
+
+      /**
+       * returns based on [["picture", "name", "status"]]
+       */
+      async ServiceAchievementList(id:string, AddAchievement:AddAchievement) {
         const {nameAchievement, pictureLink, message} = AddAchievement
         var userprofile = await this.userEntity.findOneBy({id});//player1
         const achievement = await this.achievEntity.create({

@@ -3,6 +3,7 @@ import HTTP from '../Utils/HTTP';
 import OverlaySetup from '../UserProfile/OverlaySetup';
 import { newWindow } from '../App';
 import { setupOverlay } from '../UserProfile/UserProfile';
+import OverlayAchievementData from '../UserProfile/OverlayAchievementData';
 
 export async function asyncAchievmentList(id:string){
   const response = HTTP.Get(`user-profile/GetAchievementList/${id}`, null, {Accept: 'application/json'})
@@ -37,7 +38,7 @@ function AchievementBar(props: any) {
   const handleButtonClick = (e: any) => {
     var stuff:any = e
     setAchieveData(stuff)
-    setupOverlay(true, <OverlaySetup  AchievementData={AchieveData} status={true} infoSend="achieve"/>)
+    setupOverlay(true, <OverlayAchievementData  AchievementData={AchieveData}/>)
   };
     return (
         <div >

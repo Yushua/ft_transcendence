@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import HTTP from '../Utils/HTTP';
-import OverlaygameInformation from '../UserProfile/OverlayGameInformation';
-import OverlayGameInformation from '../UserProfile/OverlayGameInformation';
-import { newWindow } from '../App';
-import OverlaySetup from '../UserProfile/OverlaySetup';
 import { setupOverlay } from '../UserProfile/UserProfile';
+import OverlayGameData from '../UserProfile/OverlayGameInformation';
 
 export async function asyncAchievmentList(id:string){
   const response = HTTP.Get(`gamestats/${id}`, null, {Accept: 'application/json'})
   var result = await JSON.parse(response)
-  _setList(Object.values(result["list"]))
+  _setList(Object.values(result))
 }
 
 async function getList(id:string){
@@ -41,7 +38,7 @@ function GameDataBar(props: any) {
   const handleButtonClick = (e: any) => {
     var stuff:any = e
     setGameData(stuff)
-    setupOverlay(true, <OverlaySetup  gameData={gameData} status={true} infoSend="game"/>)
+    setupOverlay(true, <OverlayGameData  gameData={gameData} />)
   };
     return (
         <div >

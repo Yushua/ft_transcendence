@@ -63,8 +63,8 @@ export class PongService {
 					nameAchievement: "first_win",
 					pictureLink: `aa.com/hoi.jpg`,
 					message: `you won your first game, congratz`}
-				// UserProfileService.postAchievementList(user1.id, AddAchievement)
-				// await this.UserServices.postAchievementList(user1.id, AddAchievement)
+
+				// UserProfileService.ServiceAchievementList(user1.id, AddAchievement)
 			}
 			user2.losses += 1
 			user2.pong_losses += 1
