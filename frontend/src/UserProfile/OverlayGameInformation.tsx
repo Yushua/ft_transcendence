@@ -1,6 +1,5 @@
-type props = {
-  gameData:any;
-}
+import React from 'react'
+
 
 const OverlayGameData = (props) => {
   {/* 

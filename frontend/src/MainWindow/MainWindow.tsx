@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { newWindow } from "../App";
 import { Pong } from "../Games/pong/Pong";
-import TWTCheckPage from "../TwoFactorSystem/TWTCheckPage";
 import SetUsername from "../UserProfile/SetUsername";
-import UserProfilePage from "../UserProfile/UserProfile";
 import User from "../Utils/Cache/User";
 import OurHistory from "../Utils/History";
 import HTTP from "../Utils/HTTP";
@@ -11,10 +9,9 @@ import { AppBar, Box, Button, Container, IconButton, Toolbar } from "@mui/materi
 import NameStorage from "../Utils/Cache/NameStorage";
 import { WebsocketContext } from "../Games/contexts/WebsocketContext";
 import MainChatWindow from "../Chat/Windows/MainChatWindow";
-import SearchBar from "../Search bar/SearchBar";
-import SettingsUser from "../UserProfile/SettingsUser";
 import LogoutButtonComponent from "../ButtonComponents/LogoutButton";
 import LeaderBoard from "../LeaderBoards/LeaderBoard";
+import ProfileMainWindow from "../UserProfile/ProfileMainWindow";
 
 export async function asyncGetNameExport():Promise<string> {
 	const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
@@ -71,12 +68,9 @@ export default function MainWindow() {
 	
 	var display = <></>
 	switch (currentWindow) {
-		case "profile": display = <UserProfilePage/>; break
+		case "profile": display = <ProfileMainWindow/>; break
 		case "chat": display = <MainChatWindow/>; break
 		case "pong": display = <Pong/>; socket.emit('refresh'); break
-		case "search": display = <SearchBar/>; break
-		case "tWTDisplay": display = <TWTCheckPage/>; break
-		case "settings": display = <SettingsUser/>; break
 		default: break
 	}
 
@@ -99,9 +93,6 @@ export default function MainWindow() {
 							{[	["profile", "Profile"],
 								["chat", "Chat"],
 								["pong", "Play Pong"],
-								["search", "Search"],
-								["tWTDisplay", "TwoFactor"],
-								["settings", "Settings"],
 								].map(pair =>
 							<Box key={pair[0]} sx={{ pl:_buttonDistance }}>
 								<Button
@@ -110,12 +101,6 @@ export default function MainWindow() {
 										{pair[1]}
 								</Button>
 							</Box>)}
-							{/* Logout Button */}
-							<Box sx={{ pl:_buttonDistance }}>
-								<Button sx={{ color: 'white', display: 'block' }}
-									onClick={() => newWindow(<LeaderBoard/>)}>LeaderBoard
-								</Button>
-							</Box>
 							{/* Logout Button */}
 							<Box sx={{ pl:_buttonDistance }}>
 								<Button sx={{ color: 'white', display: 'block' }}
