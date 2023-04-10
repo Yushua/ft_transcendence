@@ -207,37 +207,35 @@ export class MyGateway implements OnModuleInit {
 		//check if in game
 		const user = await this._guard.GetUser(client.handshake.headers["authorization"])
 		const state = OurSession.GetUserState(user.id)
-		if (state === 'inGame')
-		{
-			for (var game of games) {
-				var _IDs = game[1][1]
-				if (user.id === _IDs[IDs.p1_userID]) { //if user left game we dont let him re-join
-					if (_IDs[IDs.p1_socket_id] === 'left') {
-						break
-					}
-					else if (_IDs[IDs.p1_socket_id] === 'disconnected') { //if user disconnected from game he joins with new socket id
-						_IDs[IDs.p1_socket_id] = client.id
-						connections.set(client.id, game[1])
-						OurSession.GameJoining(client.id)
-						client.emit('joined', game[1][0].p1_controls)
-					}
-					else if (_IDs[IDs.p1_socket_id] === client.id) { //if user just switched tabs he just switches back to the canvas
-						client.emit('joined', game[1][0].p1_controls)
-					}
+		
+		for (var game of games) {
+			var _IDs = game[1][1]
+			if (user.id === _IDs[IDs.p1_userID]) { //if user left game we dont let him re-join
+				if (_IDs[IDs.p1_socket_id] === 'left') {
+					break
 				}
-				if (user.id === _IDs[IDs.p2_userID]) {
-					if (_IDs[IDs.p2_socket_id] === 'left') {
-						break
-					}
-					else if (_IDs[IDs.p2_socket_id] === 'disconnected') {
-						_IDs[IDs.p2_socket_id] = client.id
-						connections.set(client.id, game[1])
-						OurSession.GameJoining(client.id)
-						client.emit('joined', game[1][0].p2_controls)
-					}
-					else if (_IDs[IDs.p2_socket_id] === client.id) {
-						client.emit('joined', game[1][0].p2_controls)
-					}
+				else if (_IDs[IDs.p1_socket_id] === 'disconnected') { //if user disconnected from game he joins with new socket id
+					_IDs[IDs.p1_socket_id] = client.id
+					connections.set(client.id, game[1])
+					OurSession.GameJoining(client.id)
+					client.emit('joined', game[1][0].p1_controls)
+				}
+				else if (_IDs[IDs.p1_socket_id] === client.id) { //if user just switched tabs he just switches back to the canvas
+					client.emit('joined', game[1][0].p1_controls)
+				}
+			}
+			if (user.id === _IDs[IDs.p2_userID]) {
+				if (_IDs[IDs.p2_socket_id] === 'left') {
+					break
+				}
+				else if (_IDs[IDs.p2_socket_id] === 'disconnected') {
+					_IDs[IDs.p2_socket_id] = client.id
+					connections.set(client.id, game[1])
+					OurSession.GameJoining(client.id)
+					client.emit('joined', game[1][0].p2_controls)
+				}
+				else if (_IDs[IDs.p2_socket_id] === client.id) {
+					client.emit('joined', game[1][0].p2_controls)
 				}
 			}
 		}

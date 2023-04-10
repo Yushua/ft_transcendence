@@ -235,7 +235,7 @@ export class UserProfileService {
        */
       async SearchList(friendName:string):Promise<string[][]>{
         const users = await this.userEntity.find();
-        const filteredUsers = users.filter(user => user.username.includes(friendName));
+        const filteredUsers = users.filter(user => user.username.toLowerCase().includes(friendName.toLowerCase()));
         return filteredUsers.map(user => [user.profilePicture, user.username, OurSession.GetUserState(user.id), user.id]);
       }
 
