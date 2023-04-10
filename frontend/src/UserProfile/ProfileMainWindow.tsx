@@ -67,7 +67,7 @@ function ProfileMainWindow() {
           <Tab value="profile" label="profile" onClick={() => SetMainProfileWindow("profile")}/>
           <Tab value="search" label="search user" onClick={() => SetMainProfileWindow("search")}/>
           <Tab value="tWTDisplay" label="TwoFactor" onClick={() => SetMainProfileWindow("tWTDisplay")}/>
-          <Tab value="leaderboard" label="Game LeaderBoard" onClick={() => SetMainProfileWindow("leaderBoard")}/>
+          <Tab value="leaderBoard" label="Game LeaderBoard" onClick={() => SetMainProfileWindow("leaderBoard")}/>
           <Tab value="settings" label="settings" onClick={() => SetMainProfileWindow("settings")}/>
         </Tabs>
       </div>
