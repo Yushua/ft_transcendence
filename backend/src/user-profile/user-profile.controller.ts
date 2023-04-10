@@ -31,11 +31,11 @@ export class UserProfileController {
      */
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     @Get('/user/:id')
-    getUserById( 
-        @Param('id') id: string):Promise<UserProfile>{
+    async asyncgetUserById( @Param('id') id: string ){
         if (id == "undefined")
             return;
-        return this.userServices.findUserBy(id)
+        var user:UserProfile = await this.userServices.findUserBy(id)
+        return {user:user, username:user.username, profilePicture:user.profilePicture}
     }
 
     /**
@@ -105,14 +105,14 @@ export class UserProfileController {
         ) {
         this.userServices.removeFriend(id, idfriend);
     }
-    @Patch('friendlist/check/:idFriend/:id')
+    @Get('friendlist/check/:idFriend')
     @UseGuards(AuthGuard())
     checkFriend(
         @Request() req: Request,
         @Param('idFriend') idfriend: string,
-        @Param('id') id: string,
         ) {
-        this.userServices.checkFriend(id, idfriend);
+            console.log(`number {${this.userServices.checkFriend(req["user"].id, idfriend)}}`)
+            return {status: this.userServices.checkFriend(req["user"].id, idfriend)}
     }
     
     /**

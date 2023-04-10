@@ -131,11 +131,14 @@ export class UserProfileService {
        * check if to follow or unfollow
        * @returns 
        */
-           async checkFriend(id:string, idfriend: string):Promise<Number> {
-            if (id == idfriend)
-              return 3
-            return 3
-          }
+      async checkFriend(id:string, idfriend: string):Promise<Number> {
+        if (id == idfriend)
+          return 3
+        const user = await this.userEntity.findOneBy({id});
+        const hasFriend = user.friendList.some(friendlist => friendlist.includes(idfriend));
+        return hasFriend ? 1 : 2;
+      }
+  
       async getAllUsersIntoList():Promise<string[]> {
         return (await this.userEntity.query("SELECT id FROM user_profile;")).map(user => user.id)
       }
@@ -241,7 +244,9 @@ export class UserProfileService {
        */
       async GetFriendList(id:string):Promise<string[][]> {
         var userprofile:UserProfile = await this.userEntity.findOneBy({id});
-        if (userprofile.friendList == undefined){
+        console.log(`friendlist == {${userprofile.friendList}}`)
+        if (userprofile.friendList.length === 0){
+          console.log("nothing here")
           return []
         }
         const users: UserProfile[] = await this.userEntity.createQueryBuilder('user').where('user.id IN (:...id)', { id: userprofile.friendList }).getMany();

@@ -14,8 +14,6 @@ export function ButtonRefresh() {
 }
 
 type props = {
-  wins:number;
-  losses:number;
   id:string
 }
 var _setExp:React.Dispatch<React.SetStateAction<number>>

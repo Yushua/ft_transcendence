@@ -11,7 +11,6 @@ export async function asyncAchievmentList(id:string){
 
 async function getList(id:string){
   await asyncAchievmentList(id)
-  // const myArr = Object.values(myObj).map(val => val * 2);
 }
 
 var _setList:React.Dispatch<React.SetStateAction<string[][]>>
@@ -22,21 +21,20 @@ type Props = {
   id: string
 }
 
-var _id:Number
 
 function FriendListBar(props: any) {
   //get into page, get the entire list online
   const [ListSearchList, setList] = useState<string[][]>([]);
   const [width, setwidth] = useState<number>(props.width);
-  const [Id, setId] = useState<number>(props.id);
+  const [Id, setId] = useState<string>(props.id);
   const [widthButton, setwidthButton] = useState<number>(((width*0.9) - (width*0.9*0.03 * 3 * 2))/3);
   _setList = setList
   useEffect(() => {
-		getList(props.id)
+		getList(Id)
 	}, []); // empty dependency array means it will only run once
 
   const handleButtonClick = (e: any) => {
-    newWindow(<OtherUserProfile id={props.id}/>)
+    newWindow(<OtherUserProfile id={Id}/>)
   };
     return (
         <div >
@@ -46,6 +44,8 @@ function FriendListBar(props: any) {
                 style={{ display: "inline-block", width: `${widthButton}px`, height: `${widthButton}px`, marginLeft: `${width*0.02}px`, marginRight: `${width*0.02}px`, marginTop: `${width*0.02}px`, marginBottom: `${width*0.02}px`}}
                 onClick={() => handleButtonClick(option)}>
                   <img src={`${HTTP.HostRedirect()}pfp/${option[0]}`} alt="" style={{width: `${widthButton - width*0.03}px`, height: `${widthButton - width*0.03}px`, border: "4px solid black"}}/>
+                  <h2 >{`name   ${option[1]}`}</h2>
+                  <h2 >{`status ${option[2]}`}</h2>
               </button>
           ))}
         </div>
