@@ -160,7 +160,7 @@ export const Pong = () => {
 			firstCall = false
 		}
 	},[socket])
-	
+
 	/* BUTTON HANDLERS */
 	const leaveGame = () => {
 		PracticeModeLoop.Stop()
@@ -202,13 +202,15 @@ export const Pong = () => {
 				PracticeModeLoop.Start(gameData, setGameData)
 				return(
 					<>
-						<Button style={{}} variant="contained" onClick={() => leaveGame()}>
+						<Button style={{}} variant="contained" onClick={() => {
+							PracticeModeLoop.Stop()
+							setMainPongTab("classic")
+						}}>
 							Leave Game
 						</Button>
 						<Canvas instance={canvas} socket={socket} gameData={gameData}/>
 					</>
 				)
-	
 	}
 
 	return (

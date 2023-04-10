@@ -3,14 +3,14 @@ import HTTP from '../Utils/HTTP';
 import { setupOverlay } from '../UserProfile/UserProfile';
 import OverlayGameData from '../UserProfile/OverlayGameInformation';
 
-export async function asyncAchievmentList(id:string){
+export async function asyncGetGameDatabyId(id:string){
   const response = HTTP.Get(`gamestats/${id}`, null, {Accept: 'application/json'})
   var result = await JSON.parse(response)
   _setList(Object.values(result))
 }
 
-async function getList(id:string){
-  await asyncAchievmentList(id)
+async function getGameDataById(id:string){
+  await asyncGetGameDatabyId(id)
   // const myArr = Object.values(myObj).map(val => val * 2);
 }
 
@@ -32,7 +32,7 @@ function GameDataBar(props: any) {
 
   _setList = setList
   useEffect(() => {
-		getList(props.id)
+		getGameDataById(props.id)
 	}, []); // empty dependency array means it will only run once
 
   const handleButtonClick = (e: any) => {
@@ -42,6 +42,7 @@ function GameDataBar(props: any) {
   };
     return (
         <div >
+          <OverlayGameData/>
           {ListSearchList.map((option) => (
             <button
               key={option}

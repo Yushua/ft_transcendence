@@ -7,9 +7,11 @@ import HTTP from "../Utils/HTTP";
 async function AsyncGetOtherUser(otherId: string):Promise<any> {
   const response = HTTP.Get(`user-profile/user/${otherId}`, null, {Accept: 'application/json'})
   var result = await JSON.parse(response)
+  console.log(`experience {${result["experience"]}}`)
   _setExp(result["experience"])
   _setExpPercent((result["experience"] % 100))
-  _setlevel(Math.floor(result["experience"] / 10))
+  _setlevel(Math.floor(result["experience"] / 100))
+  console.log(' exp:', result)
 }
 
 async function setupExp(id:string){
@@ -25,6 +27,7 @@ var _setlevel:React.Dispatch<React.SetStateAction<number>>
 
 function EXPBarComponent(props: any) {
   const [TotalExp, setExp] = useState<number>(-1);
+  //make it a float
   const [expPercent, setExpPercent] = useState<number>(0);
   const [level, setlevel] = useState<number>(0);
   const [Window, setWindow] = useState<boolean>(false);
@@ -37,6 +40,7 @@ function EXPBarComponent(props: any) {
     if (Window === false){
       setupExp(props.id)
       setWindow(true)
+      console.log(`experience {${TotalExp}}`)
     }
 	}, []); // empty dependency array means it will only run once
     return (

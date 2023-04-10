@@ -37,6 +37,7 @@
     "react-cookie": "^4.1.1",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.43.5",
+    "react-overlays": "^5.2.1",
     "react-router-dom": "^6.9.0",
     "react-scripts": "^5.0.1",
     "simple-oauth2": "^5.0.0",
