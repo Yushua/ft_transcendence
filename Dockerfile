@@ -5,8 +5,8 @@ run apt-get update && apt-get install -y openssl
 copy . /ft_transcendence
 
 run cd /ft_transcendence; npm install
-run cd /ft_transcendence; make react
-run cd /ft_transcendence; make setup
+# run cd /ft_transcendence; make react
+# run cd /ft_transcendence; make setup
 run cd /ft_transcendence/frontend; npm run build
 
 run mkdir -p /keys;\
