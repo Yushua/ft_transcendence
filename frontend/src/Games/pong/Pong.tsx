@@ -186,12 +186,14 @@ export const Pong = () => {
 						<Button style={{}} variant="contained" onClick={() => leaveGame()}>
 							{spectating ? "Stop Spectating" : "Leave Game"}
 						</Button>
-						<Button variant="text" style={{float: "left"}}>
-							{gameData.p1_name}
+						{PracticeModeLoop.IsRunning() ? <></> : <>
+							<Button variant="text" style={{float: "left"}}>
+								{gameData.p1_name}
+							</Button>
+							<Button variant="text" style={{float: "right"}}>
+								{gameData.p2_name}
 						</Button>
-						<Button variant="text" style={{float: "right"}}>
-							{gameData.p2_name}
-						</Button>
+						</>}
 					</div>
 					<Canvas instance={canvas} socket={socket} gameData={gameData}/>
 				</div>
