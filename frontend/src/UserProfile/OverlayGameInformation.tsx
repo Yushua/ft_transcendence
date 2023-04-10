@@ -1,6 +1,5 @@
-type props = {
-  gameData:any;
-}
+
+
 
 const OverlayGameData = (props) => {
   {/* 
