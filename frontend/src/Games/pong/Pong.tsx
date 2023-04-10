@@ -182,11 +182,17 @@ export const Pong = () => {
 		case "canvas" :
 			return (
 				<div >
-					{spectating ?
-						<Button variant="contained" onClick={() => leaveGame()}>Stop Spectating</Button>
-						:
-						<Button variant="contained" onClick={() => leaveGame()}>Leave Game</Button> }
-					{/* <>{gameData.p2_name}</> */}
+					<div>
+						<Button style={{}} variant="contained" onClick={() => leaveGame()}>
+							{spectating ? "Stop Spectating" : "Leave Game"}
+						</Button>
+						<Button variant="text" style={{float: "left"}}>
+							{gameData.p1_name}
+						</Button>
+						<Button variant="text" style={{float: "right"}}>
+							{gameData.p2_name}
+						</Button>
+					</div>
 					<Canvas instance={canvas} socket={socket} gameData={gameData}/>
 				</div>
 			)

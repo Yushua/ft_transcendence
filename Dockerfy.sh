@@ -38,7 +38,7 @@ import * as fs from 'fs';\n\
 .\n\
 w\n\
 e ft_transcendence/src/backend/src/app.module.ts\n\
-19\nc\n\
+18\nc\n\
       host: 'postgres',\n\
 .\n\
 w\n" | ed
