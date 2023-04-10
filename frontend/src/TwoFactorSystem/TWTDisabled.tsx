@@ -56,7 +56,6 @@ function TWTDisabled(){
   
   return (
     <div className="TWTDisabled">
-      <MainWindowButtonComponent/>
       <div>
         <button onClick={turnTWTFalse}>Cancle Two Factor System</button>
       </div>

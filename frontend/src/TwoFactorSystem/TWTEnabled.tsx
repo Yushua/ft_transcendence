@@ -61,7 +61,6 @@ function TWTEnabled(){
 
   return (
     <div className="TWTEnabled">
-      <MainWindowButtonComponent/>
       <div>
       <img src={ otpSecret } alt="QR Code" />
         <form onSubmit={handleSubmit}>
