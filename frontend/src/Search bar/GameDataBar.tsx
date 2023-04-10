@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import HTTP from '../Utils/HTTP';
-import { newWindow } from '../App';
-import OverlaySetup from '../UserProfile/OverlaySetup';
 import { setupOverlay } from '../UserProfile/UserProfile';
 import OverlayGameData from '../UserProfile/OverlayGameInformation';
 

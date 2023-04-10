@@ -63,6 +63,7 @@ export class PongService {
 					nameAchievement: "first_win",
 					pictureLink: `aa.com/hoi.jpg`,
 					message: `you won your first game, congratz`}
+
 				// UserProfileService.ServiceAchievementList(user1.id, AddAchievement)
 			}
 			user2.losses += 1
