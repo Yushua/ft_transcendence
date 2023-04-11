@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { getCookie, removeCookie, setCookie, getCookies } from 'typescript-cookie';
 import { newWindow } from '../App';
 import '../App.css';
+import MainWindow from '../MainWindow/MainWindow';
 import TurnTWTOnLoginPage from '../TwoFactorSystem/TurnTWTOnLoginPage';
 import TWTCheckLoginPage from '../TwoFactorSystem/TWTCheckLoginPage';
 import HTTP from '../Utils/HTTP';
 import ErrorPage from './ErrorPage';
-import ProfileMainWindow from '../UserProfile/ProfileMainWindow';
 
 async function asyncGetintraName():Promise<string> {
   const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
@@ -175,14 +175,14 @@ async function setupLoginTWT(){
   }
   var status:boolean = await asyncGetUserStatus()
   if (status === false){
-    newWindow(<ProfileMainWindow/>)
+    newWindow(<MainWindow/>)
   }
   else {
     //check here sees false in the cookie. it seems something is set wrong here
     const statusTWT:boolean = await asyncGetTWTStatus(getCookie(`TWToken${_intraName}`))
     // alert (`status of TWT to know if to go to TWT ${statusTWT}${_intraName}`)
     if (statusTWT === true){
-      newWindow(<ProfileMainWindow/>)
+      newWindow(<MainWindow/>)
     }
     else {
       newWindow(<TurnTWTOnLoginPage/>)
