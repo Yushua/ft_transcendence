@@ -64,7 +64,7 @@ export class PFPController {
 		@UploadedFile(
 			new ParseFilePipe({
 				validators: [
-					new MaxFileSizeValidator({ maxSize: +process.env.MAX_PICTURE_SIZE_IN_BYTES }),
+					new MaxFileSizeValidator({ maxSize: +process.env.MAX_PROFILE_PICTURE_SIZE_IN_BYTES }),
 				],
 			}),
 		) file: Express.Multer.File

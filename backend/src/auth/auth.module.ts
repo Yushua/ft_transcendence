@@ -6,14 +6,12 @@ import { UserProfile } from 'src/user-profile/user.entity';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './JwtStrategy';
-// import { config } from 'dotenv';
-// config();
+
 @Module({
   imports: [
     PassportModule.register({ defaultStrategy: 'jwt'}),
     JwtModule.register({
-      secret: 'topSecret51',
-      // secret: process.env.JWT_SECRET,
+      secret: process.env.JWT_SECRET,
       signOptions: {
         expiresIn: '360000s',
       },
