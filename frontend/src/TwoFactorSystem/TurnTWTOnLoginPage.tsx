@@ -43,7 +43,7 @@ async function turningTWTOn(code:string){
         return false
     }
   } catch (error) {
-    alert("wrong code input, try again")
+    alert("wrong code input, error occured, try again")
     _setInputValue("")
     return false
   }
