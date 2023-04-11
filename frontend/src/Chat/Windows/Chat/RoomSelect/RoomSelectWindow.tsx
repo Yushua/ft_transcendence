@@ -34,7 +34,7 @@ export default function RoomSelectWindow() {
 					sx={{width: "50%", height:_buttonHeight, p:"0px", m:"0px"}}
 					onClick={() => setDisplay("friend")}
 					variant={display==="friend" ? "outlined" : "text"}
-					>Friends</Button>
+					>Directs</Button>
 				<Button
 					sx={{width: "50%", height:_buttonHeight, p:"0px", m:"0px"}}
 					onClick={() => setDisplay("room")}

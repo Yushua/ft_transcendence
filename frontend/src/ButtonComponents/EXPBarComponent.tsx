@@ -43,13 +43,37 @@ function EXPBarComponent(props: any) {
       console.log(`experience {${TotalExp}}`)
     }
 	}, []); // empty dependency array means it will only run once
-    return (
+  const barWidth = Width * .88
+  const barHeight = 0.034 * Width
+  const fontHeight = 0.025 * Width
+  return (
       <div>
-        <div style={{ width: `${Width}px`, height: `${0.05 * Width}px`, backgroundColor: '#333', color: 'white', textAlign: 'center', padding: `${0.01*Width}px` }}>
-          <div style={{ width: `${(expPercent) * Width}px`, height: `${0.05 * Width}px`, backgroundColor: 'green' }}>
-            <div style={{ width: `${Width}px`, height: `${0.05 * Width}px`, color: 'white', textAlign: 'center', justifyContent: 'center', fontSize: `${0.05 * Width}px` }}>level {level} - {expPercent}%</div>
+        <div style={{
+            width: `${barWidth}px`,
+            height: `${barHeight}px`,
+            boxSizing: "border-box",
+            backgroundColor: '#333',
+            textAlign: 'center',
+            border: "solid",
+            borderColor: "#3676cc",
+            borderRadius: "5px",
+            overflow: "hidden"
+          }}>
+          <div style={{
+            width: `${(30 / 100) * barWidth}px`,
+            height: `${barHeight}px`,
+            boxSizing: "border-box",
+            backgroundColor: "#3676cc",
+          }}>
+            <div style={{
+              width: `${barWidth}px`,
+              boxSizing: "border-box",
+              color: 'white',
+              fontSize: `${fontHeight}px`,
+            }}>level {level} - {expPercent}%
+            </div>
           </div>
-       </div>
+        </div>
       </div>
     )
 }

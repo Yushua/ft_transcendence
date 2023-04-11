@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChangeMemberWindow, asyncUpdateMembersWindow } from "./MembersWindow";
+import { ChangeMemberWindow } from "./MembersWindow";
 import ChatRoom from "../../../../Utils/Cache/ChatRoom";
 import NameStorage from "../../../../Utils/Cache/NameStorage";
 import User from "../../../../Utils/Cache/User";

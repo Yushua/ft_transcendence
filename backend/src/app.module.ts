@@ -12,23 +12,23 @@ import { GameStatsModule } from './game-stats/game-stats.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     UserProfileModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
+      host: process.env.POSTGRES_HOST,
       port: 5432,
-      username: 'postgres',
-      password: 'postgres',
-      database: 'team-zero',
+      username: process.env.POSTGRES_USER,
+      password: process.env.POSTGRES_PASSWORD,
+      database: process.env.POSTGRES_DB,
       autoLoadEntities: true,
       synchronize: true, //keeps it in sync
-      }),
+    }),
     AuthModule,
     ChatModule,
     GatewayModule,
     PFPModule,
     PongModule,
-    ConfigModule.forRoot(),
     GameStatsModule,
   ],
   controllers: [AppController]

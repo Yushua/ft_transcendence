@@ -19,7 +19,6 @@ cp -R package.json ft_transcendence/src/package.json
 cp -R package-lock.json ft_transcendence/src/package-lock.json
 
 # Edit Files #
-rm ft_transcendence/src/backend/src/game-stats/GameStats.ts
 printf "\
 e ft_transcendence/src/backend/src/main.ts\n\
 4\na\n\
@@ -35,10 +34,5 @@ import * as fs from 'fs';\n\
 .\n\
 16\nc\n\
   await app.listen(443);\n\
-.\n\
-w\n\
-e ft_transcendence/src/backend/src/app.module.ts\n\
-18\nc\n\
-      host: 'postgres',\n\
 .\n\
 w\n" | ed
