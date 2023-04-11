@@ -1,11 +1,8 @@
 import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
-import { newWindow } from '../App';
 import '../App.css';
-import MainWindowButtonComponent from '../ButtonComponents/MainWindowButtonComponent';
-import MainWindow from '../MainWindow/MainWindow';
 import HTTP from '../Utils/HTTP';
 import User from '../Utils/Cache/User';
-import TWTEnabled from './TWTEnabled';
+import { SetMainProfileWindow } from '../UserProfile/ProfileMainWindow';
 
 async function setNewTWT(){
   try {
@@ -25,7 +22,6 @@ async function setNewTWT(){
     setCookie(`TWToken${User.intraname}`, TWToken,{ expires: 100000 });
   } catch (error) {
     alert("something gone wrong while changing your TWT cookie")
-    newWindow(<TWTEnabled/>)
   }
 }
 
@@ -42,14 +38,13 @@ async function ChangeUserStatusTWTFalse(){
     }
   } catch (error) {
     alert("something gone wrong while changing your TWT cookie")
-    newWindow(<TWTEnabled/>)
   }
 }
 
 async function turnTWTFalse(){
   await setNewTWT()
   await ChangeUserStatusTWTFalse()
-  newWindow(<MainWindow/>)
+  SetMainProfileWindow("tWTDisplay")
 }
 
 function TWTDisabled(){

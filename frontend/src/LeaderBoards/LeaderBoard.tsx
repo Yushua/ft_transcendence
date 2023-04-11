@@ -6,7 +6,6 @@ import OurHistory from "../Utils/History";
 import HTTP from "../Utils/HTTP";
 import { AppBar, Box, Button, Container, IconButton, Toolbar } from "@mui/material";
 import NameStorage from "../Utils/Cache/NameStorage";
-import { WebsocketContext } from "../Games/contexts/WebsocketContext";
 import LogoutButtonComponent from "../ButtonComponents/LogoutButton";
 import MainWindow, { Width } from "../MainWindow/MainWindow";
 import TotalWins from "./TotalWins";
@@ -44,7 +43,6 @@ async function asyncToggleGetName(){
   };
 
 function LeaderBoard() {
-	const socket = React.useContext(WebsocketContext)
 	const [currentWindow, setWindow] = useState<string>("")
 	const [nameDisplay, setNameDisplay] = useState<string>("");
 	const [Display, setDisplay] = useState<boolean>(false);

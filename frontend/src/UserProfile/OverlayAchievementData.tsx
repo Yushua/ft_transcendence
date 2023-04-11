@@ -1,3 +1,16 @@
+import { useState } from "react";
+import Modal from "react-overlays/Modal";
+
+interface ExampleModalProps {
+  show: boolean;
+  onHide: () => void;
+}
+
+const ExampleModal = ({ show, onHide }: ExampleModalProps) => (
+  <Modal show={show} onHide={onHide} backdrop={true}>
+    <div>Hello</div>
+  </Modal>
+);
 
 type props = {
   AchievementData:any;
@@ -12,15 +25,30 @@ const OverlayAchievementData = (props) => {
 
   */}
 
+    const [show, setShow] = useState(false);
+
+    const handleClick = () => {
+      setShow(false);
+    };
+
     return (
-      <div>
-            <div>
-              <p>{props.AchievementData.name}</p>
-            </div>
-            <div>
-              <p>{props.AchievementData.message}</p>
-            </div>
+      <div onClick={handleClick}>
+      <ExampleModal show={show} onHide={() => setShow(false)} />
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.5)',
+        }}
+      >
+        <p>{props.AchievementData.name}</p>
+        <p>{props.AchievementData.message}</p>
+        Click anywhere to close the Modal
       </div>
+    </div>
     );
   };
 

@@ -6,6 +6,7 @@ import MainWindowButtonComponent from '../ButtonComponents/MainWindowButtonCompo
 import MainWindow from '../MainWindow/MainWindow';
 import HTTP from '../Utils/HTTP';
 import User from '../Utils/Cache/User';
+import { SetMainProfileWindow } from '../UserProfile/ProfileMainWindow';
 
 async function CheckTWTSetup(code:string){
   const response = HTTP.Get(`auth/checkTWTCodeUpdate/${code}`, null, {Accept: 'application/json'})
@@ -14,7 +15,7 @@ async function CheckTWTSetup(code:string){
     User._ManualUpdate(result["user"])
     removeCookie(`TWToken${User.intraname}`);
     setCookie(`TWToken${User.intraname}`, await result["TWT"],{ expires: 100000 });
-      newWindow(<MainWindow/>);
+    SetMainProfileWindow("tWTDisplay")
   }
   else {
     alert("wrong code input, try again")
@@ -32,6 +33,7 @@ async function handleSubmit(event:any){
   event.preventDefault();
   if (_inputValue.length < 2){
     _setInputValue("")
+    alert("input too low")
   }
   else {
     await CheckTWTSetup(_inputValue)

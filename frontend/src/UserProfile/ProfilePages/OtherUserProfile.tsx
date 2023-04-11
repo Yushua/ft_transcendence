@@ -7,7 +7,6 @@ import AchievementBar from '../../Search bar/AchievementBar';
 import GameDataBar from '../../Search bar/GameDataBar';
 import EXPBarComponent from '../../ButtonComponents/EXPBarComponent';
 import User from '../../Utils/Cache/User';
-import MainWindowButtonComponent from '../../ButtonComponents/MainWindowButtonComponent';
 
 
 async function asyncUpdateAddFriendList(otherId: string):Promise<any> {
@@ -85,33 +84,6 @@ function OtherUserProfile(props: any){
       await setUpUser(props.id)
         setMyDisplay(true)
         console.log(`button {${ButtonStatus}}`)
-        if (ButtonStatus == 1){
-          setButton(
-            <div>
-              <button
-                style={{ display: "inline-block", width: `${Width}px`, height: `${Width}px`, marginLeft: `${Width*0.02}px`, marginRight: `${Width*0.02}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`}}
-                onClick={() => handleButtonUnfollowClick(props.id)}>
-                  <h2 >{`unfollow`}</h2>
-              </button>
-            </div>
-          )
-        }
-        else if (ButtonStatus == 2){
-          setButton(
-            <div>
-              <button
-                style={{ display: "inline-block", width: `${Width}px`, height: `${Width}px`, marginLeft: `${Width*0.02}px`, marginRight: `${Width*0.02}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`}}
-                onClick={() => handleButtonFollowClick(props.id)}>
-                  <h2 >{`follow`}</h2>
-              </button>
-            </div>
-          )
-        }
-        else{
-          setButton(
-            <div></div>
-          )
-        }
       }
 
     return (
@@ -122,7 +94,23 @@ function OtherUserProfile(props: any){
                   <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: `${0.01*Width}px`}}>
                     <h2 >{`Welcome: ${myUsername}`}</h2>
                     {/* make a check if its already there. follow or unfollow */}
-                    {Button}
+                    <>
+                    { ButtonStatus === 1 ? (
+                      <button
+                        style={{ display: "inline-block", width: `${Width}px`, height: `${Width}px`, marginLeft: `${Width*0.02}px`, marginRight: `${Width*0.02}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`}}
+                        onClick={() => handleButtonUnfollowClick(props.id)}>
+                          <h2 >{`unfollow`}</h2>
+                      </button>
+                    ) : ButtonStatus === 2 ? (
+                      <button
+                          style={{ display: "inline-block", width: `${Width}px`, height: `${Width}px`, marginLeft: `${Width*0.02}px`, marginRight: `${Width*0.02}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`}}
+                          onClick={() => handleButtonFollowClick(props.id)}>
+                          <h2 >{`follow`}</h2>
+                      </button>
+                    ) : (
+                      <div></div>
+                    ) }
+                  </>
                   </div>
                 </div>
 

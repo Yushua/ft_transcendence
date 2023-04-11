@@ -6,6 +6,8 @@ export class PongStats{
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
+    @Column({default:"default_pfp.jpg"})
+    picture:string
     @Column({default:""})
     player1_id:string
     @Column({default:""})
