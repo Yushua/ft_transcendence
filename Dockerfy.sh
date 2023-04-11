@@ -19,7 +19,6 @@ cp -R package.json ft_transcendence/src/package.json
 cp -R package-lock.json ft_transcendence/src/package-lock.json
 
 # Edit Files #
-rm ft_transcendence/src/backend/src/game-stats/GameStats.ts
 printf "\
 e ft_transcendence/src/backend/src/main.ts\n\
 4\na\n\
