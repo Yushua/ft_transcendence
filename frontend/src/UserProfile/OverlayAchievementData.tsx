@@ -27,6 +27,9 @@ const OverlayAchievementData = (props) => {
 
     const [show, setShow] = useState(false);
 
+    if (show == false){
+      console.log("it is false")
+    }
     const handleClick = () => {
       setShow(false);
     };

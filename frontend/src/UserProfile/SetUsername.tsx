@@ -55,7 +55,8 @@ function SetUsername(){
             marginTop={`${Width*0.3}px`}>
             Input Username
           <input type="text" value={value} onChange={handleChange} />
-          <button type="submit">Submit</button>
+          {value.length > 4 && value.length <= 20 && (
+          <button type="submit">Submit</button> )}
         </Box>
       </form>
     </center>

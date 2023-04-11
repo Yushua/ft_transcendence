@@ -254,28 +254,25 @@ export class UserProfileService {
       }
 
       /**
-       * returns based on [["picture", "name", "status"]]
        */
       async postAchievementList(id:string, AddAchievement:AddAchievement) {
         const {nameAchievement, pictureLink, message} = AddAchievement
         var userprofile = await this.userEntity.findOneBy({id});//player1
-        const achievement = await this.achievEntity.create({
+        const achievement = this.achievEntity.create({
           nameAchievement: nameAchievement,
           pictureLink: pictureLink,
           message: message,
-          time: new Date().getTime(),
           userProfile: userprofile
         });
         await this.achievEntity.save(achievement);
       }
 
       /**
-       * returns based on [["picture", "name", "status"]]
        */
       async ServiceAchievementList(id:string, AddAchievement:AddAchievement) {
         const {nameAchievement, pictureLink, message} = AddAchievement
         var userprofile = await this.userEntity.findOneBy({id});//player1
-        const achievement = await this.achievEntity.create({
+        const achievement = this.achievEntity.create({
           nameAchievement: nameAchievement,
           pictureLink: pictureLink,
           message: message,
@@ -291,7 +288,8 @@ export class UserProfileService {
 
       async GetUserAchievment(id:string):Promise<UserAchievement[]> {
         const userprofile:UserProfile = await this.userEntity.findOneBy({id});
-        return userprofile.UserAchievement.sort((a, b) => a.time - b.time);
+        // return userprofile.UserAchievement.sort((a, b) => a.time - b.time);
+        return userprofile.UserAchievement
       }
 
       async getWinList():Promise<string[][]>{

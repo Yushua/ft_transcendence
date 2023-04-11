@@ -1,9 +1,6 @@
 import { useState } from 'react';
 import { removeCookie, setCookie } from 'typescript-cookie';
-import { newWindow } from '../App';
 import '../App.css';
-import MainWindowButtonComponent from '../ButtonComponents/MainWindowButtonComponent';
-import MainWindow from '../MainWindow/MainWindow';
 import HTTP from '../Utils/HTTP';
 import User from '../Utils/Cache/User';
 import { SetMainProfileWindow } from '../UserProfile/ProfileMainWindow';
