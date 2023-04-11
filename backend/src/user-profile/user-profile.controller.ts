@@ -98,21 +98,20 @@ export class UserProfileController {
 
     @Patch('friendlist/remove/:idFriend/:id')
     @UseGuards(AuthGuard())
-    removeFriend(
+    async removeFriend(
         @Request() req: Request,
         @Param('idFriend') idfriend: string,
         @Param('id') id: string,
         ) {
-        this.userServices.removeFriend(id, idfriend);
+        await this.userServices.removeFriend(id, idfriend);
     }
     @Get('friendlist/check/:idFriend')
     @UseGuards(AuthGuard())
-    checkFriend(
+    async checkFriend(
         @Request() req: Request,
         @Param('idFriend') idfriend: string,
         ) {
-            console.log(`number {${this.userServices.checkFriend(req["user"].id, idfriend)}}`)
-            return {status: this.userServices.checkFriend(req["user"].id, idfriend)}
+            return {status: await this.userServices.checkFriend(req["user"].id, idfriend)}
     }
     
     /**

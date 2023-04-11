@@ -132,8 +132,6 @@ export class UserProfileService {
        * @returns 
        */
       async checkFriend(id:string, idfriend: string):Promise<Number> {
-        if (id == idfriend)
-          return 3
         const user = await this.userEntity.findOneBy({id});
         const hasFriend = user.friendList.some(friendlist => friendlist.includes(idfriend));
         return hasFriend ? 1 : 2;

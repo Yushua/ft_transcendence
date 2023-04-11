@@ -32,7 +32,6 @@ function EXPBarComponent(props: any) {
     if (Window === false){
       setupExp(props.id)
       setWindow(true)
-      console.log(`experience over {${expPercent}}`)
     }
 	}, []); // empty dependency array means it will only run once
     return (

@@ -8,25 +8,25 @@ import GameDataBar from '../../Search bar/GameDataBar';
 import EXPBarComponent from '../../ButtonComponents/EXPBarComponent';
 import User from '../../Utils/Cache/User';
 
-
 async function asyncUpdateAddFriendList(otherId: string):Promise<any> {
-        HTTP.Get(`user-profile/friendlist/add/${otherId}`, null, {Accept: 'application/json'})
-    }
+    HTTP.Get(`user-profile/friendlist/add/${otherId}`, null, {Accept: 'application/json'})
+}
 async function asyncUpdateRemoveFriendList(otherId: string):Promise<any> {
-        HTTP.Get(`user-profile/friendlist/remove/${otherId}/${User.ID}`, null, {Accept: 'application/json'})
-    }
+    HTTP.Get(`user-profile/friendlist/remove/${otherId}/${User.ID}`, null, {Accept: 'application/json'})
+}
 
 async function AsyncSetButtonStatus(otherId: string):Promise<any> {
     const response = HTTP.Get(`user-profile/friendlist/check/${otherId}`, null, {Accept: 'application/json'})
     var user = await JSON.parse(response)
 	  _setButtonStatus(await user["status"])
     }
- async function AsyncGeOtherUser(otherId: string):Promise<any> {
-      const response = HTTP.Get(`user-profile/user/${otherId}`, null, {Accept: 'application/json'})
-      var result = await JSON.parse(response)
-      _setMyUsername(result["username"])
-      _setMyPFP(result["profilePicture"])
-    }
+ async function AsyncGeOtherUser(otherId: string):Promise<string> {
+    const response = HTTP.Get(`user-profile/user/${otherId}`, null, {Accept: 'application/json'})
+    var result = await JSON.parse(response)
+    _setMyUsername(result["username"])
+    _setMyPFP(result["profilePicture"])
+    return (result["username"])
+  }
 
 async function AddFriend(id:string) {
   await asyncUpdateAddFriendList(id)
@@ -39,25 +39,14 @@ async function RemoveFriend(id:string) {
   _setMyDisplay(false)
 }
 
-async function setUpUser(id:string){
-  await AsyncGeOtherUser(id)
-  await AsyncSetButtonStatus(id)
-}
-
-type Props = {
-  id: string;
-}
-
 var _setButtonStatus:React.Dispatch<React.SetStateAction<number>>
 
 var _setMyUsername:React.Dispatch<React.SetStateAction<string>>
 var _setMyPFP:React.Dispatch<React.SetStateAction<string>>
 var _setMyDisplay:React.Dispatch<React.SetStateAction<boolean>>
-var _otherUser:any
 
 function OtherUserProfile(props: any){
 
-    const [Button, setButton] = useState<any>(0);
     const [ButtonStatus, setButtonStatus] = useState<number>(0);
     const [myPFP, setMyPFP] = useState<string>("");
     const [myUsername, setMyUsername] = useState<string>("");
@@ -81,9 +70,11 @@ function OtherUserProfile(props: any){
     };
 
     async function setup(){
-      await setUpUser(props.id)
+      var username:string = await AsyncGeOtherUser(props.id)
+        if (username != User.Name){
+          await AsyncSetButtonStatus(props.id)
+        }
         setMyDisplay(true)
-        console.log(`button {${ButtonStatus}}`)
       }
 
     return (
@@ -95,22 +86,20 @@ function OtherUserProfile(props: any){
                     <h2 >{`Welcome: ${myUsername}`}</h2>
                     {/* make a check if its already there. follow or unfollow */}
                     <>
-                    { ButtonStatus === 1 ? (
-                      <button
-                        style={{ display: "inline-block", width: `${Width}px`, height: `${Width}px`, marginLeft: `${Width*0.02}px`, marginRight: `${Width*0.02}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`}}
-                        onClick={() => handleButtonUnfollowClick(props.id)}>
+                      {ButtonStatus === 1 ? (
+                        <button
+                          style={{ display: "inline-block", marginLeft: `${Width*0.02}px`, marginRight: `${Width*0.02}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`}}
+                          onClick={() => handleButtonUnfollowClick(props.id)}>
                           <h2 >{`unfollow`}</h2>
-                      </button>
-                    ) : ButtonStatus === 2 ? (
-                      <button
-                          style={{ display: "inline-block", width: `${Width}px`, height: `${Width}px`, marginLeft: `${Width*0.02}px`, marginRight: `${Width*0.02}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`}}
+                        </button>
+                      ) : ButtonStatus === 2 ? (
+                        <button
+                          style={{ display: "inline-block", marginLeft: `${Width*0.02}px`, marginRight: `${Width*0.02}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`}}
                           onClick={() => handleButtonFollowClick(props.id)}>
                           <h2 >{`follow`}</h2>
-                      </button>
-                    ) : (
-                      <div></div>
-                    ) }
-                  </>
+                        </button>
+                      ) : null}
+                    </>
                   </div>
                 </div>
 

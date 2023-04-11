@@ -1,6 +1,5 @@
 import '../App.css';
 
-import { getCookie, removeCookie } from 'typescript-cookie';
 import HTTP from '../Utils/HTTP';
 
 import { newWindow } from '../App';
