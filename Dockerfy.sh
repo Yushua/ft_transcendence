@@ -35,9 +35,4 @@ import * as fs from 'fs';\n\
 16\nc\n\
   await app.listen(443);\n\
 .\n\
-w\n\
-e ft_transcendence/src/backend/src/app.module.ts\n\
-18\nc\n\
-      host: 'postgres',\n\
-.\n\
 w\n" | ed
