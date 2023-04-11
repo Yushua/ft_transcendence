@@ -7,8 +7,7 @@ import ChatRoom from "../../Utils/Cache/ChatRoom";
 import RoomBrowser from "./RoomBrowser/RoomBrowser";
 import User from "../../Utils/Cache/User";
 import { Tab, Tabs } from "@mui/material";
-import HTTP from "../../Utils/HTTP";
-import MainWindow, { Width as MWidth } from "../../MainWindow/MainWindow";
+import { Width as MWidth } from "../../MainWindow/MainWindow";
 
 export async function asyncChangeRoom(roomID: string) {
 	await ChatRoom.asyncUpdate(roomID, true)

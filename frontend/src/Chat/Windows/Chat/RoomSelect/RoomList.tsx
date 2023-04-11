@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import HTTP from "../../../../Utils/HTTP";
 import ChatUser from "../../../../Utils/Cache/ChatUser";
 import ChatRoom from "../../../../Utils/Cache/ChatRoom";
 import NameStorage from "../../../../Utils/Cache/NameStorage";

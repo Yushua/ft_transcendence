@@ -70,8 +70,6 @@ export class PFPController {
 		) file: Express.Multer.File
 	): Promise<string> {
 		
-		console.log(file.mimetype)
-		
 		/* Validate image content */
 		const result = await validateBufferMIMEType(file.buffer, {
 			allowMimeTypes: ['image/jpeg', 'image/gif', 'image/png']
@@ -86,8 +84,6 @@ export class PFPController {
 			PictureData: file.buffer.toString('base64')
 		}))).ID
 		const pfpURL = `${pfpID}.${extension(file.mimetype)}`
-		
-		console.log(pfpURL)
 		
 		/* Change user PFP */
 		const user: UserProfile = request["user"]

@@ -1,5 +1,4 @@
-import { useState } from "react";
-import MembersWindow, { ChangeMemberWindow, asyncUpdateMembersWindow } from "./MembersWindow";
+import { ChangeMemberWindow } from "./MembersWindow";
 import NameStorage from "../../../../Utils/Cache/NameStorage";
 import ChatRoom from "../../../../Utils/Cache/ChatRoom";
 import ChatUser from "../../../../Utils/Cache/ChatUser";
@@ -7,7 +6,7 @@ import HTTP from "../../../../Utils/HTTP";
 import User from "../../../../Utils/Cache/User";
 import { Button } from "@mui/material";
 import { ChatLineHeight, ChatWindowHeight } from "../../MainChatWindow";
-import { ClearChatMessageCache, asyncUpdateChatLog } from "../ActualChat/ChatWindow";
+import { ClearChatMessageCache } from "../ActualChat/ChatWindow";
 import { CreatingGameData } from "../../../../Games/pong/components/CreateGameMenu";
 
 export function setMemberProfileID(userID: string) {
