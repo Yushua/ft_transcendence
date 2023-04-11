@@ -84,7 +84,7 @@ function UserProfilePage(props: any) {
               <div style={{display: 'flex'}}>
                 {/* friendlist */}
                 <GameDataBar id={user.id} width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/>
-              </div>
+              </div>  
             </div>
             <div style={{ display: 'flex', border: "solid black", padding: `${0.01*Width}px`, borderColor: "#3676cc", borderRadius: "5px"}}> <b>Achievemement Data</b> </div>
             <div style={{width: `${blockWidth}px`, height: `${(Width - (0.03*Width))/2}px`, border: "solid black", overflow: "auto", marginLeft: `${marginLeft}px`, marginRight: `${marginRight}px`, marginTop: `${Width*0.005}px`, marginBottom: `${Width*0.02}px`, borderColor: "#3676cc", borderRadius: "5px"}}>

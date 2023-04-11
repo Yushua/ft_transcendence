@@ -28,6 +28,8 @@ export class PongService {
 	/* On game end update database */
 	static async postPongStats(gameIDs:string[], gameData:GameData) {
 		
+		if (gameData.p1_score === gameData.p2_score)
+			console.log("both scored eleven, talk to bas")
 		/* get users */ 
 		const user1:UserProfile = await this._userRepo.findOneBy({id: gameIDs[IDs.p1_userID]})
 		const user2:UserProfile = await this._userRepo.findOneBy({id: gameIDs[IDs.p2_userID]})
