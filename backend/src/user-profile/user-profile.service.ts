@@ -263,6 +263,7 @@ export class UserProfileService {
           nameAchievement: nameAchievement,
           pictureLink: pictureLink,
           message: message,
+          time: new Date().getTime(),
           userProfile: userprofile
         });
         await this.achievEntity.save(achievement);

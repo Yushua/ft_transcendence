@@ -44,7 +44,6 @@ export class GameStatsService {
       	return games;
     }
 
-
 	static async savePongStats(statsID:string, user1ID:string, user2ID:string) {
 		const pair = [{userId: user1ID, pongStatsId: statsID}]
 		const pair2 = [{userId: user2ID, pongStatsId: statsID}]
