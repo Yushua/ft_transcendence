@@ -91,9 +91,9 @@ export class UserProfileController {
     @Patch('friendlist/add/:OtherId')
     @UseGuards(AuthGuard())
     addFriend(
-        @Request() req: Request, @Param('OtherId') OtherId: string,
+        @Request() req: Request, @Param('OtherId') friendID: string,
         ){
-        return this.userServices.addFriend(req["user"].id, OtherId);
+        return this.userServices.addFriend(req["user"].id, friendID);
     }
 
     @Patch('friendlist/remove/:idFriend/:id')

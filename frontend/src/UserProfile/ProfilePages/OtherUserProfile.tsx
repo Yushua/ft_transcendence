@@ -9,10 +9,10 @@ import EXPBarComponent from '../../ButtonComponents/EXPBarComponent';
 import User from '../../Utils/Cache/User';
 
 async function asyncUpdateAddFriendList(otherId: string):Promise<any> {
-    HTTP.Get(`user-profile/friendlist/add/${otherId}`, null, {Accept: 'application/json'})
+    HTTP.Patch(`user-profile/friendlist/add/${otherId}`, null, {Accept: 'application/json'})
 }
 async function asyncUpdateRemoveFriendList(otherId: string):Promise<any> {
-    HTTP.Get(`user-profile/friendlist/remove/${otherId}/${User.ID}`, null, {Accept: 'application/json'})
+    HTTP.Patch(`user-profile/friendlist/remove/${otherId}/${User.ID}`, null, {Accept: 'application/json'})
 }
 
 async function AsyncSetButtonStatus(otherId: string):Promise<any> {
