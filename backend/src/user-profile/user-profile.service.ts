@@ -291,7 +291,7 @@ export class UserProfileService {
 
       async GetUserAchievment(id:string):Promise<UserAchievement[]> {
         const userprofile:UserProfile = await this.userEntity.findOneBy({id});
-        return userprofile.UserAchievement
+        return userprofile.UserAchievement.sort((a, b) => a.time - b.time);
       }
 
       async getWinList():Promise<string[][]>{
