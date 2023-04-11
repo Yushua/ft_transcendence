@@ -56,13 +56,13 @@ export class UserProfile {
         pongStats => pongStats.userProfiles, //optional
         {onDelete: 'NO ACTION', onUpdate: 'NO ACTION'})
         @JoinTable({
-          name: 'user_profile_game_stats',
+          name: 'user_profile_pong_stats',
           joinColumn: {
             name: 'user_profile_id',
             referencedColumnName: 'id',
           },
           inverseJoinColumn: {
-            name: 'game_stats_id',
+            name: 'pong_stats_id',
             referencedColumnName: 'id',
           },
         })

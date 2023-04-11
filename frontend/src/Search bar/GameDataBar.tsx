@@ -4,7 +4,7 @@ import { setupOverlay } from '../UserProfile/UserProfile';
 import OverlayGameData from '../UserProfile/OverlayGameInformation';
 
 export async function asyncGetGameDatabyId(id:string){
-  const response = HTTP.Get(`gamestats/${id}`, null, {Accept: 'application/json'})
+  const response = HTTP.Get(`gamestats/pongstats/${id}`, null, {Accept: 'application/json'})
   var result = await JSON.parse(response)
   _setList(Object.values(result))
 }
@@ -36,16 +36,22 @@ function GameDataBar(props: any) {
 	}, []); // empty dependency array means it will only run once
 
   const handleButtonClick = (e: any) => {
+    // console.log('stuff:', e)
     var stuff:any = e
     setGameData(stuff)
     setupOverlay(true, <OverlayGameData  gameData={gameData} />)
   };
+  const handleButtonClick2 = () => {
+    console.log('list:', ListSearchList)
+  };
+
+
     return (
-        <div >
-          <OverlayGameData/>
+        <div>
+          <button onClick={() => handleButtonClick2()}>click</button>
           {ListSearchList.map((option) => (
             <button
-              key={option}
+              key={option}  
               style={{ display: "inline-block", width: `${widthButton}px`, height: `${widthButton}px`, marginLeft: `${width*0.02}px`, marginRight: `${width*0.02}px`, marginTop: `${width*0.02}px`, marginBottom: `${width*0.02}px`}}
               onClick={() => handleButtonClick(option)}>
                 <img src={`${HTTP.HostRedirect()}pfp/${option.pictureLink}`} alt="" style={{width: `${widthButton - width*0.03}px`, height: `${widthButton - width*0.03}px`, border: "4px solid black"}}/>

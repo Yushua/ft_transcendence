@@ -7,7 +7,7 @@ import { GameStatsService } from "./game-stats.service";
 export class GameStatsController {
     constructor(private GameStatsServices: GameStatsService) {}
     
-	@Get("/:id")
+	@Get("/pongstats/:id")
     async getPongStatsById(
         @Param("id") id: string): Promise<PongStats[]>
     {
@@ -15,8 +15,8 @@ export class GameStatsController {
         return userPongStats;
     }
 
-	@Get("/")
-    async getAllAchievements(): Promise<PongStats[]>
+	@Get("/pongstats")
+    async getAllPongstats(): Promise<PongStats[]>
     {
         const PongGames = await this.GameStatsServices.getAllPongStats();
         return PongGames;

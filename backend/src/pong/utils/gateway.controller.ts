@@ -131,7 +131,13 @@ export class MyGateway implements OnModuleInit {
 				break
 			}
 		}
-		/* check if game already exists with chosen name */
+		/* check if game name is set */
+		if (gameInfo.customSettings.gameName.length === 0)
+		{
+			player.emit('no_game_name')
+			return
+		}
+		/* check if game name already exists */
 		for (var game of customGames) {
 			if (game[0] === gameInfo.customSettings.gameName)
 			{
@@ -325,6 +331,8 @@ export class MyGateway implements OnModuleInit {
 	@SubscribeMessage('disconnect')
 	async handleDisconnect(
 		@ConnectedSocket() client: Socket) {
+			if (client === player2)
+				player2 = undefined
 			let connection = connections.get(client.id)
 			if (connection !== undefined)
 				connections.delete(client.id)

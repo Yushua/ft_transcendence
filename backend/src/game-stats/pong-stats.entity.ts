@@ -6,24 +6,28 @@ export class PongStats{
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
+    @Column({default: "default_pfp.jpg"}) /* string path towards the picture */
+    profilePicture: string
+
     @Column({default:""})
     player1_id:string
+
     @Column({default:""})
     player2_id:string
 
     @Column({default:""})
-    nameGame: string
+    nameGame:string
     @Column({default:""})
     winner:string
     @Column({default:""})
     loser:string
 
     @Column({default: 11})
-    scoreWinner: number
+    scoreWinner:number
     @Column({default: 0})
-    scoreLoser: number
+    scoreLoser:number
     @Column({default: 0})
-    timeOfGame: number
+    timeOfGame:number
 
     @ManyToMany(
         () => UserProfile,

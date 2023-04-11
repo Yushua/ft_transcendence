@@ -11,7 +11,7 @@ export class Config {
 	acceleration:number
 
 	constructor() {
-		this.gameName = 'gameName'
+		this.gameName = ''
 		this.p1_name = ''
 		this.p2_name = ''
 		this.p1_controls = 'mouse'

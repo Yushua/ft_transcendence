@@ -22,13 +22,18 @@ export const CreateGameMenu = (props:any) => {
 	const [acceleration, setBallAcceleration] = React.useState(0.5	)
 	const [paddleSize, setPaddleSize] = React.useState(100)
 	const [controls, setControls] = React.useState('mouse')
-	const [gameName, setGameName] = React.useState('gameName')
+	const [gameName, setGameName] = React.useState('')
 	const [isMouse, setIsMouse] = React.useState(true)
 	const [gameNameTaken, setGameNameTaken] = React.useState(false)
+	const [emptyName, setEmptyName] = React.useState(false)
 
 	props.socket.on('gamename taken', () => {
 		setGameNameTaken(true)
 	})
+	props.socket.on('no_game_name', () => {
+		setEmptyName(true)
+	})
+
 	const handleBallChange = (event: Event, newValue: number | number[]) => {
 		if (typeof newValue === 'number') {
 			setBallSpeed(newValue);
@@ -174,6 +179,16 @@ export const CreateGameMenu = (props:any) => {
 					</div>
 				:
 					<></> }
+				{emptyName ?
+					<div style={{color: "#FF3333", display: 'inline-block'}}>
+						<h4>
+							&nbsp;
+							Game name is empty, please fill in a name
+						</h4>
+					</div>
+				:
+					<></> }
+			
 
 			</div>
 		</React.Fragment>
