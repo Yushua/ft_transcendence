@@ -112,7 +112,7 @@ export default function MemberProfile() {
 							<Button variant="contained"
 								style={{width: "100%", height: `${ChatLineHeight}px`, boxSizing: "border-box"}}
 								onClick={() => { UnblockUser(_memberProfileID) }}
-								>{"Unblock"}</Button>
+								>Unblock</Button>
 						</div>
 							:
 						<div style={{width: "100%", display: "table", marginTop: `${ChatLineHeight/2}px`}}>
@@ -128,7 +128,7 @@ export default function MemberProfile() {
 												ClearChatMessageCache()
 											})
 								}}
-								>{"Block"}</Button>
+								>Block</Button>
 						</div>) : <></>
 				}
 				
