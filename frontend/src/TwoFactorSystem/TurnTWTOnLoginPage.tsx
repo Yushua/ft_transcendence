@@ -51,7 +51,8 @@ async function turningTWTOn(code:string){
 async function handleSubmit(event:any){
   event.preventDefault();
   var status:boolean =  await turningTWTOn(_inputValue)
-  if (status == true){
+  alert(`status ={${status}}`)
+  if (status === true){
     newWindow(<MainWindow/>);
   }
 };
