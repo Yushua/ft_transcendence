@@ -257,24 +257,30 @@ export class UserProfileService {
       async postAchievementList(id:string, AddAchievement:AddAchievement) {
         const {nameAchievement, pictureLink, message} = AddAchievement
         var userprofile = await this.userEntity.findOneBy({id});//player1
-        const achievement = this.achievEntity.create({
-          nameAchievement: nameAchievement,
-          pictureLink: pictureLink,
-          message: message,
-          userProfile: userprofile
-        });
-        await this.achievEntity.save(achievement);
+        var achieve:UserAchievement = userprofile.userAchievement.findOneBy({nameAchievement})
+        var date = new Date()
+        var tmp:string = date.toISOString().slice(0, 10)
+
+
+        achieve.nameAchievement = nameAchievement
+        achieve.pictureLink = pictureLink
+        achieve.message = message
+        achieve.status = true
+        achieve.createdAt =  parseInt(tmp, 10); 
+        
+        await this.achievEntity.save(achieve);
       }
 
       /**
        */
-      async ServiceAchievementList(id:string, AddAchievement:AddAchievement) {
-        const {nameAchievement, pictureLink, message} = AddAchievement
+      async AddAchievementList(id:string, AddAchievement:AddAchievement) {
+        const {nameAchievement, message} = AddAchievement
         var userprofile = await this.userEntity.findOneBy({id});//player1
         const achievement = this.achievEntity.create({
           nameAchievement: nameAchievement,
-          pictureLink: pictureLink,
+          pictureLink: "Invalid.jpg",
           message: message,
+          status: false,
           userProfile: userprofile
         });
         await this.achievEntity.save(achievement);
@@ -287,8 +293,11 @@ export class UserProfileService {
 
       async GetUserAchievment(id:string):Promise<UserAchievement[]> {
         const userprofile:UserProfile = await this.userEntity.findOneBy({id});
-        // return userprofile.UserAchievement.sort((a, b) => a.time - b.time);
-        return userprofile.UserAchievement
+        var achieveStore:UserAchievement[] = userprofile.UserAchievement.filter(a => a.status === true);
+        achieveStore = achieveStore.sort(function(a, b) {
+          return a.createdAt - b.createdAt;
+        });
+        return achieveStore
       }
 
       async getWinList():Promise<string[][]>{
