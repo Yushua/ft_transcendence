@@ -42,7 +42,7 @@ function FriendListBar(props: any) {
           {ListSearchList.map((option, index) => (
               <button
                 key={index}
-                style={{ display: "inline-block", width: `${widthButton}px`, height: `${widthButton}px`, marginLeft: `${width*0.02}px`, marginRight: `${width*0.02}px`, marginTop: `${width*0.02}px`, marginBottom: `${width*0.02}px`}}
+                style={{ display: "inline-block", width: `${widthButton}px`, marginLeft: `${width*0.02}px`, marginRight: `${width*0.02}px`, marginTop: `${width*0.02}px`, marginBottom: `${width*0.02}px`}}
                 onClick={() => handleButtonClick(option[3])}>
                   <img src={`${HTTP.HostRedirect()}pfp/${option[0]}`} alt="" style={{width: `${widthButton - width*0.03}px`, height: `${widthButton - width*0.03}px`, border: "4px solid black"}}/>
                   <h2 >{`name   ${option[1]}`}</h2>

@@ -175,6 +175,7 @@ export const Pong = () => {
 		case "canvas" :
 			return (
 				<div >
+					{/* Game active poongame */}
 					<div>
 						<Button style={{}} variant="contained" onClick={() => leaveGame()}>
 							{spectating ? "Stop Spectating" : "Leave Game"}
@@ -188,7 +189,7 @@ export const Pong = () => {
 					</div>
 					<Canvas instance={canvas} socket={socket} gameData={gameData}/>
 				</div>
-			)
+			);
 		case "classic":
 			_tab = <ClassicPongTab socket={socket} userID={userID} userName={userName}/>
 			break;
