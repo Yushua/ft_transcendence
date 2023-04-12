@@ -1,59 +1,52 @@
 import styled from "@emotion/styled";
-import React from "react";
-import Modal from "react-overlays/Modal";
+import React, { Component } from "react";
+import { Box, Button, Modal, Typography } from "@mui/material";
+// import "react-overlays/Modal/dist/index.css";
 
 
-
-
-
+const style = {
+	position: 'absolute' as 'absolute',
+	top: '50%',
+	left: '50%',
+	transform: 'translate(-50%, -50%)',
+	width: 400,
+	bgcolor: 'background.paper',
+	border: '2px solid #000',
+	boxShadow: 24,
+	p: 4,
+  };
+  
 const OverlayGameData = (props) => {
-  {/* 
-    because gamedata can be different, CAN BE, depending on what game. ehre you can setup a default path,
-    meaning if you have a specicfic name, you can say "if this, do this, else default system"
-  */}
+	{/* 
+	because gamedata can be different, CAN BE, depending on what game. ehre you can setup a default path,
+	meaning if you have a specicfic name, you can say "if this, do this, else default system"
+	*/}
 
-  const [showModal, setShowModal] = React.useState(false)
+	const [showModal, setShowModal] = React.useState(false)
 
-  var handleClose = () => setShowModal(false)
+	function toggleModal() {
+		setShowModal(!showModal)
+	}
 
-  var handleSave = () => {
-	console.log("success")
-  };
-  var handleSuccess = () => {
-    console.log("success");
-  };
-
-  const renderBackdrop = (props) => <div className="backdrop" {...props} />;
-
-  return (
-	<Modal
-		className="modal"
-		show={showModal}
-		onHide={handleClose}
-		renderBackdrop={renderBackdrop} >
-		<div>
-			<div className="modal-header">
-				<div className="modal-title">Modal Heading</div>
-				<div>
-					<span className="close-button" onClick={handleClose}>
-						x
-					</span>
-				</div>
-			</div>
-			<div className="modal-desc">
-				<p>Modal body contains text.</p>
-			</div>
-			<div className="modal-footer">
-				<button className="secondary-button" onClick={handleClose}>
-					Close
-				</button>
-				<button className="primary-button" onClick={handleSuccess}>
-					Success
-				</button>
-			</div>
-		</div>
-	</Modal>
-  )
-  }
+	return (
+	<div>
+		<Button onClick={(toggleModal)}>Open modal</Button>
+		<Modal
+			open={showModal}
+			onClose={toggleModal}
+			aria-labelledby="modal-modal-title"
+			aria-describedby="modal-modal-description"
+		>
+		<Box sx={style}>
+			<Typography id="modal-modal-title" variant="h6" component="h2">
+				Text in a modal
+			</Typography>
+			<Typography id="modal-modal-description" sx={{ mt: 2 }}>
+				{props.gameData.player1}
+			</Typography>
+		</Box>
+		</Modal>
+	</div>
+)}
 
 export default OverlayGameData;

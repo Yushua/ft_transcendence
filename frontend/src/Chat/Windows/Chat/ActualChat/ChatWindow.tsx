@@ -1,13 +1,12 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import HTTP from "../../../../Utils/HTTP";
 import ChatRoom from "../../../../Utils/Cache/ChatRoom";
 import NameStorage from "../../../../Utils/Cache/NameStorage";
 import User from "../../../../Utils/Cache/User";
-import { Avatar, Button, CardHeader } from "@mui/material";
+import { Button } from "@mui/material";
 import { ChatLineHeight, ChatWindowHeight } from "../../MainChatWindow";
 import ChatUser from "../../../../Utils/Cache/ChatUser";
 import { socket } from "../../../../Games/contexts/WebsocketContext";
-import OurHistory from "../../../../Utils/History";
 
 var roomCache: Map<string, JSX.Element[]> = new Map<string, JSX.Element[]>()
 var _chatLog: JSX.Element[] = []

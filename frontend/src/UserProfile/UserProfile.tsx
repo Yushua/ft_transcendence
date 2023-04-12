@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './UserProfile.css';
 import '../App.css';
 import HTTP from '../Utils/HTTP'
@@ -43,70 +43,76 @@ var _setNameDisplay: React.Dispatch<React.SetStateAction<string>>
 var _setShowOverlay:React.Dispatch<React.SetStateAction<boolean>>
 var _setLinkData:React.Dispatch<any>
 
-function UserProfilePage() {
+function UserProfilePage(props: any) {
+  const user = props?.user ?? User._user
+  
   const [nameDisplay, setNameDisplay] = useState<string>("");
   const [showOverlay, setShowOverlay] = useState(false);
   const [linkData, setLinkData] = useState<any>(null);
-
+  
   _setNameDisplay = setNameDisplay
   _setShowOverlay = setShowOverlay
   _setLinkData = setLinkData
   if (nameDisplay === ""){
     asyncToggleGetName()
   }
+  
+  const blockWidth = Width * .425
+  const marginLeft = Width * 0.01
+  const marginRight = marginLeft
+  
   return (
     <center>
-      <div className={"MainWidnow"} style={{width: `${Width}px`}}>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <img src={`${HTTP.HostRedirect()}pfp/${NameStorage.UserPFP.Get(User.ID)}`} alt="" style={{width: `${0.1*Width}px`, height: `${0.1*Width}px`, alignItems: 'center', padding: `${0.01*Width}px`}}/>
-              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: `${0.01*Width}px`}}>
-                <h2 >{`Welcome: ${User.Name}`}</h2>
+      <div className={"MainWidnow"} style={{width: `${Width * .9}px`, border: "solid", borderColor: "#3676cc", borderRadius: "5px"}}>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <img src={`${HTTP.HostRedirect()}pfp/${NameStorage.UserPFP.Get(user.id)}`}
+            style={{width: `${0.1*Width}px`, height: `${0.1*Width}px`, alignItems: 'center', padding: `${0.01*Width}px`, borderRadius: `50%`}}/>
+
+          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: `${0.01*Width}px`, color: "black"}}>
+            <h2 >{`Welcome ${user.username}`}</h2>
+          </div>
+        </div>
+        <div style={{marginBottom: `${marginLeft}px`}}> <EXPBarComponent id={user.id}/> </div>
+
+
+        {/* center left will have two blocks. one achievement, the other, games played. the right will have the friendlist*/}
+        <div style={{ display: 'flex', alignItems: 'center'}}>
+          {/*  */}
+          <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column', boxSizing: "border-box"}}>
+            <div style={{ display: 'flex', border: "solid black", padding: `${0.01*Width}px`, borderColor: "#3676cc", borderRadius: "5px"}}> <b>Game Data</b> </div>
+            <div style={{width: `${blockWidth}px`, height: `${(Width - (0.02*Width))/2}px`, border: "solid black", overflow: "auto", marginLeft: `${marginLeft}px`, marginRight: `${marginRight}px`, marginTop: `${Width*0.005}px`, marginBottom: `${Width*0.02}px`, borderColor: "#3676cc", borderRadius: "5px"}}>
+              <div style={{display: 'flex'}}>
+                {/* friendlist */}
+                <GameDataBar id={user.id} width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/>
+              </div>  
+            </div>
+            <div style={{ display: 'flex', border: "solid black", padding: `${0.01*Width}px`, borderColor: "#3676cc", borderRadius: "5px"}}> <b>Achievemement Data</b> </div>
+            <div style={{width: `${blockWidth}px`, height: `${(Width - (0.03*Width))/2}px`, border: "solid black", overflow: "auto", marginLeft: `${marginLeft}px`, marginRight: `${marginRight}px`, marginTop: `${Width*0.005}px`, marginBottom: `${Width*0.02}px`, borderColor: "#3676cc", borderRadius: "5px"}}>
+              <div style={{display: 'flex'}}>
+                {/* gameStat */}
+                <AchievementBar id={user.id} width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/>
               </div>
             </div>
-
-            <div> <EXPBarComponent id={User.ID}/> </div>
-            
-            {/* center left will have two blocks. one achievement, the other, games played. the right will have the friendlist*/}
-            <div style={{ display: 'flex', alignItems: 'center', width: `${Width}px`, border: "2px solid black" }}>
-            {/*  */}
-            <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column', width: `${(Width - (0.03*Width))/2}px`, padding: `${0.01*Width}px` }}>
-                {/* width of the box == (width - (0.03*Width))/2 */}
-                {/* height of the box == (width - (0.03*Width))/2 */}
-                  <div style={{ display: 'flex', border: "2px solid black", padding: `${0.01*Width}px`  }}> Game Data </div>
-                  <div style={{width: `${(Width - (0.05*Width))/2}px`, height: `${(Width - (0.02*Width))/2}px`, border: "2px solid black", overflow: "auto", marginLeft: `${Width*0.01}px`, marginRight: `${Width*0.01}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`,}}>
-                    <div style={{display: 'flex'}}>
-                    {/* friendlist */}
-                      <GameDataBar id={User.ID} width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/>
-                    </div>
-                  </div>
-                 <div style={{ display: 'flex', border: "2px solid black", padding: `${0.01*Width}px`  }}> Achievemement Data </div>
-                  <div style={{width: `${(Width - (0.05*Width))/2}px`, height: `${(Width - (0.03*Width))/2}px`, border: "2px solid black", overflow: "auto", marginLeft: `${Width*0.01}px`, marginRight: `${Width*0.01}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`,}}>
-                    <div style={{display: 'flex'}}>
-                      {/* gameStat */}
-                      <AchievementBar id={User.ID} width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/>
-                    </div>
-                  </div>
+          </div>
+          {/*  */}
+          <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column', width: `${(Width - (0.03*Width))/2}px` }}>
+            <div style={{ display: 'flex', border: "solid black", padding: `${0.01*Width}px`, borderColor: "#3676cc", borderRadius: "5px"}}> <b>Friend List</b> </div>
+            <div style={{width: `${blockWidth}px`, height: `${(Width - (0.02*Width))/2}px`, border: "solid black", overflow: "auto", marginLeft: `${marginLeft}px`, marginRight: `${marginRight}px`, marginTop: `${Width*0.005}px`, marginBottom: `${Width*0.02}px`, borderColor: "#3676cc", borderRadius: "5px"}}>
+              <div style={{display: 'flex'}}>
+                {/* friendlist */}
+                <FriendListBar id={user.id} width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/>
               </div>
-              {/*  */}
-              <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column', width: `${(Width - (0.03*Width))/2}px`, padding: `${0.01*Width}px` }}>
-                {/* width of the box == (width - (0.03*Width))/2 */}
-                {/* height of the box == (width - (0.03*Width))/2 */}
-                  <div style={{ display: 'flex', border: "2px solid black", padding: `${0.01*Width}px`  }}> FriendList </div>
-                  <div style={{width: `${(Width - (0.05*Width))/2}px`, height: `${(Width - (0.02*Width))/2}px`, border: "2px solid black", overflow: "auto", marginLeft: `${Width*0.01}px`, marginRight: `${Width*0.01}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`,}}>
-                    <div style={{display: 'flex'}}>
-                    {/* friendlist */}
-                      <FriendListBar id={User.ID} width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/>
-                    </div>
-                  </div>
-                 <div style={{ display: 'flex', border: "2px solid black", padding: `${0.01*Width}px`  }}> nothing </div>
-                  <div style={{width: `${(Width - (0.05*Width))/2}px`, height: `${(Width - (0.03*Width))/2}px`, border: "2px solid black", overflow: "auto", marginLeft: `${Width*0.01}px`, marginRight: `${Width*0.01}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`,}}>
-                    <div style={{display: 'flex'}}>
-                      {/* gameStat */}
-                    </div>
-                  </div>
-              </div>
-
             </div>
+            <div style={{ display: 'flex', border: "solid black", padding: `${0.01*Width}px`, borderColor: "#3676cc", borderRadius: "5px"}}> <b>nothing</b> </div>
+            <div style={{width: `${blockWidth}px`, height: `${(Width - (0.03*Width))/2}px`, border: "solid black", overflow: "auto", marginLeft: `${marginLeft}px`, marginRight: `${marginRight}px`, marginTop: `${Width*0.005}px`, marginBottom: `${Width*0.02}px`, borderColor: "#3676cc", borderRadius: "5px"}}>
+              <div style={{display: 'flex'}}>
+                {/* gameStat */}
+                {/* <SearchBarFriend width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/> */}
+              </div>
+            </div>
+          </div>
+
+        </div>
 
       </div>
     </center>

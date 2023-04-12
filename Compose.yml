@@ -17,6 +17,8 @@ services:
     ports:
       - "443:443"
 
+# Delete debug code
+
 # 42 API and other redirects need to got to https://url:443
 
 # ENV is not implemented

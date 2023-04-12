@@ -38,6 +38,9 @@ export class PFPController {
 		@Param("path") path: string,
 		@Response({ passthrough: true }) response,
 	) {
+		if (path === "")
+			throw new HttpException("", HttpStatus.BAD_REQUEST)
+
 		if (path === "default_pfp.jpg") {
 			const actualPath: string = `./src/profile-pictures/default_pfp.jpg`
 			
@@ -64,13 +67,11 @@ export class PFPController {
 		@UploadedFile(
 			new ParseFilePipe({
 				validators: [
-					new MaxFileSizeValidator({ maxSize: +process.env.MAX_PICTURE_SIZE_IN_BYTES }),
+					new MaxFileSizeValidator({ maxSize: +process.env.MAX_PROFILE_PICTURE_SIZE_IN_BYTES }),
 				],
 			}),
 		) file: Express.Multer.File
 	): Promise<string> {
-		
-		console.log(file.mimetype)
 		
 		/* Validate image content */
 		const result = await validateBufferMIMEType(file.buffer, {
@@ -87,8 +88,6 @@ export class PFPController {
 		}))).ID
 		const pfpURL = `${pfpID}.${extension(file.mimetype)}`
 		
-		console.log(pfpURL)
-		
 		/* Change user PFP */
 		const user: UserProfile = request["user"]
 		const pfpOldURL = user.profilePicture
@@ -98,7 +97,8 @@ export class PFPController {
 		/* Delete old PFP if no User is using it */
 		if (pfpOldURL !== "default_pfp.jpg")
 			this.userRepo.query(`SELECT 1 FROM user_profile WHERE "profilePicture" = '${pfpOldURL}';`)
-				.then(res => res.length === 0 && this.pfpRepo.delete({ID: pfpOldURL.substring(4, pfpOldURL.lastIndexOf('.'))}))
+				.then(res => res.length === 0 && this.pfpRepo.delete({ID: pfpOldURL.substring(0, pfpOldURL.lastIndexOf('.'))}))
+				.catch(() => {})
 		
 		return pfpURL
 	}

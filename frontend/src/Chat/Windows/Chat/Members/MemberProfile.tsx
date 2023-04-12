@@ -1,5 +1,4 @@
-import { useState } from "react";
-import MembersWindow, { ChangeMemberWindow, asyncUpdateMembersWindow } from "./MembersWindow";
+import { ChangeMemberWindow } from "./MembersWindow";
 import NameStorage from "../../../../Utils/Cache/NameStorage";
 import ChatRoom from "../../../../Utils/Cache/ChatRoom";
 import ChatUser from "../../../../Utils/Cache/ChatUser";
@@ -7,7 +6,7 @@ import HTTP from "../../../../Utils/HTTP";
 import User from "../../../../Utils/Cache/User";
 import { Button } from "@mui/material";
 import { ChatLineHeight, ChatWindowHeight } from "../../MainChatWindow";
-import { ClearChatMessageCache, asyncUpdateChatLog } from "../ActualChat/ChatWindow";
+import { ClearChatMessageCache } from "../ActualChat/ChatWindow";
 import { CreatingGameData } from "../../../../Games/pong/components/CreateGameMenu";
 
 export function setMemberProfileID(userID: string) {
@@ -113,7 +112,7 @@ export default function MemberProfile() {
 							<Button variant="contained"
 								style={{width: "100%", height: `${ChatLineHeight}px`, boxSizing: "border-box"}}
 								onClick={() => { UnblockUser(_memberProfileID) }}
-								>{"Unblock"}</Button>
+								>Unblock</Button>
 						</div>
 							:
 						<div style={{width: "100%", display: "table", marginTop: `${ChatLineHeight/2}px`}}>
@@ -129,7 +128,7 @@ export default function MemberProfile() {
 												ClearChatMessageCache()
 											})
 								}}
-								>{"Block"}</Button>
+								>Block</Button>
 						</div>) : <></>
 				}
 				
