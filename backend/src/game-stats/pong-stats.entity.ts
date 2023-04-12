@@ -7,7 +7,7 @@ export class PongStats{
     id: string;
 
     @Column({default: "default_pfp.jpg"}) /* string path towards the picture */
-    profilePicture: string
+    pictureLink: string
 
     @Column({default:""})
     player1_id:string

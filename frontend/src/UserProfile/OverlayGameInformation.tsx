@@ -42,7 +42,7 @@ const OverlayGameData = (props) => {
 				Text in a modal
 			</Typography>
 			<Typography id="modal-modal-description" sx={{ mt: 2 }}>
-				game stats
+				{props.gameData.player1}
 			</Typography>
 		</Box>
 		</Modal>

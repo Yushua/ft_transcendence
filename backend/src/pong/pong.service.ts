@@ -19,25 +19,26 @@ export class PongService {
 	) { 
 		PongService._userRepo = this.UserRepo
 		PongService._PongRepo = this.PongRepo
-
 	}
-		
+
 	private static _userRepo: Repository<UserProfile>
 	private static _PongRepo: Repository<PongStats>
 
 	/* On game end update database */
 	static async postPongStats(gameIDs:string[], gameData:GameData) {
 		
+		if (gameData.p1_score === gameData.p2_score)
+			console.log("both scored eleven, talk to bas")
 		/* get users */ 
 		const user1:UserProfile = await this._userRepo.findOneBy({id: gameIDs[IDs.p1_userID]})
 		const user2:UserProfile = await this._userRepo.findOneBy({id: gameIDs[IDs.p2_userID]})
 
 		/* stats vs yourself don't count */
-		if (user1 === user2) {
-			//achievement?
-			return ;
-		}
-		
+		// if (user1 === user2) {
+		// 	//achievement?
+		// 	return ;
+		// }
+
 		/* set game stats and update users */
 
 		// const achievement = await this.achievEntity.create({
@@ -46,7 +47,7 @@ export class PongService {
 		// 	message: message,
 		// 	userProfile: userprofile
 		//   });
-  
+
 		let stat = new PongStats
 		stat.nameGame = "Pong_Classic"
 		stat.player1_id = gameIDs[IDs.p1_userID]
@@ -90,7 +91,7 @@ export class PongService {
 		await this._userRepo.save(user1)
 		await this._userRepo.save(user2)
 		await this._PongRepo.save(stat)
-		
+
 		/* link stats to user */
 		GameStatsService.savePongStats(stat.id, user1.id, user2.id)
 	}

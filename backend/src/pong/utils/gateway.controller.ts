@@ -47,7 +47,7 @@ export class MyGateway implements OnModuleInit {
 		this.server.on('connection', async (socket) => {
 			const user = await this._guard.GetUser(socket.handshake.headers["authorization"])
 			if (!user)
-				throw new HttpException("", HttpStatus.UNAUTHORIZED)
+				socket.disconnect()
 			OurSession.SocketConnecting(user, socket.id)
 		})
 	}
@@ -76,7 +76,6 @@ export class MyGateway implements OnModuleInit {
 			}
 			else
 			{
-				console.log('p2:', player2.id)
 				game_name = game_name.replace(n_games.toString(), (n_games+1).toString())
 				n_games++
 				gameConfig.gameName = game_name
@@ -415,14 +414,17 @@ export class MyGateway implements OnModuleInit {
 				updated_games[gameName] = true
 				
 				/* Update game asyncronosly and add to await array */
-				await_updates.push((async () => 
-					gameData.update(deltaTime)
-				)())
+				gameData.update(deltaTime)
+				// await_updates.push((async () => 
+					
+				// )())
 			}
 			/* Handle end of game */
+			// console.log(gameData.gameState)
 			switch (gameData.gameState) {
-				case 'p1_won' || 'p2_won':
-					PongService.postPongStats(gameIDs, gameData)
+				case 'p1_won':
+				case 'p2_won':
+					await PongService.postPongStats(gameIDs, gameData)
 					break;
 				default: continue;
 			}
@@ -458,7 +460,7 @@ export class MyGateway implements OnModuleInit {
 		// await_updates.push(new Promise(res => setTimeout(res, 100)))
 		
 		/* Await all sends */
-		await Promise.all(await_updates)
+		// await Promise.all(await_updates)
 		
 		/* Make sure games update in set intervals */
 		const endTime = Date.now()

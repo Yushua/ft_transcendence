@@ -1,4 +1,4 @@
-import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
 import { UserProfile } from "../user-profile/user.entity";
 import { PongStats } from "src/game-stats/pong-stats.entity";
 
@@ -11,6 +11,9 @@ export class UserProfilePongStats {
   @PrimaryColumn({ name: 'pong_stats_id' })
   pongStatsId: string;
 
+  @Column({nullable:true})
+  timeStamp:Date
+  
   @ManyToOne(
     () => UserProfile,
     user => user.userStats,
