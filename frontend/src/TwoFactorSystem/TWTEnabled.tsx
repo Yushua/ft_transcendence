@@ -1,20 +1,19 @@
 import { useState } from 'react';
 import { removeCookie, setCookie } from 'typescript-cookie';
-import { newWindow } from '../App';
 import '../App.css';
-import MainWindowButtonComponent from '../ButtonComponents/MainWindowButtonComponent';
-import MainWindow from '../MainWindow/MainWindow';
 import HTTP from '../Utils/HTTP';
 import User from '../Utils/Cache/User';
+import { SetMainProfileWindow, SetWindowProfile } from '../UserProfile/ProfileMainWindow';
+import TWTDisabled from './TWTDisabled';
 
 async function CheckTWTSetup(code:string){
   const response = HTTP.Get(`auth/checkTWTCodeUpdate/${code}`, null, {Accept: 'application/json'})
   var result = await JSON.parse(response)
   if (await result["status"] == true){
-    User._ManualUpdate(result["user"])
+    User._user.status = result["status"]
     removeCookie(`TWToken${User.intraname}`);
     setCookie(`TWToken${User.intraname}`, await result["TWT"],{ expires: 100000 });
-      newWindow(<MainWindow/>);
+    SetWindowProfile(<TWTDisabled/>)
   }
   else {
     alert("wrong code input, try again")
@@ -32,6 +31,7 @@ async function handleSubmit(event:any){
   event.preventDefault();
   if (_inputValue.length < 2){
     _setInputValue("")
+    alert("input too low")
   }
   else {
     await CheckTWTSetup(_inputValue)

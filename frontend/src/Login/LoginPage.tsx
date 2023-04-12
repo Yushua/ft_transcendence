@@ -180,7 +180,6 @@ async function setupLoginTWT(){
   else {
     //check here sees false in the cookie. it seems something is set wrong here
     const statusTWT:boolean = await asyncGetTWTStatus(getCookie(`TWToken${_intraName}`))
-    // alert (`status of TWT to know if to go to TWT ${statusTWT}${_intraName}`)
     if (statusTWT === true){
       newWindow(<MainWindow/>)
     }

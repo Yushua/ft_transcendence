@@ -89,30 +89,29 @@ export class UserProfileController {
      * @returns add id based on the jwt authentication
      */
     @Patch('friendlist/add/:OtherId')
-    @UseGuards(AuthGuard())
+    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     addFriend(
-        @Request() req: Request, @Param('OtherId') OtherId: string,
-        ){
-        return this.userServices.addFriend(req["user"].id, OtherId);
+        @Request() req: Request, @Param('OtherId') friendID: string,
+    ){
+        return this.userServices.addFriend(req["user"].id, friendID);
     }
 
     @Patch('friendlist/remove/:idFriend/:id')
-    @UseGuards(AuthGuard())
-    removeFriend(
+    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+    async removeFriend(
         @Request() req: Request,
         @Param('idFriend') idfriend: string,
         @Param('id') id: string,
         ) {
-        this.userServices.removeFriend(id, idfriend);
+        await this.userServices.removeFriend(id, idfriend);
     }
     @Get('friendlist/check/:idFriend')
-    @UseGuards(AuthGuard())
-    checkFriend(
+    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+    async checkFriend(
         @Request() req: Request,
         @Param('idFriend') idfriend: string,
         ) {
-            console.log(`number {${this.userServices.checkFriend(req["user"].id, idfriend)}}`)
-            return {status: this.userServices.checkFriend(req["user"].id, idfriend)}
+            return {status: await this.userServices.checkFriend(req["user"].id, idfriend)}
     }
     
     /**
@@ -147,7 +146,7 @@ export class UserProfileController {
     }
 
     @Post('/userchange/:username')
-    @UseGuards(AuthGuard())
+    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     changeUsername(
         @Param('username') username: string, @Request() req: Request): Promise<UserProfile> {
         return this.userServices.changeUsername(username, req["user"].id);
@@ -158,33 +157,32 @@ export class UserProfileController {
     */
 
     @Get("WinList")
-    @UseGuards(AuthGuard())
+    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     async GetWinList(
         ){
         return {list: await this.userServices.getWinList() }
     }
 
     @Get("ExpList")
-    @UseGuards(AuthGuard())
+    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     async GeExpList(
         ){
         return {list: await this.userServices.getExpList() }
     }  
 
     @Get("PongWinsList")
-    @UseGuards(AuthGuard())
+    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     async GetPongWinsList(
         ){
         return {list: await this.userServices.getPongWinsList() }
     }
     
     @Get("Experience/:id")
-    @UseGuards(AuthGuard())
+    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     async GetTotalExp(
         @Param("id") id:string
         ):Promise<number>{
         var user = await this.userServices.findUserBy(id)
-        console.log(`experience = ${user.experience}`)
         return user.experience
     }
 }

@@ -44,7 +44,6 @@ export class GameStatsService {
       	return games;
     }
 
-
 	static async savePongStats(statsID:string, user1ID:string, user2ID:string) {
 		const now = new Date()
 		const pair = [{userId: user1ID, pongStatsId: statsID, timeStamp: now}]
