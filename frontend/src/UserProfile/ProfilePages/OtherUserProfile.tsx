@@ -25,6 +25,7 @@ async function AsyncSetButtonStatus(otherId: string):Promise<any> {
     var result = await JSON.parse(response)
     _setMyUsername(result["username"])
     _setMyPFP(result["profilePicture"])
+    console.log(`user {${result["username"]}} id {${otherId}}`)
     return (result["username"])
   }
 

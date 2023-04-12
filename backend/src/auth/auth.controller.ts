@@ -73,7 +73,6 @@ export class AuthController {
         var OAuthToken:string = await this.AuthService.OauthSystemCodeToAccess(dataToPost)
         var intraName:string = await this.AuthService.startRequest(OAuthToken)
         var accessToken:string = await this.AuthService.makeAccountJWT(intraName)
-
         await this.AuthService.makeAccountJWT(`${intraName}1`)
         await this.AuthService.makeAccountJWT(`${intraName}2`)
         await this.AuthService.makeAccountJWT(`${intraName}3`)
@@ -102,6 +101,7 @@ export class AuthController {
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     @Get('ChangeUsername/:username')
     async setNewUsername(@Param('username') username: string,  @Request() req: Request){
+        console.log(`user${username} id{${req["user"].id}}`)
         await this.AuthService.changeUsername(`${username}1`, `${req["user"].intraName}1`)
         await this.AuthService.changeUsername(`${username}2`, `${req["user"].intraName}2`)
         await this.AuthService.changeUsername(`${username}3`, `${req["user"].intraName}3`)
