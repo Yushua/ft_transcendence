@@ -60,7 +60,7 @@ function EXPBarComponent(props: any) {
             overflow: "hidden"
           }}>
           <div style={{
-            width: `${(30 / 100) * barWidth}px`,
+            width: `${(expPercent / 100) * barWidth}px`,
             height: `${barHeight}px`,
             boxSizing: "border-box",
             backgroundColor: "#3676cc",
