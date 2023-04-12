@@ -38,6 +38,9 @@ export class PFPController {
 		@Param("path") path: string,
 		@Response({ passthrough: true }) response,
 	) {
+		if (path === "")
+			throw new HttpException("", HttpStatus.BAD_REQUEST)
+
 		if (path === "default_pfp.jpg") {
 			const actualPath: string = `./src/profile-pictures/default_pfp.jpg`
 			

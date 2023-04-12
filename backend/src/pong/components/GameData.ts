@@ -42,10 +42,13 @@ export class GameData {
 
 	update(deltaTime: number)
 	{
+		if (this.p1_score === 11 || this.p2_score === 11)
+			return
 		switch (this.ball.update(this.p1, this.p2, deltaTime)) {
 			case 'p1_scored':
 				this.p1_score++
 				if (this.p1_score === 11) {
+					console.log('p1_won')
 					this.gameState = 'p1_won'
 					this.endTime = Date.now() / 1000
 				}
@@ -53,11 +56,11 @@ export class GameData {
 			case 'p2_scored':
 				this.p2_score++
 				if (this.p2_score === 11) {
+					console.log('p2_won')
 					this.gameState = 'p2_won'
 					this.endTime = Date.now() / 1000
 				}
 				break;
-			default: break;
 		}
 	}
 }
