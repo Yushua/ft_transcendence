@@ -34,7 +34,6 @@ function ProfileMainWindow() {
   _setWindow = setWindow
   _setDisplay = setDisplay
   if (Display == false){
-    console.log(`mainwindow {${mainWindow}}`)
     switch (mainWindow) {
       default:
         return <></>

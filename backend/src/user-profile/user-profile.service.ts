@@ -49,10 +49,6 @@ export class UserProfileService {
         const { search } = filterDto;
         const query = this.userEntity.createQueryBuilder('userProfile');
      
-        if (status) {
-          query.andWhere('task.status = :status', { status });
-        }
-     
         if (search) {
           query.andWhere(
             'LOWER(task.title) LIKE LOWER(:search) OR LOWER(task.description) LIKE LOWER(:search)',
@@ -108,8 +104,7 @@ export class UserProfileService {
       //turn the username of the friend into an id, and then add it to the currect user
       async addFriend(userid:string, otherId: string) {
         const found = await this.userEntity.findOneBy({id: userid});
-        const foundFriend = await this.userEntity.findOneBy({id: otherId});
-        found.friendList.push(foundFriend.id);
+        found.friendList.push(otherId);
         await this.userEntity.save(found);
       }
 
@@ -126,7 +121,6 @@ export class UserProfileService {
        */
       async removeFriend(id:string, idfriend: string):Promise<UserProfile> {
         const found = await this.userEntity.findOneBy({id});
-        //get all the users into one list
         found.friendList.splice(found.friendList.indexOf(idfriend), 1);
         if (found.friendList == null)
           found.friendList = [];
@@ -139,10 +133,9 @@ export class UserProfileService {
        * @returns 
        */
       async checkFriend(id:string, idfriend: string):Promise<Number> {
-        if (id == idfriend)
-          return 3
         const user = await this.userEntity.findOneBy({id});
         const hasFriend = user.friendList.some(friendlist => friendlist.includes(idfriend));
+  
         return hasFriend ? 1 : 2;
       }
   
@@ -251,7 +244,6 @@ export class UserProfileService {
        */
       async GetFriendList(id:string):Promise<string[][]> {
         var userprofile:UserProfile = await this.userEntity.findOneBy({id});
-        console.log(`friendlist == {${userprofile.friendList}}`)
         if (userprofile.friendList.length === 0){
           return []
         }
@@ -261,12 +253,11 @@ export class UserProfileService {
       }
 
       /**
-       * returns based on [["picture", "name", "status"]]
        */
       async postAchievementList(id:string, AddAchievement:AddAchievement) {
         const {nameAchievement, pictureLink, message} = AddAchievement
         var userprofile = await this.userEntity.findOneBy({id});//player1
-        const achievement = await this.achievEntity.create({
+        const achievement = this.achievEntity.create({
           nameAchievement: nameAchievement,
           pictureLink: pictureLink,
           message: message,
@@ -276,12 +267,11 @@ export class UserProfileService {
       }
 
       /**
-       * returns based on [["picture", "name", "status"]]
        */
       async ServiceAchievementList(id:string, AddAchievement:AddAchievement) {
         const {nameAchievement, pictureLink, message} = AddAchievement
         var userprofile = await this.userEntity.findOneBy({id});//player1
-        const achievement = await this.achievEntity.create({
+        const achievement = this.achievEntity.create({
           nameAchievement: nameAchievement,
           pictureLink: pictureLink,
           message: message,
@@ -297,6 +287,7 @@ export class UserProfileService {
 
       async GetUserAchievment(id:string):Promise<UserAchievement[]> {
         const userprofile:UserProfile = await this.userEntity.findOneBy({id});
+        // return userprofile.UserAchievement.sort((a, b) => a.time - b.time);
         return userprofile.UserAchievement
       }
 

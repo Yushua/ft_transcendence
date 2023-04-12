@@ -40,7 +40,6 @@ export class AuthController {
             return {
                 status:true,
                 TWT: TWT,
-                user: await this.AuthService.getUser(req["user"].id),
             }
         }
         else {
@@ -73,7 +72,6 @@ export class AuthController {
         var OAuthToken:string = await this.AuthService.OauthSystemCodeToAccess(dataToPost)
         var intraName:string = await this.AuthService.startRequest(OAuthToken)
         var accessToken:string = await this.AuthService.makeAccountJWT(intraName)
-
         await this.AuthService.makeAccountJWT(`${intraName}1`)
         await this.AuthService.makeAccountJWT(`${intraName}2`)
         await this.AuthService.makeAccountJWT(`${intraName}3`)
@@ -125,5 +123,6 @@ export class AuthController {
     @Get('ChangeUserTWTStatusFalse')
     async ChangeUserStatusTWTFalse(@Request() req: Request){
         await this.AuthService.updateTWTUser(req["user"].id, false)
+        return {status:false}
     }
 }
