@@ -79,12 +79,6 @@ export class AuthController {
 
 
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
-    @Get('LogoutOauth/:token')
-    async getLogoutOauth(@Param('token') token: string){
-        return {status : await this.AuthService.logoutOathSystem(token)}
-    }
-
-    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     @Get('makeNewTWT')
     async getNewTWT(@Param('code') code: string, @Request() req: Request) {
         var TWToken:string = await this.AuthService.makeAccountTWT(req["user"].intraName)
