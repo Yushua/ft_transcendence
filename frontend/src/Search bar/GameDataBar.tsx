@@ -45,9 +45,9 @@ function GameDataBar(props: any) {
 	return (
 		<div>
 			{gameList.map((option, idx) => (
-				<div key={option.id}>
+				<div key={option.id} style={{display: "inline-block"}}>
 					<button
-						style={{ display: "inline-block", width: `${widthButton}px`, height: `${widthButton}px`, marginLeft: `${width*0.02}px`, marginRight: `${width*0.02}px`, marginTop: `${width*0.02}px`, marginBottom: `${width*0.02}px`}}
+						style={{width: `${widthButton}px`, height: `${widthButton}px`, marginLeft: `${width*0.02}px`, marginRight: `${width*0.02}px`, marginTop: `${width*0.02}px`, marginBottom: `${width*0.02}px`}}
 						onClick={() => setShowModal(idx)}>
 						<img src={`${HTTP.HostRedirect()}pfp/${option.pictureLink}`} alt="" style={{width: `${widthButton - width*0.03}px`, height: `${widthButton - width*0.03}px`, border: "4px solid black"}}/>
 					</button>
@@ -58,7 +58,7 @@ function GameDataBar(props: any) {
 						aria-describedby="modal-modal-description"
 					>
 						<Box sx={style}>
-							<Typography id="modal-modal-title" variant="h6" component="h2">
+							<Typography id="modal-modal-title" component="h2">
 								{option.nameGame} played at {option.timestamp}
 							</Typography>
 							<Typography id="modal-modal-description" sx={{ mt: 2 }}>

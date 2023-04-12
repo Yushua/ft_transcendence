@@ -14,8 +14,15 @@ export class UserProfileService {
         private readonly userEntity: Repository<UserProfile>,
         @InjectRepository(UserAchievement)
         private readonly achievEntity: Repository<UserAchievement>,
-      ) {}
+      ) {
+        UserProfileService._instance = this
+      }
 
+      private static _instance: UserProfileService | null = null
+      static GetInstance(): UserProfileService | null {
+        return this._instance
+      }
+      
       async addFriendToID(userID: string, friendID: string):Promise<void>{
           const user = await this.findUserBy(userID);
           if (!user){

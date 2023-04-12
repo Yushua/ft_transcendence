@@ -68,7 +68,7 @@ export class PongService {
 					pictureLink: `aa.com/hoi.jpg`,
 					message: `you won your first game, congratz`}
 
-				// UserProfileService.ServiceAchievementList(user1.id, AddAchievement)
+				UserProfileService.GetInstance()?.ServiceAchievementList(user1.id, AddAchievement)
 			}
 			user2.losses += 1
 			user2.pong_losses += 1
@@ -93,6 +93,6 @@ export class PongService {
 		await this._PongRepo.save(stat)
 
 		/* link stats to user */
-		GameStatsService.savePongStats(stat.id, user1.id, user2.id)
+		GameStatsService.GetInstance()?.SavePongStats(stat.id, user1.id, user2.id)
 	}
 }

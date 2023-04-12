@@ -15,12 +15,13 @@ export class GameStatsService {
 		@InjectRepository(UserProfilePongStats)
         private readonly relationRepo: Repository<UserProfilePongStats>
       ) {
-		GameStatsService._relationRepo = this.relationRepo
-		GameStatsService._pongRepo = this.PongRepo
+		GameStatsService._instance = this
 	  }
 	
-	private static _relationRepo: Repository<UserProfilePongStats>
-	private static _pongRepo: Repository<PongStats>
+	private static _instance: GameStatsService | null = null
+	static GetInstance(): GameStatsService | null {
+		return this._instance
+	}
 
 	async getPongStatsById(id: string): Promise<PongStats[]> {
     	const user = await this.UserRepo.findOne({
@@ -45,13 +46,13 @@ export class GameStatsService {
     }
 
 
-	static async savePongStats(statsID:string, user1ID:string, user2ID:string) {
+	async SavePongStats(statsID:string, user1ID:string, user2ID:string) {
 		const now = new Date()
 		const pair = [{userId: user1ID, pongStatsId: statsID, timeStamp: now}]
 		const pair2 = [{userId: user2ID, pongStatsId: statsID, timeStamp: now}]
-		this._relationRepo.save(pair)
+		this.relationRepo.save(pair)
 		if (user1ID !== user2ID)
-			this._relationRepo.save(pair2)
+			this.relationRepo.save(pair2)
 	}
 
 	async getPongStatsTimeStampById(pong_id:string, user_id:string): Promise<Date> {
