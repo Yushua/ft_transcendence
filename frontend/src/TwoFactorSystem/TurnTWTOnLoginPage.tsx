@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
 import { newWindow } from '../App';
 import '../App.css';
-import MainWindow from '../MainWindow/MainWindow';
+import MainWindow, { Width } from '../MainWindow/MainWindow';
 import HTTP from '../Utils/HTTP';
+import { Box } from '@mui/material';
 
 export async function asyncGetTWTStatusTWT(TWT:string):Promise<boolean> {
   try {
@@ -20,7 +21,7 @@ export async function asyncGetTWTStatusTWT(TWT:string):Promise<boolean> {
 
 async function turningTWTOn(code:string){
   try {
-    const response = await fetch(HTTP.HostRedirect() + `auth/checkTWTOn/${getCookie(`TWToken${_intraName}`)}/${code}` , {
+    const response = await fetch(HTTP.HostRedirect() + `auth/checkTWTCodeUpdate/${code}` , {
       headers: {
         Accept: 'application/json',
         'Authorization': 'Bearer ' + getCookie("accessToken"),
@@ -51,7 +52,6 @@ async function turningTWTOn(code:string){
 async function handleSubmit(event:any){
   event.preventDefault();
   var status:boolean =  await turningTWTOn(_inputValue)
-  alert(`status ={${status}}`)
   if (status === true){
     newWindow(<MainWindow/>);
   }
@@ -87,11 +87,15 @@ function TurnTWTOnLoginPage(){
   //setu the QR code. if input Code, then it will be turned on. so there is always a QR code
   return (
     <form onSubmit={handleSubmit}>
-    <label>
-      enable two Factor Authentication to login
-      <input type="text" value={inputValue} onChange={handleInputChange} />
-    </label>
-    <button type="submit">Submit</button>
+       <Box
+          fontFamily={"'Courier New', monospace"}
+          fontSize={"200%"}
+          marginTop={`${Width*0.3}px`}>
+          Input Username
+        <input type="text" value={inputValue} onChange={handleInputChange} />
+        {inputValue.length === 6 && (
+        <button type="submit">Submit</button> )}
+      </Box>
   </form>
   );
 }

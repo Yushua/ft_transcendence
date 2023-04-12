@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import HTTP from '../Utils/HTTP';
 import { newWindow } from '../App';
 import OtherUserProfile from '../UserProfile/ProfilePages/OtherUserProfile';
+import { SetWindowProfile } from '../UserProfile/ProfileMainWindow';
 
 export async function asyncAchievmentList(id:string){
   const response = HTTP.Get(`user-profile/GetFriendList/${id}`, null, {Accept: 'application/json'})
@@ -33,8 +34,8 @@ function FriendListBar(props: any) {
 		getList(Id)
 	}, []); // empty dependency array means it will only run once
 
-  const handleButtonClick = (e: any) => {
-    newWindow(<OtherUserProfile id={Id}/>)
+  const handleButtonClick = (e: string) => {
+    SetWindowProfile(<OtherUserProfile id={e}/>)
   };
     return (
         <div >
@@ -42,7 +43,7 @@ function FriendListBar(props: any) {
               <button
                 key={index}
                 style={{ display: "inline-block", width: `${widthButton}px`, height: `${widthButton}px`, marginLeft: `${width*0.02}px`, marginRight: `${width*0.02}px`, marginTop: `${width*0.02}px`, marginBottom: `${width*0.02}px`}}
-                onClick={() => handleButtonClick(option)}>
+                onClick={() => handleButtonClick(option[3])}>
                   <img src={`${HTTP.HostRedirect()}pfp/${option[0]}`} alt="" style={{width: `${widthButton - width*0.03}px`, height: `${widthButton - width*0.03}px`, border: "4px solid black"}}/>
                   <h2 >{`name   ${option[1]}`}</h2>
                   <h2 >{`status ${option[2]}`}</h2>

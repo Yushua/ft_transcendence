@@ -2,7 +2,8 @@ import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
 import '../App.css';
 import HTTP from '../Utils/HTTP';
 import User from '../Utils/Cache/User';
-import { SetMainProfileWindow } from '../UserProfile/ProfileMainWindow';
+import { SetMainProfileWindow, SetWindowProfile } from '../UserProfile/ProfileMainWindow';
+import TWTEnabled from './TWTEnabled';
 
 async function setNewTWT(){
   try {
@@ -17,9 +18,17 @@ async function setNewTWT(){
     }
     var result = await response.json();
     var TWToken:string = result["TWToken"]
-    console.log("it is turned off")
-    removeCookie(`TWToken${User.intraname}`);
-    setCookie(`TWToken${User.intraname}`, TWToken,{ expires: 100000 });
+    if (TWToken === undefined){
+      removeCookie(`TWToken${User.intraname}`);
+    }
+    if (TWToken === undefined){
+      console.log("TWT is UNdefined in LOGINPAGE check")
+      window.location.replace(HTTP.HostRedirect());
+    }
+    else {
+      removeCookie(`TWToken${User.intraname}`);
+      setCookie(`TWToken${User.intraname}`, TWToken,{ expires: 100000 });
+    }
   } catch (error) {
     alert("something gone wrong while changing your TWT cookie")
   }
@@ -36,6 +45,12 @@ async function ChangeUserStatusTWTFalse(){
     if (!response.ok) {
       throw new Error(`Error! status: ${response.status}`);
     }
+    var result = await response.json();
+    if (result["status"] == false)
+    {
+      User._user.status = result["status"]
+      SetWindowProfile(<TWTEnabled/>)
+    }
   } catch (error) {
     alert("something gone wrong while changing your TWT cookie")
   }
@@ -44,7 +59,6 @@ async function ChangeUserStatusTWTFalse(){
 async function turnTWTFalse(){
   await setNewTWT()
   await ChangeUserStatusTWTFalse()
-  SetMainProfileWindow("tWTDisplay")
 }
 
 function TWTDisabled(){

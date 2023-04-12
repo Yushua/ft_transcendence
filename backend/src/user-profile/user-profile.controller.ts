@@ -93,7 +93,6 @@ export class UserProfileController {
     addFriend(
         @Request() req: Request, @Param('OtherId') friendID: string,
     ){
-        console.log(`in controller {${req["user"].username}} id {${req["user"].id}}`)
         return this.userServices.addFriend(req["user"].id, friendID);
     }
 
@@ -184,7 +183,6 @@ export class UserProfileController {
         @Param("id") id:string
         ):Promise<number>{
         var user = await this.userServices.findUserBy(id)
-        console.log(`experience = ${user.experience}`)
         return user.experience
     }
 }

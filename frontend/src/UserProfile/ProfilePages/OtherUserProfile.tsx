@@ -25,7 +25,6 @@ async function AsyncSetButtonStatus(otherId: string):Promise<any> {
     var result = await JSON.parse(response)
     _setMyUsername(result["username"])
     _setMyPFP(result["profilePicture"])
-    console.log(`user {${result["username"]}} id {${otherId}}`)
     return (result["username"])
   }
 
@@ -57,10 +56,9 @@ function OtherUserProfile(props: any){
     _setButtonStatus = setButtonStatus
     _setMyUsername = setMyUsername
     _setMyPFP = setMyPFP
-    useEffect(() => {
-      if (myDisplay == false){
-        setup()
-    }}, []);
+    if (myDisplay == false){
+      setup()
+    }
 
     const handleButtonUnfollowClick = (id:string) => {
       RemoveFriend(id)

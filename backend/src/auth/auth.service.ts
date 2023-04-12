@@ -127,9 +127,9 @@ export class AuthService {
        */
       async makeAccountTWT(intraName: string):Promise<string>{
         var user:UserProfile= await this.userProfileEntityRepos.findOneBy({ intraName })
-          const payload: JwtPayload = { userID: user.id, twoFactor: false}
-          const TWToken: string = this.jwtService.sign(payload);
-          return TWToken;
+        const payload: JwtPayload = { userID: user.id, twoFactor: false}
+        const TWToken: string = this.jwtService.sign(payload);
+        return TWToken;
       }
 
       /**
@@ -148,19 +148,19 @@ export class AuthService {
         //add checks if the account creation fails
         try {
           await this.userProfileEntityRepos.save(user);
-        } catch (error) {
+        }
+        catch (error) {
           throw new HttpException(`username ${username} already in use`, HttpStatus.BAD_REQUEST);
         }
         console.log(` id = ${user.id}`)
         const payload: JwtPayload = { userID: user.id, twoFactor: false};
         try {
          const authToken = this.jwtService.sign(payload);          
-        } catch (error) {
+        }
+        catch (error) {
           console.log(error)
-          console.log("authToken")
           throw new HttpException(`jwtService sign failed`, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        console.log(`authtoken ${authToken}`)
         return authToken;
       }
 
@@ -212,10 +212,8 @@ export class AuthService {
           // or
           // const isValid = authenticator.verify({ token, secret });
         } catch (err) {
-          console.log("failed")
           return false
         }
-        console.log("success")
         return true
       }
 

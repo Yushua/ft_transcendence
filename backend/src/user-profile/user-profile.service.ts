@@ -42,10 +42,6 @@ export class UserProfileService {
         const { search } = filterDto;
         const query = this.userEntity.createQueryBuilder('userProfile');
      
-        if (status) {
-          query.andWhere('task.status = :status', { status });
-        }
-     
         if (search) {
           query.andWhere(
             'LOWER(task.title) LIKE LOWER(:search) OR LOWER(task.description) LIKE LOWER(:search)',
@@ -101,10 +97,6 @@ export class UserProfileService {
       //turn the username of the friend into an id, and then add it to the currect user
       async addFriend(userid:string, otherId: string) {
         const found = await this.userEntity.findOneBy({id: userid});
-        const found1 = await this.userEntity.findOneBy({id: otherId});
-        console.log("in add friend")
-        console.log(`user {${found.username}} id {${userid}}`)
-        console.log(`user {${found1.username}} id {${otherId}}`)
         found.friendList.push(otherId);
         await this.userEntity.save(found);
       }
@@ -122,7 +114,6 @@ export class UserProfileService {
        */
       async removeFriend(id:string, idfriend: string):Promise<UserProfile> {
         const found = await this.userEntity.findOneBy({id});
-        //get all the users into one list
         found.friendList.splice(found.friendList.indexOf(idfriend), 1);
         if (found.friendList == null)
           found.friendList = [];
@@ -137,6 +128,7 @@ export class UserProfileService {
       async checkFriend(id:string, idfriend: string):Promise<Number> {
         const user = await this.userEntity.findOneBy({id});
         const hasFriend = user.friendList.some(friendlist => friendlist.includes(idfriend));
+  
         return hasFriend ? 1 : 2;
       }
   
@@ -245,7 +237,6 @@ export class UserProfileService {
        */
       async GetFriendList(id:string):Promise<string[][]> {
         var userprofile:UserProfile = await this.userEntity.findOneBy({id});
-        console.log(`friendlist == {${userprofile.friendList}}`)
         if (userprofile.friendList.length === 0){
           return []
         }

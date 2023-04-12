@@ -40,7 +40,6 @@ export class AuthController {
             return {
                 status:true,
                 TWT: TWT,
-                user: await this.AuthService.getUser(req["user"].id),
             }
         }
         else {
@@ -101,7 +100,6 @@ export class AuthController {
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     @Get('ChangeUsername/:username')
     async setNewUsername(@Param('username') username: string,  @Request() req: Request){
-        console.log(`user${username} id{${req["user"].id}}`)
         await this.AuthService.changeUsername(`${username}1`, `${req["user"].intraName}1`)
         await this.AuthService.changeUsername(`${username}2`, `${req["user"].intraName}2`)
         await this.AuthService.changeUsername(`${username}3`, `${req["user"].intraName}3`)
@@ -125,5 +123,6 @@ export class AuthController {
     @Get('ChangeUserTWTStatusFalse')
     async ChangeUserStatusTWTFalse(@Request() req: Request){
         await this.AuthService.updateTWTUser(req["user"].id, false)
+        return {status:false}
     }
 }
