@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import HTTP from '../Utils/HTTP';
 import FillSpaceComponentAchieve from './FillSpaceComponent';
+import { Width } from '../MainWindow/MainWindow';
 
 export async function asyncAchievmentList(id:string){
   const response = HTTP.Get(`user-profile/GetAchievementListDone/${id}`, null, {Accept: 'application/json'})
@@ -26,11 +27,12 @@ function AchievementBar(props: any) {
 		getList(props.id)
 	}, []); // empty dependency array means it will only run once
     return (
-      <div>
-        {ListSearchList.map((option, idx) => (
-          <FillSpaceComponentAchieve option={option} idx={idx} amount={6}></FillSpaceComponentAchieve>
-        ))}
-      </div>
+      <>
+      {ListSearchList.map((option, idx) => (
+
+        <FillSpaceComponentAchieve option={option} idx={idx} amount={6}></FillSpaceComponentAchieve>
+      ))}
+    </>
     )
 }
 

@@ -52,7 +52,7 @@ function FullAchievementBar(props: any) {
 	}
 
     return (
-        <div >
+      <div>
           <div>
           <Tabs value={mainWindow} centered>
             <Tab value="FULL" label="FULL" onClick={() => SetMainProfileWindow("FULL")}/>
@@ -60,10 +60,12 @@ function FullAchievementBar(props: any) {
             <Tab value="NOT DONE" label="NOT DONE" onClick={() => SetMainProfileWindow("NOT DONE")}/>
           </Tabs>
           </div>
-          <div style={{display: "table", width: "100%", height: "100%", color: "black"}}>
-            {Window}
-          </div>
-        </div>
+          <center>
+            <div style={{ display: "flex", width: `${Width * .9}px`, height: `${Width * 1.5}px`, overflowY: "scroll", border: "solid", borderColor: "#3676cc", borderRadius: `${Width * 0.01}px`}}>
+              {Window}
+            </div>
+          </center>
+      </div>
     )
 }
 

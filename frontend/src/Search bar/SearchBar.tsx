@@ -42,9 +42,9 @@ function SearchBar() {
   };
     return (
         <div >
-              <input type="text" value={SearchTerm} onChange={handleInputChange} />
+              <input type="text" value={SearchTerm} onChange={handleInputChange} style={{border: "solid", borderColor: "#3676cc", marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`}}/>
               {/* the size of the buttons, should include the profile picture, and the tet underneadth*/}
-              <div style={{width: `${Width*0.9}px`, height: `${Width*1.5}px`, overflowY: "scroll", border: "2px solid black"}}>
+              <div style={{ display: "flex", width: `${Width * .9}px`, height: `${Width * 1.5}px`, overflowY: "scroll", border: "solid", borderColor: "#3676cc", borderRadius: `${Width * 0.01}px`, }}>
                     {/*  button size */}
                     {ListSearchList.map((option, index) => (
                       //hey, f this index is 3 dividable, then go to next round

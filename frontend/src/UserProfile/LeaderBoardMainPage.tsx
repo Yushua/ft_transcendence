@@ -54,7 +54,11 @@ function LeaderBoardMainPage() {
         </Tabs>
       </div>
       <div style={{display: "table", width: "100%", height: "100%", color: "black"}}>
-        {Window}
+        <center>
+          <div style={{ display: "flex", width: `${Width * .9}px`, height: `${Width * 1.5}px`, overflowY: "scroll", border: "solid", borderColor: "#3676cc", borderRadius: `${Width * 0.01}px`, }}>
+          {Window}
+          </div>
+        </center>
       </div>
 	  </div>
   );

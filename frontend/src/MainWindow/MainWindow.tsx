@@ -10,7 +10,6 @@ import NameStorage from "../Utils/Cache/NameStorage";
 import { WebsocketContext } from "../Games/contexts/WebsocketContext";
 import MainChatWindow from "../Chat/Windows/MainChatWindow";
 import LogoutButtonComponent from "../ButtonComponents/LogoutButton";
-import LeaderBoard from "../LeaderBoards/LeaderBoard";
 import ProfileMainWindow from "../UserProfile/ProfileMainWindow";
 
 export async function asyncGetNameExport():Promise<string> {
