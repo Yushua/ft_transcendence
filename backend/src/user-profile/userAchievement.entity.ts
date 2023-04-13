@@ -21,8 +21,11 @@ export class UserAchievement {
     @Column()
     status: boolean;
 
-    @CreateDateColumn()
-    createdAt: number;
+    @CreateDateColumn({
+        type: 'timestamp',
+        name: 'created_at',
+      })
+      createdAt: Date;
 
     @ManyToOne((_type) => UserProfile, (userProfile) => userProfile.UserAchievement, {eager: false})
     userProfile: UserProfile;

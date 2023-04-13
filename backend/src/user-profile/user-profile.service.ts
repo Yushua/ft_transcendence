@@ -6,6 +6,7 @@ import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { UserProfile } from './user.entity';
 import { UserAchievement } from './userAchievement.entity';
 import { AddAchievement } from './dto/addAchievement.dto';
+import { check } from 'prettier';
 
 class MyEntity {
   @UpdateDateColumn({ type: "bigint" })
@@ -261,21 +262,32 @@ export class UserProfileService {
        */
       async postAchievementList(id:string, AddAchievement:AddAchievement) {
         const {nameAchievement, pictureLink, message} = AddAchievement
-        var userprofile = await this.userEntity.findOneBy({id});//player1
+        var userprofile = await this.userEntity.findOneBy({id});
         var achieveStore:UserAchievement[] = userprofile.UserAchievement
-        const achieve:UserAchievement = achieveStore.find(
+        var achieve:UserAchievement = achieveStore.find(
           (achievement) => achievement.nameAchievement === nameAchievement,
         );
         // var date = new Date()
         // var tmp:string = date.toISOString().slice(0, 10)
 
-
+        console.log(`before {${achieve.pictureLink}}`)
+        console.log(` {${achieve}}`)
         achieve.nameAchievement = nameAchievement
         achieve.pictureLink = pictureLink
         achieve.message = message
         achieve.status = true
+        console.log(`change {${achieve.pictureLink}}`)
+        
         
         await this.achievEntity.save(achieve);
+
+        userprofile = await this.userEntity.findOneBy({id});
+        achieveStore = userprofile.UserAchievement
+        console.log("name to find")
+        achieve = achieveStore.find(
+          (achievement) => achievement.nameAchievement === nameAchievement,
+        );
+        console.log(`doublw check {${achieve.pictureLink}}`)
       }
 
       /**
@@ -320,7 +332,7 @@ export class UserProfileService {
       async GetUserAchievementDone(id:string):Promise<UserAchievement[]> {
         const userprofile:UserProfile = await this.userEntity.findOneBy({id});
         var achieveStore:UserAchievement[] = userprofile.UserAchievement.filter(a => a.status === true);
-        achieveStore.sort((a, b) => Number(a.createdAt - b.createdAt));
+        // achieveStore.sort((a, b) => Number(a.createdAt - b.createdAt));
         return achieveStore
       }
 
@@ -331,7 +343,7 @@ export class UserProfileService {
       async GetUserAchievementNotDone(id:string):Promise<UserAchievement[]> {
         const userprofile:UserProfile = await this.userEntity.findOneBy({id});
         var achieveStore:UserAchievement[] = userprofile.UserAchievement.filter(a => a.status === false);
-        achieveStore.sort((a, b) => Number(a.createdAt - b.createdAt));
+        // achieveStore.sort((a, b) => Number(a.createdAt - b.createdAt));
         return achieveStore
       }
 
