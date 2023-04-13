@@ -42,13 +42,13 @@ export class UserProfile {
     pong_wins: number;
 
     @Column({default: 0})
+    pong_losses: number;
+
+    @Column({default: 0})
     pong_experience: number;
 
     @OneToMany((_type) => UserAchievement, (UserAchievement) => UserAchievement.userProfile, { eager: true, cascade:true})
     UserAchievement : UserAchievement[];
-
-    @Column({default: 0})
-    pong_losses: number;
 
     /* RELATIONS */
     @ManyToMany(

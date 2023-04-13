@@ -1,11 +1,16 @@
 import { ConflictException, Injectable, InternalServerErrorException, NotFoundException, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import OurSession from 'src/session/OurSession';
-import { Repository } from 'typeorm';
+import { Repository, UpdateDateColumn } from 'typeorm';
 import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { UserProfile } from './user.entity';
 import { UserAchievement } from './userAchievement.entity';
 import { AddAchievement } from './dto/addAchievement.dto';
+
+class MyEntity {
+  @UpdateDateColumn({ type: "bigint" })
+  createdAt: Date;
+}
 
 @Injectable()
 export class UserProfileService {
@@ -257,16 +262,18 @@ export class UserProfileService {
       async postAchievementList(id:string, AddAchievement:AddAchievement) {
         const {nameAchievement, pictureLink, message} = AddAchievement
         var userprofile = await this.userEntity.findOneBy({id});//player1
-        var achieve:UserAchievement = userprofile.userAchievement.findOneBy({nameAchievement})
-        var date = new Date()
-        var tmp:string = date.toISOString().slice(0, 10)
+        var achieveStore:UserAchievement[] = userprofile.UserAchievement
+        const achieve:UserAchievement = achieveStore.find(
+          (achievement) => achievement.nameAchievement === nameAchievement,
+        );
+        // var date = new Date()
+        // var tmp:string = date.toISOString().slice(0, 10)
 
 
         achieve.nameAchievement = nameAchievement
         achieve.pictureLink = pictureLink
         achieve.message = message
         achieve.status = true
-        achieve.createdAt =  parseInt(tmp, 10); 
         
         await this.achievEntity.save(achieve);
       }
@@ -286,20 +293,6 @@ export class UserProfileService {
         await this.achievEntity.save(achievement);
       }
 
-      async GetAllAchievements():Promise<UserAchievement[]> {
-        const achieve:UserAchievement[] = await this.achievEntity.find()
-        return achieve
-      }
-
-      async GetUserAchievment(id:string):Promise<UserAchievement[]> {
-        const userprofile:UserProfile = await this.userEntity.findOneBy({id});
-        var achieveStore:UserAchievement[] = userprofile.UserAchievement.filter(a => a.status === true);
-        achieveStore = achieveStore.sort(function(a, b) {
-          return a.createdAt - b.createdAt;
-        });
-        return achieveStore
-      }
-
       async getWinList():Promise<string[][]>{
         const users = await this.userEntity.find({order: { wins: 'DESC' } })
         var list:string[][] = users.map(user => [user.username, user.wins.toString(), user.losses.toString()]);
@@ -317,4 +310,34 @@ export class UserProfileService {
         var list:string[][] = users.map(user => [user.username, user.pong_wins.toString(), user.pong_losses.toString()]);
         return list
       }
+
+      /* UserAchievement */
+
+      /**
+       * when done, so when status == true
+       * @returns 
+       */
+      async GetUserAchievementDone(id:string):Promise<UserAchievement[]> {
+        const userprofile:UserProfile = await this.userEntity.findOneBy({id});
+        var achieveStore:UserAchievement[] = userprofile.UserAchievement.filter(a => a.status === true);
+        achieveStore.sort((a, b) => Number(a.createdAt - b.createdAt));
+        return achieveStore
+      }
+
+      /**
+       * when done, so when status == false
+       * @returns 
+       */
+      async GetUserAchievementNotDone(id:string):Promise<UserAchievement[]> {
+        const userprofile:UserProfile = await this.userEntity.findOneBy({id});
+        var achieveStore:UserAchievement[] = userprofile.UserAchievement.filter(a => a.status === false);
+        achieveStore.sort((a, b) => Number(a.createdAt - b.createdAt));
+        return achieveStore
+      }
+
+      async GetUserAchievementFull(id:string):Promise<UserAchievement[]> {
+        const userprofile:UserProfile = await this.userEntity.findOneBy({id});
+        return userprofile.UserAchievement;
+      }
+
 }

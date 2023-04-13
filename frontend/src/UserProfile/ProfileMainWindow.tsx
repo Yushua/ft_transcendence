@@ -8,6 +8,7 @@ import User from "../Utils/Cache/User";
 import TWTDisabled from "../TwoFactorSystem/TWTDisabled";
 import TWTEnabled from "../TwoFactorSystem/TWTEnabled";
 import LeaderBoardMainPage from "./LeaderBoardMainPage";
+import FullAchievementBar from "../Search bar/FullAchievementBar";
 
 export function SetMainProfileWindow(window: string) {
 	if (!!_setMainWindow){
@@ -57,6 +58,9 @@ function ProfileMainWindow() {
       case "settings":
         SetWindowProfile(<SettingsUser/>)
         break;
+      case "Achievements":
+        SetWindowProfile(<FullAchievementBar id={User.ID}/>)
+        break;
     }
 	}
   return (
@@ -67,6 +71,7 @@ function ProfileMainWindow() {
           <Tab value="search" label="search user" onClick={() => SetMainProfileWindow("search")}/>
           <Tab value="tWTDisplay" label="TwoFactor" onClick={() => SetMainProfileWindow("tWTDisplay")}/>
           <Tab value="leaderBoard" label="Game LeaderBoard" onClick={() => SetMainProfileWindow("leaderBoard")}/>
+          <Tab value="Achievements" label="Game Achievements" onClick={() => SetMainProfileWindow("Achievements")}/>
           <Tab value="settings" label="settings" onClick={() => SetMainProfileWindow("settings")}/>
         </Tabs>
       </div>

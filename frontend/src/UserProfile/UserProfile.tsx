@@ -34,25 +34,14 @@ export interface YourFormElement extends HTMLFormElement {
    _setNameDisplay(await asyncGetName())
   };
   
-  export function setupOverlay(status:boolean, LinkData:any){
-    _setShowOverlay(true)
-    _setLinkData(LinkData)
-  }
-  
 var _setNameDisplay: React.Dispatch<React.SetStateAction<string>>
-var _setShowOverlay:React.Dispatch<React.SetStateAction<boolean>>
-var _setLinkData:React.Dispatch<any>
 
 function UserProfilePage(props: any) {
   const user = props?.user ?? User._user
   
   const [nameDisplay, setNameDisplay] = useState<string>("");
-  const [showOverlay, setShowOverlay] = useState(false);
-  const [linkData, setLinkData] = useState<any>(null);
   
   _setNameDisplay = setNameDisplay
-  _setShowOverlay = setShowOverlay
-  _setLinkData = setLinkData
   if (nameDisplay === ""){
     asyncToggleGetName()
   }

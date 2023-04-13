@@ -7,12 +7,14 @@ import { Repository } from 'typeorm';
 import { JwtPayload } from './jwt-payload.interface';
 import { authenticator } from 'otplib';
 import { AddAchievement } from 'src/user-profile/dto/addAchievement.dto';
+import { UserProfileService } from 'src/user-profile/user-profile.service';
 
 export class AuthService {
     constructor(
       @InjectRepository(UserProfile)
       private readonly userProfileEntityRepos: Repository<UserProfile>,
       private readonly jwtService: JwtService,
+      private readonly userProlfileServices: UserProfileService,
   ) {}
   
       /**
@@ -127,7 +129,7 @@ export class AuthService {
               nameAchievement: option[0],
               pictureLink: option[1],
               message: option[2]}
-              await this.userProfileEntityRepos.AddAchievementList(id, AddAchievement)
+              await this.userProlfileServices.AddAchievementList(id, AddAchievement)
           }),
         );
 

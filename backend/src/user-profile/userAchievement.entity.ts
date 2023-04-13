@@ -1,10 +1,10 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { UserProfile } from "./user.entity";
 
 @Entity()
 export class UserAchievement {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+    @PrimaryGeneratedColumn('increment', {type: 'bigint'})
+    createdAt: number;
 
     @Column()
     nameAchievement: string;
@@ -20,9 +20,6 @@ export class UserAchievement {
 
     @Column()
     status: boolean;
-
-    @UpdateDateColumn()
-    createdAt: Date
 
     @ManyToOne((_type) => UserProfile, (userProfile) => userProfile.UserAchievement, {eager: false})
     userProfile: UserProfile;
