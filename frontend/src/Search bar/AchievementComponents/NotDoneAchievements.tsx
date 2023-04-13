@@ -49,7 +49,8 @@ var _setList:React.Dispatch<React.SetStateAction<string[][]>>
   }
 
    return (
-       <div >
+    <center>
+      <div style={{width: `${Width*0.9}px`, height: `${Width*1.5}px`, overflowY: "scroll", border: "2px solid black"}}>
          {ListSearchList.map((option, idx) => (
            <div key={option.id} style={{display: "inline-block"}}>
            <button
@@ -76,6 +77,7 @@ var _setList:React.Dispatch<React.SetStateAction<string[][]>>
          </div>	
          ))}
        </div>
+    </center>
    )
 }
 

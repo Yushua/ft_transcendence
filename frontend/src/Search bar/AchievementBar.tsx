@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import HTTP from '../Utils/HTTP';
 import { Box, Modal, Typography } from '@mui/material';
+import { Width } from '../MainWindow/MainWindow';
 
 const style = {
 	position: 'absolute' as 'absolute',
@@ -44,7 +45,8 @@ function AchievementBar(props: any) {
   _setList = setList
 
     return (
-        <div >
+      <center>
+        <div style={{width: `${Width*0.9}px`, height: `${Width*1.5}px`, overflowY: "scroll", border: "2px solid black"}}></div>
           {ListSearchList.map((option, idx) => (
             <div key={option.id} style={{display: "inline-block"}}>
             <button
@@ -70,7 +72,7 @@ function AchievementBar(props: any) {
             </Modal>
           </div>	
           ))}
-        </div>
+      </center>
     )
 }
 

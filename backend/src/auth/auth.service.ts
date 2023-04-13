@@ -113,8 +113,8 @@ export class AuthService {
       */
       async AllAchievements():Promise<string[][]>{
         var list:string[][] = [
-          ["first_win", `Invalid.jpg`, "Congratulations, you won your first game!"],
-          ["setusername", `Invalid.jpg`, "you set your username"],
+          ["first_win", `invalid_cross.jpg`, "Congratulations, you won your first game!"],
+          ["setusername", `invalid_cross.jpg`, "you set your username"],
         ]
         return list
       }

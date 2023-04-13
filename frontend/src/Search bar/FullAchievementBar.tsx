@@ -31,7 +31,10 @@ function FullAchievementBar(props: any) {
   const [Window, setWindow] = useState<any>(<div></div>)
 
   _setDisplay = setDisplay
+  _setMainWindow = setMainWindow
+  _setWindow = setWindow
   /* when set, it changes WHAT list I am getting and HOW it is filtered */
+  /* make thigns liek the buttons into seperate components */
   if (Display == false){
     switch (mainWindow) {
       default:
@@ -58,11 +61,7 @@ function FullAchievementBar(props: any) {
           </Tabs>
           </div>
           <div style={{display: "table", width: "100%", height: "100%", color: "black"}}>
-            <center>
-              <div style={{width: `${Width*0.9}px`, height: `${Width*1.5}px`, overflowY: "scroll", border: "2px solid black"}}>
-                {Window}
-              </div>
-            </center>
+            {Window}
           </div>
         </div>
     )

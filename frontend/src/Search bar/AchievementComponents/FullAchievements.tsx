@@ -18,7 +18,6 @@ const style = {
   };
 
 async function getAchieveFullList():Promise<any>{
-  alert("i am in here")
   const response = HTTP.Get(`user-profile/GetAchievementListFull/${User.ID}`, null, {Accept: 'application/json'})
   var result = await JSON.parse(response)
   _setList(Object.values(result["list"]))
@@ -35,7 +34,7 @@ var _setList:React.Dispatch<React.SetStateAction<string[][]>>
   const [Display, setDisplay] = useState<boolean>(false)
   _setList = setList
  
- var widthButton:number = (((Width*0.9) - (Width*0.9*0.03 * 3 * 2))/3)
+ var widthButton:number = (((Width*0.9) - (Width*0.9*0.03 * 6 * 2))/6)
 
  _setList = setList
   if (Display == false){
@@ -48,7 +47,8 @@ var _setList:React.Dispatch<React.SetStateAction<string[][]>>
   }
 
    return (
-       <div >
+    <center>
+      <div style={{width: `${Width*0.9}px`, height: `${Width*1.5}px`, overflowY: "scroll", border: "2px solid black"}}>
          {ListSearchList.map((option, idx) => (
            <div key={option.id} style={{display: "inline-block"}}>
            <button
@@ -75,6 +75,7 @@ var _setList:React.Dispatch<React.SetStateAction<string[][]>>
          </div>	
          ))}
        </div>
+    </center>
    )
 }
 

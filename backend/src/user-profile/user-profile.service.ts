@@ -281,11 +281,11 @@ export class UserProfileService {
       /**
        */
       async AddAchievementList(id:string, AddAchievement:AddAchievement) {
-        const {nameAchievement, message} = AddAchievement
+        const {nameAchievement, pictureLink, message} = AddAchievement
         var userprofile = await this.userEntity.findOneBy({id});//player1
         const achievement = this.achievEntity.create({
           nameAchievement: nameAchievement,
-          pictureLink: "Invalid.jpg",
+          pictureLink: pictureLink,
           message: message,
           status: false,
           userProfile: userprofile
