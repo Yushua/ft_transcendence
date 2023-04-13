@@ -111,12 +111,12 @@ export class AuthService {
           these should tell the player HOW to get them
           while PostAchievement should congratulate them on getting it
       */
+    list:string[][] = [
+       ["first_win", `invalid_cross.jpg`, "Congratulations, you won your first game!"],
+       ["setusername", `invalid_cross.jpg`, "you set your username"],
+     ]
       async AllAchievements():Promise<string[][]>{
-        var list:string[][] = [
-          ["first_win", `invalid_cross.jpg`, "Congratulations, you won your first game!"],
-          ["setusername", `invalid_cross.jpg`, "you set your username"],
-        ]
-        return list
+        return this.list
       }
 
       async setupAchievements(id:string){

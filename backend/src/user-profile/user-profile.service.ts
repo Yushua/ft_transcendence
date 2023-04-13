@@ -269,25 +269,18 @@ export class UserProfileService {
         );
         // var date = new Date()
         // var tmp:string = date.toISOString().slice(0, 10)
-
-        console.log(`before {${achieve.pictureLink}}`)
-        console.log(` {${achieve}}`)
-        achieve.nameAchievement = nameAchievement
         achieve.pictureLink = pictureLink
         achieve.message = message
         achieve.status = true
-        console.log(`change {${achieve.pictureLink}}`)
         
         
         await this.achievEntity.save(achieve);
 
         userprofile = await this.userEntity.findOneBy({id});
         achieveStore = userprofile.UserAchievement
-        console.log("name to find")
         achieve = achieveStore.find(
           (achievement) => achievement.nameAchievement === nameAchievement,
         );
-        console.log(`doublw check {${achieve.pictureLink}}`)
       }
 
       /**

@@ -13,8 +13,8 @@ function LogoutButtonComponent() {
   localStorage.removeItem('authToken');
   newWindow(<LoginPage/>);
     return (
-      <div>
-      </div>
+      <>
+      </>
     )
 }
 
