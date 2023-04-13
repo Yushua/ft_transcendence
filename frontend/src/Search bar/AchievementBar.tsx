@@ -42,9 +42,6 @@ function AchievementBar(props: any) {
   const [showModal, setShowModal] = React.useState(-1)
 
   _setList = setList
-  useEffect(() => {
-		getList(props.id)
-	}, []); // empty dependency array means it will only run once
 
     return (
         <div >

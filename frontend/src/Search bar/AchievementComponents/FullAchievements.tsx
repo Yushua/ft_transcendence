@@ -1,42 +1,81 @@
-import { useEffect, useState } from 'react';
-import '../App.css';
-import { Width } from '../MainWindow/MainWindow';
-import HTTP from '../Utils/HTTP';
+import React, { useState } from 'react';
+import HTTP from '../../Utils/HTTP';
+import User from '../../Utils/Cache/User';
+import { Width } from '../../MainWindow/MainWindow';
+import { Box, Modal, Typography } from '@mui/material';
 
-async function asyncGetList(){
-  const response = HTTP.Get(`user-profile/WinList`, null, {Accept: 'application/json'})
+const style = {
+	position: 'absolute' as 'absolute',
+	top: '50%',
+	left: '50%',
+	transform: 'translate(-50%, -50%)',
+	width: 400,
+	bgcolor: 'background.paper',
+	border: '2px solid #000',
+	boxShadow: 24,
+	p: 4,
+  alignContent: 'center',
+  };
+
+async function getAchieveFullList():Promise<any>{
+  alert("i am in here")
+  const response = HTTP.Get(`user-profile/GetAchievementListFull/${User.ID}`, null, {Accept: 'application/json'})
   var result = await JSON.parse(response)
-  _setList(await result["list"])
-}
-
-async function asyncPutList(){
-  await asyncGetList()
+  _setList(Object.values(result["list"]))
+  return Object.values(result["list"])
 }
 
 var _setList:React.Dispatch<React.SetStateAction<string[][]>>
 
-function TotalWins(){
-  const [List, setList] = useState<string[][]>([]);
+var _setList:React.Dispatch<React.SetStateAction<string[][]>>
+ //get into page, get the entire list online
+ function FullAchievements(props: any){
+  const [ListSearchList, setList] = useState<any[]>([]);
+  const [showModal, setShowModal] = React.useState(-1)
+  const [Display, setDisplay] = useState<boolean>(false)
   _setList = setList
+ 
+ var widthButton:number = (((Width*0.9) - (Width*0.9*0.03 * 3 * 2))/3)
 
-  useEffect(() => {
-      asyncPutList()
-	}, []); // empty dependency array means it will only run once
-  return (
-    <center>
-      <div style={{width: `${Width*0.9}px`, height: `${Width*1.5}px`, overflowY: "scroll", border: "2px solid black"}}>
-            {/*  button size */}
-            {List.map((option, index) => (
-              //hey, f this index is 3 dividable, then go to next round
-              <button
-                key={index}
-                style={{ display: "inline-block", width: `${Width*0.8}px`, height: `${Width*0.05}px`, marginLeft: `${Width*0.02}px`, marginRight: `${Width*0.02}px`, marginTop: `${Width*0.005}px`, marginBottom: `${Width*0.005}px`, border: "4px solid black" }}>
-                  <h2 >{`[${index}]: name{${option[0]}}: wins{${option[1]}} : loses{${option[2]}}`}</h2>
-              </button>
-            ))}
-      </div>
-    </center>
-  );
+ _setList = setList
+  if (Display == false){
+    asyncPutList()
+  }
+
+  async function asyncPutList(){
+    await getAchieveFullList()
+    setDisplay(true)
+  }
+
+   return (
+       <div >
+         {ListSearchList.map((option, idx) => (
+           <div key={option.id} style={{display: "inline-block"}}>
+           <button
+             key={option}
+             style={{ width: `${widthButton}px`, height: `${widthButton}px`, marginLeft: `${Width*0.02}px`, marginRight: `${Width*0.02}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`}}
+             onClick={() => setShowModal(idx)}>
+               <img src={`${HTTP.HostRedirect()}pfp/${option.pictureLink}`} alt="" style={{width: `${widthButton - Width*0.03}px`, height: `${widthButton - Width*0.03}px`, border: "4px solid black"}}/>
+           </button>
+           <Modal
+             open={showModal === idx}
+             onClose={() => setShowModal(-1)}
+             aria-labelledby="modal-modal-title"
+             aria-describedby="modal-modal-description"
+             >
+             <Box sx={style}>
+               <Typography id="modal-modal-title" component="h2">
+                 {option.nameAchievement}
+               </Typography>
+               <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                 {option.message}
+               </Typography>
+             </Box>
+           </Modal>
+         </div>	
+         ))}
+       </div>
+   )
 }
 
-export default TotalWins;
+export default FullAchievements;
