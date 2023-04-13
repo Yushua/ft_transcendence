@@ -58,3 +58,12 @@
   width: '100vw';
   height: '100vh';
 }
+
+.image_button {
+  border: solid;
+	border-color: white;
+}
+
+.image_button:hover {
+	border-color: #3676cc;
+}
