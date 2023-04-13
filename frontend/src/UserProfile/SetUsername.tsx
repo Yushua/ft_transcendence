@@ -8,8 +8,8 @@ import { useState } from 'react';
 import { Box } from '@mui/material';
 import { Width } from '../MainWindow/MainWindow';
 
-async function GetAchievement(name: string, message:string, picture:string){
-  HTTP.Post(`user-profile/PostAchievementList`, {nameAchievement: name, message:message, pictureLink:picture}, {Accept: 'application/json'})
+export async function GetAchievement(name: string, picture:string, message:string){
+  HTTP.Post(`user-profile/PostAchievementList`, {nameAchievement: name, pictureLink:picture, message:message}, {Accept: 'application/json'})
 }
 
 async function getAccessToken(username:string){

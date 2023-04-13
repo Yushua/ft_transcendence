@@ -19,6 +19,7 @@ export class AuthService {
        * 
        * @returns returns AccessToken
        */
+      
       async OauthSystemCodeToAccess(data:Object):Promise<string>{
         var intraAccessToken:string;
         try {
@@ -103,14 +104,32 @@ export class AuthService {
         return authToken;
       }
 
+      /*
+          "name", "picture", "message"
+          these should tell the player HOW to get them
+          while PostAchievement should congratulate them on getting it
+      */
+      async AllAchievements():Promise<string[][]>{
+        var list:string[][] = [
+          ["first_win", `Invalid.jpg`, "Congratulations, you won your first game!"],
+          ["setusername", `Invalid.jpg`, "you set your username"],
+        ]
+        return list
+      }
+
       async setupAchievements(id:string){
         {/* setup all achievements*/}
-        var AddAchievement:AddAchievement = {
-					nameAchievement: "first_win",
-					pictureLink: `Invalid.jpg`,
-					message: "Congratulations, you won your first game!"}
-        
-        await this.userProfileEntityRepos.AddAchievementList(id, AddAchievement)
+        var list:string[][] = await this.AllAchievements()
+        var AddAchievement:AddAchievement
+        await Promise.all(
+          list.map(async (option) => {
+            AddAchievement = {
+              nameAchievement: option[0],
+              pictureLink: option[1],
+              message: option[2]}
+              await this.userProfileEntityRepos.AddAchievementList(id, AddAchievement)
+          }),
+        );
 
       }
       /**

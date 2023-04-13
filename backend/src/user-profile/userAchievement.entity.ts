@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { UserProfile } from "./user.entity";
 
 @Entity()
@@ -21,8 +21,8 @@ export class UserAchievement {
     @Column()
     status: boolean;
 
-    @CreateDateColumn({ type: 'bigint' })
-    createdAt: number;
+    @UpdateDateColumn()
+    createdAt: Date
 
     @ManyToOne((_type) => UserProfile, (userProfile) => userProfile.UserAchievement, {eager: false})
     userProfile: UserProfile;
