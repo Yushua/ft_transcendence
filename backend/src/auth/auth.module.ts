@@ -6,9 +6,11 @@ import { UserProfile } from 'src/user-profile/user.entity';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './JwtStrategy';
+import { UserProfileModule } from 'src/user-profile/user-profile.module';
 
 @Module({
   imports: [
+    UserProfileModule,
     PassportModule.register({ defaultStrategy: 'jwt'}),
     JwtModule.register({
       secret: process.env.JWT_SECRET,

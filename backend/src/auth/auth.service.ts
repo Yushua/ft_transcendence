@@ -6,18 +6,22 @@ import { UserProfile } from 'src/user-profile/user.entity';
 import { Repository } from 'typeorm';
 import { JwtPayload } from './jwt-payload.interface';
 import { authenticator } from 'otplib';
+import { AddAchievement } from 'src/user-profile/dto/addAchievement.dto';
+import { UserProfileService } from 'src/user-profile/user-profile.service';
 
 export class AuthService {
     constructor(
       @InjectRepository(UserProfile)
       private readonly userProfileEntityRepos: Repository<UserProfile>,
       private readonly jwtService: JwtService,
+      private readonly userProlfileServices: UserProfileService,
   ) {}
   
       /**
        * 
        * @returns returns AccessToken
        */
+      
       async OauthSystemCodeToAccess(data:Object):Promise<string>{
         var intraAccessToken:string;
         try {
@@ -55,30 +59,11 @@ export class AuthService {
         return intraName
       }
 
-      /** logging out of intra */
-      async logoutOathSystem(token: string):Promise<boolean>{
-        console.log("hello")
-        try {
-          const intraPull = await axios.get('https://api.intra.42.fr/oauth/logout', {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            }
-          }).then((response) => {
-            return true
-          })
-        } catch (error) {
-          console.log(error.response.data)
-          console.log("Get")
-          throw new HttpException('loging out failed, system corrupted', HttpStatus.BAD_REQUEST);
-        }
-        return false;
-      }
       /**
        * 
-       * @returns checs if the user exists and returns a boolean
+       * @returns checks if the user exists and returns a boolean
        */
       async usernameUserExist(username: string):Promise<boolean>{
-        console.log(`username ${username}`)
         const user = await this.userProfileEntityRepos.findOneBy({ username })
         if(user){
           return true
@@ -115,12 +100,40 @@ export class AuthService {
           }
         }
         //two factor authentication, but how? if this is true, then log out.
-        console.log("JWT payload")
         const payload: JwtPayload = { userID: user.id, twoFactor: false};
         const authToken: string = this.jwtService.sign(payload);
+        await this.setupAchievements(user.id)
         return authToken;
       }
 
+      /*
+          "name", "picture", "message"
+          these should tell the player HOW to get them
+          while PostAchievement should congratulate them on getting it
+      */
+      async AllAchievements():Promise<string[][]>{
+        var list:string[][] = [
+          ["first_win", `invalid_cross.jpg`, "Congratulations, you won your first game!"],
+          ["setusername", `invalid_cross.jpg`, "you set your username"],
+        ]
+        return list
+      }
+
+      async setupAchievements(id:string){
+        {/* setup all achievements*/}
+        var list:string[][] = await this.AllAchievements()
+        var AddAchievement:AddAchievement
+        await Promise.all(
+          list.map(async (option) => {
+            AddAchievement = {
+              nameAchievement: option[0],
+              pictureLink: option[1],
+              message: option[2]}
+              await this.userProlfileServices.AddAchievementList(id, AddAchievement)
+          }),
+        );
+
+      }
       /**
        * 
        * @param intraName make a TWT , intraaccount now is new

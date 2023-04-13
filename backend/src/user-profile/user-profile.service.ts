@@ -1,11 +1,17 @@
 import { ConflictException, Injectable, InternalServerErrorException, NotFoundException, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import OurSession from 'src/session/OurSession';
-import { Repository } from 'typeorm';
+import { Repository, UpdateDateColumn } from 'typeorm';
 import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { UserProfile } from './user.entity';
 import { UserAchievement } from './userAchievement.entity';
 import { AddAchievement } from './dto/addAchievement.dto';
+import { check } from 'prettier';
+
+class MyEntity {
+  @UpdateDateColumn({ type: "bigint" })
+  createdAt: Date;
+}
 
 @Injectable()
 export class UserProfileService {
@@ -256,39 +262,47 @@ export class UserProfileService {
        */
       async postAchievementList(id:string, AddAchievement:AddAchievement) {
         const {nameAchievement, pictureLink, message} = AddAchievement
-        var userprofile = await this.userEntity.findOneBy({id});//player1
-        const achievement = this.achievEntity.create({
-          nameAchievement: nameAchievement,
-          pictureLink: pictureLink,
-          message: message,
-          userProfile: userprofile
-        });
-        await this.achievEntity.save(achievement);
+        var userprofile = await this.userEntity.findOneBy({id});
+        var achieveStore:UserAchievement[] = userprofile.UserAchievement
+        var achieve:UserAchievement = achieveStore.find(
+          (achievement) => achievement.nameAchievement === nameAchievement,
+        );
+        // var date = new Date()
+        // var tmp:string = date.toISOString().slice(0, 10)
+
+        console.log(`before {${achieve.pictureLink}}`)
+        console.log(` {${achieve}}`)
+        achieve.nameAchievement = nameAchievement
+        achieve.pictureLink = pictureLink
+        achieve.message = message
+        achieve.status = true
+        console.log(`change {${achieve.pictureLink}}`)
+        
+        
+        await this.achievEntity.save(achieve);
+
+        userprofile = await this.userEntity.findOneBy({id});
+        achieveStore = userprofile.UserAchievement
+        console.log("name to find")
+        achieve = achieveStore.find(
+          (achievement) => achievement.nameAchievement === nameAchievement,
+        );
+        console.log(`doublw check {${achieve.pictureLink}}`)
       }
 
       /**
        */
-      async ServiceAchievementList(id:string, AddAchievement:AddAchievement) {
+      async AddAchievementList(id:string, AddAchievement:AddAchievement) {
         const {nameAchievement, pictureLink, message} = AddAchievement
         var userprofile = await this.userEntity.findOneBy({id});//player1
         const achievement = this.achievEntity.create({
           nameAchievement: nameAchievement,
           pictureLink: pictureLink,
           message: message,
+          status: false,
           userProfile: userprofile
         });
         await this.achievEntity.save(achievement);
-      }
-
-      async GetAllAchievements():Promise<UserAchievement[]> {
-        const achieve:UserAchievement[] = await this.achievEntity.find()
-        return achieve
-      }
-
-      async GetUserAchievment(id:string):Promise<UserAchievement[]> {
-        const userprofile:UserProfile = await this.userEntity.findOneBy({id});
-        // return userprofile.UserAchievement.sort((a, b) => a.time - b.time);
-        return userprofile.UserAchievement
       }
 
       async getWinList():Promise<string[][]>{
@@ -308,4 +322,34 @@ export class UserProfileService {
         var list:string[][] = users.map(user => [user.username, user.pong_wins.toString(), user.pong_losses.toString()]);
         return list
       }
+
+      /* UserAchievement */
+
+      /**
+       * when done, so when status == true
+       * @returns 
+       */
+      async GetUserAchievementDone(id:string):Promise<UserAchievement[]> {
+        const userprofile:UserProfile = await this.userEntity.findOneBy({id});
+        var achieveStore:UserAchievement[] = userprofile.UserAchievement.filter(a => a.status === true);
+        // achieveStore.sort((a, b) => Number(a.createdAt - b.createdAt));
+        return achieveStore
+      }
+
+      /**
+       * when done, so when status == false
+       * @returns 
+       */
+      async GetUserAchievementNotDone(id:string):Promise<UserAchievement[]> {
+        const userprofile:UserProfile = await this.userEntity.findOneBy({id});
+        var achieveStore:UserAchievement[] = userprofile.UserAchievement.filter(a => a.status === false);
+        // achieveStore.sort((a, b) => Number(a.createdAt - b.createdAt));
+        return achieveStore
+      }
+
+      async GetUserAchievementFull(id:string):Promise<UserAchievement[]> {
+        const userprofile:UserProfile = await this.userEntity.findOneBy({id});
+        return userprofile.UserAchievement;
+      }
+
 }

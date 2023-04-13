@@ -105,6 +105,7 @@ export class UserProfileController {
         ) {
         await this.userServices.removeFriend(id, idfriend);
     }
+    
     @Get('friendlist/check/:idFriend')
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     async checkFriend(
@@ -113,29 +114,7 @@ export class UserProfileController {
         ) {
             return {status: await this.userServices.checkFriend(req["user"].id, idfriend)}
     }
-    
-    /**
-     * 
-     * @param id 
-     * @returns returns based on [["pfp", "username", "status"]]
-     */
-    // @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
-    @Get('GetAchievementList/:id')
-    async GetAchievementList( @Param('id') id: string ) {
 
-        return {  list: await this.userServices.GetUserAchievment(id) }
-    }
-    /**
-     * 
-     * @param id 
-     * @returns returns based on [["pfp", "username", "status"]]
-     */
-    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
-    @Post('PostAchievementList')
-    async postAchievementList( @Request() req: Request,
-        @Body() AddAchievement: AddAchievement) {
-        await this.userServices.postAchievementList(req["user"].id, AddAchievement)
-    }
 
     @Get("/username/:id")
     async ReturnNameById(
@@ -184,5 +163,39 @@ export class UserProfileController {
         ):Promise<number>{
         var user = await this.userServices.findUserBy(id)
         return user.experience
+    }
+
+    /*
+        UserAchievement
+    */
+
+    @Get('GetAchievementListDone/:id')
+    async GetAchievementListDone( @Param('id') id: string ) {
+
+        return {  list: await this.userServices.GetUserAchievementDone(id) }
+    }
+
+    @Get('GetAchievementListNotDone/:id')
+    async GetAchievementListNotDone( @Param('id') id: string ) {
+
+        return {  list: await this.userServices.GetUserAchievementNotDone(id) }
+    }
+
+    @Get('GetAchievementListFull/:id')
+    async GetAchievementListFull( @Param('id') id: string ) {
+
+        return {  list: await this.userServices.GetUserAchievementFull(id) }
+    }
+
+    /**
+     * 
+     * @param id 
+     * @returns returns based on [["pfp", "username", "status"]]
+     */
+    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+    @Post('PostAchievementList')
+    async postAchievementList( @Request() req: Request,
+        @Body() AddAchievement: AddAchievement) {
+        await this.userServices.postAchievementList(req["user"].id, AddAchievement)
     }
 }

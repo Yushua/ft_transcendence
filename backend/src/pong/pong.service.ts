@@ -68,7 +68,7 @@ export class PongService {
 					pictureLink: `aa.com/hoi.jpg`,
 					message: `you won your first game, congratz`}
 
-				UserProfileService.GetInstance()?.ServiceAchievementList(user1.id, AddAchievement)
+				UserProfileService.GetInstance()?.AddAchievementList(user1.id, AddAchievement)
 			}
 			user2.losses += 1
 			user2.pong_losses += 1
