@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import HTTP from '../Utils/HTTP';
 import { Box, Modal, Typography } from '@mui/material';
-import { Width } from '../MainWindow/MainWindow';
 
 const style = {
 	position: 'absolute' as 'absolute',
@@ -28,12 +27,6 @@ async function getList(id:string){
 
 var _setList:React.Dispatch<React.SetStateAction<string[]>>
 
-type Props = {
-  width:number;
-  height:number;
-  id:string
-}
-
 function AchievementBar(props: any) {
   //get into page, get the entire list online
   const [ListSearchList, setList] = useState<any[]>([]);
@@ -41,20 +34,35 @@ function AchievementBar(props: any) {
   const [widthButton, setwidthButton] = useState<number>(((width*0.9) - (width*0.9*0.03 * 3 * 2))/3);
 
   const [showModal, setShowModal] = React.useState(-1)
+  const [hovered, setHovered] = useState(false);
 
+  const handleHover = () => {
+    setHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setHovered(false);
+  };
+
+  const border = `${width*0.01}px solid ${hovered ? "#ff8b67" : "gray"}`
   _setList = setList
-
+  
+  useEffect(() => {
+		getList(props.id)
+	}, []); // empty dependency array means it will only run once
     return (
-      <center>
-        <div style={{width: `${Width*0.9}px`, height: `${Width*1.5}px`, overflowY: "scroll", border: "2px solid black"}}></div>
+      <div>
           {ListSearchList.map((option, idx) => (
             <div key={option.id} style={{display: "inline-block"}}>
-            <button
+            <img
               key={option}
-              style={{ width: `${widthButton}px`, height: `${widthButton}px`, marginLeft: `${width*0.02}px`, marginRight: `${width*0.02}px`, marginTop: `${width*0.02}px`, marginBottom: `${width*0.02}px`}}
-              onClick={() => setShowModal(idx)}>
-                <img src={`${HTTP.HostRedirect()}pfp/${option.pictureLink}`} alt="" style={{width: `${widthButton - width*0.03}px`, height: `${widthButton - width*0.03}px`, border: "4px solid black"}}/>
-            </button>
+              style={{ border: border, width: `${widthButton}px`, height: `${widthButton}px`, marginLeft:`${width*0.02}px`,  marginRight: `${width*0.02}px`, marginTop: `${width*0.02}px`, marginBottom: `${width*0.02}px`}}
+              onClick={() => setShowModal(idx)}
+              src={`${HTTP.HostRedirect()}pfp/${option.pictureLink}`}
+              onMouseEnter={handleHover}
+              onMouseLeave={handleMouseLeave}
+              >
+            </img>
             <Modal
               open={showModal === idx}
               onClose={() => setShowModal(-1)}
@@ -72,7 +80,7 @@ function AchievementBar(props: any) {
             </Modal>
           </div>	
           ))}
-      </center>
+      </div>
     )
 }
 
