@@ -13,16 +13,17 @@ export default class OurSession {
 	}
 	
 	static SocketConnecting(user: UserProfile, socketID: string) {
-		var userEntry = this._userMap.get(user.id)
-		if (!userEntry) {
-			userEntry = {socketIDs: [socketID], state: 0}
-			this._userMap.set(user.id, userEntry)
+		if (user) {
+			var userEntry = this._userMap.get(user.id)
+			if (!userEntry) {
+				userEntry = {socketIDs: [socketID], state: 0}
+				this._userMap.set(user.id, userEntry)
+			}
+			else
+				userEntry.socketIDs.push(socketID)
+			this._socketIDMap.set(socketID, user.id)
+			console.log(`User '${user.id}' connected: ${socketID}`)
 		}
-		else
-			userEntry.socketIDs.push(socketID)
-		
-		this._socketIDMap.set(socketID, user.id)
-		console.log(`User '${user.id}' connected: ${socketID}`)
 	}
 	
 	static SocketDisconnecting(socketID: string, userID: string | null = null) {

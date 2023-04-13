@@ -114,17 +114,18 @@ export class AuthService {
     list:string[][] = [
        ["first_win", `invalid_cross.jpg`, "Congratulations, you won your first game!"],
        ["setusername", `invalid_cross.jpg`, "you set your username"],
+       ["tenth_win", `invalid_cross.jpg`, "Congratulations, you won your tenth game!"],
+       ["test", `invalid_cross.jpg`, "test"],
      ]
-      async AllAchievements():Promise<string[][]>{
-        return this.list
-      }
+      // async AllAchievements():Promise<string[][]>{
+      //   return this.list
+      // }
 
       async setupAchievements(id:string){
         {/* setup all achievements*/}
-        var list:string[][] = await this.AllAchievements()
         var AddAchievement:AddAchievement
         await Promise.all(
-          list.map(async (option) => {
+          this.list.map(async (option) => {
             AddAchievement = {
               nameAchievement: option[0],
               pictureLink: option[1],

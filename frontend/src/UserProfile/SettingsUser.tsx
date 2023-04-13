@@ -26,7 +26,7 @@ function SettingsUser(){
     <div className="SettingsUser">
       <form onSubmit={handleUsernameChange}>
         <div>
-          <label htmlFor="username">new username Input:</label>
+          <label htmlFor="username">Choose a New username:</label>
           <input id="username" type="text" />
           <button type="submit">Submit</button>
         </div>

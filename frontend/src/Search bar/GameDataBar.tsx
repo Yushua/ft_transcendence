@@ -1,6 +1,9 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import HTTP from '../Utils/HTTP';
 import { Box, Modal, Typography } from "@mui/material";
+import { Width } from '../MainWindow/MainWindow'
+import { Moment} from 'moment';
+
 
 const style = {
 	position: 'absolute' as 'absolute',
@@ -12,18 +15,12 @@ const style = {
 	border: '2px solid #000',
 	boxShadow: 24,
 	p: 4,
-  };
+}
 
 async function GetData(id:string){
 	let response = HTTP.Get(`gamestats/pongstats/${id}`, null, {Accept: 'application/json'})
 	if (response) {
 		let games = await JSON.parse(response)
-		for (var game of games) {
-			response = HTTP.Get(`gamestats/pongstat_timestamp/${game.id}/${id}`, null, {Accept: 'application/json'})
-			if (response) {
-				game.timestamp = await JSON.parse(response)
-			}
-		}
 		_setList(games)
 	}
 }
@@ -32,25 +29,46 @@ var _setList:React.Dispatch<React.SetStateAction<string[]>>
 
 function GameDataBar(props: any) {
   	//get into page, get the entire list online
-	const [gameList, setList] = React.useState<any[]>([]);
-	const [showModal, setShowModal] = React.useState(-1)
-	const width = props.width
-	const widthButton = ((width*0.9) - (width*0.9*0.03 * 3 * 2))/3
+	const [gameList, setList] = useState<any[]>([]);
+	const [showModal, setShowModal] = useState(-1)
 	_setList = setList
 
-	React.useEffect(() => {
+    const widthButton:number = (((Width*0.9) - (Width*0.9*0.03 * 6 * 2))/6)
+
+	useEffect(() => {
 		GetData(props.id)
 	}, [])
+
+	function gameDayHour(time:Date) {
+
+
+		let day = time.getDay()
+
+		return ( day) 
+	}
+	function gameStart(time:Date) {
+		let day = time.getDay()
+		
+		return ( day) 
+	}
+	function gameEnd(time:Date) {
+
+		let day = time.getDay()
+		
+		return ( day) 
+	}
 
 	return (
 		<div>
 			{gameList.map((option, idx) => (
 				<div key={option.id} style={{display: "inline-block"}}>
-					<button
-						style={{width: `${widthButton}px`, height: `${widthButton}px`, marginLeft: `${width*0.02}px`, marginRight: `${width*0.02}px`, marginTop: `${width*0.02}px`, marginBottom: `${width*0.02}px`}}
-						onClick={() => setShowModal(idx)}>
-						<img src={`${HTTP.HostRedirect()}pfp/${option.pictureLink}`} alt="" style={{width: `${widthButton - width*0.03}px`, height: `${widthButton - width*0.03}px`, border: "4px solid black"}}/>
-					</button>
+					<img
+						className='image_button'
+						src={`https://styles.redditmedia.com/t5_2sx6x/styles/communityIcon_acwnxauia1p01.png`}
+						alt=""
+						style={{ display: "inline-block", width: `${widthButton}px`, height: `${widthButton}px`, marginLeft:`${Width*0.02}px`,  marginRight: `${Width*0.02}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`}}
+						onClick={() => setShowModal(idx)} >
+					</img>
 					<Modal
 						open={showModal === idx}
 						onClose={() => setShowModal(-1)}
@@ -59,7 +77,9 @@ function GameDataBar(props: any) {
 					>
 						<Box sx={style}>
 							<Typography id="modal-modal-title" component="h2">
-								{option.nameGame} played at {option.timestamp}
+								{option.timeStamp}
+								{/* Played at: {gameDayHour(option.timestamp)}
+								From {gameStart(option.timestamp)} to {gameEnd(option.timestamp)} */}
 							</Typography>
 							<Typography id="modal-modal-description" sx={{ mt: 2 }}>
 								Winner: {option.winner} ({option.scoreWinner}) Loser: {option.loser} ({option.scoreLoser}) 
@@ -67,7 +87,7 @@ function GameDataBar(props: any) {
 						</Box>
 					</Modal>
 				</div>	
-			))}
+			))}	
 		</div>
 	)
 }

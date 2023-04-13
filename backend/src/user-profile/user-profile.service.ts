@@ -272,8 +272,7 @@ export class UserProfileService {
         achieve.pictureLink = pictureLink
         achieve.message = message
         achieve.status = true
-        
-        
+        achieve.timeStamp = Math.floor(Date.now() / 1000) /* seconds since epoch */
         await this.achievEntity.save(achieve);
 
         userprofile = await this.userEntity.findOneBy({id});
@@ -325,7 +324,7 @@ export class UserProfileService {
       async GetUserAchievementDone(id:string):Promise<UserAchievement[]> {
         const userprofile:UserProfile = await this.userEntity.findOneBy({id});
         var achieveStore:UserAchievement[] = userprofile.UserAchievement.filter(a => a.status === true);
-        // achieveStore.sort((a, b) => Number(a.createdAt - b.createdAt));
+        achieveStore.sort((a, b) => (a.timeStamp - b.timeStamp));
         return achieveStore
       }
 
@@ -336,7 +335,7 @@ export class UserProfileService {
       async GetUserAchievementNotDone(id:string):Promise<UserAchievement[]> {
         const userprofile:UserProfile = await this.userEntity.findOneBy({id});
         var achieveStore:UserAchievement[] = userprofile.UserAchievement.filter(a => a.status === false);
-        // achieveStore.sort((a, b) => Number(a.createdAt - b.createdAt));
+        achieveStore.sort((a, b) => (a.timeStamp - b.timeStamp));
         return achieveStore
       }
 

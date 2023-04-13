@@ -86,7 +86,7 @@ export class MyGateway implements OnModuleInit {
 				player2.emit('joined', gameConfig.p2_controls)
 				OurSession.GameJoining(player.id)
 				OurSession.GameJoining(player2.id)
-
+				
 				//create gameData with default settings which holds all game info client needs to render
 				let gamedata = new GameData(gameConfig, true)
 
@@ -336,28 +336,29 @@ export class MyGateway implements OnModuleInit {
 			if (connection !== undefined)
 				connections.delete(client.id)
 			const user = await this._guard.GetUser(client.handshake.headers["authorization"])
-			const state = OurSession.GetUserState(user.id)
-			if (state === 'inGame')
-				OurSession.GameLeaving(client.id)
-			OurSession.SocketDisconnecting(client.id)
-			for (var game of games) {
-				if (game[1][1].includes(client.id)) {
-					if (game[1][1][IDs.p1_socket_id] == client.id)
-						game[1][1][IDs.p1_socket_id] = 'disconnected'
-					if (game[1][1][IDs.p2_socket_id] == client.id)
-						game[1][1][IDs.p2_socket_id] = 'disconnected'
+			if (user) {
+				const state = OurSession.GetUserState(user.id)
+				if (state === 'inGame')
+					OurSession.GameLeaving(client.id)
+				OurSession.SocketDisconnecting(client.id)
+				for (var game of games) {
+					if (game[1][1].includes(client.id)) {
+						if (game[1][1][IDs.p1_socket_id] == client.id)
+							game[1][1][IDs.p1_socket_id] = 'disconnected'
+						if (game[1][1][IDs.p2_socket_id] == client.id)
+							game[1][1][IDs.p2_socket_id] = 'disconnected'
+					}
+				}
+				for (var game of customGames) {
+					if (game[1][1][IDs.p1_userID] === user.id)
+					{
+						customGames.delete(game[0])
+						const serializedMap = [...customGames.entries()]
+						this.server.emit('custom_gamelist', serializedMap)		
+						break
+					}
 				}
 			}
-			for (var game of customGames) {
-				if (game[1][1][IDs.p1_userID] === user.id)
-				{
-					customGames.delete(game[0])
-					const serializedMap = [...customGames.entries()]
-					this.server.emit('custom_gamelist', serializedMap)		
-					break
-				}
-			}
-
 		}
 
 	@SubscribeMessage('deleteCreatedGame')

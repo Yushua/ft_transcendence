@@ -17,17 +17,25 @@ export class PongStats{
 
     @Column({default:""})
     nameGame:string
+
     @Column({default:""})
     winner:string
+
     @Column({default:""})
     loser:string
 
     @Column({default: 11})
     scoreWinner:number
+
     @Column({default: 0})
     scoreLoser:number
+
     @Column({default: 0})
     timeOfGame:number
+
+    @Column({default:""})
+    timeStamp:string
+
 
     @ManyToMany(
         () => UserProfile,

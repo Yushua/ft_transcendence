@@ -52,7 +52,7 @@ function SetUsername(){
             fontFamily={"'Courier New', monospace"}
             fontSize={"200%"}
             marginTop={`${Width*0.3}px`}>
-            Input Username
+            Choose a username
           <input type="text" value={value} onChange={handleChange} />
           {value.length > 4 && value.length <= 20 && (
           <button type="submit">Submit</button> )}

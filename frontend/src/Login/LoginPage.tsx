@@ -9,9 +9,15 @@ import HTTP from '../Utils/HTTP';
 import ErrorPage from './ErrorPage';
 
 async function asyncGetintraName():Promise<string> {
-  const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
-  var result = await JSON.parse(response)
-  return await result["intraname"];
+  try {
+    const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
+    var result = await JSON.parse(response)
+    return await result["intraname"];
+  }
+  catch {
+    removeCookie("accessToken")
+    window.location.reload();
+  }
 }
 
 async function RefreshAuthentication():Promise<boolean>{

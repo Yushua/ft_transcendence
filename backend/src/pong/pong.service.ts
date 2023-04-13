@@ -63,12 +63,13 @@ export class PongService {
 			user1.pong_experience += (100 - (gameData.p2_score * 2))
 			user1.experience += (100 - (gameData.p2_score * 2))
 			if (user1.wins == 1) {
-				var AddAchievement:AddAchievement = {
+				let AddAchievement:AddAchievement = {
 					nameAchievement: "first_win",
-					pictureLink: `aa.com/hoi.jpg`,
-					message: `you won your first game, congratz`}
-
-				UserProfileService.GetInstance()?.AddAchievementList(user1.id, AddAchievement)
+					pictureLink: "default_pfp.jpg",
+					message: "you won your first game, congratz"
+				}
+				// UserProfileService.GetInstance()?.AddAchievementList(user1.id, AddAchievement)
+				UserProfileService.GetInstance()?.postAchievementList(user1.id, AddAchievement)
 			}
 			user2.losses += 1
 			user2.pong_losses += 1
@@ -86,6 +87,11 @@ export class PongService {
 		}
 		stat.scoreWinner = 11
 		stat.timeOfGame = Math.floor(gameData.endTime - gameData.beginTime)
+
+		/* format: day-month-year, hours:minutes:seconds */
+		/* cut off seconds */
+		stat.timeStamp = new Date(gameData.beginTime * 1000).toLocaleString('en-GB', { timeZone: 'CET' })
+		stat.timeStamp = stat.timeStamp.substring(0, stat.timeStamp.length - 3) 
 
 		/* save updated profiles and the game */
 		await this._userRepo.save(user1)

@@ -50,7 +50,7 @@ export default class SpectateTab extends React.Component<any, any> {
 				&nbsp;
 				<TableContainer
         			component={Paper}
-        			style={{ width: "100%", justifyContent:"center", border: "1px solid rgba(0,0,1,0.2)" }}>
+        			style={{ width: "90%", justifyContent:"center", border: "1px solid rgba(0,0,1,0.2)" }}>
 					{rows.length === 0 ? <h3 style={{color: "#3355FF"}}>No Active Games</h3> :
 					<div>
 						<h3 style={{color: "#3355FF"}}>Active Games</h3>

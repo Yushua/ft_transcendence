@@ -5,14 +5,11 @@ import { PongStats } from "src/game-stats/pong-stats.entity";
 
 @Entity('user_profile_pong_stats')
 export class UserProfilePongStats {
-  @PrimaryColumn({ name: 'user_profile_id' })
+  @PrimaryColumn({name: 'user_profile_id'})
   userId: string;
 
-  @PrimaryColumn({ name: 'pong_stats_id' })
+  @PrimaryColumn({name: 'pong_stats_id'})
   pongStatsId: string;
-
-  @Column({nullable:true})
-  timeStamp:Date
   
   @ManyToOne(
     () => UserProfile,
