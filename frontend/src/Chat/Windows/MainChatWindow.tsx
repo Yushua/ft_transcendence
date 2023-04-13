@@ -58,6 +58,11 @@ export default function MainChatWindow() {
 	
 	}
 
+	window =
+		<div style={{display: "table", width: "100%", height: "100%", color: "black"}}>
+			{window}
+		</div>
+	
 	return (
 	<div style={{width: `${MWidth * .9}px`, padding: "0px", margin: "0px"}}>
 		<div>
@@ -69,18 +74,17 @@ export default function MainChatWindow() {
 		</div>
 		
 		{/* MetaDiv */}
-		<div style={{
-			border: (mainWindow === "chat" ? "solid" : "none"),
-			color: "#3676cc",
-			borderColor: "#3676cc", borderRadius: "5px",
-			width: `100%`, height: `${ChatWindowHeight}px`, lineHeight: `${ChatLineHeight}px`,
-			boxSizing: "border-box",
-		}}>
-			{/* ContentTable */}
-			<div style={{display: "table", width: "100%", height: "100%", color: "black"}}>
-				{window}
+		{ mainWindow === "chat" ? <>
+			<div style={{
+					border: "solid",
+					color: "#3676cc",
+					borderColor: "#3676cc", borderRadius: "5px",
+					width: `100%`, height: `${ChatWindowHeight}px`, lineHeight: `${ChatLineHeight}px`,
+					boxSizing: "border-box",
+				}}> {window}
 			</div>
-		</div>
+			</> : window
+		}
 	</div>
 	)
 }

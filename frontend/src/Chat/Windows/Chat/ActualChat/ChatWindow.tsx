@@ -43,6 +43,7 @@ export async function asyncUpdateChatLog() {
 	}
 	
 	var _msgCount = _chatLog.length
+	var _reactKeyThing = 0
 	
 	const newMsgCount = ChatRoom.MessageCount
 	
@@ -59,30 +60,27 @@ export async function asyncUpdateChatLog() {
 			
 			for (let i = msgs.length - 1; count < target && i >= 0; i--) {
 				count++
-				newChatLog.unshift(
-					<>
-						{ChatUser.BlockedUserIDs.includes(msgs[i].OwnerID) ? <></> :
-							(msgs[i].OwnerID === "game" ? 
-								<div key={count + _msgCount} style={{textAlign: "left"}}>
-									<Button
-										variant={"contained"}
-										style={{height: `${ChatLineHeight}px`, textAlign: "left"}}
-										onClick={_ => {
-											socket.emit('joinCustomGame', {gameID: msgs[i].Message, userID: User.ID, userName: User.Name})
-										}}
-									>Join game: {msgs[i].Message}</Button>
-								</div> : <>
-								<div key={count + _msgCount} style={{textAlign: "left"}}>
-									<img
-										src={`${HTTP.HostRedirect()}pfp/${NameStorage.UserPFP.Get(msgs[i].OwnerID)}`}
-										style={{width: `${ChatLineHeight * .8}px`, height: `${ChatLineHeight * .8}px`, borderRadius: "50%"}}
-									/>
-									<b>{`${NameStorage.User.Get(msgs[i].OwnerID)}`}</b>
-									{`: ${msgs[i].Message}`}
-								</div>
-							</>)
-						}
-					</>
+				if (!ChatUser.BlockedUserIDs.includes(msgs[i].OwnerID))
+					newChatLog.unshift(
+						(msgs[i].OwnerID === "game" ?
+							<div key={_reactKeyThing++} style={{textAlign: "left"}}>
+								<Button
+									variant={"contained"}
+									style={{height: `${ChatLineHeight}px`, textAlign: "left"}}
+									onClick={_ => {
+										socket.emit('joinCustomGame', {gameID: msgs[i].Message, userID: User.ID, userName: User.Name})
+									}}
+								>Join game: {msgs[i].Message}</Button>
+							</div> :
+							<div key={_reactKeyThing++} style={{textAlign: "left"}}>
+								<img
+									src={`${HTTP.HostRedirect()}pfp/${NameStorage.UserPFP.Get(msgs[i].OwnerID)}`}
+									style={{width: `${ChatLineHeight * .8}px`, height: `${ChatLineHeight * .8}px`, borderRadius: "50%"}}
+								/>
+								<b>{`${NameStorage.User.Get(msgs[i].OwnerID)}`}</b>
+								{`: ${msgs[i].Message}`}
+							</div>
+						)
 				)
 			}
 		}
@@ -94,7 +92,7 @@ export async function asyncUpdateChatLog() {
 	
 	var chatLog = _chatLog.map(x=>x)
 	for (var fill = 1; fill < _fillDepth; fill++)
-		chatLog.unshift(<div key={`fill${fill}`}><span>&#8203;</span></div>)
+		chatLog.unshift(<div key={_reactKeyThing++}><span>&#8203;</span></div>)
 	
 	_setChatLog(chatLog)
 	scrollDown(0)
@@ -121,6 +119,10 @@ export default function ChatWindow() {
 	if (ChatRoom.ID === "" || chatLog.length === 0)
 		return <div style={{display: "table-cell"}}></div>
 	
+	for (const log of chatLog) {
+		console.log(`${log.key}`)
+	}
+		
 	return (
 		<div style={{display: "table-cell", color: "black", height: `${ChatWindowHeight}px`}}>
 			
