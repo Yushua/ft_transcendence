@@ -22,10 +22,7 @@ async function getAccessToken(username:string){
       alert(`error in SetUsername already in use ${username}`)
       _setValue("")
     }
-    else if (status === true){
-      await GetAchievement("setusername", "./public/default_pfp.jpg", "you set your username")
-      newWindow(<LoginPage/>)
-    }
+    newWindow(<LoginPage/>)
   } catch (error) {
     console.log(`error ${error.errorcode}`)
     _setValue("")
@@ -33,6 +30,7 @@ async function getAccessToken(username:string){
 }
 
 var _setValue:React.Dispatch<React.SetStateAction<string>>
+
 function SetUsername(){
   const [value, setValue] = useState<string>("");
   _setValue = setValue

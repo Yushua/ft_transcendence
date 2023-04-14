@@ -6,11 +6,9 @@ import { UserProfileService } from './user-profile.service';
 import { UserProfile } from './user.entity';
 
 @Controller('user-profile')
-// @UseGuards(AuthGuard())
+
 export class UserProfileController {
     constructor(private userServices: UserProfileService) {}
-    
-    //middleware 
 
     /**
      * 
@@ -127,8 +125,8 @@ export class UserProfileController {
     @Post('/userchange/:username')
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     changeUsername(
-        @Param('username') username: string, @Request() req: Request): Promise<UserProfile> {
-        return this.userServices.changeUsername(username, req["user"].id);
+        @Param('username') username: string, @Request() req: Request) {
+        this.userServices.changeUsername(username, req["user"].id);
     }
 
     /*
@@ -202,4 +200,6 @@ export class UserProfileController {
     /*
         MessageList
     */
+
+    
 }

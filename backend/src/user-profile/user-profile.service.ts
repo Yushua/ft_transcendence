@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, InternalServerErrorException, NotFoundException, UseGuards } from '@nestjs/common';
+import { ConflictException, HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import OurSession from 'src/session/OurSession';
 import { Repository, UpdateDateColumn } from 'typeorm';
@@ -91,9 +91,9 @@ export class UserProfileService {
       }
 
       async changeUsername(username: string, id: string): Promise<UserProfile> {
-        const found = await this.findUserBy(id);
-        found.username = username;
+        const found = await this.findUserBy(id)
         try {
+          found.username = username;
           await this.userEntity.save(found);
         }
         catch (error) {
@@ -261,6 +261,7 @@ export class UserProfileService {
       /**
        */
       async postAchievementList(id:string, AddAchievement:AddAchievement) {
+        console.log("adding")
         const {nameAchievement, pictureLink, message} = AddAchievement
         var userprofile = await this.userEntity.findOneBy({id});
         var achieveStore:UserAchievement[] = userprofile.UserAchievement
@@ -269,10 +270,14 @@ export class UserProfileService {
         );
         // var date = new Date()
         // var tmp:string = date.toISOString().slice(0, 10)
+        if (achieve == undefined){
+          throw new HttpException(`achievement trying to add does NOT exist check the name`, HttpStatus.BAD_REQUEST);
+        }
         achieve.pictureLink = pictureLink
         achieve.message = message
         achieve.status = true
         achieve.timeStamp = Math.floor(Date.now() / 1000) /* seconds since epoch */
+        console.log("asving")
         await this.achievEntity.save(achieve);
 
         userprofile = await this.userEntity.findOneBy({id});
