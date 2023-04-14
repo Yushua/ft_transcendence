@@ -9,7 +9,6 @@ import { PongStats } from 'src/game-stats/pong-stats.entity';
 import { UserAchievement } from './userAchievement.entity';
 
 @Module({imports: [
-  //this to communicate with the server, else it wont work
   TypeOrmModule.forFeature([UserProfile, PongStats, UserAchievement]),
   PassportModule.register({ defaultStrategy: 'jwt'}),
   ],

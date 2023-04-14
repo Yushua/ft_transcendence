@@ -112,10 +112,10 @@ export class AuthService {
           while PostAchievement should congratulate them on getting it
       */
     list:string[][] = [
-       ["first_win", `invalid_cross.jpg`, "Congratulations, you won your first game!"],
-       ["setusername", `invalid_cross.jpg`, "you set your username"],
-       ["tenth_win", `invalid_cross.jpg`, "Congratulations, you won your tenth game!"],
-       ["test", `invalid_cross.jpg`, "test"],
+       ["first_win", `./public/invalid_cross.jpg`, "Congratulations, you won your first game!"],
+       ["setusername", `./public/invalid_cross.jpg`, "you set your username"],
+       ["tenth_win", `./public/invalid_cross.jpg`, "Congratulations, you won your tenth game!"],
+       ["test", `./public/invalid_cross.jpg`, "test"],
      ]
       // async AllAchievements():Promise<string[][]>{
       //   return this.list

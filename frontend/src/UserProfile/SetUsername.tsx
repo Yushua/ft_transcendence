@@ -23,7 +23,7 @@ async function getAccessToken(username:string){
       _setValue("")
     }
     else if (status === true){
-      await GetAchievement("setusername", "default_pfp.jpg", "you set your username")
+      await GetAchievement("setusername", "./public/default_pfp.jpg", "you set your username")
       newWindow(<LoginPage/>)
     }
   } catch (error) {

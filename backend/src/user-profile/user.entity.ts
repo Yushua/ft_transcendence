@@ -28,6 +28,9 @@ export class UserProfile {
     @Column("text", {array: true , default: "{}"})
     friendList: string[];
 
+    @Column("text", {array: true , default: "{}"})
+    messageList: string[];
+
     /* GAME STATS  */
     @Column({default: 0})
     experience: number;

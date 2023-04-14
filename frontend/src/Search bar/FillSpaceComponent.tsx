@@ -39,7 +39,7 @@ const style = {
             key={props.option}         
             style={{ display: "inline-block", border: border, width: `${widthButton}px`, height: `${widthButton}px`, marginLeft:`${Width*0.02}px`,  marginRight: `${Width*0.02}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`}}
             onClick={() => setShowModal(props.idx)}
-            src={`${HTTP.HostRedirect()}pfp/${props.option.pictureLink}`}
+            src={`${props.option.pictureLink}`}
             onMouseEnter={handleHover}
             onMouseLeave={handleMouseLeave}
             >
