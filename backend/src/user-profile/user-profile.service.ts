@@ -344,4 +344,10 @@ export class UserProfileService {
         return userprofile.UserAchievement;
       }
 
+      /* method to update users */
+      async updateUserProfiles(users:UserProfile[]) {
+        users.forEach(async user => {
+          await this.userEntity.save(user)
+        });
+      }
 }

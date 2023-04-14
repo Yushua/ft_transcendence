@@ -38,8 +38,12 @@ export class MyGateway implements OnModuleInit {
 	
 	public constructor(private _guard: AuthGuardEncryption) {
 		this._runGameLoop(1)
+		this.gameStatsService = PongService.GetInstance()
+
 	}
-	
+	private gameStatsService:PongService
+
+
 	@WebSocketServer()
 	server:Server
 
@@ -425,7 +429,7 @@ export class MyGateway implements OnModuleInit {
 			switch (gameData.gameState) {
 				case 'p1_won':
 				case 'p2_won':
-					await PongService.postPongStats(gameIDs, gameData)
+					await this.gameStatsService.postPongStats(gameIDs, gameData)
 					break;
 				default: continue;
 			}

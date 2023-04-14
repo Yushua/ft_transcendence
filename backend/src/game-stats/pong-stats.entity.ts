@@ -6,14 +6,17 @@ export class PongStats{
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({default: "default_pfp.jpg"}) /* string path towards the picture */
-    pictureLink: string
+    @Column({default: "https://i.imgur.com/sZsuhQR.png"})
+    pictureWin: string
+   
+    @Column({default: "https://i.imgur.com/DXLDXn2.png"})
+    pictureLoss: string
 
     @Column({default:""})
-    player1_id:string
+    winner_id:string
 
     @Column({default:""})
-    player2_id:string
+    loser_id:string
 
     @Column({default:""})
     nameGame:string

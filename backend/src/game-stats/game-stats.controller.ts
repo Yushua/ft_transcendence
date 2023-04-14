@@ -21,13 +21,5 @@ export class GameStatsController {
         const PongGames = await this.GameStatsServices.getAllPongStats();
         return PongGames;
     }
-  
-    // @Get("/pongstat_timestamp/:pong_id/:user_id")
-    // async getPongStatsTimeStampById(
-    //     @Param("pong_id") pong_id: string, @Param("user_id") user_id: string) : Promise<Date>
-    // {
-    //     const timestamp = await this.GameStatsServices.getPongStatsTimeStampById(pong_id, user_id);
-    //     return timestamp;
-    // }
 
 }
