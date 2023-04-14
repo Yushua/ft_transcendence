@@ -38,8 +38,7 @@ function GameDataBar(props: any) {
 	const [showModal, setShowModal] = useState(-1)
 	_setList = setList
 
-    const widthButton:number = (((Width*0.9) - (Width*0.9*0.03 * 6 * 2))/6)
-
+    const widthButton:number = (((Width*0.9) - (Width*0.9*0.03 * 6 * 2))/6) - 1
 
 	useEffect(() => {
 		GetData(props.id)
