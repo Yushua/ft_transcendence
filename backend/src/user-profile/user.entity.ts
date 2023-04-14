@@ -1,6 +1,7 @@
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { PongStats } from "src/game-stats/pong-stats.entity";
 import { UserAchievement } from "./userAchievement.entity";
+import { MessageList } from "./MessageList.entity";
 
 @Entity()
 export class UserProfile {
@@ -29,7 +30,7 @@ export class UserProfile {
     friendList: string[];
 
     @Column("text", {array: true , default: "{}"})
-    messageList: string[];
+    otherfriendList: string[];
 
     /* GAME STATS  */
     @Column({default: 0})
@@ -52,6 +53,10 @@ export class UserProfile {
 
     @OneToMany((_type) => UserAchievement, (UserAchievement) => UserAchievement.userProfile, { eager: true, cascade:true})
     UserAchievement : UserAchievement[];
+
+    //stores the messages, real simple
+    @OneToMany((_type) => MessageList, (MessageList) => MessageList.userProfile, { eager: true, cascade:true})
+    MessageList : MessageList[];
 
     /* RELATIONS */
     @ManyToMany(

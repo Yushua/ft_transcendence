@@ -8,10 +8,6 @@ import { useState } from 'react';
 import { Box } from '@mui/material';
 import { Width } from '../MainWindow/MainWindow';
 
-export async function GetAchievement(name: string, picture:string, message:string){
-  HTTP.Post(`user-profile/PostAchievementList`, {nameAchievement: name, pictureLink:picture, message:message}, {Accept: 'application/json'})
-}
-
 async function getAccessToken(username:string){
   try {
     const response = HTTP.Get(`auth/ChangeUsername/${username}`, null, {Accept: 'application/json'})
