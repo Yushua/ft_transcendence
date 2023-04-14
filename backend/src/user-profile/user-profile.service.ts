@@ -411,18 +411,20 @@ export class UserProfileService {
       async AddMessageToUser(addMessage: AddMessageDTO, id:string, userprofile:UserProfile){
         //set a limit on how many will be created, but only after testing
         const {status, message, userID} = addMessage
-        const user = await this.messageList.findOne({ where: { status, message, userID } });
-        //if it does not exist, then don't create it
-        if (!user) {
-          var userprofile = await this.userEntity.findOneBy({id});//player1
-          const StoredMessageList = this.messageList.create({
-            status: status,
-            message: message,
-            timeStamp:  Math.floor(Date.now() / 1000),
-            userID: userID,
-            userProfile: userprofile
-          });
-          await this.messageList.save(StoredMessageList);
+        if (status == "Achievement" && userprofile.YourAchievements == true){
+          const user = await this.messageList.findOne({ where: { status, message, userID } });
+          //if it does not exist, then don't create it
+          if (!user) {
+            var userprofile = await this.userEntity.findOneBy({id});//player1
+            const StoredMessageList = this.messageList.create({
+              status: status,
+              message: message,
+              timeStamp:  Math.floor(Date.now() / 1000),
+              userID: userID,
+              userProfile: userprofile
+            });
+            await this.messageList.save(StoredMessageList);
+          }
         }
       }
 
