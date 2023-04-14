@@ -75,4 +75,13 @@ export class UserProfile {
           },
         })
         userStats?: PongStats[];
+  
+  /* for message list settings */
+
+  @Column({default: true})
+    YourAchievements: boolean
+  
+  //you only want updates from these users
+  @Column("text", {array: true , default: "{}"})
+  CheckFrienddList: string[];
 }

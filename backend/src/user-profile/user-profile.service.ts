@@ -128,6 +128,13 @@ export class UserProfileService {
             userID: found.id
           }
           await this.SetupMessageToFriends(addMessage, found.id)
+          //sends to this usersfriends that they became friends
+          addMessage = {
+            status: "Achievement", 
+            message: `${found.username} and ${found1.username} both became friends`,
+            userID: found.id
+          }
+          await this.SetupMessageToFriends(addMessage, found1.id)
           //will already go to the other person because they're both friends
         }
       }
@@ -143,7 +150,10 @@ export class UserProfileService {
         if (found.friendList == null)
           found.friendList = [];
         await this.userEntity.save(found);
-
+        //IF CHECKFRIEND INCLUDED the friend, then remove it,
+        if (found.CheckFrienddList.includes(idfriend)) {
+          found.CheckFrienddList.splice(found.CheckFrienddList.indexOf(idfriend), 1)
+        }
         //tell the other user that you have removed them
         const found1 = await this.userEntity.findOneBy({id:idfriend});
         found1.otherfriendList.splice(found1.otherfriendList.indexOf(id), 1);
@@ -318,6 +328,7 @@ export class UserProfileService {
           userID: id
         }
         await this.SetupMessageToFriends(addMessage, id)
+        
       }
 
       /**
@@ -393,7 +404,7 @@ export class UserProfileService {
         await this.AddMessageToUser(addMessage, id, userprofile)
         //add this message to everyone that has you as a friend, but only add if he has friends
         if (userprofile.otherfriendList.length > 0){
-          await this.AddMessageToUserConnectedFriends(addMessage, userprofile.otherfriendList)
+          await this.AddMessageToUserConnectedFriends(addMessage, userprofile.otherfriendList, id)
         }
       }
 
@@ -415,17 +426,36 @@ export class UserProfileService {
         }
       }
 
-      async AddMessageToUserConnectedFriends(addMessage: AddMessageDTO, otherfriendList:string[]){
+      async AddMessageToUserConnectedFriends(addMessage: AddMessageDTO, otherfriendList:string[], idMain:string){
 
         for (let id of otherfriendList) {
             //loop through the lsit and give each of them this message
             var userprofile = await this.userEntity.findOneBy({id});//player1
-            await this.AddMessageToUser(addMessage, id, userprofile)
+            //if this user has him in his list, then add. if not, then this suer does not want to recieve messages
+            if (!userprofile.CheckFrienddList.includes(idMain)) {
+              await this.AddMessageToUser(addMessage, id, userprofile)
+            }
         }
         //find out who has this user added as a friend, and then send them this message
       }
 
       async RemoveMessageListWithID(userID:string){
         await this.messageList.delete(userID);
+      }
+
+      async addToCheckList(id:string, addID:string){
+        //if addID is not in id friendlist, then they can not add
+        var userprofile = await this.userEntity.findOneBy({id});//player1
+        if (userprofile.friendList.includes(addID)) {
+          userprofile.CheckFrienddList.push(addID)
+          await this.userEntity.save(userprofile)
+        }
+      }
+
+      async removeToCheckList(id:string, addID:string){
+        //if addID is not in id friendlist, then they can not add
+        var userprofile = await this.userEntity.findOneBy({id});//player1
+        userprofile.CheckFrienddList.splice(userprofile.CheckFrienddList.indexOf(addID), 1);
+        await this.userEntity.save(userprofile)
       }
 }
