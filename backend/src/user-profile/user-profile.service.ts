@@ -6,7 +6,7 @@ import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { UserProfile } from './user.entity';
 import { UserAchievement } from './userAchievement.entity';
 import { AddAchievement } from './dto/addAchievement.dto';
-import { AddMessageDTO, AddMessageDTOOtherUser, AddMessageDTOUser } from './dto/addMessage.dto';
+import { AddMessageDTO, AddMessageDTOUser } from './dto/addMessage.dto';
 import { MessageList } from './MessageList.entity';
 
 class MyEntity {
@@ -122,19 +122,20 @@ export class UserProfileService {
         await this.userEntity.save(found1);
         if (found1.friendList.includes(found.id) && found.friendList.includes(found1.id)){
           //post message
-          let addMessage:AddMessageDTO = {
+          let addMessageUser:AddMessageDTO = {
             status: "Achievement", 
             message: `${found.username} and ${found1.username} both became friends`,
             userID: found.id
           }
-          await this.SetupMessageToFriends(addMessage, found.id)
+          
+          await this.SetupMessageToFriends(addMessageUser, addMessageUser, found.id)
           //sends to this usersfriends that they became friends
-          addMessage = {
+          addMessageUser = {
             status: "Achievement", 
             message: `${found.username} and ${found1.username} both became friends`,
             userID: found.id
           }
-          await this.SetupMessageToFriends(addMessage, found1.id)
+          await this.SetupMessageToFriends(addMessageUser, addMessageUser, found1.id)
           //will already go to the other person because they're both friends
         }
       }
@@ -317,17 +318,18 @@ export class UserProfileService {
         console.log("asving")
         await this.achievEntity.save(achieve);
 
-        // userprofile = await this.userEntity.findOneBy({id});
-        // achieveStore = userprofile.UserAchievement
-        // achieve = achieveStore.find(
-        //   (achievement) => achievement.nameAchievement === nameAchievement,
-        // );
-        let addMessage:AddMessageDTO = {
+        let addMessageUser:AddMessageDTO = {
           status: "Achievement", 
           message: `${userprofile.username} has achieved ${nameAchievement}`,
           userID: id
         }
-        await this.SetupMessageToFriends(addMessage, id)
+
+        let addMessageOtherUser:AddMessageDTO = {
+          status: "Achievement", 
+          message: `Hey look, ${userprofile.username} has just achieved ${nameAchievement}`,
+          userID: id
+        }
+        await this.SetupMessageToFriends(addMessageUser, addMessageOtherUser, id)
         
       }
 
@@ -398,19 +400,19 @@ export class UserProfileService {
         MessageList
       */
 
-      async SetupMessageToFriends(addMessageUser: AddMessageDTOUser, addMessageOtherUser: AddMessageDTOOtherUser, id:string){
+      async SetupMessageToFriends(addMessageToUSer: AddMessageDTO, addMessageToOtherUSer: AddMessageDTO, id:string){
         //add this message to you
         var userprofile = await this.userEntity.findOneBy({id});//player1
-        await this.AddMessageToUser(addMessageUser, id, userprofile)
+        await this.AddMessageToUser(addMessageToUSer, id, userprofile)
         //add this message to everyone that has you as a friend, but only add if he has friends
         if (userprofile.otherfriendList.length > 0){
-          await this.AddMessageToOthers(addMessageOtherUser, userprofile.otherfriendList, id)
+          await this.AddMessageToOthers(addMessageToOtherUSer, userprofile.otherfriendList, id)
         }
       }
 
-      async AddMessageToUser(addMessage: AddMessageDTO, id:string, userprofile:UserProfile){
+      async AddMessageToUser(addMessageToUSer: AddMessageDTO, id:string, userprofile:UserProfile){
         //set a limit on how many will be created, but only after testing
-        const {status, message, userID} = addMessage
+        const {status, message, userID} = addMessageToUSer
         if (status == "Achievement" && userprofile.YourAchievements == true){
           const user = await this.messageList.findOne({ where: { status, message, userID } });
           //if it does not exist, then don't create it
@@ -428,19 +430,19 @@ export class UserProfileService {
         }
       }
 
-      async AddMessageToOthers(addMessage: AddMessageDTO, otherfriendList:string[], idMain:string){
+      async AddMessageToOthers(addMessageToOtherUSer: AddMessageDTO, otherfriendList:string[], idMain:string){
 
         for (let id of otherfriendList) {
             //loop through the lsit and give each of them this message
             var userprofile = await this.userEntity.findOneBy({id});//player1
-            //if this user has him in his list, then add. if not, then this suer does not want to recieve messages
+            //only send message if the user has them in their checkFriendList
             if (!userprofile.CheckFrienddList.includes(idMain)) {
-              await this.AddMessageToUser(addMessage, id, userprofile)
+              await this.AddMessageToUser(addMessageToOtherUSer, id, userprofile)
             }
         }
-        //find out who has this user added as a friend, and then send them this message
       }
 
+      //removing the message using the ID you send with it
       async RemoveMessageListWithID(userID:string){
         await this.messageList.delete(userID);
       }
