@@ -6,7 +6,7 @@ import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { UserProfile } from './user.entity';
 import { UserAchievement } from './userAchievement.entity';
 import { AddAchievement } from './dto/addAchievement.dto';
-import { AddMessageDTO } from './dto/addMessage.dto';
+import { AddMessageDTO, AddMessageDTOOtherUser, AddMessageDTOUser } from './dto/addMessage.dto';
 import { MessageList } from './MessageList.entity';
 
 class MyEntity {
@@ -398,13 +398,13 @@ export class UserProfileService {
         MessageList
       */
 
-      async SetupMessageToFriends(addMessage: AddMessageDTO, id:string){
+      async SetupMessageToFriends(addMessageUser: AddMessageDTOUser, addMessageOtherUser: AddMessageDTOOtherUser, id:string){
         //add this message to you
         var userprofile = await this.userEntity.findOneBy({id});//player1
-        await this.AddMessageToUser(addMessage, id, userprofile)
+        await this.AddMessageToUser(addMessageUser, id, userprofile)
         //add this message to everyone that has you as a friend, but only add if he has friends
         if (userprofile.otherfriendList.length > 0){
-          await this.AddMessageToUserConnectedFriends(addMessage, userprofile.otherfriendList, id)
+          await this.AddMessageToOthers(addMessageOtherUser, userprofile.otherfriendList, id)
         }
       }
 
@@ -428,7 +428,7 @@ export class UserProfileService {
         }
       }
 
-      async AddMessageToUserConnectedFriends(addMessage: AddMessageDTO, otherfriendList:string[], idMain:string){
+      async AddMessageToOthers(addMessage: AddMessageDTO, otherfriendList:string[], idMain:string){
 
         for (let id of otherfriendList) {
             //loop through the lsit and give each of them this message
