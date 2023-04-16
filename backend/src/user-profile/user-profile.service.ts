@@ -6,7 +6,7 @@ import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { UserProfile } from './user.entity';
 import { UserAchievement } from './userAchievement.entity';
 import { AddAchievement } from './dto/addAchievement.dto';
-import { AddMessageDTO, AddMessageDTOUser } from './dto/addMessage.dto';
+import { AddMessageDTO } from './dto/addMessage.dto';
 import { MessageList } from './MessageList.entity';
 
 class MyEntity {
@@ -95,6 +95,7 @@ export class UserProfileService {
 
       async changeUsername(username: string, id: string): Promise<UserProfile> {
         const found = await this.findUserBy(id)
+        console.log("i come in here userprofile")
         try {
           found.username = username;
           await this.userEntity.save(found);
@@ -315,7 +316,7 @@ export class UserProfileService {
         achieve.message = message
         achieve.status = true
         achieve.timeStamp = Math.floor(Date.now() / 1000) /* seconds since epoch */
-        console.log("asving")
+        console.log("saving")
         await this.achievEntity.save(achieve);
 
         let addMessageUser:AddMessageDTO = {
@@ -323,14 +324,13 @@ export class UserProfileService {
           message: `${userprofile.username} has achieved ${nameAchievement}`,
           userID: id
         }
-
+        console.log("now adding messages")
         let addMessageOtherUser:AddMessageDTO = {
           status: "Achievement", 
           message: `Hey look, ${userprofile.username} has just achieved ${nameAchievement}`,
           userID: id
         }
         await this.SetupMessageToFriends(addMessageUser, addMessageOtherUser, id)
-        
       }
 
       /**
@@ -410,10 +410,22 @@ export class UserProfileService {
         }
       }
 
+      async SetupSendSingleMessage(addMessageToUSer: AddMessageDTO, id:string){
+        //add this message to main user
+        var userprofile = await this.userEntity.findOneBy({id});//player1
+        await this.AddMessageToUser(addMessageToUSer, id, userprofile)
+      }
+
+      /**
+       * make sure to setup the status, else it wont work. each status represents something. servermessage will always go trhough
+       * @param userprofile 
+       */
       async AddMessageToUser(addMessageToUSer: AddMessageDTO, id:string, userprofile:UserProfile){
         //set a limit on how many will be created, but only after testing
         const {status, message, userID} = addMessageToUSer
-        if (status == "Achievement" && userprofile.YourAchievements == true){
+        if ((
+          status == "Achievement" && userprofile.YourAchievements == true) || (
+            status == "ServerMessage" && userprofile.YourMainMessages == true)){
           const user = await this.messageList.findOne({ where: { status, message, userID } });
           //if it does not exist, then don't create it
           if (!user) {
@@ -461,5 +473,12 @@ export class UserProfileService {
         var userprofile = await this.userEntity.findOneBy({id});//player1
         userprofile.CheckFrienddList.splice(userprofile.CheckFrienddList.indexOf(addID), 1);
         await this.userEntity.save(userprofile)
+      }
+
+      async getMessageList(id:string):Promise<MessageList[]>{
+        //if addID is not in id friendlist, then they can not add
+        var userprofile = await this.userEntity.findOneBy({id});//player1
+        console.log("hey")
+        return userprofile.MessageList
       }
 }

@@ -79,7 +79,10 @@ export class UserProfile {
   /* for message list settings */
 
   @Column({default: true})
-    YourAchievements: boolean
+  YourAchievements: boolean
+
+  @Column({default: true})
+  YourMainMessages: boolean
   
   //you only want updates from these users
   @Column("text", {array: true , default: "{}"})

@@ -8,6 +8,7 @@ import { JwtPayload } from './jwt-payload.interface';
 import { authenticator } from 'otplib';
 import { AddAchievement } from 'src/user-profile/dto/addAchievement.dto';
 import { UserProfileService } from 'src/user-profile/user-profile.service';
+import { AddMessageDTO } from 'src/user-profile/dto/addMessage.dto';
 
 export class AuthService {
     constructor(
@@ -169,7 +170,7 @@ export class AuthService {
         console.log(` id = ${user.id}`)
         const payload: JwtPayload = { userID: user.id, twoFactor: false};
         try {
-         const authToken = this.jwtService.sign(payload);          
+         authToken = this.jwtService.sign(payload);          
         }
         catch (error) {
           console.log(error)
@@ -179,19 +180,22 @@ export class AuthService {
       }
 
       async changeUsername(username:string, intraName:string):Promise<boolean>{
-        var check:boolean = false
         var user:UserProfile = await this.userProfileEntityRepos.findOneBy({ username })
         if (!user){
           var user:UserProfile = await this.userProfileEntityRepos.findOneBy({ intraName })
           user.username = username;
           await this.userProfileEntityRepos.save(user);
+          let addMessageOtherUser:AddMessageDTO = {
+            status: "ServerMessage", 
+            message: `Welcome ${username} to our new website.`,
+            userID: user.id
+          }
+          await this.userProlfileServices.SetupSendSingleMessage(addMessageOtherUser, user.id)
           let AddAchievement:AddAchievement = {
             nameAchievement: "setusername",
             pictureLink: "default_pfp.jpg",
             message: "Great job, you set up your account with an username"
           }
-          console.log("hello")
-
           await this.userProlfileServices.postAchievementList(user.id, AddAchievement)
           return true
         }

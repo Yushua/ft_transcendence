@@ -4,6 +4,7 @@ import { AuthGuardEncryption } from 'src/auth/auth.guard';
 import { AddAchievement } from './dto/addAchievement.dto';
 import { UserProfileService } from './user-profile.service';
 import { UserProfile } from './user.entity';
+import { MessageList } from './MessageList.entity';
 
 @Controller('user-profile')
 
@@ -126,6 +127,7 @@ export class UserProfileController {
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     changeUsername(
         @Param('username') username: string, @Request() req: Request) {
+        console.log("setting a new username")
         this.userServices.changeUsername(username, req["user"].id);
     }
 
@@ -168,18 +170,21 @@ export class UserProfileController {
     */
 
     @Get('GetAchievementListDone/:id')
+    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     async GetAchievementListDone( @Param('id') id: string ) {
 
         return {  list: await this.userServices.GetUserAchievementDone(id) }
     }
 
     @Get('GetAchievementListNotDone/:id')
+    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     async GetAchievementListNotDone( @Param('id') id: string ) {
 
         return {  list: await this.userServices.GetUserAchievementNotDone(id) }
     }
 
     @Get('GetAchievementListFull/:id')
+    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     async GetAchievementListFull( @Param('id') id: string ) {
 
         return {  list: await this.userServices.GetUserAchievementFull(id) }
@@ -189,5 +194,10 @@ export class UserProfileController {
         MessageList
     */
 
-    
+        @Get('GetMessageList')
+        @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+        async GetMessageList( @Request() req: Request ):Promise<MessageList[]> {
+            console.log(await this.userServices.getMessageList(req["user"].id))
+            return  await this.userServices.getMessageList(req["user"].id)
+        }
 }

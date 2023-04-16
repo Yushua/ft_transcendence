@@ -27,6 +27,9 @@ async function getAccessToken(username:string){
 
 var _setValue:React.Dispatch<React.SetStateAction<string>>
 
+/**
+ * Set your username when not set yet
+ */
 function SetUsername(){
   const [value, setValue] = useState<string>("");
   _setValue = setValue
@@ -46,7 +49,7 @@ function SetUsername(){
             fontFamily={"'Courier New', monospace"}
             fontSize={"200%"}
             marginTop={`${Width*0.3}px`}>
-            Choose a username
+              <div>Set your username to continue </div>
           <input type="text" value={value} onChange={handleChange} />
           {value.length > 4 && value.length <= 20 && (
           <button type="submit">Submit</button> )}
