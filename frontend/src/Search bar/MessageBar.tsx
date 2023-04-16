@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import HTTP from '../Utils/HTTP';
-import OtherUserProfile from '../UserProfile/ProfilePages/OtherUserProfile';
-import { SetWindowProfile } from '../UserProfile/ProfileMainWindow';
 import { Width } from '../MainWindow/MainWindow';
+import { Box } from '@mui/material';
 
 export async function asyncAchievmentList(id:string){
   const response = HTTP.Get(`user-profile/GetMessageList`, null, {Accept: 'application/json'})
@@ -14,46 +13,72 @@ export async function asyncAchievmentList(id:string){
 	}
 }
 
+export async function asyncRemoveMessage(id:string){
+  HTTP.Post(`user-profile/removemessage/${id}`, null, {Accept: 'application/json'})
+}
 async function getList(id:string){
   await asyncAchievmentList(id)
 }
+
+async function removeMessage(id:string){
+  await asyncRemoveMessage(id)
+  _setDisplay(false)
+}
+
 
 var _setList:React.Dispatch<React.SetStateAction<string[][]>>
 
 /*
   get message if you get an
-  - acheivement
+  - achievement
   - a friend gets one
 
   maybe
-  - when someone befriends you (if this message is already in there, do nothing)
+  - only when you have them set up, you need to follow them to have this option, so only in unfollow
   - 
 */
+
+var _setDisplay:React.Dispatch<React.SetStateAction<boolean>>
 
 function MessageBar(props: any) {
   //get into page, get the entire list online
   const [ListSearchList, setList] = useState<any[]>([]);
   const [width, setwidth] = useState<number>(props.width);
+  const [Display, setDisplay] = useState<boolean>(false);
   _setList = setList
-  useEffect(() => {
-		getList(props.id)
-	}, []); // empty dependency array means it will only run once
-
+  _setDisplay = setDisplay
+  if (Display == false){
+    getList(props.id)
+    setDisplay(true)
+  }
+  var boxwidth:number = props.width*0.9
+  var buttonsize:number = ((Width*0.9) - (Width*0.9*0.03 * 6 * 2))/6
+  var border:number = Width*0.005
   const handleButtonClick = (e: string) => {
-    SetWindowProfile(<OtherUserProfile id={e}/>)
+    removeMessage(e)
   };
   //have an objext, 0.8
     return (
-        <div >
+        < >
           {ListSearchList.map((option, index) => (
-              <button
+            <div
+              style={{ display: "flex", width: `${boxwidth}px`, marginLeft: `${width*0.02}px`, marginRight: `${width*0.02}px`, marginTop: `${width*0.02}px`, marginBottom: `${width*0.02}px`, border: `${Width*0.005}px solid black`}}
+              >
+              <div
                 key={index}
-                style={{ display: "flex", width: `${props.width*0.9}px`, maxHeight: `${((Width*0.9) - (Width*0.9*0.03 * 6 * 2))/6}px`, overflow: "hidden", textOverflow:"ellipsis", marginLeft: `${width*0.02}px`, marginRight: `${width*0.02}px`, marginTop: `${width*0.02}px`, marginBottom: `${width*0.02}px`}}
-                onClick={() => handleButtonClick(option[3])}>
+                style={{display: "inline-block", flex: 1, alignItems: "center", justifyContent: "center", width: `${boxwidth - (buttonsize - (border*2))}px`, maxHeight: `${buttonsize - (border*2)}px`, overflow: "hidden", textOverflow:"ellipsis"}}
+                >
                   <h2 >{`${option.message}`}</h2>
+              </div>
+              <button
+                style={{display: "inline-block", cursor: "pointer", alignItems: "center", justifyContent: "center", width: `${buttonsize - (border*2)}px`, height: `${buttonsize - (border*2)}px`, overflow: "hidden", textOverflow:"ellipsis"}}
+                onClick={() => handleButtonClick(option.id)}
+              >
+                <h2 >X</h2>
               </button>
+            </div>
           ))}
-        </div>
+        </>
     )
 }
 

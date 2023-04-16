@@ -200,4 +200,10 @@ export class UserProfileController {
             console.log(await this.userServices.getMessageList(req["user"].id))
             return  await this.userServices.getMessageList(req["user"].id)
         }
+
+        @Post('removemessage/:id')
+        @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+        async removemessage( @Param("id") id:string ) {
+            return  await this.userServices.RemoveMessageListWithID(id)
+        }
 }
