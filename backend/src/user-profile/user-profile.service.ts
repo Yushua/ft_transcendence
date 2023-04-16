@@ -95,7 +95,6 @@ export class UserProfileService {
 
       async changeUsername(username: string, id: string): Promise<UserProfile> {
         const found = await this.findUserBy(id)
-        console.log("i come in here userprofile")
         try {
           found.username = username;
           await this.userEntity.save(found);
@@ -478,7 +477,22 @@ export class UserProfileService {
       async getMessageList(id:string):Promise<MessageList[]>{
         //if addID is not in id friendlist, then they can not add
         var userprofile = await this.userEntity.findOneBy({id});//player1
-        console.log("hey")
         return userprofile.MessageList
+      }
+
+      async changeStatusAchieve(id:string, status:boolean){
+        var user:UserProfile = await this.userEntity.findOneBy({id})
+        console.log("before change status ", user.YourMainMessages)
+        user.YourAchievements = status
+        await this.userEntity.save(user)
+      }
+
+      async changeStatusMessage(id:string, status:boolean){
+        var user:UserProfile = await this.userEntity.findOneBy({id})
+        console.log(` status in {${status}} and out now {${user.YourMainMessages} username {${user.username}}`)
+        user.YourMainMessages = status
+        await this.userEntity.save(user)
+        user = await this.userEntity.findOneBy({id})
+        console.log(` second status in {${status}} and out now {${user.YourMainMessages} username {${user.username}}`)
       }
 }

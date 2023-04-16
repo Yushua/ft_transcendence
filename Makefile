@@ -48,4 +48,7 @@ react:
 	npm i @mui/x-data-grid
 	npm i immutability-helper
 	npm install react-overlays
+	npx create-react-app my-toggle-switch --template typescript
+	npm install --save @types/styled-components
+	npm install --save @material-ui/core
 

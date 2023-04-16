@@ -206,4 +206,38 @@ export class UserProfileController {
         async removemessage( @Param("id") id:string ) {
             return  await this.userServices.RemoveMessageListWithID(id)
         }
+
+
+        @Get('getAchieveMessageStatus')
+        @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+        async getAchievestatus( @Request() req: Request ) {
+            var user:UserProfile = await this.userServices.findUserBy(req["user"].id)
+            return  { status: user.YourAchievements}
+        }
+
+        @Post('PostAchieveMessageStatus/:status')
+        @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+        async PostAchievestatus( @Param("status") status:boolean, @Request() req: Request ) {
+            console.log(`in post archive and status {${status}}`)
+            await this.userServices.changeStatusAchieve(req["user"].id, status)
+            var user:UserProfile = await this.userServices.findUserBy(req["user"].id)
+            console.log(`status now {${user.YourAchievements}}`)
+        }
+
+
+        @Get('getServerMessageStatus')
+        @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+        async getServerMessageStatus( @Request() req: Request ) {
+            var user:UserProfile = await this.userServices.findUserBy(req["user"].id)
+            return  { status: user.YourMainMessages}
+        }
+
+        @Post('PostServerMessageStatus/:status')
+        @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+        async PostServerMessageStatus( @Param("status") status:boolean, @Request() req: Request ) {
+            await this.userServices.changeStatusMessage(req["user"].id, status)
+            var user:UserProfile = await this.userServices.findUserBy(req["user"].id)
+            console.log(`status now {${user.YourMainMessages}}`)
+
+        }
 }
