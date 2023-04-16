@@ -482,7 +482,6 @@ export class UserProfileService {
 
       async changeStatusAchieve(id:string, status:boolean){
         var user:UserProfile = await this.userEntity.findOneBy({id})
-        console.log("before change status ", user.YourMainMessages)
         user.YourAchievements = status
         await this.userEntity.save(user)
       }
