@@ -43,7 +43,7 @@ export async function asyncUpdateChatLog() {
 	}
 	
 	var _msgCount = _chatLog.length
-	var _reactKeyThing = 0
+	var _reactKeyThing = _chatLog.length
 	
 	const newMsgCount = ChatRoom.MessageCount
 	
@@ -119,10 +119,6 @@ export default function ChatWindow() {
 	if (ChatRoom.ID === "" || chatLog.length === 0)
 		return <div style={{display: "table-cell"}}></div>
 	
-	for (const log of chatLog) {
-		console.log(`${log.key}`)
-	}
-		
 	return (
 		<div style={{display: "table-cell", color: "black", height: `${ChatWindowHeight}px`}}>
 			
