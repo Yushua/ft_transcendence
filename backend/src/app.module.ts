@@ -9,9 +9,14 @@ import { PFPModule } from './profile-pictures/pfp.module';
 import { PongModule } from './pong/pong.module';
 import { ConfigModule } from '@nestjs/config';
 import { GameStatsModule } from './game-stats/game-stats.module';
+import { ThrottlerModule } from '@nestjs/throttler'
 
 @Module({
   imports: [
+    ThrottlerModule.forRoot({
+      ttl: 60,
+      limit: 10,
+    }),
     ConfigModule.forRoot(),
     UserProfileModule,
     TypeOrmModule.forRoot({

@@ -40,6 +40,7 @@ setup:
 	npm install otplib --save
 	npm install crypto-js --save
 	npm i --save-dev @types/qrcode
+	npm i --save @nestjs/throttler
 
 react:
 	npm i typescript @types/node @types/react @types/react-dom @types/jest
