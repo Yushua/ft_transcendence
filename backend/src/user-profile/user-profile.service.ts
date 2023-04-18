@@ -125,7 +125,7 @@ export class UserProfileService {
           let addMessageUser:AddMessageDTO = {
             status: "Achievement", 
             message: `${found.username} and ${found1.username} both became friends`,
-            userID: found.id
+            userID: found1.id
           }
           
           await this.SetupMessageToFriends(addMessageUser, addMessageUser, found.id)

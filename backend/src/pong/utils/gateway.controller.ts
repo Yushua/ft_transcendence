@@ -30,7 +30,7 @@ let gameConfig = new Config()
 
 @WebSocketGateway({
 	cors: {
-		origin: [process.env.redirect_uri]
+		origin: ['http://localhost:4243']
 	}
 })
 
@@ -308,111 +308,115 @@ export class MyGateway implements OnModuleInit {
 
 		}
 		@SubscribeMessage('spectate')
-		handleSpectator(
-			@MessageBody() gameName: string,
-			@ConnectedSocket() client: Socket) {
-				let game = games.get(gameName)
-				if (game !== undefined)
-				{
-					connections.set(client.id, game)
-					client.emit('spectating')
-				}
+	handleSpectator(
+		@MessageBody() gameName: string,
+		@ConnectedSocket() client: Socket) {
+			let game = games.get(gameName)
+			if (game !== undefined)
+			{
+				connections.set(client.id, game)
+				client.emit('spectating')
 			}
-		
-		@SubscribeMessage('refreshGameList')
-		handleRefreshGL() {
-				const serializedMap = [...games.entries()]
-				const serializedMap2 = [...customGames.entries()];
-				this.server.emit('gamelist', serializedMap)
-				this.server.emit('custom_gamelist', serializedMap2)
-			}
-		
-		@SubscribeMessage('disconnect')
-		async handleDisconnect(
-			@ConnectedSocket() client: Socket) {
-				if (client === player2)
-					player2 = undefined
-				let connection = connections.get(client.id)
-				if (connection !== undefined)
-					connections.delete(client.id)
-				const user = await this._guard.GetUser(client.handshake.headers["authorization"])
-				if (user) {
-					const state = OurSession.GetUserState(user.id)
-					if (state === 'inGame')
-						OurSession.GameLeaving(client.id)
-					OurSession.SocketDisconnecting(client.id)
-					for (var game of games) {
-						if (game[1][1].includes(client.id)) {
-							if (game[1][1][IDs.p1_socket_id] == client.id)
-								game[1][1][IDs.p1_socket_id] = 'disconnected'
-							if (game[1][1][IDs.p2_socket_id] == client.id)
-								game[1][1][IDs.p2_socket_id] = 'disconnected'
-						}
-					}
-					for (var game of customGames) {
-						if (game[1][1][IDs.p1_userID] === user.id)
-						{
-							customGames.delete(game[0])
-							const serializedMap = [...customGames.entries()]
-							this.server.emit('custom_gamelist', serializedMap)		
-							break
-						}
-					}
-				}
-			}
+		}
 	
-		@SubscribeMessage('deleteCreatedGame')
-		handleDelete(
-			@ConnectedSocket() creator: Socket) {
-				for (const game of customGames) {
-					if (game[1][1][0] === creator.id) {
-						customGames.delete(game[0])
-						const serializedMap = [...customGames.entries()]
-						this.server.emit('custom_gamelist', serializedMap)
-					}
-				}
-			}
+	@SubscribeMessage('refreshGameList')
+	handleRefreshGL() {
+			const serializedMap = [...games.entries()]
+			const serializedMap2 = [...customGames.entries()];
+			this.server.emit('gamelist', serializedMap)
+			this.server.emit('custom_gamelist', serializedMap2)
+		}
 	
-		//remove client from connections on leave
-		@SubscribeMessage('leave')
-		handleLeaver(
-			@ConnectedSocket() client: Socket) {
-				let connection = connections.get(client.id)
-				if (connection !== undefined) {
-					connections.delete(client.id)
-					if (connection[1].includes(client.id))
-						OurSession.GameLeaving(client.id)
-				}
+	@SubscribeMessage('disconnect')
+	async handleDisconnect(
+		@ConnectedSocket() client: Socket) {
+			if (client === player2)
+				player2 = undefined
+			let connection = connections.get(client.id)
+			if (connection !== undefined)
+				connections.delete(client.id)
+			const user = await this._guard.GetUser(client.handshake.headers["authorization"])
+			if (user) {
+				const state = OurSession.GetUserState(user.id)
+				if (state === 'inGame')
+					OurSession.GameLeaving(client.id)
+				OurSession.SocketDisconnecting(client.id)
 				for (var game of games) {
 					if (game[1][1].includes(client.id)) {
 						if (game[1][1][IDs.p1_socket_id] == client.id)
-							game[1][1][IDs.p1_socket_id] = 'left'
+							game[1][1][IDs.p1_socket_id] = 'disconnected'
 						if (game[1][1][IDs.p2_socket_id] == client.id)
-							game[1][1][IDs.p2_socket_id] = 'left'
+							game[1][1][IDs.p2_socket_id] = 'disconnected'
 					}
 				}
-				this.server.to(client.id).emit('left')
+				for (var game of customGames) {
+					if (game[1][1][IDs.p1_userID] === user.id)
+					{
+						customGames.delete(game[0])
+						const serializedMap = [...customGames.entries()]
+						this.server.emit('custom_gamelist', serializedMap)		
+						break
+					}
+				}
 			}
-		
-		private _startGameLoop = (deltaTime: number) => this._runGameLoop(deltaTime)
-		
-		private async _runGameLoop(deltaTime: number) {
-			
-			const startTime = Date.now()
-			
-			const updated_games = {} // Make sure games don't get updated twice
-			var await_updates = [] // Array of update promises
-			
-			/* Update all Games */
+		}
+
+	@SubscribeMessage('deleteCreatedGame')
+	handleDelete(
+		@ConnectedSocket() creator: Socket) {
+			for (const game of customGames) {
+				if (game[1][1][0] === creator.id) {
+					customGames.delete(game[0])
+					const serializedMap = [...customGames.entries()]
+					this.server.emit('custom_gamelist', serializedMap)
+				}
+			}
+		}
+
+	//remove client from connections on leave
+	@SubscribeMessage('leave')
+	handleLeaver(
+		@ConnectedSocket() client: Socket) {
+			let connection = connections.get(client.id)
+			if (connection !== undefined) {
+				connections.delete(client.id)
+				if (connection[1].includes(client.id))
+					OurSession.GameLeaving(client.id)
+			}
 			for (var game of games) {
-				
-				const gameData:GameData = game[1][0]
-				const gameIDs:string[] = game[1][1]
+				if (game[1][1].includes(client.id)) {
+					if (game[1][1][IDs.p1_socket_id] == client.id)
+						game[1][1][IDs.p1_socket_id] = 'left'
+					if (game[1][1][IDs.p2_socket_id] == client.id)
+						game[1][1][IDs.p2_socket_id] = 'left'
+				}
+			}
+			this.server.to(client.id).emit('left')
+		}
 	
-				/* Make sure games don't get updated twice */
-				const gameName: string = game[0]
-				if (!updated_games[gameName]) {
-					updated_games[gameName] = true
+	private _startGameLoop = (deltaTime: number) => this._runGameLoop(deltaTime)
+	
+	private async _runGameLoop(deltaTime: number) {
+		
+		const startTime = Date.now()
+		
+		const updated_games = {} // Make sure games don't get updated twice
+		var await_updates = [] // Array of update promises
+		
+		/* Update all Games */
+		for (var game of games) {
+			
+			const gameData:GameData = game[1][0]
+			const gameIDs:string[] = game[1][1]
+
+			/* Make sure games don't get updated twice */
+			const gameName: string = game[0]
+			if (!updated_games[gameName]) {
+				updated_games[gameName] = true
+				
+				/* Update game asyncronosly and add to await array */
+				gameData.update(deltaTime)
+				// await_updates.push((async () => 
 					
 				// )())
 			}
@@ -425,54 +429,57 @@ export class MyGateway implements OnModuleInit {
 					break;
 				default: continue;
 			}
-			
-			/* Await all game updates */
-			await Promise.all(await_updates)
-			await_updates = [] // Clearing for new
-			
-			/* Send updated data */
-			for (const connection of connections) {
-				const clientID: string = connection[0]
-				const gameData: GameData = connection[1][0]
-	
-				/* Send updated data */
-				await_updates.push((async () =>
-					this.server.to(clientID).emit('gamedata', gameData)
-				)())
-				
-				/* Handle end of a game */
-				if (gameData.gameState === 'p1_won' || gameData.gameState === 'p2_won' ) {
-					connections.delete(clientID)
-					if (connection[1][1].includes(clientID))
-						OurSession.GameLeaving(clientID)
-				}
-			}
-			
-			/* Simulate Lag */
-			// await_updates.push(new Promise(res => setTimeout(res, Math.random() * 100)))
-			// await_updates.push(new Promise(res => setTimeout(res, 100)))
-			
-			/* Await all sends */
-			// await Promise.all(await_updates)
-			
-			/* Make sure games update in set intervals */
-			const endTime = Date.now()
-			var delta = endTime - startTime
-			
-			/* Print Slowdown */
-			// if (delta < 2) {}
-			// else if (delta < 5) { console.log(`${"\x1b[37m"}${delta}${"\x1b[0m"}`) }
-			// else if (delta < 10) { console.log(`${"\x1b[33m"}${delta}${"\x1b[0m"}`) }
-			// else if (delta < 15) { console.log(`${"\x1b[43m"}${delta}${"\x1b[0m"}`) }
-			// else if (delta < 20) { console.log(`${"\x1b[31m"}${delta}${"\x1b[0m"}`) }
-			// else { console.log(`${"\x1b[41m"}${delta}${"\x1b[0m"}`) }
-			
-			/* Use fixed framerate to reserve resources */
-			if (delta < 20)
-				setTimeout(() => this._startGameLoop(targetResponseRateS), Math.max(0, targetResponseRateMS - delta))
-			/* Use delta time to make games playable under heavy or irregular load */
-			else
-				this._startGameLoop(Math.min(delta / 1000, .10))
+			games.delete(gameName)
+			const serializedMap = [...games.entries()];
+			this.server.emit('gamelist', serializedMap)
 		}
+		
+		/* Await all game updates */
+		await Promise.all(await_updates)
+		await_updates = [] // Clearing for new
+		
+		/* Send updated data */
+		for (const connection of connections) {
+			const clientID: string = connection[0]
+			const gameData: GameData = connection[1][0]
+
+			/* Send updated data */
+			await_updates.push((async () =>
+				this.server.to(clientID).emit('gamedata', gameData)
+			)())
+			
+			/* Handle end of a game */
+			if (gameData.gameState === 'p1_won' || gameData.gameState === 'p2_won' ) {
+				connections.delete(clientID)
+				if (connection[1][1].includes(clientID))
+					OurSession.GameLeaving(clientID)
+			}
+		}
+		
+		/* Simulate Lag */
+		// await_updates.push(new Promise(res => setTimeout(res, Math.random() * 100)))
+		// await_updates.push(new Promise(res => setTimeout(res, 100)))
+		
+		/* Await all sends */
+		// await Promise.all(await_updates)
+		
+		/* Make sure games update in set intervals */
+		const endTime = Date.now()
+		var delta = endTime - startTime
+		
+		/* Print Slowdown */
+		// if (delta < 2) {}
+		// else if (delta < 5) { console.log(`${"\x1b[37m"}${delta}${"\x1b[0m"}`) }
+		// else if (delta < 10) { console.log(`${"\x1b[33m"}${delta}${"\x1b[0m"}`) }
+		// else if (delta < 15) { console.log(`${"\x1b[43m"}${delta}${"\x1b[0m"}`) }
+		// else if (delta < 20) { console.log(`${"\x1b[31m"}${delta}${"\x1b[0m"}`) }
+		// else { console.log(`${"\x1b[41m"}${delta}${"\x1b[0m"}`) }
+		
+		/* Use fixed framerate to reserve resources */
+		if (delta < 20)
+			setTimeout(() => this._startGameLoop(targetResponseRateS), Math.max(0, targetResponseRateMS - delta))
+		/* Use delta time to make games playable under heavy or irregular load */
+		else
+			this._startGameLoop(Math.min(delta / 1000, .10))
 	}
 }

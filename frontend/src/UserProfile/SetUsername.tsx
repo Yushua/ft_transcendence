@@ -35,7 +35,9 @@ function SetUsername(){
   _setValue = setValue
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    getAccessToken(value)
+    if (value.length > 4 && value.length <= 20){
+      getAccessToken(value)
+    }
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
