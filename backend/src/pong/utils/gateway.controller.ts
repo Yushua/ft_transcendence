@@ -30,7 +30,7 @@ let gameConfig = new Config()
 
 @WebSocketGateway({
 	cors: {
-		origin: ['http://localhost:4243']
+		origin: true
 	}
 })
 
