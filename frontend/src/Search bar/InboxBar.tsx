@@ -70,7 +70,7 @@ function InboxBar(props: any) {
                   {option.message}
               </div>
               <button
-                style={{display: "inline-block", cursor: "pointer", alignItems: "center", justifyContent: "center", width: `${buttonsize - (border*2)}px`, height: `${buttonsize - (border*2)}px`, overflow: "hidden", textOverflow:"ellipsis", top="0px"}}
+                style={{display: "inline-block", cursor: "pointer", alignItems: "center", justifyContent: "center", width: `${buttonsize - (border*2)}px`, height: `${buttonsize - (border*2)}px`, overflow: "hidden", textOverflow:"ellipsis", top:"0px"}}
                 onClick={() => handleButtonClick(option.id)}
               >
                 <h2 >X</h2>
