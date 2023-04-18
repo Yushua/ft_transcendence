@@ -9,6 +9,7 @@ export class Config {
 	paddleSize:number
 	ballSpeed:number
 	acceleration:number
+	maxScore:number
 
 	constructor() {
 		this.gameName = ''
@@ -21,6 +22,7 @@ export class Config {
 		this.ballSpeed = 100
 		this.paddleSize = 100
 		this.acceleration = 0.5
+		this.maxScore = 11
 	}
 }
 

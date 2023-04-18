@@ -100,7 +100,7 @@ export const Pong = () => {
 		{
 			let customGamesMap:Map<string, any[]> = new Map<string, any[]>()
 			for (var instance of serializedGamesMap) {
-				customGamesMap.set(instance[0], [instance[1][0].p1_name, instance[1][0].p1_controls, instance[1][0].ballSpeed, instance[1][0].paddleSize, instance[1][0].acceleration])
+				customGamesMap.set(instance[0], [instance[1][0].p1_name, instance[1][0].p1_controls, instance[1][0].ballSpeed, instance[1][0].paddleSize, instance[1][0].acceleration, instance[1][0].maxScore])
 			}
 			setCustomGames(customGamesMap)
 			localStorage[Enum.customGames] = customGamesMap
@@ -108,7 +108,6 @@ export const Pong = () => {
 
 		function updateActiveGames(serializedGamesMap:any)
 		{
-			console.log('map', serializedGamesMap)
 			let games:Map<string, string[]> = new Map<string, string[]>()
 			for (var instance of serializedGamesMap) {
 				games.set(instance[0], [instance[1][0].p1_name, instance[1][0].p2_name, instance[1][0].isClassic])

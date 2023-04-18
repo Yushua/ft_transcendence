@@ -115,7 +115,7 @@ export class AuthService {
     list:string[][] = [
        ["Now you are a winner!", `./public/invalid_cross.jpg`, "Win a game of Pong!"],
        ["setusername", `./public/invalid_cross.jpg`, "you set your username"],
-       ["Superb Showing", `./public/invalid_cross.jpg`, "Win a game of Pong without letting your opponent score!"],
+       ["Superb Showing", `./public/invalid_cross.jpg`, "Win a game of Pong 11-0!"],
        ["Now you are a winner times ten!", `./public/invalid_cross.jpg`, "Win 10 games of Pong!"],
      ]
       // async AllAchievements():Promise<string[][]>{

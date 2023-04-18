@@ -70,7 +70,7 @@ export class PongService {
 		await UserProfileService.GetInstance()?.updateUserProfiles([winner, loser])
 
 		/* achievements */
-		if (winner.wins == 1) {
+		if (winner.wins === 1) {
 			let AddAchievement:AddAchievement = {
 				nameAchievement: "Now you are a winner!",
 				pictureLink: "https://i.imgur.com/APko8Vd.png",
@@ -78,7 +78,7 @@ export class PongService {
 			}
 			await UserProfileService.GetInstance()?.postAchievementList(winner.id, AddAchievement)
 		}
-		if (winner.wins == 10) {
+		if (winner.wins === 10) {
 			let AddAchievement:AddAchievement = {
 				nameAchievement: "Now you are a winner times ten!",
 				pictureLink: "https://i.imgur.com/phxrhIM.png",
@@ -86,7 +86,7 @@ export class PongService {
 			}
 			await UserProfileService.GetInstance()?.postAchievementList(winner.id, AddAchievement)
 		}
-		if (stat.scoreLoser == 0) {
+		if (stat.scoreLoser === 0 && stat.scoreWinner > 10 ) {
 			let AddAchievement:AddAchievement = {
 				nameAchievement: "Superb Showing",
 				pictureLink: "https://i.imgur.com/cPo6NQ4.png",

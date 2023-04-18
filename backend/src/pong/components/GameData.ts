@@ -19,6 +19,7 @@ export class GameData {
 	acceleration:number
 	beginTime:number
 	endTime:number
+	maxScore:number
 
 	constructor(Config:any, isClassic:boolean)
 	{
@@ -33,6 +34,7 @@ export class GameData {
 		this.ballSpeed = Config.ballSpeed
 		this.paddleSize = Config.paddleSize
 		this.acceleration = Config.acceleration
+		this.maxScore = Config.maxScore
 		this.p1 = new Paddle(12, 1, 1500, 750, 20, 20, Config.paddleSize, this.acceleration)
 		this.p2 = new Paddle(12, 2, 1500, 750, 20, 20, Config.paddleSize, this.acceleration)
 		this.ball = new Ball(10 * Config.ballSpeed / 100, 3, 1500, 750, 20, 20, 20, this.acceleration)
@@ -47,14 +49,14 @@ export class GameData {
 		switch (this.ball.update(this.p1, this.p2, deltaTime)) {
 			case 'p1_scored':
 				this.p1_score++
-				if (this.p1_score === 11) {
+				if (this.p1_score === this.maxScore) {
 					this.gameState = 'p1_won'
 					this.endTime = Date.now() / 1000
 				}
 				break;
 			case 'p2_scored':
 				this.p2_score++
-				if (this.p2_score === 11) {
+				if (this.p2_score === this.maxScore) {
 					this.gameState = 'p2_won'
 					this.endTime = Date.now() / 1000
 				}
