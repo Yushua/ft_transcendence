@@ -9,12 +9,13 @@ import { PFPModule } from './profile-pictures/pfp.module';
 import { PongModule } from './pong/pong.module';
 import { ConfigModule } from '@nestjs/config';
 import { GameStatsModule } from './game-stats/game-stats.module';
-import { ThrottlerModule } from '@nestjs/throttler'
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
     ThrottlerModule.forRoot({
-      ttl: 60,
+      ttl: 1,
       limit: 10,
     }),
     ConfigModule.forRoot(),
@@ -36,6 +37,12 @@ import { ThrottlerModule } from '@nestjs/throttler'
     PongModule,
     GameStatsModule,
   ],
-  controllers: [AppController]
+  controllers: [AppController],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}

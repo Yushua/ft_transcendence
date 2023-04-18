@@ -8,8 +8,9 @@ import { ChatLineHeight, ChatWindowHeight } from "../../MainChatWindow";
 import ChatUser from "../../../../Utils/Cache/ChatUser";
 import { socket } from "../../../../Games/contexts/WebsocketContext";
 
-var roomCache: Map<string, JSX.Element[]> = new Map<string, JSX.Element[]>()
+var roomCache: Map<string, {lastCount: number, jsx: JSX.Element[]}> = new Map<string, {lastCount: number, jsx: JSX.Element[]}>()
 var _chatLog: JSX.Element[] = []
+var _msgCount: number = 0
 var _fillDepth = 24
 var _oldRoomID = ""
 
@@ -33,16 +34,17 @@ export async function asyncUpdateChatLog() {
 		return
 	if (_oldRoomID !== ChatRoom.ID) {
 		if (_oldRoomID !== "" && _chatLog.length !== 0)
-			roomCache.set(_oldRoomID, _chatLog)
+			roomCache.set(_oldRoomID, {lastCount: _msgCount, jsx:_chatLog})
 		_oldRoomID = ChatRoom.ID
-		_chatLog = roomCache.get(_oldRoomID) ?? []
+		const data = roomCache.get(_oldRoomID) ?? {lastCount: 0, jsx: []}
+		_chatLog = data.jsx
+		_msgCount = data.lastCount
 		if (ChatRoom.ID === "") {
 			_setChatLog([<div><span>&#8203;</span></div>])
 			return
 		}
 	}
 	
-	var _msgCount = _chatLog.length
 	var _reactKeyThing = _chatLog.length
 	
 	const newMsgCount = ChatRoom.MessageCount
@@ -51,6 +53,8 @@ export async function asyncUpdateChatLog() {
 		var newChatLog = []
 		var count = 0
 		var target = newMsgCount - _msgCount
+		if (target > 30)
+			target = 30
 		
 		for (let page = 1; count < target; page++) {
 			const msgs = await JSON.parse(HTTP.Get(`chat/msg/${ChatRoom.ID}/-${page}`))
