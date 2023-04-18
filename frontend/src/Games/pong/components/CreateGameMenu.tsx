@@ -26,6 +26,7 @@ export const CreateGameMenu = (props:any) => {
 	const [isMouse, setIsMouse] = React.useState(true)
 	const [gameNameTaken, setGameNameTaken] = React.useState(false)
 	const [emptyName, setEmptyName] = React.useState(false)
+	const [maxScore, setMaxScore] = React.useState(11)
 
 	props.socket.on('gamename taken', () => {
 		setGameNameTaken(true)
@@ -42,6 +43,12 @@ export const CreateGameMenu = (props:any) => {
 	const handleAccelerationChange = (event: Event, newValue: number | number[]) => {
 		if (typeof newValue === 'number') {
 			setBallAcceleration(newValue);
+		}
+	}
+
+	const handleScoreChange = (event: Event, newValue: number | number[]) => {
+		if (typeof newValue === 'number') {
+			setMaxScore(newValue);
 		}
 	}
 
@@ -120,7 +127,7 @@ export const CreateGameMenu = (props:any) => {
 						</Typography>
 						<Slider
 							value={paddleSize}
-							min={5}
+							min={20}
 							step={1}
 							max={500}
 							onChange={handlePaddleChange}
@@ -146,6 +153,23 @@ export const CreateGameMenu = (props:any) => {
 					</Box>
 				</h4>
 				<p></p>
+				<h4 style={{ color: "#3368FF"}}>Choose Max Score
+					<Box sx={{ width: 250 }}>
+						<Typography id="non-linear-slider" gutterBottom style={{ color: "#3368FF"}}>
+							{maxScore}
+						</Typography>
+						<Slider
+							value={maxScore}
+							min={1}
+							step={1}
+							max={50}
+							onChange={handleScoreChange}
+							valueLabelDisplay="auto"
+							aria-labelledby="non-linear-slider"
+						/>
+					</Box>
+				</h4>
+				<p></p>
 				<Button
 					variant="contained"
 					onClick={() => createGame('public', {
@@ -153,7 +177,8 @@ export const CreateGameMenu = (props:any) => {
 						ballSpeed,
 						paddleSize,
 						controls,
-						acceleration
+						acceleration,
+						maxScore
 					})}>
 					Create Public Game
 				</Button>
@@ -165,7 +190,8 @@ export const CreateGameMenu = (props:any) => {
 						ballSpeed,
 						paddleSize,
 						controls,
-						acceleration
+						acceleration,
+						maxScore
 					})}>
 					Create Private Game
 				</Button>

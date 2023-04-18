@@ -9,9 +9,9 @@ import TableContainer from "@mui/material/TableContainer";
 import { Socket } from "socket.io-client";
 import Paper from "@mui/material/Paper";
 
-function createData(id: number, gameName: string, p1: string, controls:string, BallSpeed: number, PaddleSize:number, BallAcceleration:number)
+function createData(id: number, gameName: string, p1: string, controls:string, BallSpeed: number, PaddleSize:number, BallAcceleration:number, maxScore:number)
 {
-	return { id, gameName, p1, controls, BallSpeed, PaddleSize, BallAcceleration }
+	return { id, gameName, p1, controls, BallSpeed, PaddleSize, BallAcceleration, maxScore }
 }
 
 	
@@ -33,7 +33,7 @@ export class CustomGameList extends React.Component<any, any> {
 		/* for active games, third value of value ([1][2]) is bool that is true if game is a classic game */
 		for (var game of games) {
 			if (game[0].length < 13)
-				rows[i] = createData(i, game[0], game[1][0], game[1][1], game[1][2], game[1][3], game[1][4])
+				rows[i] = createData(i, game[0], game[1][0], game[1][1], game[1][2], game[1][3], game[1][4], game[1][5])
 			i++
 		}
 		return rows
@@ -60,6 +60,7 @@ export class CustomGameList extends React.Component<any, any> {
 								<TableCell style={{color: "#3368FF"}}>Ball Speed</TableCell>
 								<TableCell style={{color: "#3368FF"}}>Paddle Size</TableCell>
 								<TableCell style={{color: "#3368FF"}}>Ball Acceleration</TableCell>
+								<TableCell style={{color: "#3368FF"}}>Max Score</TableCell>
 							</TableRow>
 						</TableHead>
 						<TableBody>
@@ -71,6 +72,7 @@ export class CustomGameList extends React.Component<any, any> {
 								<TableCell style={{color: "#FF3333"}}>{row.BallSpeed}</TableCell>
 								<TableCell style={{color: "#FF3333"}}>{row.PaddleSize}</TableCell>
 								<TableCell style={{color: "#FF3333"}}>{row.BallAcceleration}x</TableCell>
+								<TableCell style={{color: "#FF3333"}}>{row.maxScore}</TableCell>
 								<TableCell><Button variant="contained" onClick={() => this.join(row.gameName, this.props.userID, this.props.userName, this.props.socket)}>Join Game</Button></TableCell>
 							</TableRow>
 						))}

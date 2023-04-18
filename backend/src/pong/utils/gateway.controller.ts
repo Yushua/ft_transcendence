@@ -17,9 +17,7 @@ export const IDs = {
 	p2_socket_id: 2,
 	p2_userID: 3
 }
-//todo: if both players leave, also stop the game and highest score wins/tie = nobody wins
-//check if sessions update properly
-//re-tabbing into pong doesnt change window if in custom game, why ?
+
 let player2:Socket = undefined
 let n_games:number = 0
 let game_name:string = 'Classic: 0'
@@ -155,6 +153,7 @@ export class MyGateway implements OnModuleInit {
 		CustomConfig.paddleSize = gameInfo.customSettings.paddleSize
 		CustomConfig.gameName = gameInfo.customSettings.gameName
 		CustomConfig.acceleration = gameInfo.customSettings.acceleration
+		CustomConfig.maxScore = gameInfo.customSettings.maxScore
 		let gameData = new GameData(CustomConfig, false)
 		if (gameInfo.type === 'public')
 		{
@@ -285,29 +284,7 @@ export class MyGateway implements OnModuleInit {
 			}
 		}
 
-	@SubscribeMessage('friends_game')
-	handleFriendsGame(
-		@MessageBody() gameInfo: { p1UserName:string, p2UserName:string, p1UserID:string, p2UserID:string, p1SocketID:string, p2SocketID:string}) {
-			let gameConfig = new Config()
-			gameConfig.p1_name = gameInfo.p1UserName
-			gameConfig.p2_name = gameInfo.p2UserName
-			gameConfig.p1_userID = gameInfo.p1UserID
-			gameConfig.p2_userID = gameInfo.p2UserID
-
-			let gamedata = new GameData(gameConfig, true)
-			games.set(gamedata.gameName, [gamedata, [gameInfo.p1SocketID, gameInfo.p1UserID, gameInfo.p2SocketID, gameInfo.p2UserID]])
-			connections.set(gameInfo.p1SocketID, [gamedata, [gameInfo.p1SocketID, gameInfo.p1UserID, gameInfo.p2SocketID, gameInfo.p2UserID]])
-			connections.set(gameInfo.p2SocketID, [gamedata, [gameInfo.p1SocketID, gameInfo.p1UserID, gameInfo.p2SocketID, gameInfo.p2UserID]])
-			const serializedMap = [...games.entries()]
-			this.server.emit('gamelist', serializedMap)
-			this.server.to(gameInfo.p1SocketID).emit('joined', 'mouse')
-			this.server.to(gameInfo.p2SocketID).emit('joined', 'mouse')
-
-			OurSession.GameJoining(gameInfo.p1SocketID)
-			OurSession.GameJoining(gameInfo.p2SocketID)
-
-		}
-		@SubscribeMessage('spectate')
+	@SubscribeMessage('spectate')
 	handleSpectator(
 		@MessageBody() gameName: string,
 		@ConnectedSocket() client: Socket) {
@@ -318,15 +295,7 @@ export class MyGateway implements OnModuleInit {
 				client.emit('spectating')
 			}
 		}
-	
-	@SubscribeMessage('refreshGameList')
-	handleRefreshGL() {
-			const serializedMap = [...games.entries()]
-			const serializedMap2 = [...customGames.entries()];
-			this.server.emit('gamelist', serializedMap)
-			this.server.emit('custom_gamelist', serializedMap2)
-		}
-	
+		
 	@SubscribeMessage('disconnect')
 	async handleDisconnect(
 		@ConnectedSocket() client: Socket) {

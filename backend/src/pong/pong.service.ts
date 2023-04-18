@@ -67,38 +67,38 @@ export class PongService {
 		stat.timeStamp = new Date(gameData.beginTime * 1000).toLocaleString('en-GB', { timeZone: 'CET' })
 		stat.timeStamp = stat.timeStamp.substring(0, stat.timeStamp.length - 3)
 
+		await UserProfileService.GetInstance()?.updateUserProfiles([winner, loser])
+
 		/* achievements */
-		if (winner.wins == 1) {
+		if (winner.wins === 1) {
 			let AddAchievement:AddAchievement = {
 				nameAchievement: "Now you are a winner!",
 				pictureLink: "https://i.imgur.com/APko8Vd.png",
 				message: "you won your first game, congratz!"
 			}
-			UserProfileService.GetInstance()?.postAchievementList(winner.id, AddAchievement)
+			await UserProfileService.GetInstance()?.postAchievementList(winner.id, AddAchievement)
 		}
-		if (winner.wins == 10) {
+		if (winner.wins === 10) {
 			let AddAchievement:AddAchievement = {
 				nameAchievement: "Now you are a winner times ten!",
 				pictureLink: "https://i.imgur.com/phxrhIM.png",
 				message: "you won your tenth game, congratz!"
 			}
-			UserProfileService.GetInstance()?.postAchievementList(winner.id, AddAchievement)
+			await UserProfileService.GetInstance()?.postAchievementList(winner.id, AddAchievement)
 		}
-		if (stat.scoreLoser == 0) {
+		if (stat.scoreLoser === 0 && stat.scoreWinner > 10 ) {
 			let AddAchievement:AddAchievement = {
 				nameAchievement: "Superb Showing",
 				pictureLink: "https://i.imgur.com/cPo6NQ4.png",
 				message: "you played a perfect game, congratz!"
 			}
-			UserProfileService.GetInstance()?.postAchievementList(winner.id, AddAchievement)
+			await UserProfileService.GetInstance()?.postAchievementList(winner.id, AddAchievement)
 		}
 
 		/* save updated profiles and the game */
-		await UserProfileService.GetInstance()?.updateUserProfiles([winner, loser])
 		await GameStatsService.GetInstance()?.insertPongStats(stat)
 
 		/* link stats to user */
 		await GameStatsService.GetInstance()?.LinkPongStats(stat.id, winner.id, loser.id)
-		
 	}
 }
