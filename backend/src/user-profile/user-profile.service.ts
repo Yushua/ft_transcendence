@@ -146,21 +146,24 @@ export class UserProfileService {
        */
       async removeFriend(id:string, idfriend: string):Promise<UserProfile> {
         //remove friend from user
-        const found = await this.userEntity.findOneBy({id});
+        var found:UserProfile = await this.userEntity.findOneBy({id});
         found.friendList.splice(found.friendList.indexOf(idfriend), 1);
         if (found.friendList == null)
           found.friendList = [];
         await this.userEntity.save(found);
         //IF CHECKFRIEND INCLUDED the friend, then remove it,
-        if (found.CheckFrienddList.includes(idfriend)) {
-          found.CheckFrienddList.splice(found.CheckFrienddList.indexOf(idfriend), 1)
-        }
-        //tell the other user that you have removed them
-        const found1 = await this.userEntity.findOneBy({id:idfriend});
-        found1.otherfriendList.splice(found1.otherfriendList.indexOf(id), 1);
-        if (found1.otherfriendList == null)
-          found1.otherfriendList = [];
-        await this.userEntity.save(found1);
+        await this.FrienddListRemove(idfriend, id)
+
+        // if (found.CheckFrienddList.includes(idfriend)) {
+        //   found.CheckFrienddList.splice(found.CheckFrienddList.indexOf(idfriend), 1)
+        // }
+        // //tell the other user that you have removed them
+        // const found1 = await this.userEntity.findOneBy({id:idfriend});
+        // found1.otherfriendList.splice(found1.otherfriendList.indexOf(id), 1);
+        // if (found1.otherfriendList == null)
+        //   found1.otherfriendList = [];
+        // await this.userEntity.save(found1);
+        found = await this.userEntity.findOneBy({id});
         return found;
       }
 
@@ -476,8 +479,10 @@ export class UserProfileService {
 
       async getMessageList(id:string):Promise<MessageList[]>{
         //if addID is not in id friendlist, then they can not add
-        var userprofile = await this.userEntity.findOneBy({id});//player1
-        return userprofile.MessageList
+        return this.messageList.find({
+          where: { userProfile: {id} },
+          order: { timeStamp: 'ASC' },
+        });
       }
 
       async changeStatusAchieve(id:string, status:boolean){
@@ -488,10 +493,31 @@ export class UserProfileService {
 
       async changeStatusMessage(id:string, status:boolean){
         var user:UserProfile = await this.userEntity.findOneBy({id})
-        console.log(` status in {${status}} and out now {${user.YourMainMessages} username {${user.username}}`)
         user.YourMainMessages = status
         await this.userEntity.save(user)
-        user = await this.userEntity.findOneBy({id})
-        console.log(` second status in {${status}} and out now {${user.YourMainMessages} username {${user.username}}`)
+      }
+
+      async checkCheckFrienddList(otherID:string, id:string):Promise<number>{
+        var user:UserProfile = await this.userEntity.findOneBy({id})
+        if (user.CheckFrienddList.includes(otherID)){
+          return 1
+        }
+        return 2
+      }
+
+      async FrienddListAdd(otherID:string, id:string){
+        var user:UserProfile = await this.userEntity.findOneBy({id})
+        user.CheckFrienddList.push(otherID)
+        await this.userEntity.save(user)
+      }
+
+      async FrienddListRemove(otherID:string, id:string){
+
+        var user:UserProfile = await this.userEntity.findOneBy({id})
+        const index = user.CheckFrienddList.indexOf(otherID)
+        if (index !== -1){
+          user.CheckFrienddList.splice(index, 1)
+          await this.userEntity.save(user)
+        }
       }
 }

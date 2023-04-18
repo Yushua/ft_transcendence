@@ -217,11 +217,13 @@ export class UserProfileController {
 
         @Post('PostAchieveMessageStatus/:status')
         @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
-        async PostAchievestatus( @Param("status") status:boolean, @Request() req: Request ) {
-            console.log(`in post archive and status {${status}}`)
-            await this.userServices.changeStatusAchieve(req["user"].id, status)
-            var user:UserProfile = await this.userServices.findUserBy(req["user"].id)
-            console.log(`status now {${user.YourAchievements}}`)
+        async PostAchievestatus( @Param("status") status:string, @Request() req: Request ) {
+            if (status === "true"){
+                await this.userServices.changeStatusAchieve(req["user"].id, true)
+            }
+            else {
+                await this.userServices.changeStatusAchieve(req["user"].id, false)
+            }
         }
 
 
@@ -234,10 +236,32 @@ export class UserProfileController {
 
         @Post('PostServerMessageStatus/:status')
         @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
-        async PostServerMessageStatus( @Param("status") status:boolean, @Request() req: Request ) {
-            await this.userServices.changeStatusMessage(req["user"].id, status)
-            var user:UserProfile = await this.userServices.findUserBy(req["user"].id)
-            console.log(`status now {${user.YourMainMessages}}`)
+        async PostServerMessageStatus( @Param("status") status:string, @Request() req: Request ) {
+            if (status === "true"){
+                await this.userServices.changeStatusMessage(req["user"].id, true)
+            }
+            else {
+                await this.userServices.changeStatusMessage(req["user"].id, false)
+            }
+        }
+
+        @Get('GetNotificationStatus/:id')
+        @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+        async GetNotificationStatus( @Param("id") id:string, @Request() req: Request ) {
+            return  { status: await this.userServices.checkCheckFrienddList(id, req["user"].id)}
+        }
+
+        @Patch('FrienddList/add/:id')
+        @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+        async FrienddListAdd( @Param("id") id:string, @Request() req: Request ) {
+            await this.userServices.FrienddListAdd(id, req["user"].id)
 
         }
+
+        @Patch('FrienddList/remove/:id')
+        @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+        async FrienddListRemove( @Param("id") id:string, @Request() req: Request ) {
+            await this.userServices.FrienddListRemove(id, req["user"].id)
+        }
+
 }

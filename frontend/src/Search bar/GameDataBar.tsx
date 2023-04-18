@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import HTTP from '../Utils/HTTP';
 import { Box, Modal, Typography } from "@mui/material";
 import { Width } from '../MainWindow/MainWindow'
-import { Moment} from 'moment';
+import { Moment } from 'moment';
 
 
 const style = {

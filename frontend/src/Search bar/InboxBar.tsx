@@ -40,7 +40,7 @@ var _setList:React.Dispatch<React.SetStateAction<string[][]>>
 
 var _setDisplay:React.Dispatch<React.SetStateAction<boolean>>
 
-function MessageBar(props: any) {
+function InboxBar(props: any) {
   //get into page, get the entire list online
   const [ListSearchList, setList] = useState<any[]>([]);
   const [width, setwidth] = useState<number>(props.width);
@@ -65,7 +65,7 @@ function MessageBar(props: any) {
               style={{ width: `${boxwidth}px`, marginLeft: `${width*0.02}px`, marginRight: `${width*0.02}px`, marginTop: `${width*0.02}px`, marginBottom: `${width*0.02}px`, border: `${Width*0.005}px solid black`}}>
               <div
                 key={index}
-                style={{display: "inline-block", flex: 1, alignItems: "center", justifyContent: "center", width: `${boxwidth - (buttonsize - (border*2))}px`, maxHeight: `${buttonsize - (border*2)}px`, overflow: "hidden", textOverflow:"ellipsis"}}
+                style={{display: "inline-block", flex: 1, alignItems: "center", justifyContent: "center", width: `${boxwidth - (buttonsize - (border*2))}px`, height: `${buttonsize - (border*2)}px`, overflow: "hidden", textOverflow:"ellipsis"}}
                 >
                   <h2 >{`${option.message}`}</h2>
               </div>
@@ -81,4 +81,4 @@ function MessageBar(props: any) {
     )
 }
 
-export default MessageBar;
+export default InboxBar;

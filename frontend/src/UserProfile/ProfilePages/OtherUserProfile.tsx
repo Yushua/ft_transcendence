@@ -7,6 +7,7 @@ import AchievementBar from '../../Search bar/AchievementBar';
 import GameDataBar from '../../Search bar/GameDataBar';
 import EXPBarComponent from '../../ButtonComponents/EXPBarComponent';
 import User from '../../Utils/Cache/User';
+import NotificationsComponent from './NotificationsComponent';
 
 async function asyncUpdateAddFriendList(otherId: string):Promise<any> {
     HTTP.Patch(`user-profile/friendlist/add/${otherId}`, null, {Accept: 'application/json'})
@@ -102,6 +103,7 @@ function OtherUserProfile(props: any){
                           <h2 >{`follow`}</h2>
                         </button>
                       ) : null}
+                      <NotificationsComponent buttonstatus={ButtonStatus} id={props.id}/>
                     </>
                   </div>
                 </div>
