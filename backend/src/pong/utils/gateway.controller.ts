@@ -414,24 +414,16 @@ export class MyGateway implements OnModuleInit {
 				if (!updated_games[gameName]) {
 					updated_games[gameName] = true
 					
-					/* Update game asyncronosly and add to await array */
-					gameData.update(deltaTime)
-					// await_updates.push((async () => 
-						
-					// )())
-				}
-				/* Handle end of game */
-				// console.log(gameData.gameState)
-				switch (gameData.gameState) {
-					case 'p1_won':
-					case 'p2_won':
-						await PongService.GetInstance()?.postPongStats(gameIDs, gameData)
-						break;
-					default: continue;
-				}
-				games.delete(gameName)
-				const serializedMap = [...games.entries()];
-				this.server.emit('gamelist', serializedMap)
+				// )())
+			}
+			/* Handle end of game */
+			// console.log(gameData.gameState)
+			switch (gameData.gameState) {
+				case 'p1_won':
+				case 'p2_won':
+					await PongService.GetInstance()?.postPongStats(gameIDs, gameData)
+					break;
+				default: continue;
 			}
 			
 			/* Await all game updates */
@@ -483,3 +475,4 @@ export class MyGateway implements OnModuleInit {
 				this._startGameLoop(Math.min(delta / 1000, .10))
 		}
 	}
+}

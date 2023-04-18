@@ -399,7 +399,7 @@ export class UserProfileService {
       }
 
       /*
-        MessageList
+        InboxList
       */
 
       async SetupMessageToFriends(addMessageToUSer: AddMessageDTO, addMessageToOtherUSer: AddMessageDTO, id:string){
@@ -525,10 +525,10 @@ export class UserProfileService {
        GameData
       */
 
-       /* method to update users */
+      /* method to update users */
       async updateUserProfiles(users:UserProfile[]) {
         users.forEach(async user => {
           await this.userEntity.save(user)
         });
       }
-} 
+}
