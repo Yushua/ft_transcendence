@@ -9,16 +9,12 @@ import { Width } from '../MainWindow/MainWindow';
 import AchievementBar from '../Search bar/AchievementBar';
 import GameDataBar from '../Search bar/GameDataBar';
 import FriendListBar from '../Search bar/FriendListBar';
-import MessageBar from '../Search bar/MessageBar';
+import InboxBar from '../Search bar/InboxBar';
 
 async function asyncGetName():Promise<string> {
   const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
   var result = await JSON.parse(response)
   return await result["username"];
-}
-
-export async function asyncChangeName(newUsername:string) {
-  HTTP.Post(`user-profile/userchange/${newUsername}`, null, {Accept: 'application/json'})
 }
 
 interface FormElements extends HTMLFormControlsCollection {
@@ -91,11 +87,11 @@ function UserProfilePage(props: any) {
                 <FriendListBar id={user.id} width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/>
               </div>
             </div>
-            <div style={{ display: 'flex', border: "solid black", padding: `${0.01*Width}px`, borderColor: "#3676cc", borderRadius: "5px"}}> <b>nothing</b> </div>
+            {/* object */}
+            <div style={{ display: 'flex', border: "solid black", padding: `${0.01*Width}px`, borderColor: "#3676cc", borderRadius: "5px"}}> <b>Inbox</b> </div>
+            {/* Button */}
             <div style={{width: `${blockWidth}px`, height: `${(Width - (0.03*Width))/2}px`, border: "solid black", overflow: "auto", marginLeft: `${marginLeft}px`, marginRight: `${marginRight}px`, marginTop: `${Width*0.005}px`, marginBottom: `${Width*0.02}px`, borderColor: "#3676cc", borderRadius: "5px"}}>
-              <div style={{display: 'flex'}}>
-                <MessageBar id={user.id} width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/>
-              </div>
+                <InboxBar id={user.id}  height={(Width - (0.02*Width))/2}/>
             </div>
           </div>
 

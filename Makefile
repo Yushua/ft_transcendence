@@ -48,5 +48,4 @@ react:
 	npm i @mui/material @emotion/react @emotion/styled
 	npm i @mui/x-data-grid
 	npm i immutability-helper
-	npm install react-overlays
 

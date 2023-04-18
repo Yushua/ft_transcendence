@@ -30,7 +30,7 @@ let gameConfig = new Config()
 
 @WebSocketGateway({
 	cors: {
-		origin: ['http://localhost:4243']
+		origin: true
 	}
 })
 
@@ -307,8 +307,7 @@ export class MyGateway implements OnModuleInit {
 			OurSession.GameJoining(gameInfo.p2SocketID)
 
 		}
-
-	@SubscribeMessage('spectate')
+		@SubscribeMessage('spectate')
 	handleSpectator(
 		@MessageBody() gameName: string,
 		@ConnectedSocket() client: Socket) {

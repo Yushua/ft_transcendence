@@ -1,6 +1,7 @@
 import '../App.css';
 import HTTP from '../Utils/HTTP';
 import ProfilePicture from './ProfilePicture';
+import OnOFFComponent from '../Search bar/AchievementComponents/OnOffComponent';
 
 export async function asyncChangeName(newUsername:string) {
   HTTP.Post(`user-profile/userchange/${newUsername}`, null, {Accept: 'application/json'})
@@ -20,18 +21,23 @@ async function handleUsernameChange(e: React.FormEvent<YourFormElement>){
   await asyncChangeName(e.currentTarget.elements.username.value);
 }
 
-
 function SettingsUser(){
   return (
     <div className="SettingsUser">
       <form onSubmit={handleUsernameChange}>
         <div>
-          <label htmlFor="username">Choose a New username:</label>
+          <label htmlFor="username">Choose a New username: </label>
           <input id="username" type="text" />
           <button type="submit">Submit</button>
         </div>
       </form>
-      <ProfilePicture/>
+      <div>
+        <ProfilePicture/>
+      </div>
+      <div>
+        <OnOFFComponent string={"AchieveMessage"}/>
+        <OnOFFComponent string={"ServerMessage"}/>
+      </div>
     </div>
   );
 }

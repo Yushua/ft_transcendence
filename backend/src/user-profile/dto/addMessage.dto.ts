@@ -1,14 +1,14 @@
 import { IsNotEmpty } from "class-validator";
 import { Column } from "typeorm";
 
-export class AddAchievement {
+export class AddMessageDTO {
     @Column()
     @IsNotEmpty()
-    nameAchievement: string;
-    @IsNotEmpty()
-    @Column()
-    pictureLink: string;
+    status: string;
     @IsNotEmpty()
     @Column()
     message: string;
+    @IsNotEmpty()
+    @Column()
+    userID: string;
 }

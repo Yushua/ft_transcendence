@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, InternalServerErrorException, NotFoundException, UseGuards } from '@nestjs/common';
+import { ConflictException, HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import OurSession from 'src/session/OurSession';
 import { Repository, UpdateDateColumn } from 'typeorm';
@@ -6,7 +6,8 @@ import { getTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { UserProfile } from './user.entity';
 import { UserAchievement } from './userAchievement.entity';
 import { AddAchievement } from './dto/addAchievement.dto';
-import { check } from 'prettier';
+import { AddMessageDTO } from './dto/addMessage.dto';
+import { MessageList } from './MessageList.entity';
 
 class MyEntity {
   @UpdateDateColumn({ type: "bigint" })
@@ -20,6 +21,8 @@ export class UserProfileService {
         private readonly userEntity: Repository<UserProfile>,
         @InjectRepository(UserAchievement)
         private readonly achievEntity: Repository<UserAchievement>,
+        @InjectRepository(MessageList)
+        private readonly messageList: Repository<MessageList>,
       ) {
         UserProfileService._instance = this
       }
@@ -91,9 +94,9 @@ export class UserProfileService {
       }
 
       async changeUsername(username: string, id: string): Promise<UserProfile> {
-        const found = await this.findUserBy(id);
-        found.username = username;
+        const found = await this.findUserBy(id)
         try {
+          found.username = username;
           await this.userEntity.save(found);
         }
         catch (error) {
@@ -109,9 +112,59 @@ export class UserProfileService {
 
       //turn the username of the friend into an id, and then add it to the currect user
       async addFriend(userid:string, otherId: string) {
+        //add the other suer to the user, fomring the friendlist
         const found = await this.userEntity.findOneBy({id: userid});
         found.friendList.push(otherId);
         await this.userEntity.save(found);
+        //tells the other user, this person has added them
+        const found1 = await this.userEntity.findOneBy({id: otherId});
+        found1.otherfriendList.push(userid);
+        await this.userEntity.save(found1);
+        if (found1.friendList.includes(found.id) && found.friendList.includes(found1.id)){
+          //post message
+          let addMessageUser:AddMessageDTO = {
+            status: "Achievement", 
+            message: `${found.username} and ${found1.username} both became friends`,
+            userID: found1.id
+          }
+          
+          await this.SetupMessageToFriends(addMessageUser, addMessageUser, found.id)
+          //sends to this usersfriends that they became friends
+          addMessageUser = {
+            status: "Achievement", 
+            message: `${found.username} and ${found1.username} both became friends`,
+            userID: found.id
+          }
+          await this.SetupMessageToFriends(addMessageUser, addMessageUser, found1.id)
+          //will already go to the other person because they're both friends
+        }
+      }
+
+      /**
+       * remove friends based on the id
+       * @returns 
+       */
+      async removeFriend(id:string, idfriend: string):Promise<UserProfile> {
+        //remove friend from user
+        var found:UserProfile = await this.userEntity.findOneBy({id});
+        found.friendList.splice(found.friendList.indexOf(idfriend), 1);
+        if (found.friendList == null)
+          found.friendList = [];
+        await this.userEntity.save(found);
+        //IF CHECKFRIEND INCLUDED the friend, then remove it,
+        await this.FrienddListRemove(idfriend, id)
+
+        // if (found.CheckFrienddList.includes(idfriend)) {
+        //   found.CheckFrienddList.splice(found.CheckFrienddList.indexOf(idfriend), 1)
+        // }
+        // //tell the other user that you have removed them
+        // const found1 = await this.userEntity.findOneBy({id:idfriend});
+        // found1.otherfriendList.splice(found1.otherfriendList.indexOf(id), 1);
+        // if (found1.otherfriendList == null)
+        //   found1.otherfriendList = [];
+        // await this.userEntity.save(found1);
+        found = await this.userEntity.findOneBy({id});
+        return found;
       }
 
         /** */
@@ -121,18 +174,6 @@ export class UserProfileService {
         return idFriend
       }
 
-      /**
-       * remove friends based on the id
-       * @returns 
-       */
-      async removeFriend(id:string, idfriend: string):Promise<UserProfile> {
-        const found = await this.userEntity.findOneBy({id});
-        found.friendList.splice(found.friendList.indexOf(idfriend), 1);
-        if (found.friendList == null)
-          found.friendList = [];
-        await this.userEntity.save(found);
-        return found;
-      }
 
         /**
        * check if to follow or unfollow
@@ -261,6 +302,7 @@ export class UserProfileService {
       /**
        */
       async postAchievementList(id:string, AddAchievement:AddAchievement) {
+        console.log("adding")
         const {nameAchievement, pictureLink, message} = AddAchievement
         var userprofile = await this.userEntity.findOneBy({id});
         var achieveStore:UserAchievement[] = userprofile.UserAchievement
@@ -269,17 +311,28 @@ export class UserProfileService {
         );
         // var date = new Date()
         // var tmp:string = date.toISOString().slice(0, 10)
+        if (achieve == undefined){
+          throw new HttpException(`achievement trying to add does NOT exist check the name`, HttpStatus.BAD_REQUEST);
+        }
         achieve.pictureLink = pictureLink
         achieve.message = message
         achieve.status = true
         achieve.timeStamp = Math.floor(Date.now() / 1000) /* seconds since epoch */
+        console.log("saving")
         await this.achievEntity.save(achieve);
 
-        userprofile = await this.userEntity.findOneBy({id});
-        achieveStore = userprofile.UserAchievement
-        achieve = achieveStore.find(
-          (achievement) => achievement.nameAchievement === nameAchievement,
-        );
+        let addMessageUser:AddMessageDTO = {
+          status: "Achievement", 
+          message: `${userprofile.username} has achieved ${nameAchievement}`,
+          userID: id
+        }
+        console.log("now adding messages")
+        let addMessageOtherUser:AddMessageDTO = {
+          status: "Achievement", 
+          message: `Hey look, ${userprofile.username} has just achieved ${nameAchievement}`,
+          userID: id
+        }
+        await this.SetupMessageToFriends(addMessageUser, addMessageOtherUser, id)
       }
 
       /**
@@ -292,6 +345,7 @@ export class UserProfileService {
           pictureLink: pictureLink,
           message: message,
           status: false,
+          timeStamp:  Math.floor(Date.now() / 1000), /* seconds since epoch */
           userProfile: userprofile
         });
         await this.achievEntity.save(achievement);
@@ -343,6 +397,133 @@ export class UserProfileService {
         const userprofile:UserProfile = await this.userEntity.findOneBy({id});
         return userprofile.UserAchievement;
       }
+
+      /*
+        InboxList
+      */
+
+      async SetupMessageToFriends(addMessageToUSer: AddMessageDTO, addMessageToOtherUSer: AddMessageDTO, id:string){
+        //add this message to you
+        var userprofile = await this.userEntity.findOneBy({id});//player1
+        await this.AddMessageToUser(addMessageToUSer, id, userprofile)
+        //add this message to everyone that has you as a friend, but only add if he has friends
+        if (userprofile.otherfriendList.length > 0){
+          await this.AddMessageToOthers(addMessageToOtherUSer, userprofile.otherfriendList, id)
+        }
+      }
+
+      async SetupSendSingleMessage(addMessageToUSer: AddMessageDTO, id:string){
+        //add this message to main user
+        var userprofile = await this.userEntity.findOneBy({id});//player1
+        await this.AddMessageToUser(addMessageToUSer, id, userprofile)
+      }
+
+      /**
+       * make sure to setup the status, else it wont work. each status represents something. servermessage will always go trhough
+       * @param userprofile 
+       */
+      async AddMessageToUser(addMessageToUSer: AddMessageDTO, id:string, userprofile:UserProfile){
+        //set a limit on how many will be created, but only after testing
+        const {status, message, userID} = addMessageToUSer
+        if ((
+          status == "Achievement" && userprofile.YourAchievements == true) || (
+            status == "ServerMessage" && userprofile.YourMainMessages == true)){
+          const user = await this.messageList.findOne({ where: { status, message, userID } });
+          //if it does not exist, then don't create it
+          if (!user) {
+            var userprofile = await this.userEntity.findOneBy({id});//player1
+            const StoredMessageList = this.messageList.create({
+              status: status,
+              message: message,
+              timeStamp:  Math.floor(Date.now() / 1000),
+              userID: userID,
+              userProfile: userprofile
+            });
+            await this.messageList.save(StoredMessageList);
+          }
+        }
+      }
+
+      async AddMessageToOthers(addMessageToOtherUSer: AddMessageDTO, otherfriendList:string[], idMain:string){
+
+        for (let id of otherfriendList) {
+            //loop through the lsit and give each of them this message
+            var userprofile = await this.userEntity.findOneBy({id});//player1
+            //only send message if the user has them in their checkFriendList
+            if (!userprofile.CheckFrienddList.includes(idMain)) {
+              await this.AddMessageToUser(addMessageToOtherUSer, id, userprofile)
+            }
+        }
+      }
+
+      //removing the message using the ID you send with it
+      async RemoveMessageListWithID(userID:string){
+        await this.messageList.delete(userID);
+      }
+
+      async addToCheckList(id:string, addID:string){
+        //if addID is not in id friendlist, then they can not add
+        var userprofile = await this.userEntity.findOneBy({id});//player1
+        if (userprofile.friendList.includes(addID)) {
+          userprofile.CheckFrienddList.push(addID)
+          await this.userEntity.save(userprofile)
+        }
+      }
+
+      async removeToCheckList(id:string, addID:string){
+        //if addID is not in id friendlist, then they can not add
+        var userprofile = await this.userEntity.findOneBy({id});//player1
+        userprofile.CheckFrienddList.splice(userprofile.CheckFrienddList.indexOf(addID), 1);
+        await this.userEntity.save(userprofile)
+      }
+
+      async getMessageList(id:string):Promise<MessageList[]>{
+        //if addID is not in id friendlist, then they can not add
+        return this.messageList.find({
+          where: { userProfile: {id} },
+          order: { timeStamp: 'ASC' },
+        });
+      }
+
+      async changeStatusAchieve(id:string, status:boolean){
+        var user:UserProfile = await this.userEntity.findOneBy({id})
+        user.YourAchievements = status
+        await this.userEntity.save(user)
+      }
+
+      async changeStatusMessage(id:string, status:boolean){
+        var user:UserProfile = await this.userEntity.findOneBy({id})
+        user.YourMainMessages = status
+        await this.userEntity.save(user)
+      }
+
+      async checkCheckFrienddList(otherID:string, id:string):Promise<number>{
+        var user:UserProfile = await this.userEntity.findOneBy({id})
+        if (user.CheckFrienddList.includes(otherID)){
+          return 1
+        }
+        return 2
+      }
+
+      async FrienddListAdd(otherID:string, id:string){
+        var user:UserProfile = await this.userEntity.findOneBy({id})
+        user.CheckFrienddList.push(otherID)
+        await this.userEntity.save(user)
+      }
+
+      async FrienddListRemove(otherID:string, id:string){
+
+        var user:UserProfile = await this.userEntity.findOneBy({id})
+        const index = user.CheckFrienddList.indexOf(otherID)
+        if (index !== -1){
+          user.CheckFrienddList.splice(index, 1)
+          await this.userEntity.save(user)
+        }
+      }
+
+      /*
+       GameData
+      */
 
       /* method to update users */
       async updateUserProfiles(users:UserProfile[]) {
