@@ -309,10 +309,9 @@ export class UserProfileService {
         var achieve:UserAchievement = achieveStore.find(
           (achievement) => achievement.nameAchievement === nameAchievement,
         );
-        // var date = new Date()
-        // var tmp:string = date.toISOString().slice(0, 10)
+
         if (achieve == undefined){
-          throw new HttpException(`achievement trying to add does NOT exist check the name`, HttpStatus.BAD_REQUEST);
+          throw new HttpException(`achievement trying to add does NOT exist check the name {${nameAchievement}}`, HttpStatus.BAD_REQUEST);
         }
         achieve.pictureLink = pictureLink
         achieve.message = message
