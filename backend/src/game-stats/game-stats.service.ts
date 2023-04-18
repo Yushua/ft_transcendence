@@ -46,20 +46,14 @@ export class GameStatsService {
     }
 
 
-	async SavePongStats(statsID:string, user1ID:string, user2ID:string) {
+	async LinkPongStats(statsID:string, user1ID:string, user2ID:string) {
 		this.relationRepo.save(this.relationRepo.create({userId: user1ID, pongStatsId: statsID}))
 		if (user1ID !== user2ID)
 			this.relationRepo.save(this.relationRepo.create({userId: user2ID, pongStatsId: statsID}))
 	}
 
-	// async getPongStatsTimeStampById(pong_id:string, user_id:string): Promise<Date> {
-	// 	const relation = await this.relationRepo.findOne({
-    //     	select: ["pongStatsId", "timeStamp", "userId"],
-    //     	where: {
-    //     		pongStatsId: pong_id,
-	// 			userId: user_id
-    //     	}
-	// 	})
-	// 	return relation.timeStamp
-	// }
+	async insertPongStats(stat:PongStats) {
+		await this.PongRepo.insert(stat)
+	}
+
 }

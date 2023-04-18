@@ -1,7 +1,5 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
+import { Injectable } from '@nestjs/common'
 import { UserProfile } from 'src/user-profile/user.entity'
-import { Repository } from 'typeorm'
 import { GameData } from './components/GameData'
 import { IDs } from './utils/gateway.controller'
 import { PongStats } from 'src/game-stats/pong-stats.entity'
@@ -11,27 +9,23 @@ import { AddAchievement } from 'src/user-profile/dto/addAchievement.dto'
 
 @Injectable()
 export class PongService {
-	constructor(
-		@InjectRepository(PongStats)
-		private readonly PongRepo: Repository<PongStats>,
-		@InjectRepository(UserProfile)
-		private readonly UserRepo: Repository<UserProfile>,
-	) { 
-		PongService._userRepo = this.UserRepo
-		PongService._PongRepo = this.PongRepo
+	constructor() {
+		PongService._instance = this
+	}
+	private static _instance: PongService | null = null
+	static GetInstance(): PongService | null {
+	  return this._instance
 	}
 
-	private static _userRepo: Repository<UserProfile>
-	private static _PongRepo: Repository<PongStats>
-
 	/* On game end update database */
-	static async postPongStats(gameIDs:string[], gameData:GameData) {
-		
+	async postPongStats(gameIDs:string[], gameData:GameData) {
+
 		if (gameData.p1_score === gameData.p2_score)
 			console.log("both scored eleven, talk to bas")
+
 		/* get users */ 
-		const user1:UserProfile = await this._userRepo.findOneBy({id: gameIDs[IDs.p1_userID]})
-		const user2:UserProfile = await this._userRepo.findOneBy({id: gameIDs[IDs.p2_userID]})
+		const user1:UserProfile = await UserProfileService.GetInstance()?.findUserBy(gameIDs[IDs.p1_userID])
+		const user2:UserProfile = await UserProfileService.GetInstance()?.findUserBy(gameIDs[IDs.p2_userID])
 
 		/* stats vs yourself don't count */
 		// if (user1 === user2) {
@@ -40,64 +34,71 @@ export class PongService {
 		// }
 
 		/* set game stats and update users */
-
-		// const achievement = await this.achievEntity.create({
-		// 	nameAchievement: nameAchievement,
-		// 	pictureLink: pictureLink,
-		// 	message: message,
-		// 	userProfile: userprofile
-		//   });
-
 		let stat = new PongStats
+		if (gameData.gameState === 'p1_won')
+			this.updateStatsAndUsers(user1, gameData.p1_score, user2, gameData.p2_score, stat, gameData)
+		else
+			this.updateStatsAndUsers(user2, gameData.p2_score, user1, gameData.p1_score, stat, gameData)
+	}
+
+	async updateStatsAndUsers(winner:UserProfile, winnerScore:number, loser:UserProfile, loserScore:number, stat:PongStats, gameData:GameData) {
 		stat.nameGame = "Pong_Classic"
-		stat.player1_id = gameIDs[IDs.p1_userID]
-		stat.player2_id = gameIDs[IDs.p2_userID]
 		if (!gameData.isClassic)
 			stat.nameGame = "Pong_Custom"
-		if (gameData.gameState === 'p1_won') {
-			stat.winner = gameData.p1_name
-			stat.loser = gameData.p2_name
-			stat.scoreLoser = gameData.p2_score
-			user1.wins += 1
-			user1.pong_wins += 1
-			user1.pong_experience += (100 - (gameData.p2_score * 2))
-			user1.experience += (100 - (gameData.p2_score * 2))
-			if (user1.wins == 1) {
-				let AddAchievement:AddAchievement = {
-					nameAchievement: "first_win",
-					pictureLink: "default_pfp.jpg",
-					message: "you won your first game, congratz"
-				}
-				// UserProfileService.GetInstance()?.postAchievementList(user1.id, AddAchievement)
-			}
-			user2.losses += 1
-			user2.pong_losses += 1
-			user2.pong_experience += (gameData.p2_score * 2)
-			user2.experience += (gameData.p2_score * 2)
-		}
-		else {
-			stat.loser = gameData.p1_name
-			stat.winner = gameData.p2_name
-			stat.scoreLoser = gameData.p1_score
-			user2.pong_wins += 1
-			user2.pong_experience += (100 - (gameData.p1_score * 2))
-			user1.pong_losses += 1
-			user1.pong_experience += (gameData.p1_score * 2)
-		}
-		stat.scoreWinner = 11
+		stat.winner = winner.username
+		stat.winner_id = winner.id
+		stat.scoreWinner = winnerScore
+		stat.loser = loser.username
+		stat.loser_id = loser.id
+		stat.scoreLoser = loserScore
+		winner.wins += 1
+		winner.pong_wins += 1
+		winner.pong_experience += (100 - (gameData.p2_score * 2))
+		winner.experience += (100 - (gameData.p2_score * 2))
+		
+		loser.losses += 1
+		loser.pong_losses += 1
+		loser.pong_experience += (gameData.p2_score * 2)
+		loser.experience += (gameData.p2_score * 2)
 		stat.timeOfGame = Math.floor(gameData.endTime - gameData.beginTime)
-
+		
 		/* format: day-month-year, hours:minutes:seconds */
 		/* cut off seconds */
 		stat.timeStamp = new Date(gameData.beginTime * 1000).toLocaleString('en-GB', { timeZone: 'CET' })
-		stat.timeStamp = stat.timeStamp.substring(0, stat.timeStamp.length - 3) 
+		stat.timeStamp = stat.timeStamp.substring(0, stat.timeStamp.length - 3)
+
+		/* achievements */
+		if (winner.wins == 1) {
+			let AddAchievement:AddAchievement = {
+				nameAchievement: "Now you are a winner!",
+				pictureLink: "https://i.imgur.com/APko8Vd.png",
+				message: "you won your first game, congratz!"
+			}
+			UserProfileService.GetInstance()?.postAchievementList(winner.id, AddAchievement)
+		}
+		if (winner.wins == 10) {
+			let AddAchievement:AddAchievement = {
+				nameAchievement: "Now you are a winner times ten!",
+				pictureLink: "https://i.imgur.com/phxrhIM.png",
+				message: "you won your tenth game, congratz!"
+			}
+			UserProfileService.GetInstance()?.postAchievementList(winner.id, AddAchievement)
+		}
+		if (stat.scoreLoser == 0) {
+			let AddAchievement:AddAchievement = {
+				nameAchievement: "Superb Showing",
+				pictureLink: "https://i.imgur.com/cPo6NQ4.png",
+				message: "you played a perfect game, congratz!"
+			}
+			UserProfileService.GetInstance()?.postAchievementList(winner.id, AddAchievement)
+		}
 
 		/* save updated profiles and the game */
-		await this._userRepo.save(user1)
-		await this._userRepo.save(user2)
-		await this._PongRepo.save(stat)
+		await UserProfileService.GetInstance()?.updateUserProfiles([winner, loser])
+		await GameStatsService.GetInstance()?.insertPongStats(stat)
 
 		/* link stats to user */
-		GameStatsService.GetInstance()?.SavePongStats(stat.id, user1.id, user2.id)
+		await GameStatsService.GetInstance()?.LinkPongStats(stat.id, winner.id, loser.id)
+		
 	}
 }

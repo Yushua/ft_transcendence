@@ -520,4 +520,15 @@ export class UserProfileService {
           await this.userEntity.save(user)
         }
       }
-}
+
+      /*
+       GameData
+      */
+
+       /* method to update users */
+      async updateUserProfiles(users:UserProfile[]) {
+        users.forEach(async user => {
+          await this.userEntity.save(user)
+        });
+      }
+} 
