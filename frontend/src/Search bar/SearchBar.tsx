@@ -48,14 +48,15 @@ function SearchBar() {
                     {/*  button size */}
                     {ListSearchList.map((option, index) => (
                       //hey, f this index is 3 dividable, then go to next round
-                      <button
+                      <div
+                        className='image_button'
                         key={index}
-                        style={{ display: "inline-block", width: `${((Width*0.9) - (Width*0.9*0.03 * 3 * 2))/3}px`, height: `${Width*0.2}px`, marginLeft: `${Width*0.02}px`, marginRight: `${Width*0.02}px`, marginTop: `${Width*0.03}px`, marginBottom: `${Width*0.03}px`, border: "4px solid black" }}
+                        style={{ display: "inline-block", width: `${((Width*0.9) - (Width*0.9*0.03 * 3 * 2))/3}px`, height: `${Width*0.2}px`, marginLeft: `${Width*0.02}px`, marginRight: `${Width*0.02}px`, marginTop: `${Width*0.03}px`, marginBottom: `${Width*0.03}px`}}
                         onClick={() => handleButtonClick(option[3])}>
                           <img src={`${HTTP.HostRedirect()}pfp/${option[0]}`} alt="" style={{width: `${0.05*Width}px`, height: `${0.05*Width}px`, alignItems: 'center', marginRight: `${0.01*Width}px`}}/>
                           <h2 >{`name   ${option[1]}`}</h2>
                           <h2 >{`status ${option[2]}`}</h2>
-                      </button>
+                      </div>
                     ))}
               </div>
         </div>

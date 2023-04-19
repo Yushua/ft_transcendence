@@ -303,7 +303,6 @@ export class UserProfileService {
         achieve.message = message
         achieve.status = true
         achieve.timeStamp = Math.floor(Date.now() / 1000) /* seconds since epoch */
-        console.log("saving")
         await this.achievEntity.save(achieve);
 
         let addMessageUser:AddMessageDTO = {
