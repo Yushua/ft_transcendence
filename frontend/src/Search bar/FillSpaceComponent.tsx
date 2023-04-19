@@ -37,7 +37,7 @@ const style = {
     <>
         <img
             key={props.option}         
-            style={{ display: "inline-block", border: border, width: `${widthButton}px`, height: `${widthButton}px`, marginLeft:`${Width*0.02}px`,  marginRight: `${Width*0.02}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`}}
+            style={{ display: "flex", border: border, width: `${widthButton}px`, height: `${widthButton}px`, marginLeft:`${Width*0.02}px`,  marginRight: `${Width*0.02}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`}}
             onClick={() => setShowModal(props.idx)}
             src={`${props.option.pictureLink}`}
             onMouseEnter={handleHover}
