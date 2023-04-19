@@ -16,7 +16,7 @@ async function asyncGetintraName():Promise<string> {
   }
   catch {
     removeCookie("accessToken")
-    window.location.reload();
+    newWindow(<ErrorPage/>)
   }
 }
 
@@ -175,7 +175,7 @@ async function setupLoginPage(){
 async function setupLoginTWT(){
   //if token is not ehre, make one
 
-  if (getCookie(`TWToken${_intraName}`) == null || getCookie(`TWToken${_intraName}`) == undefined){
+  if (getCookie(`TWToken${_intraName}`) === null || getCookie(`TWToken${_intraName}`) === undefined){
     removeCookie(`TWToken${_intraName}`);
     setCookie(`TWToken${_intraName}`, await setLoginTWT(),{ expires: 100000 });
   }

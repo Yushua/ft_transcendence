@@ -31,7 +31,7 @@ export class UserProfileController {
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     @Get('/user/:id')
     async asyncgetUserById( @Param('id') id: string ){
-        if (id == "undefined")
+        if (id === "undefined")
             return;
         var user:UserProfile = await this.userServices.findUserBy(id)
         return {user:user, username:user.username, profilePicture:user.profilePicture, experience:user.experience}

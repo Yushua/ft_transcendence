@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import HTTP from '../Utils/HTTP';
 import User from '../Utils/Cache/User';
 import NameStorage from '../Utils/Cache/NameStorage';

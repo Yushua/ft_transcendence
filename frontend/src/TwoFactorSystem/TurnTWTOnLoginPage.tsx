@@ -66,15 +66,13 @@ async function asyncGetName():Promise<string> {
 var _inputValue: string
 var _setInputValue: React.Dispatch<React.SetStateAction<string>>
 var _intraName: string
-var _setIntraName: React.Dispatch<React.SetStateAction<string>>
 
 function TurnTWTOnLoginPage(){
     const [inputValue, setInputValue] = useState("");
+    const [intraName, setintraName] = useState<string>('');
     _inputValue = inputValue
     _setInputValue = setInputValue
-    const [intraName, setintraName] = useState<string>('');
     _intraName = intraName
-    _setIntraName = setintraName
     const handleInputChange = (event:any) => {
       setInputValue(event.target.value);
     };

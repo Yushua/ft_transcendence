@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import HTTP from '../Utils/HTTP';
 import FillSpaceComponentAchieve from './FillSpaceComponent';
-import { Width } from '../MainWindow/MainWindow';
 
 export async function asyncAchievmentList(id:string){
   const response = HTTP.Get(`user-profile/GetAchievementListDone/${id}`, null, {Accept: 'application/json'})
@@ -20,7 +19,6 @@ function AchievementBar(props: any) {
   //get into page, get the entire list online
   const [ListSearchList, setList] = useState<any[]>([]);
 
-
   _setList = setList
   
   useEffect(() => {
@@ -29,7 +27,6 @@ function AchievementBar(props: any) {
     return (
       <>
       {ListSearchList.map((option, idx) => (
-
         <FillSpaceComponentAchieve option={option} idx={idx} amount={6}></FillSpaceComponentAchieve>
       ))}
     </>

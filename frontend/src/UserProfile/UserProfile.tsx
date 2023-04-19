@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import './UserProfile.css';
 import '../App.css';
 import HTTP from '../Utils/HTTP'

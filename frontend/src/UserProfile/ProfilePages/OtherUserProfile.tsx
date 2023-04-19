@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import '../../App.css';
 
 import HTTP from '../../Utils/HTTP';
@@ -61,7 +61,7 @@ function OtherUserProfile(props: any){
     _setButtonStatus = setButtonStatus
     _setMyUsername = setMyUsername
     _setMyPFP = setMyPFP
-    if (myDisplay == false){
+    if (myDisplay === false){
       setup()
     }
 
@@ -75,7 +75,7 @@ function OtherUserProfile(props: any){
 
     async function setup(){
       var username:string = await AsyncGeOtherUser(props.id)
-        if (username != User.Name){
+        if (username !== User.Name){
           await AsyncSetButtonStatus(props.id)
         }
         setMyDisplay(true)

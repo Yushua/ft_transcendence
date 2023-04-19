@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import HTTP from '../Utils/HTTP';
 import { Width } from '../MainWindow/MainWindow';
-import { Box } from '@mui/material';
 
 export async function asyncAchievmentList(id:string){
   const response = HTTP.Get(`user-profile/GetMessageList`, null, {Accept: 'application/json'})
@@ -43,11 +42,10 @@ var _setDisplay:React.Dispatch<React.SetStateAction<boolean>>
 function InboxBar(props: any) {
   //get into page, get the entire list online
   const [ListSearchList, setList] = useState<any[]>([]);
-  const [width, setwidth] = useState<number>(props.width);
   const [Display, setDisplay] = useState<boolean>(false);
   _setList = setList
   _setDisplay = setDisplay
-  if (Display == false){
+  if (Display === false){
     getList(props.id)
     setDisplay(true)
   }
@@ -62,7 +60,7 @@ function InboxBar(props: any) {
         < >
           {ListSearchList.map((option, index) => (
             <div
-              style={{ width: `${boxwidth}px`, marginLeft: `${width*0.02}px`, marginRight: `${width*0.02}px`, marginTop: `${width*0.02}px`, marginBottom: `${width*0.02}px`, border: `${Width*0.005}px solid black`}}>
+              style={{ width: `${boxwidth}px`, marginLeft: `${props.width*0.02}px`, marginRight: `${props.width*0.02}px`, marginTop: `${props.width*0.02}px`, marginBottom: `${props.width*0.02}px`, border: `${Width*0.005}px solid black`}}>
               <div
                 key={index}
                 style={{display: "inline-block", flex: 1, alignItems: "center", justifyContent: "center", width: `${boxwidth - (buttonsize - (border*2))}px`, height: `${buttonsize - (border*2)}px`, overflow: "hidden", textOverflow:"ellipsis", top:"0px"}}
