@@ -22,7 +22,7 @@ function _tryJoiningRoom(roomID: string, hasPass: boolean) {
 			SetMainChatWindow("chat")
 			asyncChangeRoom(roomID)},
 		async error => {
-			if (error.status === 401)
+			if (error.status === 403)
 				alert((await JSON.parse(error.responseText)).message)
 		})
 }

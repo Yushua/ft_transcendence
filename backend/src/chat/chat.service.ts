@@ -87,15 +87,15 @@ export class ChatService {
 			if (room.MemberIDs.includes(memberID)) {
 				const user = await this.userProfileRepo.findOneBy({id: userID});
 				if (!user.friendList.includes(memberID))
-					throw new HttpException("You can only add people that friend you back.", HttpStatus.UNAUTHORIZED)
+					throw new HttpException("You can only add people that friend you back.", HttpStatus.FORBIDDEN)
 			}
 			/* Joining with password */
 			else if (room.HasPassword)
 				if (!await bcrypt.compare(password, (await this.chatRoomPassRepo.findOneBy({ID: roomID})).Password))
-					throw new HttpException("Incorrect password.", HttpStatus.UNAUTHORIZED)
+					throw new HttpException("Incorrect password.", HttpStatus.FORBIDDEN)
 			
 			if (room.BanIDs.includes(userID))
-				throw new HttpException("This user is banned from this room.", HttpStatus.UNAUTHORIZED)
+				throw new HttpException("This user is banned from this room.", HttpStatus.FORBIDDEN)
 			if (room.MemberIDs.includes(userID))
 				false
 			
@@ -133,10 +133,10 @@ export class ChatService {
 	{
 		const [_, changed] = await this._modifyRoom(roomID, async room => {
 			if (!!adminID && !room.AdminIDs.includes(adminID))
-				throw new HttpException("", HttpStatus.UNAUTHORIZED)
+				throw new HttpException("", HttpStatus.FORBIDDEN)
 			if (room.OwnerID === memberID
 				|| (room.AdminIDs.includes(memberID) && memberID !== selfID))
-				throw new HttpException("", HttpStatus.UNAUTHORIZED)
+				throw new HttpException("", HttpStatus.FORBIDDEN)
 			
 			var index = room.MemberIDs.indexOf(memberID);
 			if (index === -1)
@@ -190,11 +190,11 @@ export class ChatService {
 		const { OwnerID, Name, HasPassword, Password, RoomType } =  roomDTO
 		
 		if (OwnerID !== ownerID)
-			throw new HttpException("", HttpStatus.UNAUTHORIZED)
+			throw new HttpException("", HttpStatus.FORBIDDEN)
 		
 		const [room, changed] = await this._modifyRoom(roomID, async room => {
 			if (room.OwnerID !== ownerID)
-				throw new HttpException("", HttpStatus.UNAUTHORIZED)
+				throw new HttpException("", HttpStatus.FORBIDDEN)
 			
 			room.Name = Name
 			room.RoomType = +ChatRoomType[RoomType]
@@ -224,7 +224,7 @@ export class ChatService {
 	{
 		const [_, changed] = await this._modifyRoom(roomID, async room => {
 			if (room.OwnerID !== ownerID || room.OwnerID === memberID)
-				throw new HttpException("", HttpStatus.UNAUTHORIZED)
+				throw new HttpException("", HttpStatus.FORBIDDEN)
 			
 			var index = room.AdminIDs.indexOf(memberID);
 			if (index === -1)
@@ -240,7 +240,7 @@ export class ChatService {
 	async DeleteRoom(ownerID: string, roomID: string, clearMembers: boolean = true) {
 		const room = await this.GetRoom(roomID, ownerID);
 		if (room.OwnerID !== "" && ownerID !== room.OwnerID)
-			throw new HttpException("", HttpStatus.UNAUTHORIZED)
+			throw new HttpException("", HttpStatus.FORBIDDEN)
 		
 		if (clearMembers)
 			for (const memberID of room.MemberIDs) {
@@ -278,7 +278,7 @@ export class ChatService {
 	{
 		const [room, changed] = await this._modifyRoom(roomID, async room => {
 			if (!room.AdminIDs.includes(userID))
-				throw new HttpException("", HttpStatus.UNAUTHORIZED)
+				throw new HttpException("", HttpStatus.FORBIDDEN)
 			
 			if (room.AdminIDs.includes(memberID) || !room.MemberIDs.includes(memberID))
 				return false
@@ -309,7 +309,7 @@ export class ChatService {
 	{
 		const [_, changed] = await this._modifyRoom(roomID, async (room) => {
 			if (!room.AdminIDs.includes(adminID))
-				throw new HttpException("", HttpStatus.UNAUTHORIZED)
+				throw new HttpException("", HttpStatus.FORBIDDEN)
 
 			const index = room.BanIDs.indexOf(userID)
 			if (index === -1)
@@ -338,11 +338,11 @@ export class ChatService {
 		
 		const [_, changed] = await this._modifyRoom(roomID, async (room) => {
 			if (!room.AdminIDs.includes(adminID))
-				throw new HttpException("", HttpStatus.UNAUTHORIZED)
+				throw new HttpException("", HttpStatus.FORBIDDEN)
 
 			if (room.OwnerID === userID
 				|| room.AdminIDs.includes(userID))
-				throw new HttpException("", HttpStatus.UNAUTHORIZED)
+				throw new HttpException("", HttpStatus.FORBIDDEN)
 
 			const index = room.MuteIDs.indexOf(userID)
 			if (index !== -1)
@@ -359,7 +359,7 @@ export class ChatService {
 	async UnMute(roomID: string, userID: string, adminID: string): Promise<boolean> {
 		const [_, changed] = await this._modifyRoom(roomID, async (room) => {
 			if (!room.AdminIDs.includes(adminID))
-				throw new HttpException("", HttpStatus.UNAUTHORIZED)
+				throw new HttpException("", HttpStatus.FORBIDDEN)
 
 			const index = room.MuteIDs.indexOf(userID)
 			if (index !== -1)
@@ -382,7 +382,7 @@ export class ChatService {
 	async GetRoom(roomID: string, userID: string): Promise<ChatRoom> {
 		const room = await this.chatRoomRepo.findOneBy({ ID: roomID })
 		if (!room.MemberIDs.includes(userID))
-			throw new HttpException("", HttpStatus.UNAUTHORIZED)
+			throw new HttpException("", HttpStatus.FORBIDDEN)
 		return room
 	}
 	
@@ -397,7 +397,7 @@ export class ChatService {
 		
 		const room = await this.GetRoom(roomID, userID);
 		if (!room.MemberIDs.includes(userID))
-			throw new HttpException("", HttpStatus.UNAUTHORIZED)
+			throw new HttpException("", HttpStatus.FORBIDDEN)
 		
 		return (await this.chatMessageRepo.findOneBy({ ID: this._getMsgID(roomID, index, room) }))
 			?.ToMessages()
@@ -412,7 +412,7 @@ export class ChatService {
 	{
 		const { OwnerID, Message } = msgDTO
 		if (OwnerID !== userID)
-			throw new HttpException("", HttpStatus.UNAUTHORIZED)
+			throw new HttpException("", HttpStatus.FORBIDDEN)
 		const msg = new ChatMessage(OwnerID, Message)
 		
 		/* Check for mute */
@@ -439,7 +439,7 @@ export class ChatService {
 		const user = await this.GetOrAddUser(userID)
 		const index = user.FriedsWithDirect.indexOf(friendID)
 		if (index === -1)
-			throw new HttpException("", HttpStatus.UNAUTHORIZED)
+			throw new HttpException("", HttpStatus.FORBIDDEN)
 		
 		const room = await this.GetRoom(user.DirectChatsIn[index], userID)
 		await this._postMessageToRoom(room, new ChatMessage("game", id))
@@ -491,7 +491,7 @@ export class ChatService {
 		const { OwnerID, Name, Password, RoomType } =  roomDTO
 		
 		if (OwnerID !== userID)
-			throw new HttpException("", HttpStatus.UNAUTHORIZED)
+			throw new HttpException("", HttpStatus.FORBIDDEN)
 		
 		const room = await this.chatRoomRepo.save(this.chatRoomRepo.create({
 			OwnerID, Name, HasPassword: Password !== "", RoomType: +ChatRoomType[RoomType],
@@ -525,7 +525,7 @@ export class ChatService {
 		
 		var member = await this.GetOrAddUser(memberID)
 		if (member.BlockedUserIDs.includes(userID))
-			throw new HttpException("This user has blocked you.", HttpStatus.UNAUTHORIZED)
+			throw new HttpException("This user has blocked you.", HttpStatus.FORBIDDEN)
 		
 		const index = member.FriedsWithDirect.indexOf(userID)
 		if (index != -1) {

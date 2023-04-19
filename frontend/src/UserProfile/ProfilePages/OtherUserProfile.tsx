@@ -83,7 +83,7 @@ function OtherUserProfile(props: any){
 
     return (
       <center>
-          <div className={"MainWidnow"} style={{width: `${Width}px`}}>
+          <div id="OtherProfilePage" style={{width: `${Width}px`}}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   <img src={`${HTTP.HostRedirect()}pfp/${myPFP}`} alt="" style={{width: `${0.1*Width}px`, height: `${0.1*Width}px`, alignItems: 'center', padding: `${0.01*Width}px`}}/>
                   <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: `${0.01*Width}px`}}>

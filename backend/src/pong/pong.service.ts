@@ -20,19 +20,21 @@ export class PongService {
 	/* On game end update database */
 	async postPongStats(gameIDs:string[], gameData:GameData) {
 
-		if (gameData.p1_score === gameData.p2_score)
-			console.log("both scored eleven, talk to bas")
-
 		/* get users */ 
 		const user1:UserProfile = await UserProfileService.GetInstance()?.findUserBy(gameIDs[IDs.p1_userID])
 		const user2:UserProfile = await UserProfileService.GetInstance()?.findUserBy(gameIDs[IDs.p2_userID])
 
 		/* stats vs yourself don't count */
-		// if (user1 === user2) {
-		// 	//achievement?
-		// 	return ;
-		// }
-
+		if (user1.id === user2.id) {
+			let AddAchievement:AddAchievement = {
+				nameAchievement: "You played yourself!",
+				pictureLink: "https://i.imgur.com/SWnMYbM.jpg",
+				message: "hope you won.."
+			}
+			await UserProfileService.GetInstance()?.postAchievementList(user1.id, AddAchievement)
+			return ;
+		}
+	
 		/* set game stats and update users */
 		let stat = new PongStats
 		if (gameData.gameState === 'p1_won')
@@ -95,7 +97,7 @@ export class PongService {
 			await UserProfileService.GetInstance()?.postAchievementList(winner.id, AddAchievement)
 		}
 
-		/* save updated profiles and the game */
+		/* save game stats */
 		await GameStatsService.GetInstance()?.insertPongStats(stat)
 
 		/* link stats to user */

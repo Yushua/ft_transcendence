@@ -27,7 +27,7 @@ function FriendListBar(props: any) {
 	}, []); // empty dependency array means it will only run once
 
   const handleButtonClick = (e: string) => {
-    SetWindowProfile(<OtherUserProfile id={e}/>)
+    SetWindowProfile(<OtherUserProfile id={e}/>, true)
   };
     return (
         <div >

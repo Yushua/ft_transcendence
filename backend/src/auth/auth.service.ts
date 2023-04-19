@@ -91,19 +91,13 @@ export class AuthService {
       async makeAccountJWT(intraName: string):Promise<string>{
         var user:UserProfile = await this.userProfileEntityRepos.findOneBy({ intraName })
         if(!user){
-          user = this.userProfileEntityRepos.create({
-            intraName,
-          });
-          try {
-            await this.userProfileEntityRepos.save(user);
-          } catch (error) {
-            throw new HttpException(`creating an account for the first time with ${intraName}\ncannot be created on the database`, HttpStatus.BAD_REQUEST);
-          }
+          user = this.userProfileEntityRepos.create({ intraName });
+          await this.userProfileEntityRepos.save(user)
+          await this.setupAchievements(user.id)
         }
         //two factor authentication, but how? if this is true, then log out.
         const payload: JwtPayload = { userID: user.id, twoFactor: false};
         const authToken: string = this.jwtService.sign(payload);
-        await this.setupAchievements(user.id)
         return authToken;
       }
 
@@ -118,6 +112,8 @@ export class AuthService {
        ["Superb Showing", `https://i.imgur.com/LFMQ3tP.jpg`, "Win a game of Pong 11-0!"],
        ["Now you are a winner times ten!", `https://i.imgur.com/LFMQ3tP.jpg`, "Win 10 games of Pong!"],
        ["Busy Admin", `https://i.imgur.com/LFMQ3tP.jpg`, "Be a chat room admin with at least 10 people."],
+       ["You played yourself!", `https://i.imgur.com/LFMQ3tP.jpg`, "Play a game versus yourself!"],
+
      ]
       // async AllAchievements():Promise<string[][]>{
       //   return this.list

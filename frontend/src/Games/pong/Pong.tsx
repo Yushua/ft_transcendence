@@ -6,12 +6,15 @@ import { socket } from "../contexts/WebsocketContext"
 import { GameData,  } from './components/GameData'
 import { Canvas } from './components/Canvas'
 import { Button } from '@mui/material'
-import { SetMainWindow } from '../../MainWindow/MainWindow'
+import { GetCurrentMainWindow, SetMainWindow } from '../../MainWindow/MainWindow'
 import { Tab, Tabs } from "@mui/material";
 import { ClassicPongTab } from './components/ClassicPongTab';
 import { CustomPongTab } from './components/CustomPongTab';
 import SpectateTab from './components/SpectateTab';
 import './Pong.css'
+import { SetWindowProfile } from '../../UserProfile/ProfileMainWindow';
+import OtherUserProfile from '../../UserProfile/ProfilePages/OtherUserProfile';
+import HTTP from '../../Utils/HTTP';
 
 var _setMainPongTab: React.Dispatch<React.SetStateAction<string>> | null = null
 
@@ -179,10 +182,24 @@ export const Pong = () => {
 						<Button style={{}} variant="contained" onClick={() => leaveGame()}>
 							{spectating ? "Stop Spectating" : "Leave Game"}
 						</Button>
-						<Button variant="text" style={{float: "left"}}>
+						<Button variant="text" style={{float: "left"}} onClick={() => {
+							SetMainWindow("profile", gameData.p1_name === User.Name)
+        					if (gameData.p1_name !== User.Name)
+								setTimeout(async () => {
+									const id = (await JSON.parse(HTTP.Get(`user-profile/returnID/${gameData.p1_name}`))).id
+									SetWindowProfile(<OtherUserProfile id={id}/>, true)
+								}, 0);
+						}}>
 							{gameData.p1_name}
 						</Button>
-						<Button variant="text" style={{float: "right"}}>
+						<Button variant="text" style={{float: "right"}} onClick={() => {
+							SetMainWindow("profile", gameData.p2_name === User.Name)
+        					if (gameData.p2_name !== User.Name)
+								setTimeout(async () => {
+									const id = (await JSON.parse(HTTP.Get(`user-profile/returnID/${gameData.p2_name}`))).id
+									SetWindowProfile(<OtherUserProfile id={id}/>, true)
+								}, 0);
+						}}>
 							{gameData.p2_name}
 						</Button>
 					</div>
@@ -273,7 +290,7 @@ setInterval(() => {
 }, 10)
 
 export function JoinedGame(controls:string) {
-	SetMainWindow("pong", false)
+	SetMainWindow("pong", GetCurrentMainWindow() !== "pong")
 	_setMainPongTab('canvas')
 	localStorage[Enum.window] = 'canvas'
 	g_controls = controls
