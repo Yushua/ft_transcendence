@@ -93,21 +93,16 @@ export class UserProfileService {
         return found;
       }
 
-      async changeUsername(username: string, id: string): Promise<UserProfile> {
-        const found = await this.findUserBy(id)
-        try {
+      async changeUsername(username: string, id: string){
+        var user:UserProfile = await this.userEntity.findOneBy({ username })
+        if (!user){
+          const found = await this.findUserBy(id)
           found.username = username;
           await this.userEntity.save(found);
         }
-        catch (error) {
-            if (error.code === '23505'){
-                throw new ConflictException(`account name "${username} was already in use`);
-            }
-            else {
-                throw new InternalServerErrorException(`account name "${error.code} was already in use, but the error is different`);
-            }
+        else {
+          throw new ConflictException(`account name "${username} was already in use`);
         }
-        return found;
       }
 
       //turn the username of the friend into an id, and then add it to the currect user

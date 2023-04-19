@@ -127,7 +127,7 @@ export class UserProfileController {
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     changeUsername(
         @Param('username') username: string, @Request() req: Request) {
-        console.log("setting a new username")
+        console.log(`setting username {${username}}`)
         this.userServices.changeUsername(username, req["user"].id);
     }
 

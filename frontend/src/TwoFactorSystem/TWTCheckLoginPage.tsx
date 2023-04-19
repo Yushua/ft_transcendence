@@ -4,6 +4,8 @@ import { newWindow } from '../App';
 import '../App.css';
 import LoginPage from '../Login/LoginPage';
 import HTTP from '../Utils/HTTP';
+import { Width } from '../MainWindow/MainWindow';
+import { Box } from '@mui/material';
 
 async function turningTWTOn(code:string){
   try {
@@ -69,13 +71,19 @@ function TWTCheckLoginPage(){
   }, []);
   newWindow(<LoginPage/>)
   return (
+    <center>
     <form onSubmit={handleSubmit}>
-    <label>
-      enable two Factor Authentication to login
+      <Box
+          fontFamily={"'Courier New', monospace"}
+          fontSize={"200%"}
+          marginTop={`${Width*0.3}px`}>
+        <div> {"enable two Factor Authentication to login"} </div>
       <input type="text" value={inputValue} onChange={handleInputChange} />
-    </label>
-    <button type="submit">Submit Code</button>
-  </form>
+
+      <button type="submit">Submit Code</button>
+      </Box>
+    </form>
+  </center>
   );
 }
 

@@ -2,9 +2,16 @@ import '../App.css';
 import HTTP from '../Utils/HTTP';
 import ProfilePicture from './ProfilePicture';
 import OnOFFComponent from '../Search bar/AchievementComponents/OnOffComponent';
+import { useState } from 'react';
+import { Box } from '@mui/material';
+import { Width } from '../MainWindow/MainWindow';
 
 export async function asyncChangeName(newUsername:string) {
-  HTTP.Post(`user-profile/userchange/${newUsername}`, null, {Accept: 'application/json'})
+  try {
+    HTTP.Post(`user-profile/userchange/${newUsername}`, null, {Accept: 'application/json'})
+  } catch (error) {
+    _setmessage("wrong input of username")
+  }
 }
 
 interface FormElements extends HTMLFormControlsCollection {
@@ -21,24 +28,39 @@ async function handleUsernameChange(e: React.FormEvent<YourFormElement>){
   await asyncChangeName(e.currentTarget.elements.username.value);
 }
 
+var _setValue:React.Dispatch<React.SetStateAction<string>>
+var _setmessage:React.Dispatch<React.SetStateAction<string>>
 function SettingsUser(){
+  const [value, setValue] = useState<string>("");
+  const [message, setmessage] = useState<string>("Choose a New Username");
+  _setValue = setValue
+  _setmessage = setmessage
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setValue(event.target.value);
+  };
   return (
-    <div className="SettingsUser">
+    <center>
       <form onSubmit={handleUsernameChange}>
-        <div>
-          <label htmlFor="username">Choose a New username: </label>
-          <input id="username" type="text" />
-          <button type="submit">Submit</button>
-        </div>
+      <Box
+            fontFamily={"'Courier New', monospace"}
+            fontSize={"200%"}
+            marginTop={`${Width*0.05}px`}>
+          <div> {message} </div>
+          <input type="text" value={value} onChange={handleChange} />
+          {value.length > 4 && value.length <= 20 && (
+          <button type="submit">Submit</button> )}
+          <div> <ProfilePicture/> </div>
+      </Box>
+      <Box
+            fontFamily={"'Courier New', monospace"}
+            fontSize={"200%"}
+            marginTop={`${Width*0.05}px`}>
+          <div> Settings inbox </div>
+          <div> <OnOFFComponent string={"AchieveMessage"}/> </div>
+          <div> <OnOFFComponent string={"ServerMessage"}/> </div>
+      </Box>
       </form>
-      <div>
-        <ProfilePicture/>
-      </div>
-      <div>
-        <OnOFFComponent string={"AchieveMessage"}/>
-        <OnOFFComponent string={"ServerMessage"}/>
-      </div>
-    </div>
+    </center>
   );
 }
 

@@ -34,7 +34,8 @@ export class AuthController {
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     @Get('checkTWTCodeUpdate/:code')
     async checkTWTCodeUpdate(@Param('code') code: string, @Request() req: Request){
-        if (await this.AuthService.checkCodeSecret(code, req["user"].QRSecret) === true){
+        var check:boolean = await this.AuthService.checkCodeSecret(code, req["user"].QRSecret)
+        if (check === true){
             var TWT:string =  await this.AuthService.updateTWT(req["user"].id, true)
             await this.AuthService.updateTWTUser(req["user"].id, true)
             return {

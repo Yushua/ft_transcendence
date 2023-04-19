@@ -4,6 +4,8 @@ import HTTP from '../Utils/HTTP';
 import User from '../Utils/Cache/User';
 import { SetWindowProfile } from '../UserProfile/ProfileMainWindow';
 import TWTEnabled from './TWTEnabled';
+import { Width } from '../MainWindow/MainWindow';
+import { Box } from '@mui/material';
 
 async function setNewTWT(){
   try {
@@ -64,11 +66,15 @@ async function turnTWTFalse(){
 function TWTDisabled(){
   
   return (
-    <div className="TWTDisabled">
-      <div>
-        <button onClick={turnTWTFalse}>Cancle Two Factor System</button>
-      </div>
-    </div>
+    <center>
+      <Box
+          fontFamily={"'Courier New', monospace"}
+          fontSize={"200%"}
+          marginTop={`${Width*0.1}px`}>
+        <div> {"disable tow factor authentication"} </div>
+        <button onClick={turnTWTFalse}>Cancle</button>
+      </Box>
+    </center>
   );
 }
 

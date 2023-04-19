@@ -63,12 +63,12 @@ function InboxBar(props: any) {
               style={{width: `${boxwidth}px`, height: `${buttonsize - (border*2)}px`, overflow: "hidden", textOverflow:"ellipsis", marginRight: `${props.width*0.02}px`, marginTop: `${props.width*0.02}px`, marginBottom: `${props.width*0.02}px`, borderColor: "#3676cc", borderRadius: "5px"}}>
               <div
                 key={index}
-                style={{display: "inline-block", flex: 1, width: `${boxwidth - buttonsize - (border*4)}px`, height: `${buttonsize - border*2}px`, top:"0px"}}
+                style={{display: "inline-block", flex: 1, width: `${boxwidth - buttonsize - (border*4)}px`, height: `${buttonsize - border*2}px`}}
                 >
                   <h2>{option.message}</h2>
               </div>
               <button
-                style={{display: "inline-block", cursor: "pointer", width: `${buttonsize - border*2}px`, height: `${buttonsize - border*2}px`, top:"0px"}}
+                style={{display: "inline-block", cursor: "pointer", width: `${buttonsize - border*2}px`, height: `${buttonsize - border*2}px`}}
                 onClick={() => handleButtonClick(option.id)}
               >
                 <h2 >X</h2>

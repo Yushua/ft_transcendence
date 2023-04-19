@@ -20,6 +20,7 @@ export async function asyncGetTWTStatusTWT(TWT:string):Promise<boolean> {
 }
 
 async function turningTWTOn(code:string){
+  console.log("logging in with TWT")
   try {
     const response = await fetch(HTTP.HostRedirect() + `auth/checkTWTCodeUpdate/${code}` , {
       headers: {
@@ -39,12 +40,12 @@ async function turningTWTOn(code:string){
       return true
     }
     else {
-        alert("wrong code input, try again")
+        _setInputString("wrong code input, try again")
         _setInputValue("")
         return false
     }
   } catch (error) {
-    alert("wrong code input, error occured, try again")
+    _setInputString("wrong code input, try again")
     _setInputValue("")
     return false
   }
@@ -66,13 +67,16 @@ async function asyncGetName():Promise<string> {
 var _inputValue: string
 var _setInputValue: React.Dispatch<React.SetStateAction<string>>
 var _intraName: string
+var _setInputString: React.Dispatch<React.SetStateAction<string>>
 
 function TurnTWTOnLoginPage(){
     const [inputValue, setInputValue] = useState("");
     const [intraName, setintraName] = useState<string>('');
+    const [InputString, setInputString] = useState<string>('set your Two Factor Code To Login');
     _inputValue = inputValue
     _setInputValue = setInputValue
     _intraName = intraName
+    _setInputString = setInputString
     const handleInputChange = (event:any) => {
       setInputValue(event.target.value);
     };
@@ -84,17 +88,19 @@ function TurnTWTOnLoginPage(){
     }, []);
   //setu the QR code. if input Code, then it will be turned on. so there is always a QR code
   return (
-    <form onSubmit={handleSubmit}>
-       <Box
-          fontFamily={"'Courier New', monospace"}
-          fontSize={"200%"}
-          marginTop={`${Width*0.3}px`}>
-          Input Username
-        <input type="text" value={inputValue} onChange={handleInputChange} />
-        {inputValue.length === 6 && (
-        <button type="submit">Submit</button> )}
-      </Box>
-  </form>
+    <center>
+      <form onSubmit={handleSubmit}>
+        <Box
+            fontFamily={"'Courier New', monospace"}
+            fontSize={"200%"}
+            marginTop={`${Width*0.3}px`}>
+          <div> {InputString} </div>
+          <input type="text" value={inputValue} onChange={handleInputChange} />
+          {inputValue.length === 6 && (
+          <button type="submit">Submit</button> )}
+        </Box>
+      </form>
+    </center>
   );
 }
 
