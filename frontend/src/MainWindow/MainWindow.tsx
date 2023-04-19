@@ -9,7 +9,6 @@ import { AppBar, Box, Button, Container, IconButton, Toolbar } from "@mui/materi
 import NameStorage from "../Utils/Cache/NameStorage";
 import { WebsocketContext } from "../Games/contexts/WebsocketContext";
 import MainChatWindow from "../Chat/Windows/MainChatWindow";
-import LogoutButtonComponent from "../ButtonComponents/LogoutButton";
 import ProfileMainWindow from "../UserProfile/ProfileMainWindow";
 
 export async function asyncGetNameExport():Promise<string> {
