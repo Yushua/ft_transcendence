@@ -23,21 +23,20 @@ export interface YourFormElement extends HTMLFormElement {
   readonly elements: FormElements
  }
 
-async function handleUsernameChange(e: React.FormEvent<YourFormElement>){
-  e.preventDefault();
-  await asyncChangeName(e.currentTarget.elements.username.value);
-}
-
-var _setValue:React.Dispatch<React.SetStateAction<string>>
-var _setmessage:React.Dispatch<React.SetStateAction<string>>
-function SettingsUser(){
-  const [value, setValue] = useState<string>("");
-  const [message, setmessage] = useState<string>("Choose a New Username");
-  _setValue = setValue
-  _setmessage = setmessage
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(event.target.value);
-  };
+ 
+ var _setValue:React.Dispatch<React.SetStateAction<string>>
+ var _setmessage:React.Dispatch<React.SetStateAction<string>>
+ function SettingsUser(){
+   const [value, setValue] = useState<string>("");
+   const [message, setmessage] = useState<string>("Choose a New Username");
+   _setValue = setValue
+   _setmessage = setmessage
+   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+     setValue(event.target.value);
+    };
+    async function handleUsernameChange(){
+      await asyncChangeName(value);
+    }
   return (
     <center>
       <form onSubmit={handleUsernameChange}>
