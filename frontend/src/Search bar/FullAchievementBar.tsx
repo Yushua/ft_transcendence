@@ -61,7 +61,7 @@ function FullAchievementBar(props: any) {
           </Tabs>
           </div>
           <center>
-            <div style={{ display: "flex", width: `${Width * .9}px`, height: `${Width * 1.5}px`, overflowY: "scroll", border: "solid", borderColor: "#3676cc", borderRadius: `${Width * 0.01}px`}}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', overflowY: "scroll", width: `${Width * .9}px`, height: `${Width * 0.9}px`, border: "solid", borderColor: "#3676cc", borderRadius: `${Width * 0.01}px`}}>
               {Window}
             </div>
           </center>

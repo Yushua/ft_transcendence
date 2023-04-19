@@ -288,7 +288,6 @@ export class UserProfileService {
       /**
        */
       async postAchievementList(id:string, AddAchievement:AddAchievement) {
-        console.log("adding")
         const {nameAchievement, pictureLink, message} = AddAchievement
         var userprofile = await this.userEntity.findOneBy({id});
         var achieveStore:UserAchievement[] = userprofile.UserAchievement
@@ -299,11 +298,12 @@ export class UserProfileService {
         if (achieve === undefined){
           throw new HttpException(`achievement trying to add does NOT exist check the name {${nameAchievement}}`, HttpStatus.BAD_REQUEST);
         }
+        if (achieve.status)
+          return
         achieve.pictureLink = pictureLink
         achieve.message = message
         achieve.status = true
         achieve.timeStamp = Math.floor(Date.now() / 1000) /* seconds since epoch */
-        console.log("saving")
         await this.achievEntity.save(achieve);
 
         let addMessageUser:AddMessageDTO = {
@@ -311,7 +311,6 @@ export class UserProfileService {
           message: `${userprofile.username} has achieved ${nameAchievement}`,
           userID: id
         }
-        console.log("now adding messages")
         let addMessageOtherUser:AddMessageDTO = {
           status: "Achievement", 
           message: `Hey look, ${userprofile.username} has just achieved ${nameAchievement}`,
@@ -330,6 +329,7 @@ export class UserProfileService {
           pictureLink: pictureLink,
           message: message,
           status: false,
+          name: userprofile.intraName,
           timeStamp:  Math.floor(Date.now() / 1000), /* seconds since epoch */
           userProfile: userprofile
         });
@@ -379,8 +379,16 @@ export class UserProfileService {
       }
 
       async GetUserAchievementFull(id:string):Promise<UserAchievement[]> {
-        const userprofile:UserProfile = await this.userEntity.findOneBy({id});
-        return userprofile.UserAchievement;
+        console.log(await this.achievEntity
+          .createQueryBuilder('UserAchievement')
+          .leftJoin('UserAchievement.userProfile', 'userProfile')
+          .where('userProfile.id = :id', { id })
+          .getMany())
+        return await this.achievEntity
+        .createQueryBuilder('UserAchievement')
+        .leftJoin('UserAchievement.userProfile', 'userProfile')
+        .where('userProfile.id = :id', { id })
+        .getMany();;
       }
 
       /*

@@ -113,11 +113,11 @@ export class AuthService {
           while PostAchievement should congratulate them on getting it
       */
     list:string[][] = [
-       ["Now you are a winner!", `./public/invalid_cross.jpg`, "Win a game of Pong!"],
-       ["setusername", `./public/invalid_cross.jpg`, "you set your username"],
-       ["Superb Showing", `./public/invalid_cross.jpg`, "Win a game of Pong 11-0!"],
-       ["Now you are a winner times ten!", `./public/invalid_cross.jpg`, "Win 10 games of Pong!"],
-       ["Busy Admin", `./public/invalid_cross.jpg`, "Be a chat room admin with at least 10 people."],
+       ["Now you are a winner!", `https://i.imgur.com/LFMQ3tP.jpg`, "Win a game of Pong!"],
+       ["setusername", `https://i.imgur.com/LFMQ3tP.jpg`, "you set your username"],
+       ["Superb Showing", `https://i.imgur.com/LFMQ3tP.jpg`, "Win a game of Pong 11-0!"],
+       ["Now you are a winner times ten!", `https://i.imgur.com/LFMQ3tP.jpg`, "Win 10 games of Pong!"],
+       ["Busy Admin", `https://i.imgur.com/LFMQ3tP.jpg`, "Be a chat room admin with at least 10 people."],
      ]
       // async AllAchievements():Promise<string[][]>{
       //   return this.list
@@ -194,7 +194,7 @@ export class AuthService {
           await this.userProlfileServices.SetupSendSingleMessage(addMessageOtherUser, user.id)
           let AddAchievement:AddAchievement = {
             nameAchievement: "setusername",
-            pictureLink: "default_pfp.jpg",
+            pictureLink: "pfp/default_pfp.jpg",
             message: "Great job, you set up your account with an username"
           }
           await this.userProlfileServices.postAchievementList(user.id, AddAchievement)
