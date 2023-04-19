@@ -28,7 +28,7 @@ function TotalExpWins(){
           <button
             key={index}
             style={{  width: `${Width*0.8}px`, height: `${Width*0.05}px`, marginLeft: `${Width*0.02}px`, marginRight: `${Width*0.02}px`, marginTop: `${Width*0.005}px`, marginBottom: `${Width*0.005}px`, borderColor: "#3676cc", borderRadius: `${Width * 0.01}px`}}>
-              <h2 >{`[${index + 1}]: name{${option[0]}}: total exp{${option[1]}}`}</h2>
+              <h2 >{`${index + 1}) ${option[0]} exp: ${option[1]}`}</h2>
           </button>
         ))}
       </>

@@ -48,9 +48,9 @@ function LeaderBoardMainPage() {
     <div style={{width: `${Width * .9}px`, padding: "0px", margin: "0px"}}>
       <div>
         <Tabs value={mainWindow} centered>
-          <Tab value="totalWins" label="totalWins" onClick={() => SetMainProfileWindow("totalWins")}/>
-          <Tab value="PongWins" label="PongWins" onClick={() => SetMainProfileWindow("PongWins")}/>
-          <Tab value="TotalExpWins" label="TotalExpWins" onClick={() => SetMainProfileWindow("TotalExpWins")}/>
+          <Tab value="totalWins" label="total Wins" onClick={() => SetMainProfileWindow("totalWins")}/>
+          <Tab value="PongWins" label="Pong Wins" onClick={() => SetMainProfileWindow("PongWins")}/>
+          <Tab value="TotalExpWins" label="Experience" onClick={() => SetMainProfileWindow("TotalExpWins")}/>
         </Tabs>
       </div>
       <div style={{display: "table", width: "100%", height: "100%", color: "black"}}>
