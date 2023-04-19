@@ -96,8 +96,8 @@ export class PFPController {
 		
 		/* Delete old PFP if no User is using it */
 		if (pfpOldURL !== "default_pfp.jpg")
-			this.userRepo.query(`SELECT 1 FROM user_profile WHERE "profilePicture" = '${pfpOldURL}';`)
-				.then(res => res.length === 0 && this.pfpRepo.delete({ID: pfpOldURL.substring(0, pfpOldURL.lastIndexOf('.'))}))
+			this.userRepo.findOne({where: {profilePicture: pfpOldURL}})
+				.then(res => !!res && this.pfpRepo.delete({ID: pfpOldURL.substring(0, pfpOldURL.lastIndexOf('.'))}))
 				.catch(() => {})
 		
 		return pfpURL
