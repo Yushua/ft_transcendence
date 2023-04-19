@@ -91,19 +91,13 @@ export class AuthService {
       async makeAccountJWT(intraName: string):Promise<string>{
         var user:UserProfile = await this.userProfileEntityRepos.findOneBy({ intraName })
         if(!user){
-          user = this.userProfileEntityRepos.create({
-            intraName,
-          });
-          try {
-            await this.userProfileEntityRepos.save(user);
-          } catch (error) {
-            throw new HttpException(`creating an account for the first time with ${intraName}\ncannot be created on the database`, HttpStatus.BAD_REQUEST);
-          }
+          user = this.userProfileEntityRepos.create({ intraName });
+          await this.userProfileEntityRepos.save(user)
+          await this.setupAchievements(user.id)
         }
         //two factor authentication, but how? if this is true, then log out.
         const payload: JwtPayload = { userID: user.id, twoFactor: false};
         const authToken: string = this.jwtService.sign(payload);
-        await this.setupAchievements(user.id)
         return authToken;
       }
 
