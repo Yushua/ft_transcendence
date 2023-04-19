@@ -44,7 +44,7 @@ function ProfileMainWindow() {
       case "search":
       	SetWindowProfile(<SearchBar/>)
       	break;
-      case "tWTDisplay":
+      case "TWTDisplay":
         if (User.TWTStatus === true){
           SetWindowProfile(<TWTDisabled/>)
         }
@@ -69,9 +69,9 @@ function ProfileMainWindow() {
         <Tabs value={mainWindow} centered>
           <Tab value="profile" label="profile" onClick={() => SetMainProfileWindow("profile")}/>
           <Tab value="search" label="search user" onClick={() => SetMainProfileWindow("search")}/>
-          <Tab value="tWTDisplay" label="TwoFactor" onClick={() => SetMainProfileWindow("tWTDisplay")}/>
-          <Tab value="leaderBoard" label="Game LeaderBoard" onClick={() => SetMainProfileWindow("leaderBoard")}/>
-          <Tab value="Achievements" label="Game Achievements" onClick={() => SetMainProfileWindow("Achievements")}/>
+          <Tab value="TWTDisplay" label="Authentication" onClick={() => SetMainProfileWindow("TWTDisplay")}/>
+          <Tab value="leaderBoard" label="LeaderBoard" onClick={() => SetMainProfileWindow("leaderBoard")}/>
+          <Tab value="Achievements" label="Achievements" onClick={() => SetMainProfileWindow("Achievements")}/>
           <Tab value="settings" label="settings" onClick={() => SetMainProfileWindow("settings")}/>
         </Tabs>
       </div>

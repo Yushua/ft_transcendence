@@ -288,7 +288,6 @@ export class UserProfileService {
       /**
        */
       async postAchievementList(id:string, AddAchievement:AddAchievement) {
-        console.log("adding")
         const {nameAchievement, pictureLink, message} = AddAchievement
         var userprofile = await this.userEntity.findOneBy({id});
         var achieveStore:UserAchievement[] = userprofile.UserAchievement
@@ -299,6 +298,8 @@ export class UserProfileService {
         if (achieve === undefined){
           throw new HttpException(`achievement trying to add does NOT exist check the name {${nameAchievement}}`, HttpStatus.BAD_REQUEST);
         }
+        if (achieve.status)
+          return
         achieve.pictureLink = pictureLink
         achieve.message = message
         achieve.status = true
@@ -310,7 +311,6 @@ export class UserProfileService {
           message: `${userprofile.username} has achieved ${nameAchievement}`,
           userID: id
         }
-        console.log("now adding messages")
         let addMessageOtherUser:AddMessageDTO = {
           status: "Achievement", 
           message: `Hey look, ${userprofile.username} has just achieved ${nameAchievement}`,

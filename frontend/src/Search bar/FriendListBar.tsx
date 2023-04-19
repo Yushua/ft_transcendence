@@ -33,7 +33,7 @@ function FriendListBar(props: any) {
         <div >
           {ListSearchList.map((option, index) => (
               <div
-                className='image_button'
+                className='object_button'
                 key={index}
                 style={{ display: "inline-block", width: `${widthButton}px`, marginLeft: `${width*0.02}px`, marginRight: `${width*0.02}px`, marginTop: `${width*0.02}px`, marginBottom: `${width*0.02}px`}}
                 onClick={() => handleButtonClick(option[3])}>
