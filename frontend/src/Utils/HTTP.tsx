@@ -1,4 +1,9 @@
-import { getCookie } from "typescript-cookie"
+import { getCookie, removeCookie } from "typescript-cookie"
+import User from "./Cache/User"
+import ChatUser from "./Cache/ChatUser"
+import ChatRoom from "./Cache/ChatRoom"
+import { newWindow } from "../App"
+import ErrorPage from "../Login/ErrorPage"
 
 export default class HTTP {
 	
@@ -77,6 +82,14 @@ export default class HTTP {
 			: string {
 		var [req, finalBody] = this._setupRequest(method, url, body, hdr, false)
 		req.send(finalBody);
+		if (req.status === 401) {
+			User.Clear();
+			ChatUser.Clear();
+			ChatRoom.Clear();
+			removeCookie('accessToken');
+      		newWindow(<ErrorPage/>)
+			return null
+		}
 		if (req.status < 300)
 			return req.responseText
 		console.log(req.responseText)
@@ -92,6 +105,14 @@ export default class HTTP {
 			error: ((msg: XMLHttpRequest) => any) | null) {
 		var [req, finalBody] = this._setupRequest(method, url, body, hdr, true)
 		req.onload = function(ev) {
+			if (req.status === 401) {
+				User.Clear();
+				ChatUser.Clear();
+				ChatRoom.Clear();
+				removeCookie('accessToken');
+				newWindow(<ErrorPage/>)
+				return
+			}
 			if (!!callback && req.status < 300)
 				callback(this)
 			else if (!!error)
