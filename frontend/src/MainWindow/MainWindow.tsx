@@ -9,7 +9,7 @@ import { AppBar, Box, Button, Container, IconButton, Toolbar } from "@mui/materi
 import NameStorage from "../Utils/Cache/NameStorage";
 import { WebsocketContext } from "../Games/contexts/WebsocketContext";
 import MainChatWindow from "../Chat/Windows/MainChatWindow";
-import ProfileMainWindow from "../UserProfile/ProfileMainWindow";
+import ProfileMainWindow, { SetMainProfileWindow } from "../UserProfile/ProfileMainWindow";
 
 export async function asyncGetNameExport():Promise<string> {
 	const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
@@ -18,16 +18,16 @@ export async function asyncGetNameExport():Promise<string> {
 	return await user["username"];
   }
 
-export function GetCurrentWindow() {
+export function GetCurrentMainWindow() {
 	return _currentWindow
 }
 var _currentWindow: string
 
-export function SetMainWindow(window: string, new_window = true) {
+export function SetMainWindow(window: string, add_to_history = true) {
 	_currentWindow = window
 	if (!!_setWindow)
 		_setWindow(window)
-	if (new_window)
+	if (add_to_history)
 		OurHistory.Add()
 }
 var _setWindow: React.Dispatch<React.SetStateAction<string>> | null = null
@@ -40,9 +40,10 @@ async function asyncToggleGetName(){
   };
 
 
-export const Width: number = Math.trunc(window.screen.width * .5)
+export var Width: number = Math.trunc(window.screen.width * .5)
 
 export default function MainWindow() {
+	Width = Math.trunc(window.screen.width * .5)
 	const socket = React.useContext(WebsocketContext)
 	const [currentWindow, setWindow] = useState<string>("")
 	const [nameDisplay, setNameDisplay] = useState<string>("");
@@ -82,6 +83,7 @@ export default function MainWindow() {
 							
 							{/* Logo */}
 							<Box
+								onClick={() => SetMainWindow("")}
 								fontFamily={"'Courier New', monospace"}
 								fontSize={"200%"}>
 								Team-Zero

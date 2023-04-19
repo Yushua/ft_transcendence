@@ -5,9 +5,12 @@ import ChatUser from "../../../../Utils/Cache/ChatUser";
 import HTTP from "../../../../Utils/HTTP";
 import User from "../../../../Utils/Cache/User";
 import { Button } from "@mui/material";
-import { ChatLineHeight, ChatWindowHeight } from "../../MainChatWindow";
+import { ChatLineHeight, ChatWindowHeight, SetMainChatWindow } from "../../MainChatWindow";
 import { ClearChatMessageCache } from "../ActualChat/ChatWindow";
 import { CreatingGameData } from "../../../../Games/pong/components/CreateGameMenu";
+import { SetWindowProfile } from "../../../../UserProfile/ProfileMainWindow";
+import OtherUserProfile from "../../../../UserProfile/ProfilePages/OtherUserProfile";
+import { SetMainWindow } from "../../../../MainWindow/MainWindow";
 
 export function setMemberProfileID(userID: string) {
 	_memberProfileID = userID
@@ -95,7 +98,12 @@ export default function MemberProfile() {
 				<div style={{width: "100%", display: "table"}}>
 					<Button variant="contained"
 						style={{width: "100%", height: `${ChatLineHeight}px`, boxSizing: "border-box"}}
-						onClick={() => {}}
+						onClick={() => {
+							SetMainWindow("profile", false)
+        					setTimeout(() => {
+								SetWindowProfile(<OtherUserProfile id={_memberProfileID}/>, true)
+							}, 0);
+						}}
 						>View Profile</Button>
 				</div>
 				{ !!CreatingGameData.gameID && ChatRoom.Direct && _memberProfileID !== User.ID ?
