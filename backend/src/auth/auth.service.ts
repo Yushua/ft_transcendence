@@ -117,6 +117,7 @@ export class AuthService {
        ["setusername", `./public/invalid_cross.jpg`, "you set your username"],
        ["Superb Showing", `./public/invalid_cross.jpg`, "Win a game of Pong 11-0!"],
        ["Now you are a winner times ten!", `./public/invalid_cross.jpg`, "Win 10 games of Pong!"],
+       ["Busy Admin", `./public/invalid_cross.jpg`, "Be a chat room admin with at least 10 people."],
      ]
       // async AllAchievements():Promise<string[][]>{
       //   return this.list

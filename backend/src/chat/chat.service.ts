@@ -10,6 +10,8 @@ import { ChatRoomDTO } from './dto/chat_room.dto';
 import { Observable, Subject, map } from 'rxjs';
 import { UserProfile } from 'src/user-profile/user.entity';
 import * as bcrypt from 'bcrypt'
+import { AddAchievement } from 'src/user-profile/dto/addAchievement.dto';
+import { UserProfileService } from 'src/user-profile/user-profile.service';
 
 @Injectable()
 export class ChatService {
@@ -80,7 +82,7 @@ export class ChatService {
 		memberID: string = "")
 	: Promise<string>
 	{
-		const [_, changed] = await this._modifyRoom(roomID, async room => {
+		const [room, changed] = await this._modifyRoom(roomID, async room => {
 			/* Adding friend */
 			if (room.MemberIDs.includes(memberID)) {
 				const user = await this.userProfileRepo.findOneBy({id: userID});
@@ -107,6 +109,16 @@ export class ChatService {
 		if (changed) {
 			this.Notify(`room-${roomID}`, "mem")
 			this.Notify(`user-${userID}`, "room")
+			
+			if (room.MemberIDs.length !== 10)
+				return
+			let AddAchievement:AddAchievement = {
+				nameAchievement: "Busy Admin",
+				pictureLink: "./public/invalid_cross.jpg",
+				message: "You managed a chat room of 10 or more people, wow..."
+			}
+			for (const adminID of room.AdminIDs)
+				UserProfileService.GetInstance()?.postAchievementList(adminID, AddAchievement)
 		}
 		return roomID
 	}
@@ -204,27 +216,6 @@ export class ChatService {
 		this.Notify(`room-${roomID}`, "room")
 	}
 	
-	async MakeAdmin(
-			roomID: string, 
-			memberID: string, 
-			userID: string)
-		: Promise<boolean>
-	{
-		const [_, changed] = await this._modifyRoom(roomID, async room => {
-			if (!room.AdminIDs.includes(userID))
-				throw new HttpException("", HttpStatus.UNAUTHORIZED)
-			
-			if (room.AdminIDs.includes(memberID) || !room.MemberIDs.includes(memberID))
-				return false
-			
-			room.AdminIDs.push(memberID)
-			return true
-		})
-		if (changed)
-			this.Notify("room-" + roomID, "mem")
-		return changed
-	}
-	
 	async RemoveAdmin(
 			roomID: string, 
 			memberID: string, 
@@ -278,6 +269,37 @@ export class ChatService {
 	
 	Ban = (roomID: string, memberID: string, adminID: string)
 		: Promise<boolean> => this._removeMember(roomID, memberID, true, adminID, "")
+	
+	async MakeAdmin(
+			roomID: string, 
+			memberID: string, 
+			userID: string)
+		: Promise<boolean>
+	{
+		const [room, changed] = await this._modifyRoom(roomID, async room => {
+			if (!room.AdminIDs.includes(userID))
+				throw new HttpException("", HttpStatus.UNAUTHORIZED)
+			
+			if (room.AdminIDs.includes(memberID) || !room.MemberIDs.includes(memberID))
+				return false
+			
+			room.AdminIDs.push(memberID)
+			return true
+		})
+		if (changed) {
+			this.Notify("room-" + roomID, "mem")
+			
+			if (room.MemberIDs.length < 10)
+				return
+			let AddAchievement:AddAchievement = {
+				nameAchievement: "Busy Admin",
+				pictureLink: "./public/invalid_cross.jpg",
+				message: "You managed a chat room of 10 or more people, wow..."
+			}
+			UserProfileService.GetInstance()?.postAchievementList(memberID, AddAchievement)
+		}
+		return changed
+	}
 	
 	async UnBan(
 			roomID: string, 
