@@ -193,7 +193,7 @@ export class AuthService {
           await this.userProlfileServices.SetupSendSingleMessage(addMessageOtherUser, user.id)
           let AddAchievement:AddAchievement = {
             nameAchievement: "setusername",
-            pictureLink: "default_pfp.jpg",
+            pictureLink: "public/blem.jpg",
             message: "Great job, you set up your account with an username"
           }
           await this.userProlfileServices.postAchievementList(user.id, AddAchievement)

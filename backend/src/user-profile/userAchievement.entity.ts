@@ -24,6 +24,9 @@ export class UserAchievement {
     @Column({default: 0})
     timeStamp: number;
 
+    @Column({default: ""})
+    name: string;
+
     @ManyToOne((_type) => UserProfile, (userProfile) => userProfile.UserAchievement, {eager: false})
     userProfile: UserProfile;
 }

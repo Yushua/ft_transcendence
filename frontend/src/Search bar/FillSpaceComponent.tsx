@@ -20,28 +20,18 @@ const style = {
  
  function FillSpaceComponentAchieve(props: any){
   const [showModal, setShowModal] = React.useState(-1)
-  const [hovered, setHovered] = useState(false);
 
-  const handleHover = () => {
-    setHovered(true);
-  };
 
-  const handleMouseLeave = () => {
-    setHovered(false);
-  };
-
-  const border = `${Width*0.01}px solid ${hovered ? "#ff8b67" : "gray"}`
     var widthButton:number = (((Width*0.9) - (Width*0.9*0.03 * props.amount * 2))/props.amount)
 
    return (
     <>
         <img
+            className='image_button'
             key={props.option}         
-            style={{ display: "flex", border: border, width: `${widthButton}px`, height: `${widthButton}px`, marginLeft:`${Width*0.02}px`,  marginRight: `${Width*0.02}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`}}
+            style={{ display: "flex", width: `${widthButton}px`, height: `${widthButton}px`, marginLeft:`${Width*0.02}px`,  marginRight: `${Width*0.02}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`}}
             onClick={() => setShowModal(props.idx)}
             src={`${props.option.pictureLink}`}
-            onMouseEnter={handleHover}
-            onMouseLeave={handleMouseLeave}
             >
         </img>
         <Modal

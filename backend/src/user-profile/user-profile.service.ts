@@ -330,6 +330,7 @@ export class UserProfileService {
           pictureLink: pictureLink,
           message: message,
           status: false,
+          name: userprofile.intraName,
           timeStamp:  Math.floor(Date.now() / 1000), /* seconds since epoch */
           userProfile: userprofile
         });
@@ -379,8 +380,16 @@ export class UserProfileService {
       }
 
       async GetUserAchievementFull(id:string):Promise<UserAchievement[]> {
-        const userprofile:UserProfile = await this.userEntity.findOneBy({id});
-        return userprofile.UserAchievement;
+        console.log(await this.achievEntity
+          .createQueryBuilder('UserAchievement')
+          .leftJoin('UserAchievement.userProfile', 'userProfile')
+          .where('userProfile.id = :id', { id })
+          .getMany())
+        return await this.achievEntity
+        .createQueryBuilder('UserAchievement')
+        .leftJoin('UserAchievement.userProfile', 'userProfile')
+        .where('userProfile.id = :id', { id })
+        .getMany();;
       }
 
       /*
