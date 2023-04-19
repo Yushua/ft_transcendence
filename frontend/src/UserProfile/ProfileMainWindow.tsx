@@ -34,7 +34,7 @@ function ProfileMainWindow() {
 	_setMainWindow = setMainWindow
   _setWindow = setWindow
   _setDisplay = setDisplay
-  if (Display == false){
+  if (Display === false){
     switch (mainWindow) {
       default:
         return <></>
@@ -45,7 +45,7 @@ function ProfileMainWindow() {
       	SetWindowProfile(<SearchBar/>)
       	break;
       case "tWTDisplay":
-        if (User.TWTStatus == true){
+        if (User.TWTStatus === true){
           SetWindowProfile(<TWTDisabled/>)
         }
         else {

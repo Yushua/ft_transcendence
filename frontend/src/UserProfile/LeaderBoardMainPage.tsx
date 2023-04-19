@@ -29,7 +29,7 @@ function LeaderBoardMainPage() {
 	_setMainWindow = setMainWindow
   _setWindow = setWindow
   _setDisplay = setDisplay
-  if (Display == false){
+  if (Display === false){
     switch (mainWindow) {
       default:
         return <></>

@@ -3,13 +3,15 @@ import { removeCookie, setCookie } from 'typescript-cookie';
 import '../App.css';
 import HTTP from '../Utils/HTTP';
 import User from '../Utils/Cache/User';
-import { SetMainProfileWindow, SetWindowProfile } from '../UserProfile/ProfileMainWindow';
+import { SetWindowProfile } from '../UserProfile/ProfileMainWindow';
 import TWTDisabled from './TWTDisabled';
+import { Width } from '../MainWindow/MainWindow';
+import { Box } from '@mui/material';
 
 async function CheckTWTSetup(code:string){
   const response = HTTP.Get(`auth/checkTWTCodeUpdate/${code}`, null, {Accept: 'application/json'})
   var result = await JSON.parse(response)
-  if (await result["status"] == true){
+  if (await result["status"] === true){
     User._user.status = result["status"]
     removeCookie(`TWToken${User.intraname}`);
     setCookie(`TWToken${User.intraname}`, await result["TWT"],{ expires: 100000 });
@@ -60,18 +62,21 @@ function TWTEnabled(){
   }
 
   return (
-    <div className="TWTEnabled">
-      <div>
-      <img src={ otpSecret } alt="QR Code" />
-        <form onSubmit={handleSubmit}>
-          <label>
-            please fill in the code to enable Two Factor Authorization
-            <input type="text" value={inputValue} onChange={handleInputChange} />
-          </label>
-          <button type="submit">Submit</button>
-        </form>
-      </div>
-    </div>
+    <center>
+    <form onSubmit={handleSubmit}>
+      <Box
+          fontFamily={"'Courier New', monospace"}
+          fontSize={"200%"}
+          marginTop={`${Width*0.1}px`}>
+        <img src={ otpSecret } alt="QR Code" />
+        <div> {"enable two Factor Authentication to login"} </div>
+      <input type="text" value={inputValue} onChange={handleInputChange} />
+
+      <button type="submit">Submit Code</button>
+      </Box>
+    </form>
+  </center>
+
   );
 }
 

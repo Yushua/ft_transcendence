@@ -29,25 +29,21 @@ function OnOFFComponent(props: any){
 
   _setDisplay = setDisplay
 
-  if (Display == false){
+  if (Display === false){
 		setup()
     setDisplay(true)
   }
 
   async function handleOn(){
-    console.log(`in on status is {${ButtonStatus}}`)
     //turn it true. so then it goes to turning false
     await AsyncPostThisStatus(props.string, true)
     setButtonStatus(await AsyncGetThisStatus(props.string))
-    console.log(`status was false,  but turn it true now it is == {${ButtonStatus}}`)
     setDisplay(false)
   };
 
   async function handleOff(){
-    console.log(`in off status is {${ButtonStatus}}`)
     await AsyncPostThisStatus(props.string, false)
     setButtonStatus(await AsyncGetThisStatus(props.string))
-    console.log(`status was true, but turn it false now it is == {${ButtonStatus}}`)
     setDisplay(false)
   };
 

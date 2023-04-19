@@ -40,7 +40,7 @@ function NotificationsComponent(props: any){
   
   _setMyDisplay = setMyDisplay
   _setButtonStatus = setButtonStatus
-  if (myDisplay == false){
+  if (myDisplay === false){
     setup()
   }
   
@@ -59,7 +59,7 @@ function NotificationsComponent(props: any){
     setMyDisplay(true)
   }
   
-    if (props.buttonstatus == 2){
+    if (props.buttonstatus === 2){
       console.log(`buttonstatus check {${props.buttonstatus}}`)
       return (
         <></>

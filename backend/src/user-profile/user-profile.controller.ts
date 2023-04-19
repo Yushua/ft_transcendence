@@ -31,7 +31,7 @@ export class UserProfileController {
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     @Get('/user/:id')
     async asyncgetUserById( @Param('id') id: string ){
-        if (id == "undefined")
+        if (id === "undefined")
             return;
         var user:UserProfile = await this.userServices.findUserBy(id)
         return {user:user, username:user.username, profilePicture:user.profilePicture, experience:user.experience}
@@ -127,7 +127,7 @@ export class UserProfileController {
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     changeUsername(
         @Param('username') username: string, @Request() req: Request) {
-        console.log("setting a new username")
+        console.log(`setting username {${username}}`)
         this.userServices.changeUsername(username, req["user"].id);
     }
 

@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import HTTP from '../Utils/HTTP';
 import { Width } from '../MainWindow/MainWindow';
-import { Box } from '@mui/material';
 
 export async function asyncAchievmentList(id:string){
   const response = HTTP.Get(`user-profile/GetMessageList`, null, {Accept: 'application/json'})
@@ -43,11 +42,10 @@ var _setDisplay:React.Dispatch<React.SetStateAction<boolean>>
 function InboxBar(props: any) {
   //get into page, get the entire list online
   const [ListSearchList, setList] = useState<any[]>([]);
-  const [width, setwidth] = useState<number>(props.width);
   const [Display, setDisplay] = useState<boolean>(false);
   _setList = setList
   _setDisplay = setDisplay
-  if (Display == false){
+  if (Display === false){
     getList(props.id)
     setDisplay(true)
   }
@@ -57,20 +55,20 @@ function InboxBar(props: any) {
   const handleButtonClick = (e: string) => {
     removeMessage(e)
   };
-  //have an objext, 0.8
+  {/* object around then text, then button*/}
     return (
         < >
           {ListSearchList.map((option, index) => (
             <div
-              style={{ width: `${boxwidth}px`, marginLeft: `${width*0.02}px`, marginRight: `${width*0.02}px`, marginTop: `${width*0.02}px`, marginBottom: `${width*0.02}px`, border: `${Width*0.005}px solid black`}}>
+              style={{width: `${boxwidth}px`, height: `${buttonsize - (border*2)}px`, overflow: "hidden", textOverflow:"ellipsis", marginRight: `${props.width*0.02}px`, marginTop: `${props.width*0.02}px`, marginBottom: `${props.width*0.02}px`, borderColor: "#3676cc", borderRadius: "5px"}}>
               <div
                 key={index}
-                style={{display: "inline-block", flex: 1, alignItems: "center", justifyContent: "center", width: `${boxwidth - (buttonsize - (border*2))}px`, height: `${buttonsize - (border*2)}px`, overflow: "hidden", textOverflow:"ellipsis", top:"0px"}}
+                style={{display: "inline-block", flex: 1, width: `${boxwidth - buttonsize - (border*4)}px`, height: `${buttonsize - border*2}px`}}
                 >
-                  {option.message}
+                  <h2>{option.message}</h2>
               </div>
               <button
-                style={{display: "inline-block", cursor: "pointer", alignItems: "center", justifyContent: "center", width: `${buttonsize - (border*2)}px`, height: `${buttonsize - (border*2)}px`, overflow: "hidden", textOverflow:"ellipsis", top:"0px"}}
+                style={{display: "inline-block", cursor: "pointer", width: `${buttonsize - border*2}px`, height: `${buttonsize - border*2}px`}}
                 onClick={() => handleButtonClick(option.id)}
               >
                 <h2 >X</h2>

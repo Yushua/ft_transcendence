@@ -27,7 +27,7 @@ function SearchBar() {
 
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
     setSearchTerm(event.target.value)
-    if (Display == true && event.target.value.length < 5){
+    if (Display === true && event.target.value.length < 5){
       _setNameSearchList([])
       setDisplay(false);
     }

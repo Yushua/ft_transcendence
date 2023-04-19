@@ -35,7 +35,7 @@ function FullAchievementBar(props: any) {
   _setWindow = setWindow
   /* when set, it changes WHAT list I am getting and HOW it is filtered */
   /* make thigns liek the buttons into seperate components */
-  if (Display == false){
+  if (Display === false){
     switch (mainWindow) {
       default:
         return <></>

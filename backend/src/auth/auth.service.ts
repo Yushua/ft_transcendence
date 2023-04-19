@@ -203,6 +203,7 @@ export class AuthService {
       }
 
       async updateTWTUser(id: string, status:boolean){
+
         var user:UserProfile = await this.userProfileEntityRepos.findOneBy({ id })
         user.TWTStatus = status
         await this.userProfileEntityRepos.save(user);
@@ -222,7 +223,7 @@ export class AuthService {
       async disableLoginCheck(TWT:string, intraName:string):Promise<boolean>{
         var token = this.jwtService.decode(TWT);
         var user:UserProfile = await this.userProfileEntityRepos.findOneBy({ intraName })
-        if (!user || (intraName == user.intraName))
+        if (!user || (intraName === user.intraName))
           return true
         return false
       }
@@ -233,14 +234,7 @@ export class AuthService {
        * @returns 
        */
       async checkCodeSecret(code:string, secret:string):Promise<boolean>{
-        try {
-          const isValid = authenticator.check(code, secret);
-          // or
-          // const isValid = authenticator.verify({ token, secret });
-        } catch (err) {
-          return false
-        }
-        return true
+        return authenticator.check(code, secret);
       }
 
       async changeQRSecret(id: string):Promise<string>{

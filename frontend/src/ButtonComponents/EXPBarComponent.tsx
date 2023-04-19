@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Width } from "../MainWindow/MainWindow";
 import HTTP from "../Utils/HTTP";
 
@@ -13,9 +13,6 @@ async function setupExp(id:string){
   await AsyncGetOtherUser(id)
 }
 
-type props = {
-  id:string
-}
 var _setExpPercent:React.Dispatch<React.SetStateAction<number>>
 var _setlevel:React.Dispatch<React.SetStateAction<number>>
 
@@ -28,12 +25,11 @@ function EXPBarComponent(props: any) {
   _setExpPercent = setExpPercent
   _setlevel = setlevel
 
-  useEffect(() => {
-    if (Window === false){
-      setupExp(props.id)
-      setWindow(true)
-    }
-	}, []); // empty dependency array means it will only run once
+  if (Window === false){
+    setupExp(props.id)
+    setWindow(true)
+  }
+
   const barWidth = Width * .88
   const barHeight = 0.034 * Width
   const fontHeight = 0.025 * Width

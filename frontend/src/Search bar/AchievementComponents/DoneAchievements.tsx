@@ -18,7 +18,7 @@ function DoneAchievements(props: any){
   const [Display, setDisplay] = useState<boolean>(false)
   _setList = setList
 
-  if (Display == false){
+  if (Display === false){
     asyncPutList()
   }
 

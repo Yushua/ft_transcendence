@@ -93,21 +93,16 @@ export class UserProfileService {
         return found;
       }
 
-      async changeUsername(username: string, id: string): Promise<UserProfile> {
-        const found = await this.findUserBy(id)
-        try {
+      async changeUsername(username: string, id: string){
+        var user:UserProfile = await this.userEntity.findOneBy({ username })
+        if (!user){
+          const found = await this.findUserBy(id)
           found.username = username;
           await this.userEntity.save(found);
         }
-        catch (error) {
-            if (error.code === '23505'){
-                throw new ConflictException(`account name "${username} was already in use`);
-            }
-            else {
-                throw new InternalServerErrorException(`account name "${error.code} was already in use, but the error is different`);
-            }
+        else {
+          throw new ConflictException(`account name "${username} was already in use`);
         }
-        return found;
       }
 
       //turn the username of the friend into an id, and then add it to the currect user
@@ -148,21 +143,12 @@ export class UserProfileService {
         //remove friend from user
         var found:UserProfile = await this.userEntity.findOneBy({id});
         found.friendList.splice(found.friendList.indexOf(idfriend), 1);
-        if (found.friendList == null)
+        if (found.friendList === null)
           found.friendList = [];
         await this.userEntity.save(found);
         //IF CHECKFRIEND INCLUDED the friend, then remove it,
         await this.FrienddListRemove(idfriend, id)
 
-        // if (found.CheckFrienddList.includes(idfriend)) {
-        //   found.CheckFrienddList.splice(found.CheckFrienddList.indexOf(idfriend), 1)
-        // }
-        // //tell the other user that you have removed them
-        // const found1 = await this.userEntity.findOneBy({id:idfriend});
-        // found1.otherfriendList.splice(found1.otherfriendList.indexOf(id), 1);
-        // if (found1.otherfriendList == null)
-        //   found1.otherfriendList = [];
-        // await this.userEntity.save(found1);
         found = await this.userEntity.findOneBy({id});
         return found;
       }
@@ -310,7 +296,7 @@ export class UserProfileService {
           (achievement) => achievement.nameAchievement === nameAchievement,
         );
 
-        if (achieve == undefined){
+        if (achieve === undefined){
           throw new HttpException(`achievement trying to add does NOT exist check the name {${nameAchievement}}`, HttpStatus.BAD_REQUEST);
         }
         achieve.pictureLink = pictureLink
@@ -425,8 +411,8 @@ export class UserProfileService {
         //set a limit on how many will be created, but only after testing
         const {status, message, userID} = addMessageToUSer
         if ((
-          status == "Achievement" && userprofile.YourAchievements == true) || (
-            status == "ServerMessage" && userprofile.YourMainMessages == true)){
+          status === "Achievement" && userprofile.YourAchievements === true) || (
+            status === "ServerMessage" && userprofile.YourMainMessages === true)){
           const user = await this.messageList.findOne({ where: { status, message, userID } });
           //if it does not exist, then don't create it
           if (!user) {

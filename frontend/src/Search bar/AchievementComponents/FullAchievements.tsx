@@ -21,7 +21,7 @@ var _setList:React.Dispatch<React.SetStateAction<string[][]>>
   _setList = setList
 
  _setList = setList
-  if (Display == false){
+  if (Display === false){
     asyncPutList()
   }
 

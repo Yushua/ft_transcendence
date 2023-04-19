@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import HTTP from '../Utils/HTTP';
-import { newWindow } from '../App';
 import OtherUserProfile from '../UserProfile/ProfilePages/OtherUserProfile';
 import { SetWindowProfile } from '../UserProfile/ProfileMainWindow';
 
@@ -15,13 +14,6 @@ async function getList(id:string){
 }
 
 var _setList:React.Dispatch<React.SetStateAction<string[][]>>
-
-type Props = {
-  width:number;
-  height:number;
-  id: string
-}
-
 
 function FriendListBar(props: any) {
   //get into page, get the entire list online
