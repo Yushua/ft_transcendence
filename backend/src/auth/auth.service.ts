@@ -118,6 +118,8 @@ export class AuthService {
        ["Superb Showing", `https://i.imgur.com/LFMQ3tP.jpg`, "Win a game of Pong 11-0!"],
        ["Now you are a winner times ten!", `https://i.imgur.com/LFMQ3tP.jpg`, "Win 10 games of Pong!"],
        ["Busy Admin", `https://i.imgur.com/LFMQ3tP.jpg`, "Be a chat room admin with at least 10 people."],
+       ["You played yourself!", `https://i.imgur.com/LFMQ3tP.jpg`, "Play a game versus yourself!"],
+
      ]
       // async AllAchievements():Promise<string[][]>{
       //   return this.list
