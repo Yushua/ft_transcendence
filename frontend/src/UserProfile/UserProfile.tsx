@@ -73,7 +73,7 @@ function UserProfilePage(props: any) {
               </div>  
             </div>
             <div style={{ display: 'flex', border: "solid black", padding: `${0.01*Width}px`, borderColor: "#3676cc", borderRadius: "5px"}}> <b>Achievemement Data</b> </div>
-            <div style={{width: `${blockWidth}px`, height: `${(Width - (0.03*Width))/2}px`, border: "solid black", overflow: "auto", marginLeft: `${marginLeft}px`, marginRight: `${marginRight}px`, marginTop: `${Width*0.005}px`, marginBottom: `${Width*0.02}px`, borderColor: "#3676cc", borderRadius: "5px"}}>
+            <div style={{width: `${blockWidth}px`, height: `${(Width - (0.02*Width))/2}px`, border: "solid black", overflow: "auto", marginLeft: `${marginLeft}px`, marginRight: `${marginRight}px`, marginTop: `${Width*0.005}px`, marginBottom: `${Width*0.02}px`, borderColor: "#3676cc", borderRadius: "5px"}}>
               <div style={{display: 'flex'}}>
                 <AchievementBar id={user.id} width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/>
               </div>
@@ -89,8 +89,8 @@ function UserProfilePage(props: any) {
             </div>
             {/* object */}
             <div style={{ display: 'flex', border: "solid black", padding: `${0.01*Width}px`, borderColor: "#3676cc", borderRadius: "5px"}}> <b>Inbox</b> </div>
-            {/* Button */}
-            <div style={{width: `${blockWidth}px`, height: `${(Width - (0.03*Width))/2}px`, border: "solid black", overflow: "auto", marginLeft: `${marginLeft}px`, marginRight: `${marginRight}px`, marginTop: `${Width*0.005}px`, marginBottom: `${Width*0.02}px`, borderColor: "#3676cc", borderRadius: "5px"}}>
+            {/* Button input Object*/}
+            <div style={{width: `${blockWidth}px`, height: `${(Width - (0.02*Width))/2}px`, border: "solid black", overflow: "auto", marginLeft: `${marginLeft}px`, marginRight: `${marginRight}px`, marginTop: `${Width*0.005}px`, marginBottom: `${Width*0.02}px`, borderColor: "#3676cc", borderRadius: "5px"}}>
                 <InboxBar id={user.id}  height={(Width - (0.02*Width))/2}/>
             </div>
           </div>
