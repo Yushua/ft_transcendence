@@ -40,9 +40,10 @@ async function asyncToggleGetName(){
   };
 
 
-export const Width: number = Math.trunc(window.screen.width * .5)
+export var Width: number = Math.trunc(window.screen.width * .5)
 
 export default function MainWindow() {
+	Width = Math.trunc(window.screen.width * .5)
 	const socket = React.useContext(WebsocketContext)
 	const [currentWindow, setWindow] = useState<string>("")
 	const [nameDisplay, setNameDisplay] = useState<string>("");

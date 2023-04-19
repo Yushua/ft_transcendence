@@ -54,8 +54,8 @@ function SearchBar() {
                         style={{ display: "inline-block", width: `${((Width*0.9) - (Width*0.9*0.03 * 3 * 2))/3}px`, height: `${Width*0.2}px`, marginLeft: `${Width*0.02}px`, marginRight: `${Width*0.02}px`, marginTop: `${Width*0.03}px`, marginBottom: `${Width*0.03}px` }}
                         onClick={() => handleButtonClick(option[3])}>
                           <img src={`${HTTP.HostRedirect()}pfp/${option[0]}`} alt="" style={{width: `${0.05*Width}px`, height: `${0.05*Width}px`, alignItems: 'center', marginTop: `${Width*0.03}px`, marginBottom: `${Width*0.03}px`}}/>
-                          <h2 >{`name   ${option[1]}`}</h2>
-                          <h2 >{`status ${option[2]}`}</h2>
+                          <h2 >{`${option[1]}`}</h2>
+                          <h2 >{`${option[2]}`}</h2>
                       </div>
                     ))}
               </div>

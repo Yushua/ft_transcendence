@@ -50,7 +50,7 @@ function InboxBar(props: any) {
     setDisplay(true)
   }
   var boxwidth:number = props.width*0.9
-  var buttonsize:number = ((Width*0.9) - (Width*0.9*0.03 * 6 * 2))/6
+  var buttonsize:number = ((Width*0.9) - (Width*0.9*0.03 * 6 * 2))/7
   var border:number = Width*0.005
   const handleButtonClick = (e: string) => {
     removeMessage(e)
@@ -58,21 +58,23 @@ function InboxBar(props: any) {
   {/* object around then text, then button*/}
     return (
         < >
+
           {ListSearchList.map((option, index) => (
             <div
-              style={{width: `${boxwidth}px`, height: `${buttonsize - (border*2)}px`, overflow: "hidden", textOverflow:"ellipsis", marginRight: `${props.width*0.02}px`, marginTop: `${props.width*0.02}px`, marginBottom: `${props.width*0.02}px`, borderColor: "#3676cc", borderRadius: "5px"}}>
+              style={{display: 'flex', alignItems: 'center', width: `${boxwidth}px`, height: `${buttonsize - (border*2)}px`, marginLeft:`${props.width*0.02}px` , marginRight: `${props.width*0.02}px`, marginTop: `${Width*0.005}px`, marginBottom: `${Width*0.005}px`, borderColor: "black", borderRadius: "5px"}}>
               <div
                 key={index}
-                style={{display: "inline-block", flex: 1, width: `${boxwidth - buttonsize - (border*4)}px`, height: `${buttonsize - border*2}px`}}
+                style={{objectFit: 'contain',  width: `${boxwidth - buttonsize - (border*4)}px`, height: `${buttonsize - border*2}px`, marginLeft:`${props.width*0.02}px`, marginRight:`${props.width*0.02}px`}}
                 >
                   <h2>{option.message}</h2>
               </div>
-              <button
-                style={{display: "inline-block", cursor: "pointer", width: `${buttonsize - border*2}px`, height: `${buttonsize - border*2}px`}}
+              <div
+                className='image_button'
+                style={{ width: `${buttonsize - border*2}px`, height: `${buttonsize - border*2}px`}}
                 onClick={() => handleButtonClick(option.id)}
               >
                 <h2 >X</h2>
-              </button>
+              </div>
             </div>
           ))}
         </>
