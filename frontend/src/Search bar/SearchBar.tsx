@@ -37,7 +37,7 @@ function SearchBar() {
   }
   const handleButtonClick = (e: any) => {
     var id:string = e
-    SetWindowProfile(<OtherUserProfile id={id} userId={User.ID}/>)
+    SetWindowProfile(<OtherUserProfile id={id} userId={User.ID}/>, true)
   };
     return (
         <div >
