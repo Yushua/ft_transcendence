@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { newWindow } from '../App';
 import { Width } from '../MainWindow/MainWindow';
 import OtherUserProfile from '../UserProfile/ProfilePages/OtherUserProfile';
 import HTTP from '../Utils/HTTP';

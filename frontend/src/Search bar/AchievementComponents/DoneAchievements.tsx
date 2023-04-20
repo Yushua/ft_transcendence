@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import HTTP from '../../Utils/HTTP';
 import User from '../../Utils/Cache/User';
 import FillSpaceComponentAchieve from '../FillSpaceComponent';
-import { Width } from '../../MainWindow/MainWindow';
 
 async function getAchieveDoneList():Promise<any>{
   const response = HTTP.Get(`user-profile/GetAchievementListDone/${User.ID}`, null, {Accept: 'application/json'})
@@ -30,7 +29,6 @@ function DoneAchievements(props: any){
    return (
     <>
       {ListSearchList.map((option, idx) => (
-
         <FillSpaceComponentAchieve option={option} idx={idx} amount={6}></FillSpaceComponentAchieve>
       ))}
     </>

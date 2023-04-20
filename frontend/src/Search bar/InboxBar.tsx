@@ -71,7 +71,6 @@ function InboxBar(props: any) {
     setShowModal(-1)
     removeMessage(e)
   };
-  {/* object around then text, then button*/}
     return (
         < >
 

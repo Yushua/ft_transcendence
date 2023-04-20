@@ -166,7 +166,7 @@ async function loginIntoOAuth(){
  * if valid, validate TWT
  */
 async function setupLoginPage(){
-  if (getCookie("accessToken") != undefined && getCookie("accessToken") != null){
+  if (getCookie("accessToken") !== undefined && getCookie("accessToken") !== null){
     //token is already made
     _setintraName(await asyncGetintraName())
     if ((await RefreshAuthentication()) === false){
@@ -175,7 +175,7 @@ async function setupLoginPage(){
     //if there already is one, set intraname
     setupLoginTWT()
   }
-  else if (window.location.href.split('code=')[1] != undefined){
+  else if (window.location.href.split('code=')[1] !== undefined){
     removeCookie('accessToken');
     setCookie('accessToken', await setLogin(),{ expires: 100000 });
     setupLoginPage()
