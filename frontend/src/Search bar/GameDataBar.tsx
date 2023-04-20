@@ -42,7 +42,7 @@ function GameDataBar(props: any) {
 
 	useEffect(() => {
 		GetData(props.id)
-	}, [])
+	}, [props.id])
 
 	return (
 		<div>

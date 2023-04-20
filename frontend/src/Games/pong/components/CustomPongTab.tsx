@@ -1,4 +1,4 @@
-import { Button, Box, Slider, Typography } from '@mui/material'
+import { Button } from '@mui/material'
 import React from 'react'
 import { JoinPrivateButton } from './JoinPrivateButton'
 import { CreateGameMenu, CreatingGameData } from './CreateGameMenu'

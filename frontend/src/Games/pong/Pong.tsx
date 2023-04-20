@@ -161,7 +161,7 @@ export const Pong = () => {
 			gameCanvas.height = 0
 			firstCall = false
 		}
-	},[socket])
+	},[])
 
 	/* BUTTON HANDLERS */
 	const leaveGame = () => {
