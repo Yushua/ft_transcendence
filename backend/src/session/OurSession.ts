@@ -22,7 +22,7 @@ export default class OurSession {
 			else
 				userEntry.socketIDs.push(socketID)
 			this._socketIDMap.set(socketID, user.id)
-			console.log(`User '${user.id}' connected: ${socketID}`)
+			// console.log(`User '${user.id}' connected: ${socketID}`)
 		}
 	}
 	
@@ -35,7 +35,7 @@ export default class OurSession {
 			this._userMap.delete(userID)
 			userEntry.socketIDs.splice(userEntry.socketIDs.indexOf(socketID), 1)
 		
-		console.log(`User '${userID}' disconnected: ${socketID}`)
+		// console.log(`User '${userID}' disconnected: ${socketID}`)
 	}
 	
 	static GameJoining(socketID: string, userID: string | null = null) {
@@ -43,7 +43,7 @@ export default class OurSession {
 		const userEntry = this._userMap.get(userID)
 		userEntry.state += 1
 		
-		console.log(`User '${userID}' joined a Game: ${socketID}`)
+		// console.log(`User '${userID}' joined a Game: ${socketID}`)
 	}
 	
 	static GameLeaving(socketID: string, userID: string | null = null) {
@@ -51,7 +51,7 @@ export default class OurSession {
 		const userEnty = this._userMap.get(userID)
 		userEnty.state -= 1
 		
-		console.log(`User '${userID}' left a Game: ${socketID}`)
+		// console.log(`User '${userID}' left a Game: ${socketID}`)
 	}
 }
 
