@@ -15,7 +15,7 @@ async function turningTWTOn(code:string){
         'Authorization': 'Bearer ' + getCookie("accessToken"),
         'Content-Type': 'application/json',
       },
-      method: 'GET's
+      method: 'GET'
     })
     if (!response.ok) {
       throw new Error(`Error! status: ${response.status}`);
