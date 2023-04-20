@@ -379,11 +379,11 @@ export class UserProfileService {
       }
 
       async GetUserAchievementFull(id:string):Promise<UserAchievement[]> {
-        console.log(await this.achievEntity
+        await this.achievEntity
           .createQueryBuilder('UserAchievement')
           .leftJoin('UserAchievement.userProfile', 'userProfile')
           .where('userProfile.id = :id', { id })
-          .getMany())
+          .getMany()
         return await this.achievEntity
         .createQueryBuilder('UserAchievement')
         .leftJoin('UserAchievement.userProfile', 'userProfile')

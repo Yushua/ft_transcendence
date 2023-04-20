@@ -197,7 +197,6 @@ export class UserProfileController {
         @Get('GetMessageList')
         @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
         async GetMessageList( @Request() req: Request ):Promise<MessageList[]> {
-            console.log(await this.userServices.getMessageList(req["user"].id))
             return  await this.userServices.getMessageList(req["user"].id)
         }
 
