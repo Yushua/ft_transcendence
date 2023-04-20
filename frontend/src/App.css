@@ -64,6 +64,11 @@
 	border-color: #e9f6fb;
 }
 
+.normal_object {
+  border: solid;
+	border-color: #e9f6fb;
+}
+
 .image_button:hover {
 	border-color: #3676cc;
 }

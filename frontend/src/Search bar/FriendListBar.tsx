@@ -36,12 +36,13 @@ function FriendListBar(props: any) {
           {ListSearchList.map((option, index) => (
               <Box
                 fontFamily={"'Courier New', monospace"}
-                fontSize={"150%"}
+                fontSize={"100%"}
                 marginTop={`${Width*0.3}px`}
                 key={index}
-                style={{ alignItems: 'center', justifyContent: "center", width: `${widthButton}px`, marginLeft: `${width*0.02}px`, marginRight: `${width*0.02}px`, marginTop: `${width*0.02}px`, marginBottom: `${width*0.02}px`}}
-                onClick={() => handleButtonClick(option[3])}>
-                  <img src={`${HTTP.HostRedirect()}pfp/${option[0]}`} alt="" className='image_button' style={{width: `${widthButton - width*0.03}px`, height: `${widthButton - width*0.03}px`}}/>
+                className='normal_object'
+                style={{ alignItems: 'center', justifyContent: "center", width: `${widthButton}px`, height: `${1.7*widthButton}px`, marginLeft: `${width*0.02}px`, marginRight: `${width*0.02}px`, marginTop: `${width*0.02}px`, marginBottom: `${width*0.02}px`}}
+                >
+                  <img onClick={() => handleButtonClick(option[3])} src={`${HTTP.HostRedirect()}pfp/${option[0]}`} alt="" className='image_button' style={{width: `${widthButton - width*0.03}px`, height: `${widthButton - width*0.03}px`}}/>
                   <h2 >{`${option[1]}`}</h2>
                   <h2 >{`${option[2]}`}</h2>
               </Box>
