@@ -60,13 +60,13 @@ function NotificationsComponent(props: any){
   }
   
     if (props.buttonstatus === 2){
-      console.log(`buttonstatus check {${props.buttonstatus}}`)
+      // console.log(`buttonstatus check {${props.buttonstatus}}`)
       return (
         <></>
       )
     }
     return (
-        console.log(`buttonstatus here {${ButtonStatus}}`),
+        // console.log(`buttonstatus here {${ButtonStatus}}`),
         <>
             {ButtonStatus === 2 ? (
             <button

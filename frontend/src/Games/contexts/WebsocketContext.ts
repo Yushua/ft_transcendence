@@ -2,7 +2,6 @@ import { createContext } from "react"
 import { io, Socket } from 'socket.io-client'
 import HTTP from '../../Utils/HTTP'
 import { getCookie } from "typescript-cookie"
-import { SetMainWindow } from "../../MainWindow/MainWindow";
 import { JoinedGame } from "../pong/Pong";
 
 export function ConenctSocket() {
