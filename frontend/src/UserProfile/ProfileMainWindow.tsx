@@ -38,6 +38,12 @@ export function SetWindowProfile(window: any, add_to_history = false) {
     })
   }
 }
+function handleTabButtons(window: string) {
+  SetMainProfileWindow(window)
+  if (document.getElementById("OtherProfilePage"))
+    OurHistory.Add()
+}
+
 var _setMainWindow: React.Dispatch<React.SetStateAction<string>> | null = null
 var _setDisplay: React.Dispatch<React.SetStateAction<boolean>>
 var _setWindow: any
@@ -87,16 +93,12 @@ function ProfileMainWindow() {
     <div style={{width: `${Width * .9}px`, padding: "0px", margin: "0px"}}>
       <div>
         <Tabs value={mainWindow} centered>
-          <Tab value="profile" label="profile" onClick={() => {
-            SetMainProfileWindow("profile")
-            if (document.getElementById("OtherProfilePage"))
-              OurHistory.Add()
-          }}/>
-          <Tab value="search" label="search user" onClick={() => SetMainProfileWindow("search")}/>
-          <Tab value="TWTDisplay" label="Authentication" onClick={() => SetMainProfileWindow("TWTDisplay")}/>
-          <Tab value="leaderBoard" label="LeaderBoard" onClick={() => SetMainProfileWindow("leaderBoard")}/>
-          <Tab value="Achievements" label="Achievements" onClick={() => SetMainProfileWindow("Achievements")}/>
-          <Tab value="settings" label="settings" onClick={() => SetMainProfileWindow("settings")}/>
+          <Tab value="profile" label="profile" onClick={() => handleTabButtons("profile")}/>
+          <Tab value="search" label="search user" onClick={() => handleTabButtons("search")}/>
+          <Tab value="TWTDisplay" label="Authentication" onClick={() => handleTabButtons("TWTDisplay")}/>
+          <Tab value="leaderBoard" label="LeaderBoard" onClick={() => handleTabButtons("leaderBoard")}/>
+          <Tab value="Achievements" label="Achievements" onClick={() => handleTabButtons("Achievements")}/>
+          <Tab value="settings" label="settings" onClick={() => handleTabButtons("settings")}/>
         </Tabs>
       </div>
       <div style={{display: "table", width: "100%", height: "100%", color: "black"}}>
