@@ -99,10 +99,11 @@ export default function MemberProfile() {
 					<Button variant="contained"
 						style={{width: "100%", height: `${ChatLineHeight}px`, boxSizing: "border-box"}}
 						onClick={() => {
-							SetMainWindow("profile", false)
-        					setTimeout(() => {
-								SetWindowProfile(<OtherUserProfile id={_memberProfileID}/>, true)
-							}, 0);
+							SetMainWindow("profile", _memberProfileID === User.ID)
+        					if (_memberProfileID !== User.ID)
+								setTimeout(async () => {
+									SetWindowProfile(<OtherUserProfile id={_memberProfileID}/>, true)
+								}, 0);
 						}}
 						>View Profile</Button>
 				</div>
