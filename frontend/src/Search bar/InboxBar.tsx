@@ -60,21 +60,21 @@ function InboxBar(props: any) {
         < >
 
           {ListSearchList.map((option, index) => (
-            <div
-              style={{display: 'flex', alignItems: 'center', width: `${boxwidth}px`, height: `${buttonsize - (border*2)}px`, marginLeft:`${props.width*0.02}px` , marginRight: `${props.width*0.02}px`, marginTop: `${Width*0.005}px`, marginBottom: `${Width*0.005}px`, borderColor: "black", borderRadius: "5px"}}>
-              <div
-                key={index}
-                style={{objectFit: 'contain',  width: `${boxwidth - buttonsize - (border*4)}px`, height: `${buttonsize - border*2}px`, marginLeft:`${props.width*0.02}px`, marginRight:`${props.width*0.02}px`}}
+            <div style={{display: 'flex', alignItems: 'center'}}>
+                <div
+                  className='image_button'
+                  key={index}
+                  style={{display: 'flex', overflow: "hidden", textOverflow: `ellipsis`, alignItems: 'center', minWidth: `${boxwidth - buttonsize - border*2}px`, width: `${boxwidth - buttonsize - border*2}px`, height: `${buttonsize - (border*2)}px`, marginLeft:`${props.width*0.02}px` , marginRight: `${props.width*0.02}px`, marginTop: `${Width*0.005}px`, marginBottom: `${Width*0.005}px`}}
+                  >
+                    <h2>{option.message}</h2>
+                </div>
+                <div
+                  className='image_button'
+                  style={{ display: 'flex', width: `${buttonsize - border*2}px`, height: `${buttonsize - border*2}px`}}
+                  onClick={() => handleButtonClick(option.id)}
                 >
-                  <h2>{option.message}</h2>
-              </div>
-              <div
-                className='image_button'
-                style={{ width: `${buttonsize - border*2}px`, height: `${buttonsize - border*2}px`}}
-                onClick={() => handleButtonClick(option.id)}
-              >
-                <h2 >X</h2>
-              </div>
+                  <h2 >X</h2>
+                </div>
             </div>
           ))}
         </>

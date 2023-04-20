@@ -15,7 +15,7 @@ async function turningTWTOn(code:string){
         'Authorization': 'Bearer ' + getCookie("accessToken"),
         'Content-Type': 'application/json',
       },
-      method: 'GET'
+      method: 'GET's
     })
     if (!response.ok) {
       throw new Error(`Error! status: ${response.status}`);
@@ -26,18 +26,18 @@ async function turningTWTOn(code:string){
       setCookie(`TWToken${_intraName}`, await result["TWT"], { expires: 100000 });
     }
     else {
-        alert("wrong code input, try again")
+      _setMessage("wrong code input, try again")
         _setInputValue("")
     }
   } catch (error) {
-    alert("wrong code input, try again")
+    _setMessage("wrong code input, try again")
     _setInputValue("")
   }
 }
 async function handleSubmit(event:any){
   event.preventDefault();
   await turningTWTOn(_inputValue)
-  alert("wrong code input, try again")
+  _setMessage("wrong code input, try again")
   _setInputValue("")
 };
 
@@ -51,14 +51,17 @@ async function asyncGetName():Promise<string> {
 var _inputValue: string
 var _setInputValue: React.Dispatch<React.SetStateAction<string>>
 var _intraName: string
+var _setMessage:React.Dispatch<React.SetStateAction<string>>
 
 //get the username in here
 function TWTCheckLoginPage(){
   const [inputValue, setInputValue] = useState("");
   const [intraName, setintraName] = useState<string>('');
+  const [Message, setMessage] = useState<string>("enable two Factor Authentication to login");
   _inputValue = inputValue
   _setInputValue = setInputValue
   _intraName = intraName
+  _setMessage = setMessage
   const handleInputChange = (event:any) => {
     setInputValue(event.target.value);
   };
@@ -77,7 +80,7 @@ function TWTCheckLoginPage(){
           fontFamily={"'Courier New', monospace"}
           fontSize={"200%"}
           marginTop={`${Width*0.3}px`}>
-        <div> {"enable two Factor Authentication to login"} </div>
+        <div> {Message} </div>
       <input type="text" value={inputValue} onChange={handleInputChange} />
 
       <button type="submit">Submit Code</button>

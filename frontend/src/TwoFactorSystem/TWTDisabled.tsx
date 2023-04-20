@@ -6,6 +6,7 @@ import { SetWindowProfile } from '../UserProfile/ProfileMainWindow';
 import TWTEnabled from './TWTEnabled';
 import { Width } from '../MainWindow/MainWindow';
 import { Box } from '@mui/material';
+import { useState } from 'react';
 
 async function setNewTWT(){
   try {
@@ -32,7 +33,7 @@ async function setNewTWT(){
       setCookie(`TWToken${User.intraname}`, TWToken,{ expires: 100000 });
     }
   } catch (error) {
-    alert("something gone wrong while changing your TWT cookie")
+    _setMessage("something gone wrong while changing your TWT cookie")
   }
 }
 
@@ -54,7 +55,7 @@ async function ChangeUserStatusTWTFalse(){
       SetWindowProfile(<TWTEnabled/>)
     }
   } catch (error) {
-    alert("something gone wrong while changing your TWT cookie")
+    _setMessage("something gone wrong while changing your TWT cookie")
   }
 }
 
@@ -63,15 +64,19 @@ async function turnTWTFalse(){
   await ChangeUserStatusTWTFalse()
 }
 
+var _setMessage:React.Dispatch<React.SetStateAction<string>>
+
 function TWTDisabled(){
-  
+  const [Message, setMessage] = useState<string>("disable tow factor authentication");
+
+  _setMessage = setMessage
   return (
     <center>
       <Box
           fontFamily={"'Courier New', monospace"}
           fontSize={"200%"}
           marginTop={`${Width*0.1}px`}>
-        <div> {"disable tow factor authentication"} </div>
+        <div> {Message} </div>
         <button onClick={turnTWTFalse}>Cancle</button>
       </Box>
     </center>

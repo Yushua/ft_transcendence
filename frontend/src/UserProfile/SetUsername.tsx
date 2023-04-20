@@ -54,7 +54,7 @@ function SetUsername(){
             fontFamily={"'Courier New', monospace"}
             fontSize={"200%"}
             marginTop={`${Width*0.3}px`}>
-              <div> Set your username to continue </div>
+              <div> {Message} </div>
           <input type="text" value={value} onChange={handleChange} />
           {value.length > 4 && value.length <= 20 && (
           <button type="submit">Submit</button> )}

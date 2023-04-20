@@ -6,19 +6,6 @@ import MainWindow, { Width } from '../MainWindow/MainWindow';
 import HTTP from '../Utils/HTTP';
 import { Box } from '@mui/material';
 
-export async function asyncGetTWTStatusTWT(TWT:string):Promise<boolean> {
-  try {
-    const response = HTTP.Get(`auth/checkStatusTWT/${getCookie(`TWToken${_intraName}`)}`, null, {Accept: 'application/json'})
-    var result = await JSON.parse(response)
-    console.log("TWT token status in TWT check " + result["status"])
-    return await result["status"]
-  } catch (error) {
-    alert(`${error}, Token is out of date Loginpage`)
-    //react router
-  }
-  return false
-}
-
 async function turningTWTOn(code:string){
   console.log("logging in with TWT")
   try {
