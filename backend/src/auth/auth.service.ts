@@ -184,7 +184,7 @@ export class AuthService {
           await this.userProfileEntityRepos.save(user);
           let addMessageOtherUser:AddMessageDTO = {
             status: "ServerMessage", 
-            message: `Welcome ${username} to our new website. you cna click these emssages in the inbox bar to have them removed`,
+            message: `Welcome ${username}, remove messages in inbox by clicking on them`,
             userID: user.id
           }
           await this.userProlfileServices.SetupSendSingleMessage(addMessageOtherUser, user.id)

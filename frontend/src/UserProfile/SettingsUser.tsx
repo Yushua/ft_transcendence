@@ -46,7 +46,7 @@ export interface YourFormElement extends HTMLFormElement {
             marginTop={`${Width*0.05}px`}>
           <div> {message} </div>
           <input type="text" value={value} onChange={handleChange} />
-          {value.length > 4 && value.length <= 20 && (
+          {value.length > 4 && value.length <= 10 && (
           <button type="submit">Submit</button> )}
           <div> <ProfilePicture/> </div>
       </Box>

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import HTTP from '../Utils/HTTP';
 import OtherUserProfile from '../UserProfile/ProfilePages/OtherUserProfile';
 import { SetWindowProfile } from '../UserProfile/ProfileMainWindow';
+import { Box } from '@mui/material';
+import { Width } from '../MainWindow/MainWindow';
 
 export async function asyncAchievmentList(id:string){
   const response = HTTP.Get(`user-profile/GetFriendList/${id}`, null, {Accept: 'application/json'})
@@ -30,19 +32,21 @@ function FriendListBar(props: any) {
     SetWindowProfile(<OtherUserProfile id={e}/>, true)
   };
     return (
-        <div >
+        <>
           {ListSearchList.map((option, index) => (
-              <div
-                className='object_button'
+              <Box
+                fontFamily={"'Courier New', monospace"}
+                fontSize={"150%"}
+                marginTop={`${Width*0.3}px`}
                 key={index}
-                style={{ display: "inline-block", width: `${widthButton}px`, marginLeft: `${width*0.02}px`, marginRight: `${width*0.02}px`, marginTop: `${width*0.02}px`, marginBottom: `${width*0.02}px`}}
+                style={{ alignItems: 'center', justifyContent: "center", width: `${widthButton}px`, marginLeft: `${width*0.02}px`, marginRight: `${width*0.02}px`, marginTop: `${width*0.02}px`, marginBottom: `${width*0.02}px`}}
                 onClick={() => handleButtonClick(option[3])}>
-                  <img src={`${HTTP.HostRedirect()}pfp/${option[0]}`} alt="" style={{width: `${widthButton - width*0.03}px`, height: `${widthButton - width*0.03}px`, border: "4px solid black"}}/>
+                  <img src={`${HTTP.HostRedirect()}pfp/${option[0]}`} alt="" className='image_button' style={{width: `${widthButton - width*0.03}px`, height: `${widthButton - width*0.03}px`}}/>
                   <h2 >{`${option[1]}`}</h2>
                   <h2 >{`${option[2]}`}</h2>
-              </div>
+              </Box>
           ))}
-        </div>
+        </>
     )
 }
 
