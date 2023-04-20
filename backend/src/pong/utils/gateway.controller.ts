@@ -217,7 +217,7 @@ export class MyGateway implements OnModuleInit {
 			var _IDs = game[1][1]
 			if (user.id === _IDs[IDs.p1_userID]) { //if user left game we dont let him re-join
 				if (_IDs[IDs.p1_socket_id] === 'left') {
-					break
+					continue
 				}
 				else if (_IDs[IDs.p1_socket_id] === 'disconnected') { //if user disconnected from game he joins with new socket id
 					_IDs[IDs.p1_socket_id] = client.id
@@ -231,7 +231,7 @@ export class MyGateway implements OnModuleInit {
 			}
 			if (user.id === _IDs[IDs.p2_userID]) {
 				if (_IDs[IDs.p2_socket_id] === 'left') {
-					break
+					continue
 				}
 				else if (_IDs[IDs.p2_socket_id] === 'disconnected') {
 					_IDs[IDs.p2_socket_id] = client.id
