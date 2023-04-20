@@ -104,7 +104,7 @@ export default function MainWindow() {
 							{/* Avatar */}
 							<Box sx={{ position: "absolute", right: "0px" }}>
 								<IconButton sx={{ p: 0 }} onClick={() => SetMainWindow("profile")}>
-									<img alt="profile-picture" src={User.ID !== "" ? `${HTTP.HostRedirect()}pfp/${NameStorage.UserPFP.Get(User.ID)}` : ""}
+									<img alt="" src={User.ID !== "" ? `${HTTP.HostRedirect()}pfp/${NameStorage.UserPFP.Get(User.ID)}` : ""}
 										style={{width: `${Width * .04}px`, height: `${Width * .04}px`, borderRadius: "50%"}}/>
 								</IconButton>
 							</Box>

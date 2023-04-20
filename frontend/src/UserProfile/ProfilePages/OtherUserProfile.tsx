@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import '../../App.css';
-
 import HTTP from '../../Utils/HTTP';
 import { Width } from '../../MainWindow/MainWindow';
 import AchievementBar from '../../Search bar/AchievementBar';
@@ -85,7 +84,7 @@ function OtherUserProfile(props: any){
       <center>
           <div id="OtherProfilePage" style={{width: `${Width}px`}}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <img src={`${HTTP.HostRedirect()}pfp/${myPFP}`} alt="" style={{width: `${0.1*Width}px`, height: `${0.1*Width}px`, alignItems: 'center', padding: `${0.01*Width}px`}}/>
+                  <img src={myPFP !== "" ? `${HTTP.HostRedirect()}pfp/${myPFP}` : ""} alt="" style={{width: `${0.1*Width}px`, height: `${0.1*Width}px`, alignItems: 'center', padding: `${0.01*Width}px`}}/>
                   <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: `${0.01*Width}px`}}>
                     <h2 >{`Welcome: ${myUsername}`}</h2>
                     {/* make a check if its already there. follow or unfollow */}
