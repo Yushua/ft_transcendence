@@ -7,6 +7,8 @@ import HTTP from "../../../../Utils/HTTP";
 import OurHistory from "../../../../Utils/History";
 import { Button } from "@mui/material";
 import { ChatLineHeight, ChatWindowHeight } from "../../MainChatWindow";
+import ButtonAsyncText from "../../../../Utils/ButtonAsyncText";
+import ImgAsyncUrl from "../../../../Utils/ImgAsyncUrl";
 
 export async function asyncUpdateMemberList() {
 	if (!!_setMembers)
@@ -16,14 +18,15 @@ export async function asyncUpdateMemberList() {
 function GenerateRoomListJSX(): JSX.Element[] {
 	return ChatRoom.MemberIDs.map(memberID => {
 		return (<div key={memberID}>
-			<img
-				src={`${HTTP.HostRedirect()}pfp/${NameStorage.UserPFP.Get(memberID)}`}
+			<ImgAsyncUrl
+				asyncUrl={async () => `${HTTP.HostRedirect()}pfp/${await NameStorage.UserPFP.asyncGet(memberID)}`}
 				style={{width: `${ChatLineHeight}px`, height: `${ChatLineHeight}px`, borderRadius: "50%"}}
 			/>
-			<Button variant="contained"
-			style={{height: `${ChatLineHeight}px`, width: "80%", textAlign: "left"}}
-			onClick={() => ChangeMemberWindow(memberID)}>
-				{NameStorage.User.Get(memberID)}</Button>
+			<ButtonAsyncText variant="contained"
+				style={{height: `${ChatLineHeight}px`, width: "80%", textAlign: "left"}}
+				onClick={() => ChangeMemberWindow(memberID)}
+				asyncText={() => NameStorage.User.asyncGet(memberID)}
+			/>
 		</div>)
 	})
 }

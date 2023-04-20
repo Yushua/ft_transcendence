@@ -7,6 +7,7 @@ import { Button } from "@mui/material";
 import { ChatLineHeight, ChatWindowHeight } from "../../MainChatWindow";
 import ChatUser from "../../../../Utils/Cache/ChatUser";
 import { socket } from "../../../../Games/contexts/WebsocketContext";
+import ImgAsyncUrl from "../../../../Utils/ImgAsyncUrl";
 
 var roomCache: Map<string, {lastCount: number, jsx: JSX.Element[]}> = new Map<string, {lastCount: number, jsx: JSX.Element[]}>()
 var _chatLog: JSX.Element[] = []
@@ -57,7 +58,21 @@ export async function asyncUpdateChatLog() {
 			target = 30
 		
 		for (let page = 1; count < target; page++) {
-			const msgs = await JSON.parse(HTTP.Get(`chat/msg/${ChatRoom.ID}/-${page}`))
+			var msgs: any
+			try {
+				const res = HTTP.Get(`chat/msg/${ChatRoom.ID}/-${page}`)
+				msgs = await JSON.parse(res)
+			} catch (error) {
+				console.log(error.status)
+				if (error.status !== 429)
+					return
+				_setChatLog([<div key="key">Loading...</div>])
+				scrollDown(0)
+				setTimeout(() => {
+					asyncUpdateChatLog()
+				}, 1250);
+				return
+			}
 			
 			if (msgs.length == 0)
 				break
@@ -77,8 +92,8 @@ export async function asyncUpdateChatLog() {
 								>Join game: {msgs[i].Message}</Button>
 							</div> :
 							<div key={_reactKeyThing++} style={{textAlign: "left"}}>
-								<img
-									src={`${HTTP.HostRedirect()}pfp/${NameStorage.UserPFP.Get(msgs[i].OwnerID)}`}
+								<ImgAsyncUrl
+									asyncUrl={async () => `${HTTP.HostRedirect()}pfp/${await NameStorage.UserPFP.asyncGet(msgs[i].OwnerID)}`}
 									style={{width: `${ChatLineHeight * .8}px`, height: `${ChatLineHeight * .8}px`, borderRadius: "50%"}}
 								/>
 								<b>{`${NameStorage.User.Get(msgs[i].OwnerID)}`}</b>

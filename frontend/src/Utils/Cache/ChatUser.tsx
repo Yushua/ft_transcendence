@@ -17,7 +17,8 @@ export default class ChatUser {
 	static async asyncUpdate(userID: string) {
 		if (userID === "")
 			return
-		const user = await JSON.parse(HTTP.Get(`chat/user`))
+		const res = HTTP.Get(`chat/user`)
+		const user = await JSON.parse(res)
 		if (!!user) {
 			this._chatUser = user
 			ChatUserEvent.SubscribeServerSentEvent(`chat/event/user-${userID}`)

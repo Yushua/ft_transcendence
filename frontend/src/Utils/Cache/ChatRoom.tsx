@@ -23,7 +23,8 @@ export default class ChatRoom {
 		OurHistory.ClearEvent.Subscribe(() => ChatRoom.Clear())
 		if (roomID === "")
 			return
-		const room = await JSON.parse(HTTP.Get(`chat/room/${roomID}`)) ?? null
+		const res = HTTP.Get(`chat/room/${roomID}`)
+		const room = await JSON.parse(res) ?? null
 		if (!!room) {
 			const oldID = this._chatRoom?.id;
 			this._chatRoom = room

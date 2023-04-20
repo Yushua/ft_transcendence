@@ -7,6 +7,8 @@ import HTTP from "../../../../Utils/HTTP";
 import { Button } from "@mui/material";
 import { ChatLineHeight, ChatWindowHeight } from "../../MainChatWindow";
 import ChatUser from "../../../../Utils/Cache/ChatUser";
+import ButtonAsyncText from "../../../../Utils/ButtonAsyncText";
+import ImgAsyncUrl from "../../../../Utils/ImgAsyncUrl";
 
 export async function asyncUpdateAddFriendList() {
 	if (!!_setFriends)
@@ -20,8 +22,8 @@ function GenerateAddFriendJSX(): JSX.Element[] {
 			ChatRoom.BanIDs.includes(friendID)
 			?
 			<div key={friendID}>
-				<img
-					src={`${HTTP.HostRedirect()}pfp/${NameStorage.UserPFP.Get(friendID)}`}
+				<ImgAsyncUrl
+					asyncUrl={async () => `${HTTP.HostRedirect()}pfp/${await NameStorage.UserPFP.asyncGet(friendID)}`}
 					style={{width: `${ChatLineHeight}px`, height: `${ChatLineHeight}px`, borderRadius: "50%"}}
 				/>
 				<Button variant="outlined"
@@ -30,11 +32,11 @@ function GenerateAddFriendJSX(): JSX.Element[] {
 					>{"[ Banned ]"}</Button></div>
 			:
 			<div key={friendID}>
-				<img
-					src={`${HTTP.HostRedirect()}pfp/${NameStorage.UserPFP.Get(friendID)}`}
+				<ImgAsyncUrl
+					asyncUrl={async () => `${HTTP.HostRedirect()}pfp/${await NameStorage.UserPFP.asyncGet(friendID)}`}
 					style={{width: `${ChatLineHeight}px`, height: `${ChatLineHeight}px`, borderRadius: "50%"}}
 				/>
-				<Button variant="outlined"
+				<ButtonAsyncText variant="outlined"
 					style={{height: `${ChatLineHeight}px`, width: "80%", textAlign: "left"}}
 					onClick={async () => {
 						await HTTP.asyncPatch(`chat/room/${ChatRoom.ID}/${friendID}`, null, null, () => {},
@@ -42,7 +44,8 @@ function GenerateAddFriendJSX(): JSX.Element[] {
 							alert((await JSON.parse(error.responseText)).message)
 						})
 					}}
-					>{NameStorage.User.Get(friendID)}</Button></div>
+					asyncText={() => NameStorage.User.asyncGet(friendID)}
+				/></div>
 		)
 }
 

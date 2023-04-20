@@ -7,6 +7,7 @@ import NameStorage from "../../../../Utils/Cache/NameStorage";
 import { ChatLineHeight, ChatWindowHeight, asyncChangeRoom } from "../../MainChatWindow";
 import { Button } from "@mui/material";
 import { UnblockUser } from "../Members/MemberProfile";
+import ButtonAsyncText from "../../../../Utils/ButtonAsyncText";
 
 export async function asyncUpdateFriendsList() {
 	if (!!_setFriends)
@@ -18,12 +19,13 @@ function GenerateFriedListJSX(): JSX.Element[] {
 		.filter(friendID => !User.Friends.includes(friendID))
 		.concat(User.Friends)
 		.map(friendID => <div key={friendID}>
-		<Button 
+		<ButtonAsyncText
 			variant={ChatRoom.IsRoomOfFriend(friendID) ? "contained" : "text"}
 			id={friendID}
 			style={{height: `${ChatLineHeight}px`, width: "100%", textAlign: "left"}}
-			onClick={_ => _changeToFriendRoom(friendID)}
-		>{NameStorage.User.Get(friendID)}</Button></div>
+			onClick={() => _changeToFriendRoom(friendID)}
+			asyncText={() => NameStorage.User.asyncGet(friendID)}
+		/></div>
 	)
 }
 

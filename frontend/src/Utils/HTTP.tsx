@@ -97,28 +97,32 @@ export default class HTTP {
 	}
 	
 	static async asyncSendRequest(
-			method: string,
-			url: string,
-			body: string | object | null,
-			hdr: object | null,
-			callback: ((msg: XMLHttpRequest) => any) | null,
-			error: ((msg: XMLHttpRequest) => any) | null) {
+				method: string,
+				url: string,
+				body: string | object | null,
+				hdr: object | null,
+				callback: ((msg: XMLHttpRequest) => any) | null,
+				error: ((msg: XMLHttpRequest) => any) | null)
+			: Promise<XMLHttpRequest> {
 		var [req, finalBody] = this._setupRequest(method, url, body, hdr, true)
-		req.onload = function(ev) {
-			if (req.status === 401) {
-				User.Clear();
-				ChatUser.Clear();
-				ChatRoom.Clear();
-				removeCookie('accessToken');
-				newWindow(<ErrorPage/>)
-				return
+		return new Promise((res, err) => {
+			req.onload = function(ev) {
+				if (req.status === 401) {
+					User.Clear();
+					ChatUser.Clear();
+					ChatRoom.Clear();
+					removeCookie('accessToken');
+					newWindow(<ErrorPage/>)
+					return
+				}
+				if (!!callback && req.status < 300)
+					callback(this)
+				else if (!!error)
+					error(this)
+				res(req)
 			}
-			if (!!callback && req.status < 300)
-				callback(this)
-			else if (!!error)
-				error(this)
-		}
-		req.send(finalBody)
-		return req
+			req.onerror = () => err(req)
+			req.send(finalBody)
+		})
 	}
 }

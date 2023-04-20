@@ -18,7 +18,8 @@ export default class User {
 	static async asyncUpdate(userID: string) {
 		if (userID === "")
 			return
-		const user = await JSON.parse(HTTP.Get(`user-profile/user/${userID}`))
+		const res = HTTP.Get(`user-profile/user/${userID}`)
+		const user = await JSON.parse(res)
 		this._ManualUpdate(user)
 	}
 

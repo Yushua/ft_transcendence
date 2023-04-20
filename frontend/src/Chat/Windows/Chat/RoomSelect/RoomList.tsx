@@ -4,6 +4,7 @@ import ChatRoom from "../../../../Utils/Cache/ChatRoom";
 import NameStorage from "../../../../Utils/Cache/NameStorage";
 import { ChatLineHeight, ChatWindowHeight, asyncChangeRoom } from "../../MainChatWindow";
 import { Button } from "@mui/material";
+import ButtonAsyncText from "../../../../Utils/ButtonAsyncText";
 
 export async function asyncUpdateRoomList() {
 	if (!!_setRooms)
@@ -12,13 +13,15 @@ export async function asyncUpdateRoomList() {
 
 function GenerateRoomListJSX(): JSX.Element[] {
 	return ChatUser.ChatRoomsIn.map(roomID => <div key={roomID}>
-		<Button
+		<ButtonAsyncText
 			variant={roomID == ChatRoom.ID ? "contained" : "text"}
 			style={{height: `${ChatLineHeight}px`, width: "100%", textAlign: "left"}}
-			onClick={_ => asyncChangeRoom(roomID)}
-		>{NameStorage.Room.Get(roomID)}</Button></div>
+			onClick={() => asyncChangeRoom(roomID)}
+			asyncText={() => NameStorage.Room.asyncGet(roomID)}
+		/></div>
 	)
 }
+// {NameStorage.Room.Get(roomID)}
 
 var _setRooms: React.Dispatch<React.SetStateAction<JSX.Element[]>> | null = null
 var _firstRender = true
