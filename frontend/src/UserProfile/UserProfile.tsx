@@ -53,7 +53,7 @@ function UserProfilePage(props: any) {
       <div className={"MainWidnow"} style={{width: `${Width * .9}px`, border: "solid", borderColor: "#3676cc", borderRadius: "5px"}}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <img src={`${HTTP.HostRedirect()}pfp/${NameStorage.UserPFP.Get(user.id)}`}
-            alt="profile-picture"
+            alt="profile-pic"
             style={{width: `${0.1*Width}px`, height: `${0.1*Width}px`, alignItems: 'center', padding: `${0.01*Width}px`, borderRadius: `50%`}}/>
 
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: `${0.01*Width}px`, color: "black"}}>
