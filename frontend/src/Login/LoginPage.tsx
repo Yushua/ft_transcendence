@@ -142,8 +142,22 @@ export async function asyncGetTWTStatus(TWT: string):Promise<boolean> {
   return false
 }
 
-const loginIntoOAuth = () => {
-  window.location.replace('https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-c73b865f02b3cf14638e1a50c5caa720828d13082db6ab753bdb24ca476e1a4c&redirect_uri=http%3A%2F%2Ff1r3s13%3A4242%2F&response_type=code');
+//when login in for the first time, this is the first function set. logs into intra and redirects back
+async function loginIntoOAuth(){
+  try {
+    const response = HTTP.Get(`auth/authGetLink`, null, {Accept: 'application/json'})
+    var result = await JSON.parse(response)
+    if (result["status"] === true){
+      window.location.replace(result["link"]);
+    }
+    else {
+      alert(".env file in backend is wrong")
+      newWindow(<ErrorPage/>)
+    }
+  } catch (error) {
+    alert("error in get response")
+    newWindow(<ErrorPage/>)
+  }
 }
 
 /**

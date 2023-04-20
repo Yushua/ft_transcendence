@@ -11,6 +11,14 @@ export class AuthController {
         private AuthService: AuthService,
     ) {}
     
+    @Get('authGetLink')
+    async authGetLink(@Request() req: Request){
+        if (process.env.LinkRedirect === undefined || process.env.LinkRedirect === ""){
+            return { status: false }
+        }
+        return {status:  true, link: process.env.LinkRedirect}
+    }
+
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     @Get('getQRCode')
     async getQRCode(@Request() req: Request, @Res() response){
