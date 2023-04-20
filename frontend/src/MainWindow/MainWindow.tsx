@@ -9,7 +9,7 @@ import { AppBar, Box, Button, Container, IconButton, Toolbar } from "@mui/materi
 import NameStorage from "../Utils/Cache/NameStorage";
 import { WebsocketContext } from "../Games/contexts/WebsocketContext";
 import MainChatWindow from "../Chat/Windows/MainChatWindow";
-import ProfileMainWindow, { SetMainProfileWindow } from "../UserProfile/ProfileMainWindow";
+import ProfileMainWindow from "../UserProfile/ProfileMainWindow";
 
 export async function asyncGetNameExport():Promise<string> {
 	const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
@@ -104,7 +104,7 @@ export default function MainWindow() {
 							{/* Avatar */}
 							<Box sx={{ position: "absolute", right: "0px" }}>
 								<IconButton sx={{ p: 0 }} onClick={() => SetMainWindow("profile")}>
-									<img src={User.ID !== "" ? `${HTTP.HostRedirect()}pfp/${NameStorage.UserPFP.Get(User.ID)}` : ""}
+									<img alt="profile-picture" src={User.ID !== "" ? `${HTTP.HostRedirect()}pfp/${NameStorage.UserPFP.Get(User.ID)}` : ""}
 										style={{width: `${Width * .04}px`, height: `${Width * .04}px`, borderRadius: "50%"}}/>
 								</IconButton>
 							</Box>

@@ -67,7 +67,7 @@ async function turnTWTFalse(){
 var _setMessage:React.Dispatch<React.SetStateAction<string>>
 
 function TWTDisabled(){
-  const [Message, setMessage] = useState<string>("disable tow factor authentication");
+  const [Message, setMessage] = useState<string>("disable two-factor authentication");
 
   _setMessage = setMessage
   return (
@@ -77,7 +77,7 @@ function TWTDisabled(){
           fontSize={"200%"}
           marginTop={`${Width*0.1}px`}>
         <div> {Message} </div>
-        <button onClick={turnTWTFalse}>Cancle</button>
+        <button onClick={turnTWTFalse}>Cancel</button>
       </Box>
     </center>
   );
