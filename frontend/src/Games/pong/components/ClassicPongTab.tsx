@@ -39,7 +39,9 @@ export const ClassicPongTab = (props:any) => {
 					</div> 
 				: classicGame ?
 					<div>
-						<p></p>	
+						<p></p>
+						Choose controls to join queue
+						<p></p>
 						<Button variant="contained" onClick={() => findGame('mouse')}>Mouse</Button>
 						<Button variant="contained" onClick={() => findGame('keyboard')}>Keyboard</Button>
 					</div>
