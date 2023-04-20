@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import HTTP from '../../Utils/HTTP';
 import User from '../../Utils/Cache/User';
 import FillSpaceComponentAchieve from '../FillSpaceComponent';
-import { Width } from '../../MainWindow/MainWindow';
 
 async function getAchieveNotDoneList():Promise<any>{
   const response = HTTP.Get(`user-profile/GetAchievementListNotDone/${User.ID}`, null, {Accept: 'application/json'})
@@ -16,7 +15,6 @@ var _setList:React.Dispatch<React.SetStateAction<string[][]>>
  //have a search option that, when put it, will search for the achievement based on the NAME
 function NotDoneAchievements(props: any){
   const [ListSearchList, setList] = useState<any[]>([]);
-  const [showModal, setShowModal] = React.useState(-1)
   const [Display, setDisplay] = useState<boolean>(false)
   _setList = setList
  

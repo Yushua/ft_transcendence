@@ -10,7 +10,7 @@ function ErrorPage(){
           fontFamily={"'Courier New', monospace"}
           fontSize={"200%"}
           marginTop={`${Width*0.3}px`}>
-        <div> {"you are unable to enter transendence due to unknown circumstances"} </div>
+        <div> {"you are unable to enter transcendence due to unknown circumstances"} </div>
       </Box>
   </center>
   );

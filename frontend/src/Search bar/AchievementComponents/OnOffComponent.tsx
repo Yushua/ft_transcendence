@@ -1,14 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Width } from "../../MainWindow/MainWindow";
 import HTTP from "../../Utils/HTTP";
 
-var buttonsize:number = ((Width*0.9) - (Width*0.9*0.03 * 6 * 2))/6
-var border:number = Width*0.005
-
-/**
- * get AchieveMessage Status
- * get ServerMessage Status
- */
 async function AsyncGetThisStatus(status:string):Promise<boolean> {
   const response = HTTP.Get(`user-profile/get${status}Status`, null, {Accept: 'application/json'})
   var result = await JSON.parse(response)
@@ -21,13 +14,9 @@ async function AsyncPostThisStatus(status:string, change:boolean) {
   HTTP.Post(`user-profile/Post${status}Status/${change}`, null, {Accept: 'application/json'})
 }
 
-var _setDisplay:React.Dispatch<React.SetStateAction<boolean>>
-
 function OnOFFComponent(props: any){
   const [ButtonStatus, setButtonStatus] = useState<boolean>(true);
   const [Display, setDisplay] = useState<boolean>(false);
-
-  _setDisplay = setDisplay
 
   if (Display === false){
 		setup()

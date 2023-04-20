@@ -390,7 +390,6 @@ export class MyGateway implements OnModuleInit {
 				// )())
 			}
 			/* Handle end of game */
-			// console.log(gameData.gameState)
 			switch (gameData.gameState) {
 				case 'p1_won':
 				case 'p2_won':

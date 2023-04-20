@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import HTTP from '../Utils/HTTP';
 import { Tab, Tabs } from '@mui/material';
 import { Width } from '../MainWindow/MainWindow';
 import FullAchievements from './AchievementComponents/FullAchievements';

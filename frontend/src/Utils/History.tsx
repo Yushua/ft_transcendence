@@ -1,6 +1,5 @@
 import ManualEventManager from "../Events/ManualEventManager"
 import { GetCurrentMainWindow, SetMainWindow } from "../MainWindow/MainWindow"
-import ChatRoom from "./Cache/ChatRoom"
 
 var funcs = {}
 

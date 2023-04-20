@@ -10,7 +10,6 @@ import TWTEnabled from "../TwoFactorSystem/TWTEnabled";
 import LeaderBoardMainPage from "./LeaderBoardMainPage";
 import FullAchievementBar from "../Search bar/FullAchievementBar";
 import OurHistory from "../Utils/History";
-import { SetMainChatWindow } from "../Chat/Windows/MainChatWindow";
 import OtherUserProfile from "./ProfilePages/OtherUserProfile";
 
 export function SetMainProfileWindow(window: string) {

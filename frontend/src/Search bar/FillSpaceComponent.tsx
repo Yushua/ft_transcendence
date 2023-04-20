@@ -1,26 +1,24 @@
-import React, { useState } from 'react';
+import React, { } from 'react';
 import { Box, Modal, Typography } from '@mui/material';
 import { Width } from '../MainWindow/MainWindow';
-import HTTP from '../Utils/HTTP';
 
 const style = {
 	position: 'absolute' as 'absolute',
 	top: '50%',
 	left: '50%',
 	transform: 'translate(-50%, -50%)',
-	width: 400,
+	width: `${Width}`,
 	bgcolor: 'background.paper',
 	border: '2px solid #000',
 	boxShadow: 24,
 	p: 4,
-  alignContent: 'center',
+    alignContent: 'center',
   };
 
- //get into page, get the entire list online
+
  
  function FillSpaceComponentAchieve(props: any){
   const [showModal, setShowModal] = React.useState(-1)
-
 
     var widthButton:number = (((Width*0.9) - (Width*0.9*0.03 * props.amount * 2))/props.amount)
 

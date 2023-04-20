@@ -27,7 +27,6 @@ export default class SpectateTab extends React.Component<any, any> {
 	{
 		const rows = []
 		let i = 0
-		console.log('info:', gamesList)
 		/* public games have max len of 12 chars, private ones have ID that is longer */
 		/* game is map with key = gamename and value = string of data: p1_name, p2_name (+custom stuff if set) */
 		/* for active games, third value of value ([1][2]) is bool that is true if game is a classic game */

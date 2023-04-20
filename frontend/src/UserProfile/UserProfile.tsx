@@ -53,6 +53,7 @@ function UserProfilePage(props: any) {
       <div className={"MainWidnow"} style={{width: `${Width * .9}px`, border: "solid", borderColor: "#3676cc", borderRadius: "5px"}}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <img src={`${HTTP.HostRedirect()}pfp/${NameStorage.UserPFP.Get(user.id)}`}
+            alt="profile-pic"
             style={{width: `${0.1*Width}px`, height: `${0.1*Width}px`, alignItems: 'center', padding: `${0.01*Width}px`, borderRadius: `50%`}}/>
 
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: `${0.01*Width}px`, color: "black"}}>
@@ -84,7 +85,7 @@ function UserProfilePage(props: any) {
             {/* object */}
             <div style={{ display: 'flex', border: "solid black", padding: `${0.01*Width}px`, borderColor: "#3676cc", borderRadius: "5px"}}> <b>Inbox</b> </div>
             {/* Button input Object*/}
-            <div style={{display: 'flex', flexWrap: 'wrap', overflowY: "scroll", scrollbarWidth: "none", width: `${blockWidth}px`, height: `${(Width - (0.02*Width))/2}px`, border: "solid black", overflow: "auto", marginLeft: `${marginLeft}px`, marginRight: `${marginRight}px`, marginTop: `${Width*0.005}px`, marginBottom: `${Width*0.02}px`, borderColor: "#3676cc", borderRadius: "5px"}}>
+            <div style={{alignItems: 'center', flexWrap: 'wrap', overflowY: "scroll", scrollbarWidth: "none", width: `${blockWidth}px`, height: `${(Width - (0.02*Width))/2}px`, border: "solid black", overflow: "auto", marginLeft: `${marginLeft}px`, marginRight: `${marginRight}px`, marginTop: `${Width*0.005}px`, marginBottom: `${Width*0.02}px`, borderColor: "#3676cc", borderRadius: "5px"}}>
                 <InboxBar id={user.id}  height={(Width - (0.02*Width))/2}/>
             </div>
           </div>
@@ -93,7 +94,6 @@ function UserProfilePage(props: any) {
 
       </div>
     </center>
-    //logout when initialized
   );
 }
 

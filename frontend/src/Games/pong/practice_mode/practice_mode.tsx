@@ -1,5 +1,4 @@
 import { Ball, GameData, Paddle } from "../components/GameData"
-import update from 'immutability-helper';
 
 export default class PracticeModeLoop {
 	private static readonly _targetFPS = 60

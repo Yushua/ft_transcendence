@@ -121,7 +121,7 @@ export const Pong = () => {
 
 		/* INCOMING EVENTS ON SOCKET */
 		socket.on('connect', () => {
-			console.log('connected with gateway!', socket.id)
+			// console.log('connected with gateway!', socket.id)
 		})
 
 		socket.on('gamedata', (s_gameData:GameData) => {
@@ -161,7 +161,7 @@ export const Pong = () => {
 			gameCanvas.height = 0
 			firstCall = false
 		}
-	},[socket])
+	},[])
 
 	/* BUTTON HANDLERS */
 	const leaveGame = () => {

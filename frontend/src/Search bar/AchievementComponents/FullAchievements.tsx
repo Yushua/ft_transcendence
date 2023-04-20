@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import HTTP from '../../Utils/HTTP';
 import User from '../../Utils/Cache/User';
 import FillSpaceComponentAchieve from '../FillSpaceComponent';
-import { Width } from '../../MainWindow/MainWindow';
 
 async function getAchieveFullList():Promise<any>{
   const response = HTTP.Get(`user-profile/GetAchievementListFull/${User.ID}`, null, {Accept: 'application/json'})
@@ -11,7 +10,6 @@ async function getAchieveFullList():Promise<any>{
   return Object.values(result["list"])
 }
 
-var _setList:React.Dispatch<React.SetStateAction<string[][]>>
 
 var _setList:React.Dispatch<React.SetStateAction<string[][]>>
  //get into page, get the entire list online
