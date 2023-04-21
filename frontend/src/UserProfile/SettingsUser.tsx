@@ -32,17 +32,20 @@ export async function asyncChangeName(newUsername:string) {
       <Box
             fontFamily={"'Courier New', monospace"}
             fontSize={"200%"}
-            marginTop={`${Width*0.05}px`}>
+            marginTop={`${Width*0.05}px`}
+            marginBottom={`${Width*0.025}px`}>
           <div> {message} </div>
           <input type="text" value={value} onChange={handleChange} />
           {value.length > 4 && value.length <= 10 && (
           <button type="submit">Submit</button> )}
+          <div> Set New profile picture </div>
           <div> <ProfilePicture/> </div>
       </Box>
       <Box
             fontFamily={"'Courier New', monospace"}
             fontSize={"200%"}
-            marginTop={`${Width*0.05}px`}>
+            marginTop={`${Width*0.05}px`}
+            marginBottom={`${Width*0.025}px`}>
           <div> Settings inbox </div>
           <div> <OnOFFComponent string={"AchieveMessage"}/> </div>
           <div> <OnOFFComponent string={"ServerMessage"}/> </div>
