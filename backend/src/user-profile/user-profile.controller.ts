@@ -114,7 +114,7 @@ export class UserProfileController {
     }
 
 
-    @Get("/username/:id")
+    @Get("username/:id")
     async ReturnNameById(
         @Param("id") id: string): Promise<string>
     {
@@ -122,7 +122,7 @@ export class UserProfileController {
         return (await found).username;
     }
 
-    @Post('/userchange/:username')
+    @Post('userchange/:username')
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     changeUsername(
         @Param('username') username: string, @Request() req: Request) {
