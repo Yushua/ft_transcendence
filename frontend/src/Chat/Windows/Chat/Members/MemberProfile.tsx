@@ -120,7 +120,10 @@ export default function MemberProfile() {
 						<div style={{width: "100%", display: "table", marginTop: `${ChatLineHeight/2}px`}}>
 							<Button variant="contained"
 								style={{width: "100%", height: `${ChatLineHeight}px`, boxSizing: "border-box"}}
-								onClick={() => { UnblockUser(_memberProfileID) }}
+								onClick={() => {
+									ChangeMemberWindow("members")
+									UnblockUser(_memberProfileID)
+								}}
 								>Unblock</Button>
 						</div>
 							:
@@ -130,6 +133,7 @@ export default function MemberProfile() {
 								onClick={() => {
 									if (window.confirm(`Are you sure you want to block user ${NameStorage.User.Get(_memberProfileID)}?\nYou won't be able to see anything they write and private messages will be deleted.`)
 										&& window.confirm(`Are you REALLY sure?\nAll private messages with this user will be deleted.`))
+											ChangeMemberWindow("members")	
 											HTTP.asyncPatch(`chat/block/${_memberProfileID}`, null, null, async () => {
 												await ChatUser.asyncUpdate(ChatUser.ID)
 												if (ChatRoom.Direct)
@@ -158,6 +162,7 @@ export default function MemberProfile() {
 							<Button variant="contained"
 								style={{width: "33%", height: `${ChatLineHeight}px`, boxSizing: "border-box"}}
 								onClick={() => {
+									ChangeMemberWindow("members")
 									if (window.confirm(`Kick ${NameStorage.User.Get(_memberProfileID)}?`))
 										HTTP.asyncDelete(`chat/member/${ChatRoom.ID}/${_memberProfileID}`)
 								}}
@@ -165,6 +170,7 @@ export default function MemberProfile() {
 							<Button variant="contained"
 								style={{width: "33%", height: `${ChatLineHeight}px`, boxSizing: "border-box"}}
 								onClick={() => {
+									ChangeMemberWindow("members")
 									if (window.confirm(`Do you really want to ban ${NameStorage.User.Get(_memberProfileID)}?`)
 										&& window.confirm(`Are you REALLY sure?\nThis can't be undone.`))
 										HTTP.asyncDelete(`chat/ban/${ChatRoom.ID}/${_memberProfileID}`)
@@ -175,6 +181,7 @@ export default function MemberProfile() {
 							<Button variant="contained"
 								style={{width: "100%", height: `${ChatLineHeight}px`, boxSizing: "border-box"}}
 								onClick={() => {
+									ChangeMemberWindow("members")
 									if (window.confirm(`Make ${NameStorage.User.Get(_memberProfileID)} admin?`)
 										&& window.confirm(`Are you REALLY sure?`))
 										HTTP.asyncPatch(`chat/admin/${ChatRoom.ID}/${_memberProfileID}`)
@@ -200,6 +207,7 @@ export default function MemberProfile() {
 							<Button variant="contained"
 								style={{width: "100%", height: `${ChatLineHeight}px`, boxSizing: "border-box"}}
 								onClick={() => {
+									ChangeMemberWindow("members")
 									if (window.confirm(`Remove admin role from ${NameStorage.User.Get(_memberProfileID)}?`))
 										HTTP.asyncDelete(`chat/admin/${ChatRoom.ID}/${_memberProfileID}`)
 								}}

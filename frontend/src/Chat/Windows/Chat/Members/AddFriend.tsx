@@ -39,6 +39,7 @@ function GenerateAddFriendJSX(): JSX.Element[] {
 				<ButtonAsyncText variant="outlined"
 					style={{height: `${ChatLineHeight}px`, width: "80%", textAlign: "left"}}
 					onClick={async () => {
+						ChangeMemberWindow("members")
 						await HTTP.asyncPatch(`chat/room/${ChatRoom.ID}/${friendID}`, null, null, () => {},
 						async error => {
 							alert((await JSON.parse(error.responseText)).message)
