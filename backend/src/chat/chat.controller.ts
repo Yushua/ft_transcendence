@@ -105,6 +105,15 @@ export class ChatController {
 		: Promise<void>
 			{ await this.service.InviteFriendToGame(req["user"].id, friendID, body) }
 	
+	@Post("invitegroup/:roomID")
+	@UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+	async InviteGroupToGame(
+		@Request() req: Request,
+		@Param("roomID") roomID: string,
+		@Body() body: any)
+		: Promise<void>
+			{ await this.service.InviteGroupToGame(req["user"].id, roomID, body) }
+	
 	//#endregion
 	
 	//#region Patch

@@ -445,6 +445,15 @@ export class ChatService {
 		await this._postMessageToRoom(room, new ChatMessage("game", id))
 	}
 	
+	async InviteGroupToGame(userID: string, roomID: string, body: any) {
+		const id = body?.id
+		if (!id || typeof(id) !== 'string' || id === "" || id.length > 20)
+			throw new HttpException("", HttpStatus.BAD_REQUEST)
+		
+		const room = await this.GetRoom(roomID, userID)
+		await this._postMessageToRoom(room, new ChatMessage("game", id))
+	}
+	
 	async BlockUser(userID: string, memberID: string) {
 		var user = await this.GetOrAddUser(userID)
 		var member = await this.GetOrAddUser(memberID)

@@ -107,12 +107,17 @@ export default function MemberProfile() {
 						}}
 						>View Profile</Button>
 				</div>
-				{ !!CreatingGameData.gameID && ChatRoom.Direct && _memberProfileID !== User.ID ?
+				{ !!CreatingGameData.gameID ?
 					<div style={{width: "100%", display: "table"}}>
 						<Button variant="contained"
 							style={{width: "100%", height: `${ChatLineHeight}px`, boxSizing: "border-box"}}
-							onClick={() => {HTTP.asyncPost(`chat/invite/${_memberProfileID}`, {id: CreatingGameData.gameID})}}
-							>Invite to Pong</Button>
+							onClick={() => {
+								if (ChatRoom.Direct)
+									HTTP.asyncPost(`chat/invite/${_memberProfileID}`, {id: CreatingGameData.gameID})
+								else
+									HTTP.asyncPost(`chat/invitegroup/${ChatRoom.ID}`, {id: CreatingGameData.gameID})
+							}}
+							>Post Pong Invite</Button>
 					</div> : <></>
 				}
 				{ _memberProfileID !== User.ID ?
