@@ -9,7 +9,9 @@ import { AppBar, Box, Button, Container, IconButton, Toolbar } from "@mui/materi
 import NameStorage from "../Utils/Cache/NameStorage";
 import { WebsocketContext } from "../Games/contexts/WebsocketContext";
 import MainChatWindow from "../Chat/Windows/MainChatWindow";
-import ProfileMainWindow from "../UserProfile/ProfileMainWindow";
+import ProfileMainWindow, { SetWindowProfile } from "../UserProfile/ProfileMainWindow";
+import ChatRoom from "../Utils/Cache/ChatRoom";
+import OtherUserProfile from "../UserProfile/ProfilePages/OtherUserProfile";
 
 export async function asyncGetNameExport():Promise<string> {
 	const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
@@ -63,7 +65,31 @@ export default function MainWindow() {
 	_setWindow = setWindow
 	_currentWindow = currentWindow
 	
-	useEffect(OurHistory.Add, [])
+	useEffect(() => {
+		const params = new URLSearchParams(window.location.search)
+		const page = params.get("window")
+		if (!page) {
+			OurHistory.Add()
+			return
+		}
+		setWindow(page)
+		switch (page) {
+			case "chat":
+				const roomID = params.get("roomID")
+				if (!!roomID)
+					ChatRoom.asyncUpdate(roomID)
+				break
+			case "profile":
+				const id = params.get("id")
+				if (!!id)
+					setTimeout(async () => {
+						SetWindowProfile(<OtherUserProfile id={id}/>, true)
+					}, 100)
+				break
+			default:
+				break
+		}
+	}, [])
 	
 	var display = <></>
 	switch (currentWindow) {
