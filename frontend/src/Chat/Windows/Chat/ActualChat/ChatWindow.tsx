@@ -8,6 +8,7 @@ import { ChatLineHeight, ChatWindowHeight } from "../../MainChatWindow";
 import ChatUser from "../../../../Utils/Cache/ChatUser";
 import { socket } from "../../../../Games/contexts/WebsocketContext";
 import ImgAsyncUrl from "../../../../Utils/ImgAsyncUrl";
+import { Width } from "../../../../MainWindow/MainWindow";
 
 var roomCache: Map<string, {lastCount: number, jsx: JSX.Element[]}> = new Map<string, {lastCount: number, jsx: JSX.Element[]}>()
 var _chatLog: JSX.Element[] = []
@@ -99,7 +100,7 @@ export async function asyncUpdateChatLog() {
 									}}
 								>Join game: {msgs[i].Message}</Button>
 							</div> :
-							<div key={_reactKeyThing++} style={{textAlign: "left"}}>
+							<div key={_reactKeyThing++} style={{width: `${Width * .9 * .6 * .95}px`, textAlign: "left", overflowWrap: "break-word"}}>
 								<ImgAsyncUrl
 									id={`${_reactKeyThing} - ${msgs[i].OwnerID}`}
 									asyncUrl={() => url}
