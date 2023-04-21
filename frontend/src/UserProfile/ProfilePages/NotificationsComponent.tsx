@@ -40,45 +40,41 @@ function NotificationsComponent(props: any){
   
   _setMyDisplay = setMyDisplay
   _setButtonStatus = setButtonStatus
-  if (myDisplay === false){
+  if (myDisplay === false && props.buttonstatus !== 2){
     setup()
   }
   
   const handleButtonNotificationOffClick = (id:string) => {
-    AddFriend(id)
-  };
-  
-  const handleButtonNotificationOnClick = (id:string) => {
     RemoveFriend(id)
   };
   
+  const handleButtonNotificationOnClick = (id:string) => {
+    AddFriend(id)
+  };
+  
   async function setup(){
-    //check what the notification is. is it on or off
-    //or better, is the other user ID in there or not
     await AsyncSetButtonStatus(props.id)
     setMyDisplay(true)
   }
   
     if (props.buttonstatus === 2){
-      // console.log(`buttonstatus check {${props.buttonstatus}}`)
       return (
         <></>
       )
     }
     return (
-        // console.log(`buttonstatus here {${ButtonStatus}}`),
         <>
-            {ButtonStatus === 2 ? (
-            <button
-                style={{ display: "inline-block", marginLeft: `${Width*0.02}px`, marginRight: `${Width*0.02}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`}}
-                onClick={() => handleButtonNotificationOnClick(props.id)}>
-                <h2 >{`Notifications On`}</h2>
-            </button>
-            ) : ButtonStatus === 1 ? (
+            {ButtonStatus === 1 ? (
             <button
                 style={{ display: "inline-block", marginLeft: `${Width*0.02}px`, marginRight: `${Width*0.02}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`}}
                 onClick={() => handleButtonNotificationOffClick(props.id)}>
                 <h2 >{`Notifications Off`}</h2>
+            </button>
+            ) : ButtonStatus === 2 ? (
+            <button
+                style={{ display: "inline-block", marginLeft: `${Width*0.02}px`, marginRight: `${Width*0.02}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`}}
+                onClick={() => handleButtonNotificationOnClick(props.id)}>
+                <h2 >{`Notifications On`}</h2>
             </button>
             ) : null}
         </>

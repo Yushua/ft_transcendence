@@ -13,16 +13,6 @@ export async function asyncChangeName(newUsername:string) {
     _setmessage("wrong input of username")
   }
 }
-
-interface FormElements extends HTMLFormControlsCollection {
-  username: HTMLInputElement
-  newInput: HTMLInputElement
-}
-
-export interface YourFormElement extends HTMLFormElement {
-  readonly elements: FormElements
- }
-
  
  var _setmessage:React.Dispatch<React.SetStateAction<string>>
  function SettingsUser(){
@@ -38,26 +28,29 @@ export interface YourFormElement extends HTMLFormElement {
     }
   return (
     <center>
-      <form onSubmit={handleUsernameChange}>
+      < div onSubmit={handleUsernameChange}>
       <Box
             fontFamily={"'Courier New', monospace"}
             fontSize={"200%"}
-            marginTop={`${Width*0.05}px`}>
+            marginTop={`${Width*0.05}px`}
+            marginBottom={`${Width*0.025}px`}>
           <div> {message} </div>
           <input type="text" value={value} onChange={handleChange} />
           {value.length > 4 && value.length <= 10 && (
           <button type="submit">Submit</button> )}
+          <div> Set New profile picture </div>
           <div> <ProfilePicture/> </div>
       </Box>
       <Box
             fontFamily={"'Courier New', monospace"}
             fontSize={"200%"}
-            marginTop={`${Width*0.05}px`}>
+            marginTop={`${Width*0.05}px`}
+            marginBottom={`${Width*0.025}px`}>
           <div> Settings inbox </div>
           <div> <OnOFFComponent string={"AchieveMessage"}/> </div>
           <div> <OnOFFComponent string={"ServerMessage"}/> </div>
       </Box>
-      </form>
+      </div>
     </center>
   );
 }

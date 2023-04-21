@@ -399,8 +399,8 @@ export class UserProfileService {
         //add this message to you
         var userprofile = await this.userEntity.findOneBy({id});//player1
         await this.AddMessageToUser(addMessageToUSer, id, userprofile)
-        //add this message to everyone that has you as a friend, but only add if he has friends
         if (userprofile.otherfriendList.length > 0){
+          console.log("friendlist", userprofile.otherfriendList)
           await this.AddMessageToOthers(addMessageToOtherUSer, userprofile.otherfriendList, id)
         }
       }
@@ -439,11 +439,14 @@ export class UserProfileService {
 
       async AddMessageToOthers(addMessageToOtherUSer: AddMessageDTO, otherfriendList:string[], idMain:string){
 
+        //idMain is the is of the main user. you check here if its included in the users that follow the main
         for (let id of otherfriendList) {
             //loop through the lsit and give each of them this message
             var userprofile = await this.userEntity.findOneBy({id});//player1
             //only send message if the user has them in their checkFriendList
-            if (!userprofile.CheckFrienddList.includes(idMain)) {
+            //CheckFrienddList tells if the user wants notifications of THIS user
+            if (userprofile.CheckFrienddList.includes(idMain)) {
+              //if here, then friend has put IdMain notifcations on
               await this.AddMessageToUser(addMessageToOtherUSer, id, userprofile)
             }
         }

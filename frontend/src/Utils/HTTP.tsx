@@ -87,7 +87,7 @@ export default class HTTP {
 			ChatUser.Clear();
 			ChatRoom.Clear();
 			removeCookie('accessToken');
-      		newWindow(<ErrorPage/>)
+			newWindow(<ErrorPage message={"401 error"}/>)
 			return null
 		}
 		if (req.status < 300)
@@ -112,7 +112,7 @@ export default class HTTP {
 					ChatUser.Clear();
 					ChatRoom.Clear();
 					removeCookie('accessToken');
-					newWindow(<ErrorPage/>)
+					newWindow(<ErrorPage message={"401 error"}/>)
 					return
 				}
 				if (!!callback && req.status < 300)

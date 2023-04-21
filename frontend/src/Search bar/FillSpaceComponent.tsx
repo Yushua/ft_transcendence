@@ -25,6 +25,7 @@ const style = {
    return (
     <>
         <img
+            alt=""
             className='image_button'
             key={props.option}         
             style={{ display: "flex", width: `${widthButton}px`, height: `${widthButton}px`, marginLeft:`${Width*0.02}px`,  marginRight: `${Width*0.02}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`}}

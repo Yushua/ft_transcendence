@@ -16,7 +16,7 @@ async function asyncGetintraName():Promise<string> {
   }
   catch {
     removeCookie("accessToken")
-    newWindow(<ErrorPage/>)
+    newWindow(<ErrorPage message={"System fault, unable to connect to our website"}/>)
   }
 }
 
@@ -61,16 +61,15 @@ async function setLogin():Promise<string>{
     setCookie(`oAth${_intraName}`, await result["OAuthToken"],{ expires: 1000000 });
     if (accessToken === undefined || accessToken === null){
       removeCookie('accessToken');
-      newWindow(<ErrorPage/>)
+      newWindow(<ErrorPage message={"Accesstoken was undefined, please refresh the page"}/>)
     }
     else {
       return accessToken
     }
   } catch (error) {
-    alert(`already logged in error ${error}`)
-    newWindow(<ErrorPage/>)
+    newWindow(<ErrorPage message={"you are already logged in"}/>)
   }
-  newWindow(<ErrorPage/>)
+  newWindow(<ErrorPage message={"you are already logged in"}/>)
   return ""
 }
 
@@ -92,18 +91,16 @@ async function setLoginTWT():Promise<string>{
     var result = await response.json();
     var TWToken:string = await result["TWToken"]
     if (TWToken === undefined || TWToken === null){
-      newWindow(<ErrorPage/>)
+      newWindow(<ErrorPage message={"Please refresh"}/>)
     }
     else {
       return TWToken
     }
   } catch (error) {
-    console.log(`error ${error}`)
     removeCookie("accessToken")
-    //logout of the system
-    newWindow(<ErrorPage/>)
+    newWindow(<ErrorPage message={` please refresh ${error}`}/>)
   }
-  newWindow(<ErrorPage/>)
+  newWindow(<ErrorPage message={"Please refresh"}/>)
   return ""
 }
 
@@ -152,11 +149,10 @@ async function loginIntoOAuth(){
     }
     else {
       alert(".env file in backend is wrong")
-      newWindow(<ErrorPage/>)
+      newWindow(<ErrorPage message={"our .env file in backend is wrong, unable to enter our webpage"}/>)
     }
   } catch (error) {
-    alert("error in get response")
-    newWindow(<ErrorPage/>)
+    newWindow(<ErrorPage message={`error in get message ${error}`}/>)
   }
 }
 

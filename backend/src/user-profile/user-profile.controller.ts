@@ -1,7 +1,6 @@
-import { Body, Controller, Get, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthGuardEncryption } from 'src/auth/auth.guard';
-import { AddAchievement } from './dto/addAchievement.dto';
 import { UserProfileService } from './user-profile.service';
 import { UserProfile } from './user.entity';
 import { MessageList } from './MessageList.entity';
@@ -127,7 +126,6 @@ export class UserProfileController {
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     changeUsername(
         @Param('username') username: string, @Request() req: Request) {
-        console.log(`setting username {${username}}`)
         this.userServices.changeUsername(username, req["user"].id);
     }
 
@@ -254,7 +252,6 @@ export class UserProfileController {
         @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
         async FrienddListAdd( @Param("id") id:string, @Request() req: Request ) {
             await this.userServices.FrienddListAdd(id, req["user"].id)
-
         }
 
         @Patch('FrienddList/remove/:id')
