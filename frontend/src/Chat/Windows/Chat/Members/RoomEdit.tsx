@@ -25,7 +25,10 @@ export default function RoomEdit() {
 					>Back</Button> Edit Room
 			</div>
 			
-			New Room Name <input id="_RoomName" style={{width: "100%", boxSizing: "border-box"}} type="text" value={name} onChange={data => setName(data.target.value)} disabled={dis}/><br />
+			New Room Name <input id="_RoomName" style={{width: "100%", boxSizing: "border-box"}} type="text" value={name} onChange={data => {
+					if (data.target.value.length <= 10)
+						setName(data.target.value)
+				}} disabled={dis}/><br />
 			
 			New Password?
 				<Checkbox checked={newPass} onChange={event => setNewPass(event.target.checked)} sx={{width: `${ChatLineHeight}px`, height: `${ChatLineHeight}px`, transform: "scale(.75)"}}/>

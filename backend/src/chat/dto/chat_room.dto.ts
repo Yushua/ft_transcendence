@@ -1,4 +1,4 @@
-import { IsBoolean, IsEnum, IsNotEmpty, IsString, Matches } from "class-validator"
+import { IsBoolean, IsEnum, IsNotEmpty, IsString, Matches, MaxLength } from "class-validator"
 import { ChatRoomType } from "../chat_entities/chat_room"
 
 export class ChatRoomDTO {
@@ -8,6 +8,7 @@ export class ChatRoomDTO {
 	
 	@IsString()
 	@IsNotEmpty()
+	@MaxLength(10)
 	Name: string
 	
 	@IsString()
