@@ -90,6 +90,7 @@ export const CreateGameMenu = (props:any) => {
 					id="message"
 					name="message"
 					maxLength={12}
+					autoComplete="off"
 					onChange={handleTextChange} />
 				<p></p>
 				{isMouse ?

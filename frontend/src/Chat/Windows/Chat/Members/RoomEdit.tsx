@@ -25,11 +25,14 @@ export default function RoomEdit() {
 					>Back</Button> Edit Room
 			</div>
 			
-			New Room Name <input id="_RoomName" style={{width: "100%", boxSizing: "border-box"}} type="text" value={name} onChange={data => setName(data.target.value)} disabled={dis}/><br />
+			New Room Name <input id="_RoomName" style={{width: "100%", boxSizing: "border-box"}} type="text" value={name} autoComplete="off" onChange={data => {
+					if (data.target.value.length <= 10)
+						setName(data.target.value)
+				}} disabled={dis}/><br />
 			
 			New Password?
 				<Checkbox checked={newPass} onChange={event => setNewPass(event.target.checked)} sx={{width: `${ChatLineHeight}px`, height: `${ChatLineHeight}px`, transform: "scale(.75)"}}/>
-				<input id="_RoomPassword" style={{width: "100%", boxSizing: "border-box"}} type="password" value={pass} onChange={data => setPass(data.target.value)} disabled={!newPass || dis}/><br />
+				<input id="_RoomPassword" style={{width: "100%", boxSizing: "border-box"}} type="password" value={pass} autoComplete="off" onChange={data => setPass(data.target.value)} disabled={!newPass || dis}/><br />
 			<Button variant={priv ? "contained" : "outlined"}
 					sx={{height: `${ChatLineHeight}px`, mt: `${ChatLineHeight / 4}px`}}
 					onClick={() => setPriv(!priv)}

@@ -6,15 +6,17 @@ import AddFriend from "./AddFriend"
 import ChatRoom from "../../../../Utils/Cache/ChatRoom"
 import ChatUser from "../../../../Utils/Cache/ChatUser"
 
+var wasLastRommDirect = true
 export async function asyncUpdateMembersWindow() {
 	if (ChatRoom.ID !== "" && ChatRoom.Direct)
 		ChangeMemberWindow(`!${ChatRoom.MemberIDs.find(userID => userID !== ChatUser.ID) ?? ChatUser.ID}`)
-	else
+	else if (wasLastRommDirect)
 		ChangeMemberWindow("members")
+	wasLastRommDirect = ChatRoom.ID === "" ? false : ChatRoom.Direct
 }
 
 export function ChangeMemberWindow(window: string) {
-	if (!!_setDisplay)	
+	if (!!_setDisplay)
 		_setDisplay(window)
 }
 

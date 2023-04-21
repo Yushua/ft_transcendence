@@ -78,6 +78,14 @@ export async function asyncUpdateChatLog() {
 				break
 			
 			for (let i = msgs.length - 1; count < target && i >= 0; i--) {
+				const url = new Promise((res, err) => {
+					const id = msgs[i].OwnerID
+					setTimeout(async () => {
+						const url = await NameStorage.UserPFP.asyncGet(id)
+						res(`${HTTP.HostRedirect()}pfp/${url}`)
+					}, _reactKeyThing);
+				})
+				
 				count++
 				if (!ChatUser.BlockedUserIDs.includes(msgs[i].OwnerID))
 					newChatLog.unshift(
@@ -93,7 +101,8 @@ export async function asyncUpdateChatLog() {
 							</div> :
 							<div key={_reactKeyThing++} style={{textAlign: "left"}}>
 								<ImgAsyncUrl
-									asyncUrl={async () => `${HTTP.HostRedirect()}pfp/${await NameStorage.UserPFP.asyncGet(msgs[i].OwnerID)}`}
+									id={`${_reactKeyThing} - ${msgs[i].OwnerID}`}
+									asyncUrl={() => url}
 									style={{width: `${ChatLineHeight * .8}px`, height: `${ChatLineHeight * .8}px`, borderRadius: "50%"}}
 								/>
 								<b>{`${NameStorage.User.Get(msgs[i].OwnerID)}`}</b>
@@ -149,6 +158,7 @@ export default function ChatWindow() {
 				style={{width: "100%", boxSizing: "border-box", height: "5%", fontSize: `${ChatLineHeight * .8}px`}}
 				id="SendMessageTextField"
 				type="text"
+				autoComplete="off"
 				onKeyDown={event => {
 					if (event.key !== "Enter" || User.ID === "" || ChatRoom.ID === "")
 						return

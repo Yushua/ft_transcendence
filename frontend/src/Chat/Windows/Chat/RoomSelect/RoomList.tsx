@@ -39,7 +39,7 @@ export default function RoomList() {
 	}
 	
 	return (
-		<div style={{overflowY: "scroll", overflowX: "hidden", width: "100%", height: `${ChatWindowHeight * .94}px`}}>
+		<div style={{overflowY: "scroll", overflowX: "hidden", width: "100%", height: `${ChatWindowHeight * .93}px`}}>
 			{rooms}
 		</div>
 	)
