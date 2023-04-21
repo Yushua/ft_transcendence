@@ -31,6 +31,7 @@ export const JoinPrivateButton = (props:any) => {
 						type="text"
 						id="message"
 						name="message"
+						autoComplete="off"
 						onChange={handleTextChange} />
 					&nbsp;&nbsp;
 					<Button variant="contained" onClick={() => join(gameID, props.userID, props.userName, props.socket)}>Join</Button>

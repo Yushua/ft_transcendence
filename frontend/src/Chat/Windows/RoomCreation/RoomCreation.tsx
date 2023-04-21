@@ -16,12 +16,14 @@ export default function RoomCreation() {
 		<>
 			<br />
 			<TextField sx={{backgroundColor: "white"}}
+				autoComplete="off"
 				label="Room Name" type="text" variant="filled"
 				value={name} onChange={e => {
 					if (e.target.value.length <= 10)
 						setName(e.target.value)
 				}}/><br />
 			<TextField sx={{backgroundColor: "white"}}
+				autoComplete="off"
 				label="Password" type="password" variant="filled"
 				value={pass} onChange={e => setPass(e.target.value)}/><br />
 			<Button variant={priv ? "contained" : "outlined"}
