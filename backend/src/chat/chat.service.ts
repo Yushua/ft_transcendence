@@ -411,6 +411,8 @@ export class ChatService {
 		: Promise<string>
 	{
 		const { OwnerID, Message } = msgDTO
+		if (Message.length > 500)
+			throw new HttpException("Message is too long! 500 characters max!", HttpStatus.BAD_REQUEST)
 		if (OwnerID !== userID)
 			throw new HttpException("", HttpStatus.FORBIDDEN)
 		const msg = new ChatMessage(OwnerID, Message)

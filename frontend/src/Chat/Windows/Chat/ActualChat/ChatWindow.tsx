@@ -159,6 +159,7 @@ export default function ChatWindow() {
 				style={{width: "100%", boxSizing: "border-box", height: "5%", fontSize: `${ChatLineHeight * .8}px`}}
 				id="SendMessageTextField"
 				type="text"
+				maxLength={500}
 				autoComplete="off"
 				onKeyDown={event => {
 					if (event.key !== "Enter" || User.ID === "" || ChatRoom.ID === "")

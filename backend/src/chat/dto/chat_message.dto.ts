@@ -8,6 +8,5 @@ export class ChatMessageDTO {
 	@IsString()
 	@IsNotEmpty()
 	@MinLength(1)
-	@MaxLength(500)
 	public Message: string;
 }
