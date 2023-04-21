@@ -65,7 +65,7 @@ export default function FriendsList() {
 	}
 	
 	return (
-		<div style={{overflowY: "scroll", overflowX: "hidden", width: "100%", height: `${ChatWindowHeight * .94}px`}}>
+		<div style={{overflowY: "scroll", overflowX: "hidden", width: "100%", height: `${ChatWindowHeight * .93}px`}}>
 			{friends}
 		</div>
 	)

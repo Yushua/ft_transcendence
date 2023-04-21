@@ -29,7 +29,7 @@ export default function RoomSelectWindow() {
 	
 	return (
 		<div style={{display: "table-cell", width: "20%", height: `${ChatWindowHeight}px`}}>
-			<div style={{display: "table", width: "100%", height:_buttonHeight, padding:"0px", margin:"0px"}}>
+			<div style={{display: "table", width: "100%", height:_buttonHeight, padding:"0px", marginBottom:`${ChatWindowHeight * .01}px`}}>
 				<Button
 					sx={{width: "50%", height:_buttonHeight, p:"0px", m:"0px"}}
 					onClick={() => setDisplay("friend")}
