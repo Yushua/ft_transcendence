@@ -9,35 +9,36 @@ import { Width } from '../MainWindow/MainWindow';
 export async function asyncChangeName(newUsername:string) {
   try {
     HTTP.Post(`user-profile/userchange/${newUsername}`, null, {Accept: 'application/json'})
+    _setmessage(`you succesfully changed your username to ${newUsername}`)
   } catch (error) {
     _setmessage("wrong input of username")
   }
 }
  
  var _setmessage:React.Dispatch<React.SetStateAction<string>>
+
  function SettingsUser(){
    const [value, setValue] = useState<string>("");
    const [message, setmessage] = useState<string>("Choose a New Username");
    
    _setmessage = setmessage
-   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-     setValue(event.target.value);
-    };
+   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setValue(e.target.value);
+  }
     async function handleUsernameChange(){
       await asyncChangeName(value);
     }
   return (
     <center>
-      < div onSubmit={handleUsernameChange}>
       <Box
             fontFamily={"'Courier New', monospace"}
             fontSize={"200%"}
             marginTop={`${Width*0.05}px`}
             marginBottom={`${Width*0.025}px`}>
           <div> {message} </div>
-          <input type="text" value={value} onChange={handleChange} />
+          <input type="text" value={value} onChange={handleInputChange} />
           {value.length > 4 && value.length <= 10 && (
-          <button type="submit">Submit</button> )}
+          <button onClick={handleUsernameChange}>Submit</button> )}
           <div> Set New profile picture </div>
           <div> <ProfilePicture/> </div>
       </Box>
@@ -50,7 +51,6 @@ export async function asyncChangeName(newUsername:string) {
           <div> <OnOFFComponent string={"AchieveMessage"}/> </div>
           <div> <OnOFFComponent string={"ServerMessage"}/> </div>
       </Box>
-      </div>
     </center>
   );
 }
