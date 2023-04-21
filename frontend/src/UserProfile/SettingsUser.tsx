@@ -13,16 +13,6 @@ export async function asyncChangeName(newUsername:string) {
     _setmessage("wrong input of username")
   }
 }
-
-interface FormElements extends HTMLFormControlsCollection {
-  username: HTMLInputElement
-  newInput: HTMLInputElement
-}
-
-export interface YourFormElement extends HTMLFormElement {
-  readonly elements: FormElements
- }
-
  
  var _setmessage:React.Dispatch<React.SetStateAction<string>>
  function SettingsUser(){
@@ -38,7 +28,7 @@ export interface YourFormElement extends HTMLFormElement {
     }
   return (
     <center>
-      <form onSubmit={handleUsernameChange}>
+      < div onSubmit={handleUsernameChange}>
       <Box
             fontFamily={"'Courier New', monospace"}
             fontSize={"200%"}
@@ -57,7 +47,7 @@ export interface YourFormElement extends HTMLFormElement {
           <div> <OnOFFComponent string={"AchieveMessage"}/> </div>
           <div> <OnOFFComponent string={"ServerMessage"}/> </div>
       </Box>
-      </form>
+      </div>
     </center>
   );
 }

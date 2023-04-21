@@ -164,7 +164,6 @@ export class AuthService {
         catch (error) {
           throw new HttpException(`username ${username} already in use`, HttpStatus.BAD_REQUEST);
         }
-        console.log(` id = ${user.id}`)
         const payload: JwtPayload = { userID: user.id, twoFactor: false};
         try {
          authToken = this.jwtService.sign(payload);          
