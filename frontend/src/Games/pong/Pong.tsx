@@ -1,4 +1,4 @@
-import React from 'react'
+import { useState, useEffect, Fragment} from 'react'
 import PracticeModeLoop from './practice_mode/practice_mode';
 import User from '../../Utils/Cache/User';
 import NameStorage from '../../Utils/Cache/NameStorage';
@@ -48,12 +48,12 @@ export const Pong = () => {
 	let userID = User.ID
 	let userName = NameStorage.User.Get(User.ID)
 
-	const [spectating, setSpectating] = React.useState(false)
-	const [gameData, setGameData] = React.useState(iniGameData)
-	const [activeGames, setActiveGames] = React.useState(iniActiveGames)
-	const [customGames, setCustomGames] = React.useState(iniCustomGames)
+	const [spectating, setSpectating] = useState(false)
+	const [gameData, setGameData] = useState(iniGameData)
+	const [activeGames, setActiveGames] = useState(iniActiveGames)
+	const [customGames, setCustomGames] = useState(iniCustomGames)
 
-	const [MainTab, setMainPongTab] = React.useState<string>("classic")
+	const [MainTab, setMainPongTab] = useState<string>("classic")
 	_setMainPongTab = setMainPongTab
 
 	/* reset states to locally stored states if user comes back to window */
@@ -68,7 +68,7 @@ export const Pong = () => {
 	}
 
 	/*  */
-	React.useEffect(() => {
+	useEffect(() => {
 		/* FUNCTIONS TO UPDATE DATA USED TO RENDER CANVAS */
 		function updateGameData(data:GameData)
 		{
@@ -231,7 +231,7 @@ export const Pong = () => {
 	}
 
 	return (
-		<React.Fragment>
+		<Fragment>
 			<Tabs value={MainTab} centered>
 				<Tab label="Classic Pong" value="classic" onClick={() => setMainPongTab("classic")}/>
 				<Tab label="Custom Pong" value="custom" onClick={() => setMainPongTab("custom")}/>
@@ -252,7 +252,7 @@ export const Pong = () => {
 					{_tab}
 				</div>
 			</div>
-		</React.Fragment>
+		</Fragment>
 	)
 }
 

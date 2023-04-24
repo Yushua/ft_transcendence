@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import HTTP from '../Utils/HTTP';
 import { Width } from '../MainWindow/MainWindow';
 import { Box, Modal, Typography } from '@mui/material';
@@ -57,7 +57,7 @@ function InboxBar(props: any) {
   //get into page, get the entire list online
   const [ListSearchList, setList] = useState<any[]>([]);
   const [Display, setDisplay] = useState<boolean>(false);
-  const [showModal, setShowModal] = React.useState(-1)
+  const [showModal, setShowModal] = useState(-1)
   _setList = setList
   _setDisplay = setDisplay
   if (Display === false){

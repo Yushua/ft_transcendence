@@ -1,10 +1,10 @@
 import { Button } from '@mui/material'
-import React from 'react'
+import { useState, Fragment } from 'react'
 import { Socket } from 'socket.io-client'
 
 export const JoinPrivateButton = (props:any) => {
-	const [showMenu, setShowMenu] = React.useState(false)
-	const [gameID, setGameID] = React.useState('')
+	const [showMenu, setShowMenu] = useState(false)
+	const [gameID, setGameID] = useState('')
 
 	const join = (gameID:string, userID:string, userName:string, socket:Socket) =>
 	{
@@ -19,7 +19,7 @@ export const JoinPrivateButton = (props:any) => {
 	}
 
 	return (
-		<React.Fragment>
+		<Fragment>
 			<Button variant="outlined" onClick={() => _setShowMenu()}>Join Private Game</Button>
 			{showMenu ? 
 			<div>
@@ -36,6 +36,6 @@ export const JoinPrivateButton = (props:any) => {
 					&nbsp;&nbsp;
 					<Button variant="contained" onClick={() => join(gameID, props.userID, props.userName, props.socket)}>Join</Button>
 			</div> : <></> }
-		</React.Fragment>
+		</Fragment>
 	)
 }

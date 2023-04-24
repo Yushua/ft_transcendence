@@ -1,5 +1,5 @@
 import { Button } from '@mui/material'
-import React from 'react'
+import { useEffect, useState, Fragment} from 'react'
 import { JoinPrivateButton } from './JoinPrivateButton'
 import { CreateGameMenu, CreatingGameData } from './CreateGameMenu'
 import { CustomGameList } from './CustomGameList'
@@ -23,10 +23,10 @@ localStorage[Enum.gameID] = ''
 
 export const CustomPongTab = (props:any) => {
 
-	const [menu, setMenu] = React.useState(false)
-	const [showGameList, setShowGameList] = React.useState(true)
-	const [gameCreated, setGameCreated] = React.useState(false)
-	const [gameID, setGameID] = React.useState('')
+	const [menu, setMenu] = useState(false)
+	const [showGameList, setShowGameList] = useState(true)
+	const [gameCreated, setGameCreated] = useState(false)
+	const [gameID, setGameID] = useState('')
 
 	if (reset) {
 		setMenu(localStorage[Enum.menu])
@@ -35,7 +35,7 @@ export const CustomPongTab = (props:any) => {
 		setGameID(localStorage[Enum.gameID])
 		reset = false
 	}
-	React.useEffect(() => {
+	useEffect(() => {
 		
 		props.socket.on('game_created', (gameID:string) => {
 			setShowGameList(false)
@@ -77,7 +77,7 @@ export const CustomPongTab = (props:any) => {
 	}
 
 	return (
-		<React.Fragment>
+		<Fragment>
 			<p></p>
 			{ gameCreated ?
 				<div>
@@ -105,6 +105,6 @@ export const CustomPongTab = (props:any) => {
 					}
 				</div>
 			}
-		</React.Fragment>
+		</Fragment>
 	)
 }

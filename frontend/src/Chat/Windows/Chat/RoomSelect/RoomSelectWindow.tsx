@@ -2,7 +2,7 @@ import { useState } from "react"
 import FriendsList from "./FriendsList"
 import RoomList from "./RoomList"
 import ChatRoom from "../../../../Utils/Cache/ChatRoom"
-import { Button, Tab, Tabs } from "@mui/material"
+import { Button } from "@mui/material"
 import { ChatWindowHeight } from "../../MainChatWindow"
 
 export function UpdateRoomSelectWindowButtons() {

@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import '../App.css';
 import { Width } from '../MainWindow/MainWindow';
 import HTTP from '../Utils/HTTP';
-import { Box } from '@mui/material';
 
 async function asyncGetList(){
   const response = HTTP.Get(`user-profile/WinList`, null, {Accept: 'application/json'})

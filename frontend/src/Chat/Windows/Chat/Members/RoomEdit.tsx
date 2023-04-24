@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChangeMemberWindow, asyncUpdateMembersWindow } from "./MembersWindow";
+import { ChangeMemberWindow } from "./MembersWindow";
 import User from "../../../../Utils/Cache/User";
 import ChatRoom from "../../../../Utils/Cache/ChatRoom";
 import HTTP from "../../../../Utils/HTTP";
@@ -52,7 +52,7 @@ export default function RoomEdit() {
 							RoomType:(priv?"Private":"Public")},
 						null,
 						ok => {
-							if (name != ChatRoom.Name)
+							if (name !== ChatRoom.Name)
 								NameStorage.Room.Clear(ChatRoom.ID)
 							ChatRoom.asyncUpdate(ChatRoom.ID)
 						},

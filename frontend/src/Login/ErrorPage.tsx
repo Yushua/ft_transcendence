@@ -1,4 +1,4 @@
-import { Box, useThemeProps } from '@mui/material';
+import { Box } from '@mui/material';
 import '../App.css';
 
 const Width: number = Math.trunc(window.screen.width * .5)

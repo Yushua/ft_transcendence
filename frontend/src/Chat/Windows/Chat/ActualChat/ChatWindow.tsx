@@ -74,7 +74,7 @@ export async function asyncUpdateChatLog() {
 				return
 			}
 			
-			if (msgs.length == 0)
+			if (msgs.length === 0)
 				break
 			
 			for (let i = msgs.length - 1; count < target && i >= 0; i--) {
