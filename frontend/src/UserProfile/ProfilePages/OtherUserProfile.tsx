@@ -58,6 +58,8 @@ function OtherUserProfile(props: any){
     const [myUsername, setMyUsername] = useState<string>("");
     const [myStatus, setMyStatus] = useState<string>("");
     const [myDisplay, setMyDisplay] = useState<boolean>(false);
+    const marginLeft = Width * 0.01
+    const marginRight = marginLeft
 
     _setMyDisplay = setMyDisplay
     _setButtonStatus = setButtonStatus
@@ -118,22 +120,17 @@ function OtherUserProfile(props: any){
                 
                 {/* center left will have two blocks. one achievement, the other, games played. the right will have the friendlist*/}
                 <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column', width: `${(Width - (0.03*Width))}px`, padding: `${0.01*Width}px` }}>
-                    {/* width of the box == (width - (0.03*Width))/2 */}
-                    {/* height of the box == (width - (0.03*Width))/2 */}
-                      <div style={{ display: 'flex', border: "2px solid black", padding: `${0.01*Width}px`  }}> Game Data </div>
-                      <div style={{width: `${(Width - (0.05*Width))/2}px`, height: `${(Width - (0.02*Width))/2}px`, border: "2px solid black", overflow: "auto", marginLeft: `${Width*0.01}px`, marginRight: `${Width*0.01}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`,}}>
-                        <div style={{display: 'flex'}}>
-                        {/* friendlist */}
-                          <GameDataBar id={props.id} width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/>
-                        </div>
-                      </div>
-                    <div style={{ display: 'flex', border: "2px solid black", padding: `${0.01*Width}px`  }}> Achievemement Data </div>
-                      <div style={{width: `${(Width - (0.05*Width))/2}px`, height: `${(Width - (0.03*Width))/2}px`, border: "2px solid black", overflow: "auto", marginLeft: `${Width*0.01}px`, marginRight: `${Width*0.01}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`,}}>
-                        <div style={{display: 'flex'}}>
-                          {/* gameStat */}
-                          <AchievementBar id={props.id} width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/>
-                        </div>
-                      </div>
+
+                  <div style={{ display: 'flex', border: "solid black", padding: `${0.01*Width}px`, borderColor: "#3676cc", borderRadius: "5px"}}> <b>Game Data</b> </div>
+                    <div style={{display: 'flex', flexWrap: 'wrap', overflowY: "scroll", scrollbarWidth: "none", width: `${(Width - (0.05*Width))/2}px`, height: `${(Width - (0.02*Width))/2}px`, border: "solid black", overflow: "auto", marginLeft: `${marginLeft}px`, marginRight: `${marginRight}px`, marginTop: `${Width*0.005}px`, marginBottom: `${Width*0.02}px`, borderColor: "#3676cc", borderRadius: "5px"}}>
+                    <GameDataBar id={props.id} width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/>
+                    </div>
+
+                  <div style={{ display: 'flex', border: "solid black", padding: `${0.01*Width}px`, borderColor: "#3676cc", borderRadius: "5px"}}> <b>Achievemement Data</b> </div>
+                    <div style={{display: 'flex', flexWrap: 'wrap', overflowY: "scroll", scrollbarWidth: "none", width: `${(Width - (0.05*Width))/2}px`, height: `${(Width - (0.02*Width))/2}px`, border: "solid black", overflow: "auto", marginLeft: `${marginLeft}px`, marginRight: `${marginRight}px`, marginTop: `${Width*0.005}px`, marginBottom: `${Width*0.02}px`, borderColor: "#3676cc", borderRadius: "5px"}}>
+                        <AchievementBar id={props.id} width={(Width - (0.03*Width))/2} height={(Width - (0.02*Width))/2}/>
+                    </div>
+
                   </div>
                 </div>
       </center>

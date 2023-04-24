@@ -25,7 +25,7 @@ async function setNewTWT(){
       removeCookie(`TWToken${User.intraname}`);
     }
     if (TWToken === undefined){
-      console.log("TWT is UNdefined in LOGINPAGE check")
+      // console.log("TWT is UNdefined in LOGINPAGE check")
       window.location.replace(HTTP.HostRedirect());
     }
     else {

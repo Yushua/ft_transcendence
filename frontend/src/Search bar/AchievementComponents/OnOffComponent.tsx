@@ -9,7 +9,6 @@ async function AsyncGetThisStatus(status:string):Promise<boolean> {
 }
 
 async function AsyncPostThisStatus(status:string, change:boolean) {
-  console.log(`posting {${change}}`)
   HTTP.Post(`user-profile/Post${status}Status/${change}`, null, {Accept: 'application/json'})
 }
 
