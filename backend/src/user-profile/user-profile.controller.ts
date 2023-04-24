@@ -33,7 +33,7 @@ export class UserProfileController {
         if (id === "undefined")
             return;
         var user:UserProfile = await this.userServices.findUserBy(id)
-        return {user:user, username:user.username, profilePicture:user.profilePicture, experience:user.experience}
+        return {user:user, username:user.username, profilePicture:user.profilePicture, experience:user.experience, status:user.userStatus}
     }
 
     /**

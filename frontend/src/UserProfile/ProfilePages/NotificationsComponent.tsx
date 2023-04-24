@@ -68,13 +68,13 @@ function NotificationsComponent(props: any){
             <button
                 style={{ display: "inline-block", marginLeft: `${Width*0.02}px`, marginRight: `${Width*0.02}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`}}
                 onClick={() => handleButtonNotificationOffClick(props.id)}>
-                <h2 >{`Notifications Off`}</h2>
+                < div>{`Notifications Off`}</div>
             </button>
             ) : ButtonStatus === 2 ? (
             <button
                 style={{ display: "inline-block", marginLeft: `${Width*0.02}px`, marginRight: `${Width*0.02}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`}}
                 onClick={() => handleButtonNotificationOnClick(props.id)}>
-                <h2 >{`Notifications On`}</h2>
+                < div>{`Notifications On`}</div>
             </button>
             ) : null}
         </>

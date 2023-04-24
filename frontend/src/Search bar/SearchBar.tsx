@@ -52,9 +52,9 @@ function SearchBar() {
                         key={index}
                         style={{ display: "inline-block", width: `${((Width*0.9) - (Width*0.9*0.03 * 3 * 2))/3}px`, height: `${Width*0.2}px`, marginLeft: `${Width*0.02}px`, marginRight: `${Width*0.02}px`, marginTop: `${Width*0.03}px`, marginBottom: `${Width*0.03}px` }}
                         onClick={() => handleButtonClick(option[3])}>
-                          <img src={`${HTTP.HostRedirect()}pfp/${option[0]}`} alt="" style={{width: `${0.05*Width}px`, height: `${0.05*Width}px`, alignItems: 'center', marginTop: `${Width*0.03}px`, marginBottom: `${Width*0.03}px`}}/>
-                          <h2 >{`${option[1]}`}</h2>
-                          <h2 >{`${option[2]}`}</h2>
+                          <img src={`${HTTP.HostRedirect()}pfp/${option[0]}`} alt="" style={{width: `${0.1*Width}px`, height: `${0.1*Width}px`, alignItems: 'center', marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.01}px`}}/>
+                          < div style={{marginTop: `${Width*0.01}px`, marginBottom: `${Width*0.01}px`}}>{`${option[1]}`}</div>
+                          < div style={{marginTop: `${Width*0.01}px`, marginBottom: `${Width*0.01}px`}}>{`${option[2]}`}</div>
                       </div>
                     ))}
               </div>

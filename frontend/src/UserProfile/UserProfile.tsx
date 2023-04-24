@@ -57,7 +57,7 @@ function UserProfilePage(props: any) {
             style={{width: `${0.1*Width}px`, height: `${0.1*Width}px`, alignItems: 'center', padding: `${0.01*Width}px`, borderRadius: `50%`}}/>
 
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: `${0.01*Width}px`, color: "black"}}>
-            <h2 >{`Welcome ${user.username}`}</h2>
+            < div>{`Welcome ${user.username}`}</div>
           </div>
         </div>
         <div style={{marginBottom: `${marginLeft}px`}}> <EXPBarComponent id={user.id}/> </div>

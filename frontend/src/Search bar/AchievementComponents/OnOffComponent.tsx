@@ -45,13 +45,13 @@ function OnOFFComponent(props: any){
         <button
         style={{ display: "inline-block", marginLeft: `${Width*0.02}px`, marginRight: `${Width*0.02}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`}}
         onClick={() => handleOff()}>
-        <h2 >{`turn ${props.string} Off`}</h2>
+        < div>{`turn ${props.string} Off`}</div>
       </button>
         :
         <button
           style={{ display: "inline-block", marginLeft: `${Width*0.02}px`, marginRight: `${Width*0.02}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`}}
           onClick={() => handleOn()}>
-          <h2 >{`turn ${props.string} On`}</h2>
+          < div>{`turn ${props.string} On`}</div>
         </button>
       }
     </div>
