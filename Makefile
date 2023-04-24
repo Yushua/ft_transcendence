@@ -19,6 +19,9 @@ run-front:
 run-back:
 	cd ./backend ; npm run start:dev
 
+run-docker:
+	docker-compose up --build
+
 setup:
 	npm i @nestjs/common
 	npm i @nestjs/core

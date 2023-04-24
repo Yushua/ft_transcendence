@@ -33,7 +33,7 @@ export class UserProfileController {
         if (id === "undefined")
             return;
         var user:UserProfile = await this.userServices.findUserBy(id)
-        return {user:user, username:user.username, profilePicture:user.profilePicture, experience:user.experience}
+        return {user:user, username:user.username, profilePicture:user.profilePicture, experience:user.experience, status:user.userStatus}
     }
 
     /**
@@ -41,6 +41,7 @@ export class UserProfileController {
      * @param username 
      * @returns turns an username into an ID
      */
+    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     @Get('/returnID/:username')
     getReturnID(@Param('username') username:string): Promise<UserProfile> {
         return this.userServices.ReturnWithUsername(username);
@@ -53,6 +54,7 @@ export class UserProfileController {
      */
 
     @Get('/returnUsername/:id')
+    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     getReturnUsername(@Param('id') id:string): Promise<string> {
         return this.userServices.ReturnUsername(id);
     }
@@ -76,7 +78,7 @@ export class UserProfileController {
      * @param id 
      * @returns returns based on [["pfp", "username", "status"]]
      */
-     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
+    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     @Get('GetFriendList/:id')
     async GetFriendList( @Param('id') id: string) {
         return { list: await this.userServices.GetFriendList(id) }
@@ -115,6 +117,7 @@ export class UserProfileController {
 
 
     @Get("username/:id")
+    @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     async ReturnNameById(
         @Param("id") id: string): Promise<string>
     {

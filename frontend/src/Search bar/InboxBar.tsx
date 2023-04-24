@@ -82,7 +82,7 @@ function InboxBar(props: any) {
                   onClick={() => setShowModal(index)}
                   style={{display: 'flex', overflow: "hidden", textOverflow: `ellipsis`, alignItems: 'center', justifyContent: "center", minWidth: `${boxwidth}px`, width: `${boxwidth}px`, height: `${buttonsize - (border*2)}px`, marginLeft:`${props.width*0.02}px` , marginRight: `${props.width*0.02}px`}}
                   >
-                    <h2>{option.message}</h2>
+                    <>{option.message}</>
                 </div>
                 <Modal
                   open={showModal === index}
