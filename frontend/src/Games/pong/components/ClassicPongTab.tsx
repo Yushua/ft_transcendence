@@ -1,9 +1,9 @@
-import React from 'react'
+import { useState} from 'react'
 import { Button } from '@mui/material'
 
 export const ClassicPongTab = (props:any) => {
-	const [classicGame, setClassicGame] = React.useState(false)
-	const [pending, setPending] = React.useState(false)
+	const [classicGame, setClassicGame] = useState(false)
+	const [pending, setPending] = useState(false)
 
 	props.socket.on('pending', () => {
 		setPending(true)

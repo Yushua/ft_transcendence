@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Cookies, getCookie, removeCookie, setCookie } from 'typescript-cookie';
+import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
 import { newWindow } from '../App';
 import '../App.css';
 import MainWindow from '../MainWindow/MainWindow';

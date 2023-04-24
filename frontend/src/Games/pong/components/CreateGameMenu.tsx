@@ -1,5 +1,5 @@
 import { Button, Box, Slider, Typography } from '@mui/material'
-import React from 'react'
+import { useState, Fragment} from 'react'
 
 //add color options to paddle/map/ball mayb
 
@@ -18,15 +18,15 @@ function makeGameID() {
 export var CreatingGameData: {gameID: string | null} = {gameID:null}
 
 export const CreateGameMenu = (props:any) => {
-	const [ballSpeed, setBallSpeed] = React.useState(100)
-	const [acceleration, setBallAcceleration] = React.useState(0.5	)
-	const [paddleSize, setPaddleSize] = React.useState(100)
-	const [controls, setControls] = React.useState('mouse')
-	const [gameName, setGameName] = React.useState('')
-	const [isMouse, setIsMouse] = React.useState(true)
-	const [gameNameTaken, setGameNameTaken] = React.useState(false)
-	const [emptyName, setEmptyName] = React.useState(false)
-	const [maxScore, setMaxScore] = React.useState(11)
+	const [ballSpeed, setBallSpeed] = useState(100)
+	const [acceleration, setBallAcceleration] = useState(0.5	)
+	const [paddleSize, setPaddleSize] = useState(100)
+	const [controls, setControls] = useState('mouse')
+	const [gameName, setGameName] = useState('')
+	const [isMouse, setIsMouse] = useState(true)
+	const [gameNameTaken, setGameNameTaken] = useState(false)
+	const [emptyName, setEmptyName] = useState(false)
+	const [maxScore, setMaxScore] = useState(11)
 
 	props.socket.on('gamename taken', () => {
 		setGameNameTaken(true)
@@ -82,7 +82,7 @@ export const CreateGameMenu = (props:any) => {
 	}
 
 	return (
-		<React.Fragment>
+		<Fragment>
 			<div>
 				<h4 style={{ color: "#3368FF"}}>Game Name</h4>
 				<input
@@ -218,7 +218,7 @@ export const CreateGameMenu = (props:any) => {
 			
 
 			</div>
-		</React.Fragment>
+		</Fragment>
 	)
 }
 
