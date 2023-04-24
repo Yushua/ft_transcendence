@@ -56,7 +56,6 @@ export class AuthService {
           console.log("Get")
           throw new HttpException('intraPull failed, problem with OAuth API. input Data out of date', HttpStatus.BAD_REQUEST);
         }
-        console.log(`intraname ${intraName}`)
         return intraName
       }
 
