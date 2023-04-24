@@ -19,13 +19,13 @@ var _setList:React.Dispatch<React.SetStateAction<string[][]>>
 
 function FriendListBar(props: any) {
   const [ListSearchList, setList] = useState<string[][]>([]);
-  var widthButton = ((props.width*0.9) - (props.width*0.9*0.03 * 3 * 2))/3
+  var widthButton = ((props.width*0.9) - (props.width*0.9*0.03 * 3 * 2)) * .3
   var height:number = widthButton - props.width*0.03
-  var heightPicture:number = 1.7*widthButton + props.width*0.02*2
   _setList = setList
+  
   useEffect(() => {
 		getList(props.id)
-	}, []);
+	}, [props]); // empty dependency array means it will only run once
 
   const handleButtonClick = (e: string) => {
     SetWindowProfile(<OtherUserProfile id={e}/>, true)

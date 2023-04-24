@@ -20,7 +20,7 @@ const style = {
  function FillSpaceComponentAchieve(props: any){
   const [showModal, setShowModal] = useState(-1)
 
-    var widthButton:number = (((Width*0.9) - (Width*0.9*0.03 * props.amount * 2))/props.amount)
+    var widthButton:number = (((Width*0.9) - (Width*0.9*0.03 * 6 * 2))/6) - 1
 
    return (
     <>

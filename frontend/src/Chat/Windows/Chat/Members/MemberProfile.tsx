@@ -5,7 +5,7 @@ import ChatUser from "../../../../Utils/Cache/ChatUser";
 import HTTP from "../../../../Utils/HTTP";
 import User from "../../../../Utils/Cache/User";
 import { Button } from "@mui/material";
-import { ChatLineHeight, ChatWindowHeight, SetMainChatWindow } from "../../MainChatWindow";
+import { ChatLineHeight, ChatWindowHeight } from "../../MainChatWindow";
 import { ClearChatMessageCache } from "../ActualChat/ChatWindow";
 import { CreatingGameData } from "../../../../Games/pong/components/CreateGameMenu";
 import { SetWindowProfile } from "../../../../UserProfile/ProfileMainWindow";

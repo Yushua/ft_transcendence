@@ -23,14 +23,14 @@ function AchievementBar(props: any) {
   
   useEffect(() => {
 		getList(props.id)
-	}, []); // empty dependency array means it will only run once
-    return (
-      <>
+	}, [props]); // empty dependency array means it will only run once
+  return (
+    <>
       {ListSearchList.map((option, idx) => (
         <FillSpaceComponentAchieve option={option} idx={idx} amount={6}></FillSpaceComponentAchieve>
       ))}
     </>
-    )
+  )
 }
 
 export default AchievementBar;

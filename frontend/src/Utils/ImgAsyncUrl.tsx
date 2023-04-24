@@ -1,5 +1,4 @@
-import { Button } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 
 export default function ImgAsyncUrl(props: any) {
@@ -18,12 +17,13 @@ export default function ImgAsyncUrl(props: any) {
 				}
 			}
 		})()
-	}, [])
+	}, [props])
 	
 	return (
 		<img
 			className={props.className}
 			key={props.key}
+			alt=""
 			style={props.style}
 			src={url ?? ""}
 			onClick={url !== null ? props.onClick : () => {}}

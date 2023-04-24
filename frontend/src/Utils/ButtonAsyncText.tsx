@@ -1,5 +1,5 @@
 import { Button } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 
 export default function ButtonAsyncText(props: any) {
@@ -18,7 +18,7 @@ export default function ButtonAsyncText(props: any) {
 				}
 			}
 		})()
-	}, [])
+	}, [props])
 	
 	return (
 		<Button

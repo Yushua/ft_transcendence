@@ -40,8 +40,8 @@ export default function RoomCreation() {
 					HTTP.asyncPost(`chat/room`,
 						{	OwnerID:User.ID,
 							Name:name,
-							HasPassword:(pass!=""?"t":"f"),
-							Password:(pass!=""?pass:""),
+							HasPassword:(pass!==""?"t":"f"),
+							Password:(pass!==""?pass:""),
 							RoomType:(priv?"Private":"Public")},
 						null,
 						async ok => {

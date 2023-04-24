@@ -4,6 +4,7 @@ import { AuthGuardEncryption } from 'src/auth/auth.guard';
 import { UserProfileService } from './user-profile.service';
 import { UserProfile } from './user.entity';
 import { MessageList } from './MessageList.entity';
+import OurSession from 'src/session/OurSession';
 
 @Controller('user-profile')
 
@@ -33,7 +34,7 @@ export class UserProfileController {
         if (id === "undefined")
             return;
         var user:UserProfile = await this.userServices.findUserBy(id)
-        return {user:user, username:user.username, profilePicture:user.profilePicture, experience:user.experience, status:user.userStatus}
+        return {user:user, username:user.username, profilePicture:user.profilePicture, experience:user.experience, status:OurSession.GetUserState(id)}
     }
 
     /**

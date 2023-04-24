@@ -18,7 +18,7 @@ export async function asyncGetNameExport():Promise<string> {
 	var user = await JSON.parse(response)
 	User._ManualUpdate(user["user"])
 	return await user["username"];
-  }
+}
 
 export function GetCurrentMainWindow() {
 	return _currentWindow
@@ -34,13 +34,14 @@ export function SetMainWindow(window: string, add_to_history = true) {
 }
 var _setWindow: React.Dispatch<React.SetStateAction<string>> | null = null
 
-var _setNameDisplay: React.Dispatch<React.SetStateAction<string>>
-var _setDisplay: React.Dispatch<React.SetStateAction<boolean>>
 async function asyncToggleGetName(){
-	_setNameDisplay(await asyncGetNameExport())
-	_setDisplay(true)
-  };
-
+	const name = await asyncGetNameExport()
+	if (name === "") {
+		newWindow(<SetUsername/>)
+		return false
+	}
+	return true
+}
 
 export var Width: number = Math.trunc(window.screen.width * .5)
 
@@ -48,47 +49,38 @@ export default function MainWindow() {
 	Width = Math.trunc(window.screen.width * .5)
 	const socket = React.useContext(WebsocketContext)
 	const [currentWindow, setWindow] = useState<string>("")
-	const [nameDisplay, setNameDisplay] = useState<string>("");
-	const [Display, setDisplay] = useState<boolean>(false);
-	_setNameDisplay = setNameDisplay
-	_setDisplay = setDisplay
-	useEffect(() => {
-		if (Display === false){
-			asyncToggleGetName()
-		}
-	}, []); // empty dependency array means it will only run once
-	if (Display === true){
-		if (nameDisplay === ""){
-			newWindow(<SetUsername/>)
-		}
-	}
+
 	_setWindow = setWindow
 	_currentWindow = currentWindow
 	
 	useEffect(() => {
-		const params = new URLSearchParams(window.location.search)
-		const page = params.get("window")
-		if (!page) {
-			OurHistory.Add()
-			return
-		}
-		setWindow(page)
-		switch (page) {
-			case "chat":
-				const roomID = params.get("roomID")
-				if (!!roomID)
-					ChatRoom.asyncUpdate(roomID)
-				break
-			case "profile":
-				const id = params.get("id")
-				if (!!id)
-					setTimeout(async () => {
-						SetWindowProfile(<OtherUserProfile id={id}/>, true)
-					}, 100)
-				break
-			default:
-				break
-		}
+		asyncToggleGetName().then(res => {
+			if (!res)
+				return
+			const params = new URLSearchParams(window.location.search)
+			const page = params.get("window")
+			if (!page) {
+				OurHistory.Add()
+				return
+			}
+			setWindow(page)
+			switch (page) {
+				case "chat":
+					const roomID = params.get("roomID")
+					if (!!roomID)
+						ChatRoom.asyncUpdate(roomID)
+					break
+				case "profile":
+					const id = params.get("id")
+					if (!!id)
+						setTimeout(async () => {
+							SetWindowProfile(<OtherUserProfile id={id}/>, true)
+						}, 100)
+					break
+				default:
+					break
+			}
+		})
 	}, [])
 	
 	var display = <></>
