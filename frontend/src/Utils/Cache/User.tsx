@@ -15,11 +15,9 @@ export default class User {
 		this.ClearEvent.Run()
 	}
 	
-	static async asyncUpdate(userID: string) {
-		if (userID === "")
-			return
-		const res = HTTP.Get(`user-profile/user/${userID}`)
-		const user = await JSON.parse(res)
+	static async asyncUpdate() {
+		const res = HTTP.Get(`user-profile/user`)
+		const user = (await JSON.parse(res)).user
 		this._ManualUpdate(user)
 	}
 
@@ -27,6 +25,7 @@ export default class User {
 		if (!!user) {
 			this._user = user
 			NameStorage.User._ManualSet(user.id, user.username)
+			NameStorage.UserPFP._ManualSet(user.id, user.profilePicture)
 			ConenctSocket()
 			this.UpdateEvent.Run()
 		}
