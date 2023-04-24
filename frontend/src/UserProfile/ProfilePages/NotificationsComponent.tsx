@@ -57,28 +57,30 @@ function NotificationsComponent(props: any){
     setMyDisplay(true)
   }
   
-    if (props.buttonstatus === 2){
+    if (props.buttonstatus !== 1){
       return (
         <></>
       )
     }
-    return (
-        <>
-            {ButtonStatus === 1 ? (
-            <button
-                style={{ display: "inline-block", marginLeft: `${Width*0.02}px`, marginRight: `${Width*0.02}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`}}
-                onClick={() => handleButtonNotificationOffClick(props.id)}>
-                < div>{`Notifications Off`}</div>
-            </button>
-            ) : ButtonStatus === 2 ? (
-            <button
-                style={{ display: "inline-block", marginLeft: `${Width*0.02}px`, marginRight: `${Width*0.02}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`}}
-                onClick={() => handleButtonNotificationOnClick(props.id)}>
-                < div>{`Notifications On`}</div>
-            </button>
-            ) : null}
-        </>
-      );
+    else {
+      return (
+          <>
+              {ButtonStatus === 1 ? (
+              <button
+                  style={{ display: "inline-block", marginLeft: `${Width*0.02}px`, marginRight: `${Width*0.02}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`}}
+                  onClick={() => handleButtonNotificationOffClick(props.id)}>
+                  < div>{`Notifications Off`}</div>
+              </button>
+              ) : ButtonStatus === 2 ? (
+              <button
+                  style={{ display: "inline-block", marginLeft: `${Width*0.02}px`, marginRight: `${Width*0.02}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`}}
+                  onClick={() => handleButtonNotificationOnClick(props.id)}>
+                  < div>{`Notifications On`}</div>
+              </button>
+              ) : null}
+          </>
+        );
+    }
 }
 
 export default NotificationsComponent;
