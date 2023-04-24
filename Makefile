@@ -20,7 +20,7 @@ run-back:
 	cd ./backend ; npm run start:dev
 
 run-docker:
-	docker-compose up --build
+	bash Entrypoint.sh
 
 setup:
 	npm i @nestjs/common
