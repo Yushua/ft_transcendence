@@ -95,11 +95,14 @@ function OtherUserProfile(props: any){
                     {/* make a check if its already there. follow or unfollow */}
                     <>
                       {ButtonStatus === 1 ? (
-                        <button
-                          style={{ display: "inline-block", marginLeft: `${Width*0.02}px`, marginRight: `${Width*0.02}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`}}
-                          onClick={() => handleButtonUnfollowClick(props.id)}>
-                          < div>{`unfollow`}</div>
-                        </button>
+                        <>
+                          <button
+                            style={{ display: "inline-block", marginLeft: `${Width*0.02}px`, marginRight: `${Width*0.02}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`}}
+                            onClick={() => handleButtonUnfollowClick(props.id)}>
+                            < div>{`unfollow`}</div>
+                          </button>
+                          <NotificationsComponent buttonstatus={ButtonStatus} id={props.id}/>
+                        </>
                       ) : ButtonStatus === 2 ? (
                         <button
                           style={{ display: "inline-block", marginLeft: `${Width*0.02}px`, marginRight: `${Width*0.02}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`}}
@@ -107,7 +110,6 @@ function OtherUserProfile(props: any){
                           < div>{`follow`}</div>
                         </button>
                       ) : null}
-                      <NotificationsComponent buttonstatus={ButtonStatus} id={props.id}/>
                     </>
                   </div>
                 </div>
