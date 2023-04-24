@@ -92,7 +92,7 @@ export default class HTTP {
 		}
 		if (req.status < 300)
 			return req.responseText
-		console.log(req.responseText)
+		// console.log(req.responseText)
 		throw req
 	}
 	

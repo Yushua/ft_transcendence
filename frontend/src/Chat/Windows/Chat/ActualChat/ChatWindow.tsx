@@ -64,7 +64,6 @@ export async function asyncUpdateChatLog() {
 				const res = HTTP.Get(`chat/msg/${ChatRoom.ID}/-${page}`)
 				msgs = await JSON.parse(res)
 			} catch (error) {
-				console.log(error.status)
 				if (error.status !== 429)
 					return
 				_setChatLog([<div key="key">Loading...</div>])
@@ -79,35 +78,29 @@ export async function asyncUpdateChatLog() {
 				break
 			
 			for (let i = msgs.length - 1; count < target && i >= 0; i--) {
-				const url = new Promise((res, err) => {
-					const id = msgs[i].OwnerID
-					setTimeout(async () => {
-						const url = await NameStorage.UserPFP.asyncGet(id)
-						res(`${HTTP.HostRedirect()}pfp/${url}`)
-					}, _reactKeyThing);
-				})
+				const msg = msgs[i]
 				
 				count++
-				if (!ChatUser.BlockedUserIDs.includes(msgs[i].OwnerID))
+				if (!ChatUser.BlockedUserIDs.includes(msg.OwnerID))
 					newChatLog.unshift(
-						(msgs[i].OwnerID === "game" ?
+						(msg.OwnerID === "game" ?
 							<div key={_reactKeyThing++} style={{textAlign: "left"}}>
 								<Button
 									variant={"contained"}
 									style={{height: `${ChatLineHeight}px`, textAlign: "left"}}
 									onClick={_ => {
-										socket.emit('joinCustomGame', {gameID: msgs[i].Message, userID: User.ID, userName: User.Name})
+										socket.emit('joinCustomGame', {gameID: msg.Message, userID: User.ID, userName: User.Name})
 									}}
-								>Join game: {msgs[i].Message}</Button>
+								>Join game: {msg.Message}</Button>
 							</div> :
 							<div key={_reactKeyThing++} style={{width: `${Width * .9 * .6 * .95}px`, textAlign: "left", overflowWrap: "break-word"}}>
 								<ImgAsyncUrl
-									id={`${_reactKeyThing} - ${msgs[i].OwnerID}`}
-									asyncUrl={() => url}
+									id={`${_reactKeyThing} - ${msg.OwnerID}`}
+									asyncUrl={async () => `${HTTP.HostRedirect()}pfp/${await NameStorage.UserPFP.asyncGet(msg.OwnerID)}`}
 									style={{width: `${ChatLineHeight * .8}px`, height: `${ChatLineHeight * .8}px`, borderRadius: "50%"}}
 								/>
-								<b>{`${NameStorage.User.Get(msgs[i].OwnerID)}`}</b>
-								{`: ${msgs[i].Message}`}
+								<b>{`${NameStorage.User.Get(msg.OwnerID)}`}</b>
+								{`: ${msg.Message}`}
 							</div>
 						)
 				)

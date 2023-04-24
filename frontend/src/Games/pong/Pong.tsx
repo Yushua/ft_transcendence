@@ -129,8 +129,8 @@ export const Pong = () => {
 		})
 
 		socket.on('spectating', () => {
+			SetMainWindow("pong", GetCurrentMainWindow() !== "pong")
 			setSpectating(true)
-			setMainPongTab("pong")
 			setMainPongTab('canvas')
 			localStorage[Enum.window] = 'canvas'
 			localStorage[Enum.spectating] = true

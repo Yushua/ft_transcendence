@@ -178,9 +178,32 @@ export class MyGateway implements OnModuleInit {
 		if (!key)
 			key = playerInfo.gameID /* private games have their ID as key, public ones a game name */
 		customGame = customGames.get(key)
-
+		
+		if (!customGame) {
+			const runningGame = games.get(key)
+			if (!runningGame)
+				return
+			const _IDs = runningGame[1];
+			for (const i of ['1', '2']) {
+				if (_IDs[IDs[`p${i}_socket_id`]] === player2.id) {
+					player2.emit('joined', runningGame[0][`p${i}_controls`])
+					return
+				}
+				if (_IDs[`IDs.p${i}_userID`] === playerInfo.userID && _IDs[IDs[`p${i}_socket_id`]] === 'disconnected') {
+					_IDs[IDs[`p${i}_socket_id`]] = player2.id
+					connections.set(player2.id, runningGame)
+					OurSession.GameJoining(player2.id)
+					player2.emit('joined', runningGame[0][`p${i}_controls`])
+					return
+				}
+			}
+			connections.set(player2.id, runningGame)
+			player2.emit('spectating')
+			return
+		}
+		
 		/* game needs to exist and can't join the game you yourself created*/
-		if (customGame && customGame[1][IDs.p1_socket_id] !== player2.id)
+		if (customGame[1][IDs.p1_socket_id] !== player2.id)
 		{
 			customGames.delete(key)
 			const serializedMap = [...customGames.entries()];
@@ -211,7 +234,6 @@ export class MyGateway implements OnModuleInit {
 		@ConnectedSocket() client:Socket) {
 		//check if in game
 		const user = await this._guard.GetUser(client.handshake.headers["authorization"])
-		const state = OurSession.GetUserState(user.id)
 		
 		for (var game of games) {
 			var _IDs = game[1][1]
