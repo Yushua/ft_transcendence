@@ -5,7 +5,6 @@ import HTTP from "../../Utils/HTTP";
 async function AsyncGetThisStatus(status:string):Promise<boolean> {
   const response = HTTP.Get(`user-profile/get${status}Status`, null, {Accept: 'application/json'})
   var result = await JSON.parse(response)
-  console.log(`status before {${result["status"]}}`)
   return (result["status"])
 }
 

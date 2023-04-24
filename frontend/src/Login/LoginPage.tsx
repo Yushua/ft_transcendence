@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
+import { Cookies, getCookie, removeCookie, setCookie } from 'typescript-cookie';
 import { newWindow } from '../App';
 import '../App.css';
 import MainWindow from '../MainWindow/MainWindow';
@@ -166,7 +166,7 @@ async function setupLoginPage(){
     //token is already made
     _setintraName(await asyncGetintraName())
     if ((await RefreshAuthentication()) === false){
-      newWindow(<ErrorPage/>)
+      newWindow(<ErrorPage message={"our .env file in backend is wrong, unable to enter our webpage"}/>)
     }
     //if there already is one, set intraname
     setupLoginTWT()
