@@ -4,9 +4,8 @@ import SSEManager from "../../Events/SSEManager";
 import OurHistory from "../../Utils/History";
 
 export const ChatUserEvent: SSEManager = new SSEManager(msg => {
-	ChatUser.asyncUpdate(ChatUser.ID);
+	ChatUser.asyncUpdate(ChatUser.ID)
 	if (msg.startsWith("kick")) {
-		ChatUser.asyncUpdate(ChatUser.ID)
 		if (msg.substring(4) === ChatRoom.ID) {
 			ChatRoom.Clear();
 			OurHistory.Add();
