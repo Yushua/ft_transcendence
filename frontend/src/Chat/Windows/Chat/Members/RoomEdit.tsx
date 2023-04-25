@@ -73,6 +73,7 @@ export default function RoomEdit() {
 					HTTP.Delete(`chat/room/${ChatRoom.ID}`)
 					ChatRoom.Clear()
 					OurHistory.Add()
+					ChangeMemberWindow("members")
 				}}
 				color="error"
 				>Delete Room</Button>

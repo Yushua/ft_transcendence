@@ -13,6 +13,8 @@ export async function asyncUpdateMembersWindow() {
 	else if (wasLastRommDirect)
 		ChangeMemberWindow("members")
 	wasLastRommDirect = ChatRoom.ID === "" ? false : ChatRoom.Direct
+	if (ChatRoom.ID === "")
+		ChangeMemberWindow("members")
 }
 
 export function ChangeMemberWindow(window: string) {
