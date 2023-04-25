@@ -23,6 +23,7 @@ async function AsyncSetButtonStatus(otherId: string):Promise<any> {
     const response = HTTP.Get(`user-profile/friendlist/check/${otherId}`, null, {Accept: 'application/json'})
     var user = await JSON.parse(response)
 	  _setButtonStatus(await user["status"])
+    _setMyDisplay(true)
     }
  async function AsyncGetOtherUser(otherId: string):Promise<string> {
     const response = HTTP.Get(`user-profile/user/${otherId}`, null, {Accept: 'application/json'})
@@ -74,9 +75,6 @@ function OtherUserProfile(props: any){
     if (myDisplay === false){
       setup()
     }
-    else {
-      return (<></>)
-    }
 
     const handleButtonUnfollowClick = (id:string) => {
       RemoveFriend(id)
@@ -87,7 +85,7 @@ function OtherUserProfile(props: any){
     };
 
     async function setup(){
-      var username:string = await AsyncGetOtherUser(props.id)
+        var username:string = await AsyncGetOtherUser(props.id)
         if (username !== User.Name){
           await AsyncSetButtonStatus(props.id)
         }
