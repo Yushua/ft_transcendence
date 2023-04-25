@@ -17,7 +17,7 @@ export default class User {
 	
 	static async asyncUpdate() {
 		const res = HTTP.Get(`user-profile/user`)
-		const user = (await JSON.parse(res)).user
+		const user = await JSON.parse(res)
 		this._ManualUpdate(user)
 	}
 
