@@ -40,6 +40,7 @@ async function asyncToggleGetName(){
 		newWindow(<SetUsername/>)
 		return false
 	}
+	_setWindow(" ")
 	return true
 }
 
