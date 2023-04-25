@@ -20,8 +20,7 @@ async function getAccessToken(username:string){
     }
     newWindow(<LoginPage/>)
   } catch (error) {
-    _setMessage(`username already in use`)
-    console.log(`error ${error.errorcode}`)
+    _setMessage(`error ${error.errorcode}`)
     _setValue("")
   }
 }
@@ -38,8 +37,11 @@ function SetUsername(){
   _setMessage = setMessage
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (value.length > 4 && value.length <= 20){
+    if (value.length > 4 && value.length <= 10){
       getAccessToken(value)
+    }
+    else {
+      _setMessage(`must be no larger than 10, yours is ${value.length}`)
     }
   };
 
