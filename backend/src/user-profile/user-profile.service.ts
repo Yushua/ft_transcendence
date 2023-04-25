@@ -268,7 +268,7 @@ export class UserProfileService {
        */
       async SearchList(friendName:string):Promise<string[][]>{
         const users = await this.userEntity.find();
-        const filteredUsers = users.filter(user => user.username.toLowerCase().includes(friendName.toLowerCase()));
+        const filteredUsers = users.filter(user => user.username.toLowerCase().includes(friendName.toLowerCase()) || user?.intraName.toLowerCase().includes(friendName.toLowerCase()));
         return filteredUsers.map(user => [user.profilePicture, user.username, OurSession.GetUserState(user.id), user.id]);
       }
 
@@ -400,7 +400,6 @@ export class UserProfileService {
         var userprofile = await this.userEntity.findOneBy({id});//player1
         await this.AddMessageToUser(addMessageToUSer, id, userprofile)
         if (userprofile.otherfriendList.length > 0){
-          console.log("friendlist", userprofile.otherfriendList)
           await this.AddMessageToOthers(addMessageToOtherUSer, userprofile.otherfriendList, id)
         }
       }
