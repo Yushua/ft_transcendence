@@ -55,6 +55,7 @@ export default function RoomEdit() {
 							if (name !== ChatRoom.Name)
 								NameStorage.Room.Clear(ChatRoom.ID)
 							ChatRoom.asyncUpdate(ChatRoom.ID)
+							ChangeMemberWindow("members")
 						},
 						err => setDis(false)
 					)
