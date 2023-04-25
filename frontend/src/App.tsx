@@ -4,7 +4,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import LoginPage from './Login/LoginPage';
 
 export async function newWindow(newWindow:JSX.Element) {
-  if (!!_setWindow)
+  if (!!_setWindow && !document.getElementById("ErrorPage"))
     _setWindow(newWindow)
 }
 
