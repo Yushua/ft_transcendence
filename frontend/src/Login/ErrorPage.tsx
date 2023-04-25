@@ -7,6 +7,7 @@ function ErrorPage(props: any){
   return (
     <center>
       <Box
+          id="ErrorPage"
           fontFamily={"'Courier New', monospace"}
           fontSize={"200%"}
           marginTop={`${Width*0.3}px`}>
