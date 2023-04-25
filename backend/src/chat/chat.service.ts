@@ -83,6 +83,11 @@ export class ChatService {
 	: Promise<string>
 	{
 		const [room, changed] = await this._modifyRoom(roomID, async room => {
+			if (room.MemberIDs.includes(userID)) {
+				this.Notify(`user-${userID}`, "room")
+				return false
+			}
+			
 			/* Adding friend */
 			if (room.MemberIDs.includes(memberID)) {
 				const user = await this.userProfileRepo.findOneBy({id: userID});
