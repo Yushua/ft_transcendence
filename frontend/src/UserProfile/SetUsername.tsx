@@ -10,7 +10,7 @@ import { Width } from '../MainWindow/MainWindow';
 
 async function getAccessToken(username:string){
   try {
-    const response = HTTP.Get(`auth/ChangeUsername`, {username}, {Accept: 'application/json'})
+    const response = HTTP.Patch(`auth/ChangeUsername`, {username}, {Accept: 'application/json'})
     var result = await JSON.parse(response)
 
     var status:boolean = result["status"]

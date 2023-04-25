@@ -1,4 +1,4 @@
-import { Controller, Get, Param, UseGuards, Request, Post, Res, Body } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards, Request, Post, Res, Body, Patch } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthGuardEncryption } from './auth.guard';
 import { AuthService } from './auth.service';
@@ -98,7 +98,7 @@ export class AuthController {
     }
 
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
-    @Get('ChangeUsername')
+    @Patch('ChangeUsername')
     async setNewUsername(@Body() usernameDTO: UsernameDTO,  @Request() req: Request){
         return {
             status: await this.AuthService.changeUsername(usernameDTO.username, req["user"].intraName)

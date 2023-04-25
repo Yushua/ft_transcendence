@@ -69,7 +69,7 @@ export class UserProfileController {
      * @returns returns all the users [["pfp", "username"]]
      */
     @UseGuards(AuthGuard('jwt'))
-    @Get('SearchList')
+    @Patch('SearchList')
     async getSearchList(@Body() usernameDTO: UsernameDTO,) {
         var searchlist:string[][] = await this.userServices.SearchList(usernameDTO.username)
         return { searchlist: searchlist }
