@@ -6,7 +6,7 @@ import User from '../Utils/Cache/User';
 import { SetWindowProfile } from '../UserProfile/ProfileMainWindow';
 
 export async function asyncGetSearchList(SearchTerm:string){
-  const response = HTTP.Get(`user-profile/SearchList/${SearchTerm}`, null, {Accept: 'application/json'})
+  const response = HTTP.Get(`user-profile/SearchList`, {username: SearchTerm}, {Accept: 'application/json'})
   var result = await JSON.parse(response)
   _setNameSearchList(await result["searchlist"])
 }

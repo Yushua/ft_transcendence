@@ -8,7 +8,7 @@ import { Width } from '../MainWindow/MainWindow';
 
 export async function asyncChangeName(newUsername:string) {
   try {
-    HTTP.Post(`user-profile/userchange/${newUsername}`, null, {Accept: 'application/json'})
+    HTTP.Post(`user-profile/userchange`, {username: newUsername}, {Accept: 'application/json'})
     _setmessage(`you succesfully changed your username to ${newUsername}`)
   } catch (error) {
     _setmessage("wrong input of username")

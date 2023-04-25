@@ -1,10 +1,11 @@
-import { Controller, Get, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthGuardEncryption } from 'src/auth/auth.guard';
 import { UserProfileService } from './user-profile.service';
 import { UserProfile } from './user.entity';
 import { MessageList } from './MessageList.entity';
 import OurSession from 'src/session/OurSession';
+import { UsernameDTO } from 'src/auth/dto/auth-credentials.dto copy';
 
 @Controller('user-profile')
 
@@ -68,9 +69,9 @@ export class UserProfileController {
      * @returns returns all the users [["pfp", "username"]]
      */
     @UseGuards(AuthGuard('jwt'))
-    @Get('SearchList/:friendName')
-    async getSearchList(@Param('friendName') friendName:string) {
-        var searchlist:string[][] = await this.userServices.SearchList(friendName)
+    @Get('SearchList')
+    async getSearchList(@Body() usernameDTO: UsernameDTO,) {
+        var searchlist:string[][] = await this.userServices.SearchList(usernameDTO.username)
         return { searchlist: searchlist }
     }
 
@@ -126,11 +127,11 @@ export class UserProfileController {
         return (await found).username;
     }
 
-    @Post('userchange/:username')
+    @Post('userchange')
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
     changeUsername(
-        @Param('username') username: string, @Request() req: Request) {
-        this.userServices.changeUsername(username, req["user"].id);
+        @Body() usernameDTO: UsernameDTO, @Request() req: Request) {
+        this.userServices.changeUsername(usernameDTO.username, req["user"].id);
     }
 
     /*

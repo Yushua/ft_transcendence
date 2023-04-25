@@ -1,9 +1,10 @@
-import { Controller, Get, Param, UseGuards, Request, Post, Res } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards, Request, Post, Res, Body } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthGuardEncryption } from './auth.guard';
 import { AuthService } from './auth.service';
 import { authenticator } from '@otplib/preset-default';
 import * as qrcode from 'qrcode'
+import { UsernameDTO } from './dto/auth-credentials.dto copy';
 
 @Controller('auth')
 export class AuthController {
@@ -97,10 +98,10 @@ export class AuthController {
     }
 
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
-    @Get('ChangeUsername/:username')
-    async setNewUsername(@Param('username') username: string,  @Request() req: Request){
+    @Get('ChangeUsername')
+    async setNewUsername(@Body() usernameDTO: UsernameDTO,  @Request() req: Request){
         return {
-            status: await this.AuthService.changeUsername(username, req["user"].intraName)
+            status: await this.AuthService.changeUsername(usernameDTO.username, req["user"].intraName)
     }}
 
     @Get('checkStatusTWT/:TWT')
