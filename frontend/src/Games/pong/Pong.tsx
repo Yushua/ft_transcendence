@@ -17,6 +17,7 @@ import OtherUserProfile from '../../UserProfile/ProfilePages/OtherUserProfile';
 import HTTP from '../../Utils/HTTP';
 
 var _setMainPongTab: React.Dispatch<React.SetStateAction<string>> | null = null
+var _setSpectating: React.Dispatch<React.SetStateAction<boolean>>
 
 var g_controls = ''
 var iniGameData = new GameData()
@@ -52,9 +53,11 @@ export const Pong = () => {
 	const [gameData, setGameData] = useState(iniGameData)
 	const [activeGames, setActiveGames] = useState(iniActiveGames)
 	const [customGames, setCustomGames] = useState(iniCustomGames)
-
 	const [MainTab, setMainPongTab] = useState<string>("classic")
+	
+	/* expose these so people can join/spectate through chat without having to have loaded the pong tab */
 	_setMainPongTab = setMainPongTab
+	_setSpectating = setSpectating
 
 	/* reset states to locally stored states if user comes back to window */
 	if (!firstCall)
@@ -67,7 +70,7 @@ export const Pong = () => {
 		firstCall = true
 	}
 
-	/*  */
+	/* runs once */
 	useEffect(() => {
 		/* FUNCTIONS TO UPDATE DATA USED TO RENDER CANVAS */
 		function updateGameData(data:GameData)
@@ -127,14 +130,6 @@ export const Pong = () => {
 		socket.on('gamedata', (s_gameData:GameData) => {
 			updateGameData(s_gameData)
 		})
-
-		socket.on('spectating', () => {
-			SetMainWindow("pong", GetCurrentMainWindow() !== "pong")
-			setSpectating(true)
-			setMainPongTab('canvas')
-			localStorage[Enum.window] = 'canvas'
-			localStorage[Enum.spectating] = true
-		})
 		socket.on('left', () => {
 			setSpectating(false)
 			setMainPongTab('classic')
@@ -170,14 +165,14 @@ export const Pong = () => {
 	}
 
 	//JSX 
-	var _tab
+	var _tab:any
 	switch (MainTab) {
 		default:
 			return <></>
 		case "canvas" :
 			return (
 				<div >
-					{/* Game active poongame */}
+					{/* Game active pong-game */}
 					<div>
 						<Button style={{}} variant="contained" onClick={() => leaveGame()}>
 							{spectating ? "Stop Spectating" : "Leave Game"}
@@ -294,5 +289,13 @@ export function JoinedGame(controls:string) {
 	_setMainPongTab('canvas')
 	localStorage[Enum.window] = 'canvas'
 	g_controls = controls
+}
+
+export function SpectateGame() {
+	SetMainWindow("pong", GetCurrentMainWindow() !== "pong")
+	_setSpectating(true)
+	_setMainPongTab('canvas')
+	localStorage[Enum.window] = 'canvas'
+	localStorage[Enum.spectating] = true
 }
 

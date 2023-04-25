@@ -2,9 +2,10 @@ import { createContext } from "react"
 import { io, Socket } from 'socket.io-client'
 import HTTP from '../../Utils/HTTP'
 import { getCookie } from "typescript-cookie"
+import { SpectateGame } from "../pong/Pong";
 import { JoinedGame } from "../pong/Pong";
 
-export function ConenctSocket() {
+export function ConnectSocket() {
 	try {
 		socket.disconnect();
 	} catch (error) { /* Ignore error */ }
@@ -17,6 +18,10 @@ export function ConenctSocket() {
 
 	socket.on('joined', (controls:string) => {
 		JoinedGame(controls)
+	})
+
+	socket.on('spectating', () => {
+		SpectateGame()
 	})
 
 	WebsocketContext = createContext<Socket>(socket)

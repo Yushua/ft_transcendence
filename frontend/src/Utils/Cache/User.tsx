@@ -1,5 +1,5 @@
 import ManualEventManager from "../../Events/ManualEventManager";
-import { ConenctSocket } from "../../Games/contexts/WebsocketContext";
+import { ConnectSocket } from "../../Games/contexts/WebsocketContext";
 import HTTP from "../HTTP";
 import ChatUser from "./ChatUser";
 import NameStorage from "./NameStorage";
@@ -26,7 +26,7 @@ export default class User {
 			this._user = user
 			NameStorage.User._ManualSet(user.id, user.username)
 			NameStorage.UserPFP._ManualSet(user.id, user.profilePicture)
-			ConenctSocket()
+			ConnectSocket()
 			this.UpdateEvent.Run()
 		}
 	}
