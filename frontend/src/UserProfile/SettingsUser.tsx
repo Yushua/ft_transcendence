@@ -5,10 +5,12 @@ import OnOFFComponent from '../Search bar/AchievementComponents/OnOffComponent';
 import { useState } from 'react';
 import { Box } from '@mui/material';
 import { Width } from '../MainWindow/MainWindow';
+import User from '../Utils/Cache/User';
 
 export async function asyncChangeName(newUsername:string) {
   try {
     HTTP.Post(`user-profile/userchange`, {username: newUsername}, {Accept: 'application/json'})
+    User._user.username = newUsername
     _setmessage(`you succesfully changed your username to ${newUsername}`)
   } catch (error) {
     _setmessage("wrong input of username")
