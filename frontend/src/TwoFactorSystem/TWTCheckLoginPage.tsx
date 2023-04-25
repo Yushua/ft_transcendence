@@ -43,8 +43,8 @@ async function handleSubmit(event:any){
 
 async function asyncGetName():Promise<string> {
 	const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
-	var user = await JSON.parse(response)
-	return await user["intraname"];
+	var result = await JSON.parse(response)
+	return result.intraName;
   }
 
 

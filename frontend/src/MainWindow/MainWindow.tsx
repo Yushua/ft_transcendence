@@ -18,8 +18,8 @@ export async function asyncGetNameExport():Promise<string> {
 	try {
 		const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
 		var user = await JSON.parse(response)
-		User._ManualUpdate(user["user"])
-		return await user["username"];
+		User._ManualUpdate(user)
+		return User.Name;
 	} catch (error) {
 		newWindow(<ErrorPage message={`MainWindow error, Couldn't get the user data due to ${error}`}/>)
 	}

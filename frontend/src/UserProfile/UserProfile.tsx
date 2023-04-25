@@ -14,7 +14,7 @@ import InboxBar from '../Search bar/InboxBar';
 async function asyncGetName():Promise<string> {
   const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
   var result = await JSON.parse(response)
-  return await result["username"];
+  return result.username;
 }
 
 interface FormElements extends HTMLFormControlsCollection {

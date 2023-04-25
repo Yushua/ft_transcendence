@@ -12,7 +12,7 @@ async function asyncGetintraName():Promise<string> {
   try {
     const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
     var result = await JSON.parse(response)
-    return await result["intraname"];
+    return result.intraName;
   }
   catch {
     removeCookie("accessToken")
