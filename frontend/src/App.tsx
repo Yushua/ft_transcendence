@@ -14,7 +14,7 @@ function App(){
 
   const [window, setWindow] = useState<JSX.Element>(<LoginPage />)
   _setWindow = setWindow
-
+  
   return (
     <BrowserRouter>
     <Routes>

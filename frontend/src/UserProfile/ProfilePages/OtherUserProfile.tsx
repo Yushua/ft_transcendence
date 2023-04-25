@@ -28,7 +28,9 @@ async function AsyncSetButtonStatus(otherId: string):Promise<any> {
     const response = HTTP.Get(`user-profile/user/${otherId}`, null, {Accept: 'application/json'})
     var result = await JSON.parse(response)
     _setMyUsername(result["username"])
-    _setMyPFP(result["profilePicture"])
+    _setMyintraname(result["intraname"])
+    if (result["profilePicture"] !== undefined)
+      _setMyPFP(`${HTTP.HostRedirect()}pfp/${result["profilePicture"]}`)
     _setMyStatus(result["status"])
     return (result["username"])
   }
@@ -47,6 +49,7 @@ async function RemoveFriend(id:string) {
 var _setButtonStatus:React.Dispatch<React.SetStateAction<number>>
 
 var _setMyUsername:React.Dispatch<React.SetStateAction<string>>
+var _setMyintraname:React.Dispatch<React.SetStateAction<string>>
 var _setMyStatus:React.Dispatch<React.SetStateAction<string>>
 var _setMyPFP:React.Dispatch<React.SetStateAction<string>>
 var _setMyDisplay:React.Dispatch<React.SetStateAction<boolean>>
@@ -54,8 +57,9 @@ var _setMyDisplay:React.Dispatch<React.SetStateAction<boolean>>
 function OtherUserProfile(props: any){
 
     const [ButtonStatus, setButtonStatus] = useState<number>(0);
-    const [myPFP, setMyPFP] = useState<string>("");
+    const [myPFP, setMyPFP] = useState<string>(`${HTTP.HostRedirect()}pfp/${"default_pfp.jpg"}`);
     const [myUsername, setMyUsername] = useState<string>("");
+    const [myintraname, setMyintraname] = useState<string>("");
     const [myStatus, setMyStatus] = useState<string>("");
     const [myDisplay, setMyDisplay] = useState<boolean>(false);
     const marginLeft = Width * 0.01
@@ -64,10 +68,14 @@ function OtherUserProfile(props: any){
     _setMyDisplay = setMyDisplay
     _setButtonStatus = setButtonStatus
     _setMyUsername = setMyUsername
+    _setMyintraname = setMyintraname
     _setMyStatus = setMyStatus
     _setMyPFP = setMyPFP
     if (myDisplay === false){
       setup()
+    }
+    else {
+      return (<></>)
     }
 
     const handleButtonUnfollowClick = (id:string) => {
@@ -85,34 +93,36 @@ function OtherUserProfile(props: any){
         }
         setMyDisplay(true)
       }
-
     return (
       <center>
           <div id="OtherProfilePage" style={{width: `${Width}px`}}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <img src={myPFP !== "" ? `${HTTP.HostRedirect()}pfp/${myPFP}` : ""} alt="" style={{width: `${0.1*Width}px`, height: `${0.1*Width}px`, alignItems: 'center', padding: `${0.01*Width}px`}}/>
+                <img src={myPFP}
+                  alt=""
+                  style={{width: `${0.1*Width}px`, height: `${0.1*Width}px`, alignItems: 'center', padding: `${0.01*Width}px`, borderRadius: `50%`}}/>
                   <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: `${0.01*Width}px`}}>
-                    < div>{`Welcome: ${myUsername}`}</div>
-                    < div>{`Status: ${myStatus}`}</div>
-                    {/* make a check if its already there. follow or unfollow */}
-                    <>
-                      {ButtonStatus === 1 ? (
-                        <>
+                    < div style={{display: 'flex', fontFamily: "'Courier New', monospace",  fontSize: `${Width*0.05/3}px`, marginTop: `${Width*0.005}px`, marginBottom: `${Width*0.005}px`}}>{`${myUsername} - ${myintraname}`}</div>
+                    < div style={{display: 'flex', fontFamily: "'Courier New', monospace",  fontSize: `${Width*0.05/3}px`, marginTop: `${Width*0.005}px`, marginBottom: `${Width*0.005}px`}}>{`${myStatus}`}</div>
+                    <div style={{display: 'flex'}}>
+                      <>
+                        {ButtonStatus === 1 ? (
+                          <>
+                            <button
+                              style={{ display: "inline-block", marginLeft: `${Width*0.02}px`, marginRight: `${Width*0.02}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`}}
+                              onClick={() => handleButtonUnfollowClick(props.id)}>
+                              < div>{`unfollow`}</div>
+                            </button>
+                            <NotificationsComponent buttonstatus={ButtonStatus} id={props.id}/>
+                          </>
+                        ) : ButtonStatus === 2 ? (
                           <button
                             style={{ display: "inline-block", marginLeft: `${Width*0.02}px`, marginRight: `${Width*0.02}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`}}
-                            onClick={() => handleButtonUnfollowClick(props.id)}>
-                            < div>{`unfollow`}</div>
+                            onClick={() => handleButtonFollowClick(props.id)}>
+                            < div>{`follow`}</div>
                           </button>
-                          <NotificationsComponent buttonstatus={ButtonStatus} id={props.id}/>
-                        </>
-                      ) : ButtonStatus === 2 ? (
-                        <button
-                          style={{ display: "inline-block", marginLeft: `${Width*0.02}px`, marginRight: `${Width*0.02}px`, marginTop: `${Width*0.02}px`, marginBottom: `${Width*0.02}px`}}
-                          onClick={() => handleButtonFollowClick(props.id)}>
-                          < div>{`follow`}</div>
-                        </button>
-                      ) : null}
-                    </>
+                        ) : null}
+                      </>
+                    </div>
                   </div>
                 </div>
 

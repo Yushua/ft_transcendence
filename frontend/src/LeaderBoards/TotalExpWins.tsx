@@ -22,14 +22,52 @@ function TotalExpWins(){
   useEffect(() => {
       asyncPutList()
 	}, []);
+  const style1= {
+    display: "inline-block",
+    alignItems: 'center',
+    justifyContent: "center", 
+    width: `${Width*0.1}px`, 
+    marginLeft: `${Width*0.02}px`, 
+    marginRight: `${Width*0.02}px`, 
+    marginTop: `${Width*0.005}px`, 
+    marginBottom: `${Width*0.005}px`, 
+  }
+  const style2= {
+    display: "inline-block",
+    alignItems: 'center',
+    justifyContent: "center", 
+    width: `${Width*0.4}px`, 
+    marginLeft: `${Width*0.02}px`, 
+    marginRight: `${Width*0.02}px`, 
+    marginTop: `${Width*0.005}px`, 
+    marginBottom: `${Width*0.005}px`, 
+  }
   return (
       <>
+        <div style={{ fontFamily: "'Courier New', monospace",  fontSize: `${Width*0.05/2}px`}}>
+          <div style={style1}>
+            Rank
+          </div>
+          <div style={style2}>
+            Name
+          </div>
+          <div style={style1}>
+            exp
+          </div>
+        </div>
+        <div style={{marginTop: `${Width*0.005}px`, marginBottom: `${Width*0.005}px`}}> </div>
         {List.map((option, index) => (
-          <button
-            key={index}
-            style={{  fontFamily: "'Courier New', monospace", fontSize: `${Width*0.05/2}px`, alignItems: 'center', justifyContent: "center", width: `${Width*0.8}px`, marginLeft: `${Width*0.02}px`, marginRight: `${Width*0.02}px`, marginTop: `${Width*0.01}px`, marginBottom: `${Width*0.01}px`, borderColor: "#3676cc", borderRadius: `${Width * 0.01}px`}}>
-              {`[${index + 1}] [${option[0]}] exp: [${option[1]}]`}
-          </button>
+          <div key={index} style={{ fontFamily: "'Courier New', monospace",  fontSize: `${Width*0.05/2}px`}}>
+            <div style={style1}>
+            {index + 1}
+            </div>
+            <div style={style2}>
+              {option[0]}
+            </div>
+            <div style={style1}>
+            {option[1]}
+            </div>
+          </div>
         ))}
       </>
   );

@@ -38,6 +38,7 @@ function UserProfilePage(props: any) {
   const user = props?.user ?? User._user
   
   const [nameDisplay, setNameDisplay] = useState<string>("");
+
   
   _setNameDisplay = setNameDisplay
   if (nameDisplay === ""){
@@ -57,7 +58,7 @@ function UserProfilePage(props: any) {
             style={{width: `${0.1*Width}px`, height: `${0.1*Width}px`, alignItems: 'center', padding: `${0.01*Width}px`, borderRadius: `50%`}}/>
 
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: `${0.01*Width}px`, color: "black"}}>
-            < div>{`Welcome ${user.username}`}</div>
+            < div style={{fontFamily: "'Courier New', monospace",  fontSize: `${Width*0.05/3}px`, marginTop: `${Width*0.005}px`, marginBottom: `${Width*0.005}px`}}>{`Welcome ${user.username} - ${User.intraname}`}</div>
           </div>
         </div>
         <div style={{marginBottom: `${marginLeft}px`}}> <EXPBarComponent id={user.id}/> </div>

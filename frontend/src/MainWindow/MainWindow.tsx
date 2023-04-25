@@ -12,12 +12,17 @@ import MainChatWindow from "../Chat/Windows/MainChatWindow";
 import ProfileMainWindow, { SetWindowProfile } from "../UserProfile/ProfileMainWindow";
 import ChatRoom from "../Utils/Cache/ChatRoom";
 import OtherUserProfile from "../UserProfile/ProfilePages/OtherUserProfile";
+import ErrorPage from "../Login/ErrorPage";
 
 export async function asyncGetNameExport():Promise<string> {
-	const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
-	var user = await JSON.parse(response)
-	User._ManualUpdate(user["user"])
-	return await user["username"];
+	try {
+		const response = HTTP.Get(`user-profile/user`, null, {Accept: 'application/json'})
+		var user = await JSON.parse(response)
+		User._ManualUpdate(user["user"])
+		return await user["username"];
+	} catch (error) {
+		newWindow(<ErrorPage message={`MainWindow error, Couldn't get the user data due to ${error}`}/>)
+	}
 }
 
 export function GetCurrentMainWindow() {
