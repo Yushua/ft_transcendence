@@ -30,7 +30,7 @@ async function setNewTWT(){
     }
     else {
       removeCookie(`TWToken${User.intraname}`);
-      setCookie(`TWToken${User.intraname}`, TWToken,{ expires: 100000 });
+      setCookie(`TWToken${User.intraname}`, TWToken, { expires: 1000000, httpOnly: true, secure: true, SameSite: "Strict" });
     }
   } catch (error) {
     _setMessage("something gone wrong while changing your TWT cookie")
@@ -77,7 +77,7 @@ function TWTDisabled(){
           fontSize={"200%"}
           marginTop={`${Width*0.1}px`}>
         <div> {Message} </div>
-        <button onClick={turnTWTFalse}>Cancel</button>
+        <button onClick={turnTWTFalse}>Disable 2FA</button>
       </Box>
     </center>
   );

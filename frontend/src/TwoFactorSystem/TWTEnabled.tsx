@@ -14,7 +14,7 @@ async function CheckTWTSetup(code:string){
   if (await result["status"] === true){
     User._user.status = result["status"]
     removeCookie(`TWToken${User.intraname}`);
-    setCookie(`TWToken${User.intraname}`, await result["TWT"],{ expires: 100000 });
+    setCookie(`TWToken${User.intraname}`, await result["TWT"], { expires: 1000000, httpOnly: true, secure: true , SameSite: "Strict"});
     SetWindowProfile(<TWTDisabled/>)
   }
   else {
