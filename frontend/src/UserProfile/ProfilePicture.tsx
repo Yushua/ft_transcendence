@@ -16,10 +16,14 @@ export default function ProfilePicture() {
 				<input type="file" id="avatar" name="avatar" accept="image/png, image/jpeg, image/gif" onChange={event => {
 					if (!event.target.files)
 						return
-					const pfpURL = HTTP.Post("pfp", event.target.files[0])
-					User._user.profilePicture = pfpURL
-					NameStorage.UserPFP._ManualSet(User.ID, pfpURL)
-					setProfilePicture(pfpURL)
+					HTTP.asyncPost("pfp", event.target.files[0], null, ok => {
+						const pfpURL = ok.responseText
+						User._user.profilePicture = pfpURL
+						NameStorage.UserPFP._ManualSet(User.ID, pfpURL)
+						setProfilePicture(pfpURL)
+					}, async error => {
+						alert((await JSON.parse(error.responseText)).message)
+					})
 				}}/>
 			</div>
 		</center>
