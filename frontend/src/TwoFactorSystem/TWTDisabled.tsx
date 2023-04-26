@@ -30,7 +30,7 @@ async function setNewTWT(){
     }
     else {
       removeCookie(`TWToken${User.intraname}`);
-      setCookie(`TWToken${User.intraname}`, TWToken, { expires: 1000000, httpOnly: true, secure: true, SameSite: "Strict" });
+      setCookie(`TWToken${User.intraname}`, TWToken, { expires: 1000000});
     }
   } catch (error) {
     _setMessage("something gone wrong while changing your TWT cookie")

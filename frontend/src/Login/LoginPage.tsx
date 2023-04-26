@@ -58,7 +58,7 @@ async function setLogin():Promise<string>{
     var result = await response.json();
     var accessToken:string = await result["accessToken"]
     _intraName = await result["intraname"]
-    setCookie(`oAth${_intraName}`, await result["OAuthToken"], { expires: 1000000, httpOnly: true, secure: true , SameSite: "Strict"});
+    setCookie(`oAth${_intraName}`, await result["OAuthToken"], { expires: 1000000});
     if (accessToken === undefined || accessToken === null){
       removeCookie('accessToken');
       newWindow(<ErrorPage message={"Accesstoken was undefined, please refresh the page"}/>)
@@ -133,7 +133,7 @@ export async function asyncGetTWTStatus(TWT: string):Promise<boolean> {
   } catch (error) {
     alert(`${error}, Token is out of date Loginpage`)
     removeCookie(`TWToken${_intraName}`);
-    setCookie(`TWToken${_intraName}`, await setLoginTWT(), { expires: 1000000, httpOnly: true, secure: true , SameSite: "Strict"});
+    setCookie(`TWToken${_intraName}`, await setLoginTWT(), { expires: 1000000});
     newWindow(<TWTCheckLoginPage />)
   }
   return false
@@ -173,7 +173,7 @@ async function setupLoginPage(){
   }
   else if (window.location.href.split('code=')[1] !== undefined){
     removeCookie('accessToken');
-    setCookie('accessToken', await setLogin(), { expires: 1000000, httpOnly: true, secure: true , SameSite: "Strict"});
+    setCookie('accessToken', await setLogin(), { expires: 1000000});
     setupLoginPage()
   }
   else {
@@ -187,7 +187,7 @@ async function setupLoginTWT(){
 
   if (getCookie(`TWToken${_intraName}`) === null || getCookie(`TWToken${_intraName}`) === undefined){
     removeCookie(`TWToken${_intraName}`);
-    setCookie(`TWToken${_intraName}`, await setLoginTWT(), { expires: 1000000, httpOnly: true, secure: true });
+    setCookie(`TWToken${_intraName}`, await setLoginTWT(), { expires: 1000000});
   }
   var status:boolean = await asyncGetUserStatus()
   if (status === false){

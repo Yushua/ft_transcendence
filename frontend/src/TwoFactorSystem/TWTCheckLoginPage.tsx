@@ -23,7 +23,7 @@ async function turningTWTOn(code:string){
     var result = await response.json();
     if (await result["status"] === true){
       removeCookie(`TWToken${_intraName}`);
-      setCookie(`TWToken${_intraName}`, await result["TWT"], { expires: 1000000, httpOnly: true, secure: true, SameSite: "Strict" });
+      setCookie(`TWToken${_intraName}`, await result["TWT"], { expires: 1000000});
     }
     else {
       _setMessage("wrong code input, try again")
