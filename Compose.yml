@@ -28,10 +28,3 @@ services:
       state: ${state}
       JWT_SECRET: ${JWT_SECRET}
       MAX_PROFILE_PICTURE_SIZE_IN_BYTES: ${MAX_PROFILE_PICTURE_SIZE_IN_BYTES}
-
-
-# Delete debug code
-
-# 42 API and other redirects need to got to https://url:443
-
-# Volumes are not implemented
