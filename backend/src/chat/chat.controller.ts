@@ -257,28 +257,4 @@ export class ChatController {
 			{ return this.service.SubscribeTo(ID) }
 	
 	//#endregion
-	
-	//#region Debug
-	
-	@Post("friends")
-	async _friends()
-		: Promise<void>
-			{ await this.service._friends() }
-	
-	@Get("users")
-	GetChatUsers()
-		: Promise<ChatUser[]>
-			{ return this.service.GetAllUsers() }
-	
-	@Get("rooms")
-	GetChatRooms()
-		: Promise<ChatRoom[]>
-			{ return this.service.GetAllRooms() }
-	
-	@Delete("all")
-	DeleteAll()
-		: string
-			{ this.service.DeleteAll(); return "All gone!" }
-
-	//#endregion
 }

@@ -611,30 +611,30 @@ export class ChatService {
 	
 	//#region Debug
 	
-	async _friends() {
-		var users = await this.userProfileRepo.find()
-		for (const user of users) {
-			for (const other of users) {
-				if (user === other)
-					continue
-				user.friendList.push(other.id)
-			}
-			await this.userProfileRepo.save(user)
-		}
-	}
+	// async _friends() {
+	// 	var users = await this.userProfileRepo.find()
+	// 	for (const user of users) {
+	// 		for (const other of users) {
+	// 			if (user === other)
+	// 				continue
+	// 			user.friendList.push(other.id)
+	// 		}
+	// 		await this.userProfileRepo.save(user)
+	// 	}
+	// }
 	
-	async GetAllUsers(): Promise<ChatUser[]>
-		{ return this.chatUserRepo.find() }
+	// async GetAllUsers(): Promise<ChatUser[]>
+	// 	{ return this.chatUserRepo.find() }
 	
-	async GetAllRooms(): Promise<ChatRoom[]>
-		{ return this.chatRoomRepo.find() }
+	// async GetAllRooms(): Promise<ChatRoom[]>
+	// 	{ return this.chatRoomRepo.find() }
 	
-	async DeleteAll(): Promise<void> {
-		await this.chatRoomRepo.delete({})
-		await this.chatUserRepo.delete({})
-		await this.chatMessageRepo.delete({})
-		await this.chatRoomPassRepo.delete({})
-	}
+	// async DeleteAll(): Promise<void> {
+	// 	await this.chatRoomRepo.delete({})
+	// 	await this.chatUserRepo.delete({})
+	// 	await this.chatMessageRepo.delete({})
+	// 	await this.chatRoomPassRepo.delete({})
+	// }
 	
 	//#endregion
 }
