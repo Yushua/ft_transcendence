@@ -15,7 +15,7 @@ import { UserProfileModule } from 'src/user-profile/user-profile.module';
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: {
-        expiresIn: '360000s',
+        expiresIn: '1000000s',
       },
     }),
     TypeOrmModule.forFeature([UserProfile])],
