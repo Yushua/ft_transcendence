@@ -44,8 +44,8 @@ export class GameData {
 
 	update(deltaTime: number)
 	{
-		if (this.p1_score === this.maxScore || this.p2_score === this.maxScore)
-			return
+		// if (this.p1_score === this.maxScore || this.p2_score === this.maxScore)
+		// 	return
 		switch (this.ball.update(this.p1, this.p2, deltaTime)) {
 			case 'p1_scored':
 				this.p1_score++

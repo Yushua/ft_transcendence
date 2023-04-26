@@ -387,12 +387,11 @@ export class MyGateway implements OnModuleInit {
 	
 	private _startGameLoop = (deltaTime: number) => this._runGameLoop(deltaTime)
 	
-	private async _runGameLoop(deltaTime: number) {
+	private _runGameLoop(deltaTime: number) {
 		
 		const startTime = Date.now()
 		
 		const updated_games = {} // Make sure games don't get updated twice
-		var await_updates = [] // Array of update promises
 		
 		/* Update all Games */
 		for (var game of games) {
@@ -407,15 +406,12 @@ export class MyGateway implements OnModuleInit {
 				
 				/* Update game asyncronosly and add to await array */
 				gameData.update(deltaTime)
-				// await_updates.push((async () => 
-					
-				// )())
 			}
 			/* Handle end of game */
 			switch (gameData.gameState) {
 				case 'p1_won':
 				case 'p2_won':
-					await PongService.GetInstance()?.postPongStats(gameIDs, gameData)
+					PongService.GetInstance()?.postPongStats(gameIDs, gameData)
 					break;
 				default: continue;
 			}
@@ -425,8 +421,6 @@ export class MyGateway implements OnModuleInit {
 		}
 		
 		/* Await all game updates */
-		await Promise.all(await_updates)
-		await_updates = [] // Clearing for new
 		
 		/* Send updated data */
 		for (const connection of connections) {
@@ -434,9 +428,7 @@ export class MyGateway implements OnModuleInit {
 			const gameData: GameData = connection[1][0]
 
 			/* Send updated data */
-			await_updates.push((async () =>
-				this.server.to(clientID).emit('gamedata', gameData)
-			)())
+			this.server.to(clientID).emit('gamedata', gameData)
 			
 			/* Handle end of a game */
 			if (gameData.gameState === 'p1_won' || gameData.gameState === 'p2_won' ) {
@@ -449,9 +441,6 @@ export class MyGateway implements OnModuleInit {
 		/* Simulate Lag */
 		// await_updates.push(new Promise(res => setTimeout(res, Math.random() * 100)))
 		// await_updates.push(new Promise(res => setTimeout(res, 100)))
-		
-		/* Await all sends */
-		// await Promise.all(await_updates)
 		
 		/* Make sure games update in set intervals */
 		const endTime = Date.now()
