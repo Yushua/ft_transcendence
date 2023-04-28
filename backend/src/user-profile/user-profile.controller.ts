@@ -129,9 +129,9 @@ export class UserProfileController {
 
     @Post('userchange')
     @UseGuards(AuthGuard('jwt'), AuthGuardEncryption)
-    changeUsername(
+    async changeUsername(
         @Body() usernameDTO: UsernameDTO, @Request() req: Request) {
-        this.userServices.changeUsername(usernameDTO.username, req["user"].id);
+        await this.userServices.changeUsername(usernameDTO.username, req["user"].id);
     }
 
     /*
